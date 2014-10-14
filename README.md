@@ -20,6 +20,7 @@ In the "System Variables" find PATH and edited
 ( make sure your Python27 and Python27/Scripts in the Variable value)
 ```
 3. In command promt install all the following
+
 *PyMongo 2.7.2 : pip install pymongo
 *Django : 	pip install Django==1.7
 *Newspaper : https://github.com/codelucas/newspaper/archive/master.zip Download then use shell command:
