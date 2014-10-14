@@ -1,6 +1,3 @@
-Something to do with Israelis and Palentinians
-
-
 ##Team ACME
 
 Username  |Name | Email
