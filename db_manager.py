@@ -70,7 +70,7 @@ def get_keywords():
     '''(None) - > list of str
     Return a list of keywords in COLLECTION
     '''
-    list = COLLECTION.findone["list"]
+    list = COLLECTION.find_one()["list"]
     return list
 
 
