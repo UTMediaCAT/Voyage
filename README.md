@@ -16,7 +16,10 @@ Python 2.7.x : 	python.org
 
 pip:		https://pip.pypa.io/en/latest/installing.html
 
-(for windows): downloaded the latest version of pip and run using python 2.7. After that right click my computer-->properties-->advanced system setting-->Environment Variables. In the "System Variables" find PATH and edited ( make sure your Python27 and Python27/Scripts in the Variable value)
+(for windows): downloaded the latest version of pip and run using python 2.7. 
+After that right click my computer-->properties-->advanced system setting-->Environment Variables.
+In the "System Variables" find PATH and edited 
+( make sure your Python27 and Python27/Scripts in the Variable value)
 
 In command promt install all the following
 PyMongo 2.7.2 : pip install pymongo
