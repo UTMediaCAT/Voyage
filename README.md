@@ -2,14 +2,15 @@ Something to do with Israelis and Palentinians
 
 
 ##Team ACME
-```
-Username      Name                      Email
-sunakujira1   Yuya Iwabuchi             yuya.iwabuchi@gmail.com
-sughandj      Jai Sughand               jaisughand@gmail.com
-wangx173      Xiang Wang                rogerxiang.wang@gmail.com
-kbridge       Kyle Bridgemohansingh     bsingh.kyle@gmail.com
-ryanbelt      Ryan Pan                  ryanbelt1993129@hotmail.com
-```
+
+Username  |Name | Email
+--------------|-------------------|--------------------------
+sunakujira1 | Yuya Iwabuchi | yuya.iwabuchi@gmail.com
+sughandj | Jai Sughand | jaisughand@gmail.com
+wangx173 | Xiang Wang | rogerxiang.wang@gmail.com
+kbridge | Kyle Bridgemohansingh | bsingh.kyle@gmail.com
+ryanbelt | Ryan Pan | ryanbelt1993129@hotmail.com
+
 ##Installation guide：
 * [Python 2.7.x](https://www.python.org/downloads/release/python-278/) 
 * [pip](https://pip.pypa.io/en/latest/installing.html)
