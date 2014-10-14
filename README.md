@@ -10,7 +10,8 @@ wangx173      Xiang Wang                rogerxiang.wang@gmail.com
 kbridge       Kyle Bridgemohansingh     bsingh.kyle@gmail.com
 ryanbelt      Ryan Pan                  ryanbelt1993129@hotmail.com
 ```
-Installation guide：
+###Installation guide：
+
 Python 2.7.x : 	python.org
 
 pip:		https://pip.pypa.io/en/latest/installing.html
@@ -29,8 +30,8 @@ In command promt install all the following
 
 	Tweepy : 	pip install tweepy
 
-
 Click team04-Project\Phase2\Execute.py to run
+
 ----------------------------------------------
 
 Our Task Board and Assignment project please click the follow link and use 
