@@ -21,11 +21,11 @@ In the "System Variables" find PATH and edited
 ```
 3. In command promt install all the following
 
-*PyMongo 2.7.2 : pip install pymongo
-*Django : 	pip install Django==1.7
-*Newspaper : https://github.com/codelucas/newspaper/archive/master.zip Download then use shell command:
-             -python setup.py install
-*Tweepy : 	pip install tweepy
+* PyMongo 2.7.2 : pip install pymongo
+* Django : 	pip install Django==1.7
+* Newspaper : https://github.com/codelucas/newspaper/archive/master.zip Download then use shell command:
+              -python setup.py install
+* Tweepy : 	pip install tweepy
 
 4. Click team04-Project\Phase2\Execute.py to run
 ###Task Board
