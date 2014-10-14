@@ -12,7 +12,7 @@ ryanbelt      Ryan Pan                  ryanbelt1993129@hotmail.com
 ```
 ###Installation guide：
 ```
-Python 2.7.x : 	python.org
+[Python 2.7.x ](https://www.python.org/downloads/release/python-278/) 	
 
 pip:		https://pip.pypa.io/en/latest/installing.html
 
