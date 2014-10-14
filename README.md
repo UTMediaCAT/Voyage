@@ -23,7 +23,7 @@ In the "System Variables" find PATH and edited
 
 1. PyMongo 2.7.2 :` pip install pymongo`
 * Django : 	`pip install Django==1.7`
-* Newspaper : [click this](https://github.com/codelucas/newspaper/archive/master.zip) Download then use shell command:                              `python setup.py install`
+* Newspaper : [click this](https://github.com/codelucas/newspaper/archive/master.zip) to download, extract and then                              `python setup.py install`
 * Tweepy : 	`pip install tweepy`
 
 * Click team04-Project\Phase2\Execute.py to run
