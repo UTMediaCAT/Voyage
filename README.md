@@ -1,7 +1,7 @@
 Something to do with Israelis and Palentinians
 
 
-###Team ACME
+##Team ACME
 ```
 Username      Name                      Email
 sunakujira1   Yuya Iwabuchi             yuya.iwabuchi@gmail.com
@@ -10,7 +10,7 @@ wangx173      Xiang Wang                rogerxiang.wang@gmail.com
 kbridge       Kyle Bridgemohansingh     bsingh.kyle@gmail.com
 ryanbelt      Ryan Pan                  ryanbelt1993129@hotmail.com
 ```
-###Installation guide：
+##Installation guide：
 * [Python 2.7.x](https://www.python.org/downloads/release/python-278/) 
 * [pip](https://pip.pypa.io/en/latest/installing.html)
 
@@ -21,19 +21,19 @@ In the "System Variables" find PATH and edited
 
 * In command promt install all the following
 
-1. PyMongo 2.7.2 : pip install pymongo
-* Django : 	pip install Django==1.7
-* Newspaper : https://github.com/codelucas/newspaper/archive/master.zip Download then use shell command:                              -python setup.py install
-* Tweepy : 	pip install tweepy
+1. PyMongo 2.7.2 :` pip install pymongo`
+* Django : 	`pip install Django==1.7`
+* Newspaper : [click this](https://github.com/codelucas/newspaper/archive/master.zip) Download then use shell command:                              `python setup.py install`
+* Tweepy : 	`pip install tweepy`
 
 * Click team04-Project\Phase2\Execute.py to run
 
-###Task Board
+##Task Board
 
 Our Task Board and Assignment progress please click the follow link and use 
-USER:"acmeteam4@gmail.com" Password:"acmeteamfour" to log in (no quotation for user and PW)
+USER:**acmeteam4@gmail.com** Password:**acmeteamfour** to log in
 
 * [Trello](https://trello.com/b/Y08lMCXy/cscc01-acme)
 
-in "My Boards" click CSCC01-ACME to see the progress.
+in My Boards click **CSCC01-ACME** to see the progress.
 
