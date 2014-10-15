@@ -26,13 +26,19 @@ Install all of the following api's on terminal/cmd
 
 ##Task Board
 
-Our Task Board and Assignment progress please click the follow link and login using 
+Our Task Board and Assignment progress is on [Trello](https://trello.com/b/Y08lMCXy/cscc01-acme)
 
-USER: **acmeteam4@gmail.com** Password: **acmeteamfour**
+USER: **acmeteam4@gmail.com** Password: **acmeteam4**
 
-* [Trello](https://trello.com/b/Y08lMCXy/cscc01-acme)
+In My Boards click **CSCC01-ACME** to see the progress
 
-In My Boards click **CSCC01-ACME** to see the progress.
+##Database 
+
+All our articles and tweets are stored on [MongoDB](https://mongolab.com)
+
+USER: **acmeteam4** Password: **acmeteam4**
+
+click **CSCC01-ACME** to access the database
 
 ##Website
 
