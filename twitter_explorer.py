@@ -40,22 +40,3 @@ def get_followers(user):
         count += 1
         followers.append(user.screen_name)
     return [count, followers]
-
-def test_search(keyword):
-    holder = []
-    auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-    auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
-    api = tweepy.A4PI(auth)
-    
-    follower=[]
-    
-    for tweet in tweepy.Cursor(api.search, q = keyword, result_type = "recent",
-                               include_entities=True,lang="en").items(5):
-        print tweet.user.screen_name + ": " +tweet.text + "\n"
-        #follower.append(tweet.user.screen_name)
-    
-    #for follow in follower:
-        #get_followers(follow)[0]
-        
-        
-
