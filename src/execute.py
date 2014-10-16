@@ -1,7 +1,7 @@
-import article_explorer
-import twitter_explorer
 import pymongo
 import db_manager as db
+import article_explorer
+import twitter_explorer
 
 SITES_DB = "sites"
 KEYWORDS_DB = "keywords"
