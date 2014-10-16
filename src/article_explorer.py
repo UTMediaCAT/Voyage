@@ -3,27 +3,30 @@
 This script retrieves monitoring site, foreign sites,
 and keywords from Mongo database and looks into the monitoring
 sites to find matching foreign sites or keywords.
-If found, all the data will be stored at another
-Mongo database specialized for Articles
+newspaper package is used as well to extract other useful data.
+If any keyword or foreign sites matched, all the data will be
+stored at another Mongo database specialized for Articles
 """
 
 
-# newspaper -- For more information, go to
+# newspaper, for populating articles of each site
+# and parsing most of the data.
 import newspaper
 from newspaper import news_pool
 from newspaper import Article
 import lxml.html.clean
 
-#regex
+# Regex, for parsing keywords and sources
 import re
 
-#Times
+# For counting seconds
 import time
+# For getting today's date
 import datetime
-#dateutil
+# For extracting 'pub_date's
 from dateutil import parser
 
-#db_manager
+# For connecting with the Database
 import db_manager as db
 
 
@@ -48,7 +51,7 @@ def run(keyword_db, site_db, article_db):
     monitoring_sites = []
     # Retrieve, store, and print monitoring site information
     print "\nMonitoring Sites\n\t%-25s%-40s" % ("Name", "URL")
-    for site in db.get_document("is_monitor", True):
+    for site in db.get_documents("is_monitor", True):
         # monitoring_sites is now in form [['Name', 'URL'], ...]
         monitoring_sites.append([site['name'], site['_id']])
         print("\t%-25s%-40s" % (site['name'], site['_id']))
@@ -56,7 +59,7 @@ def run(keyword_db, site_db, article_db):
     foreign_sites = []
     # Retrieve, store, and print foreign site information
     print "\nForeign Sites\n\t%-25s%-40s" % ("Name", "URL")
-    for site in db.get_document("is_monitor", False):
+    for site in db.get_documents("is_monitor", False):
         # foreign_sites is now in form ['URL', ...]
         foreign_sites.append(site['_id'])
         print("\t%-25s%-40s" % (site['name'], site['_id']))
