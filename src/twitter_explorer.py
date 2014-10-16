@@ -1,4 +1,5 @@
-import db_manager
+import db_manager as db
+import datetime
 import tweepy
 import time
 
@@ -139,24 +140,67 @@ def search_tweets(keyword, result_type, amount):
             continue
     return tweets
 
-def add_tweet():
-    pass
+def download_tweets(tweets, db_keywords, db_name):
+    ''' (list of status, list of str, str) -> None
+    Download tweets
+    '''
+    db.connect(db_name)
+
+    keywords = get_keywords(tweets, db_keyword)
+    sources = get_sources(tweets)
+
+
+    for status in tweets:
+
+        date = tweet.date.strftime("%Y-%m-%d")
+
+        db.add_document({"_id":tweet.id, "date":date, "keywords":keywords,"sources":sources, "author":tweet.user.screen_name})
+
+    client.close()
+
+
+def get_keywords(tweet, keywords):
+    ''' (status, list of str) -> list of str
+    Searches and returns keywords containd in the tweet
+    Returns empty list otherwise.
+    '''
+    matched_keywords = []
+    for keyword in keywords:
+        if re.search(key, tweet.text, re.IGNORECASE):
+            matched_keywords.append(key)
+    return matched_keywords
+
+def get_sources(status, sites):
+    ''' (status, list of str) -> list of str
+    Searches and returns links redirected to sites within the html
+    Returns empty list if none found
+
+    Keyword arguments:
+    html            -- string of html
+    sites           -- List of site urls to look for
+    '''
+    matched_urls = []
+
+    for site in sites:
+        for url in re.findall("href=[\"\'][^\"\']*?" + re.escape(site) + "[^\"\']*?[\"\']", status.text, re.IGNORECASE):
+            matched_urls.append(url[6:-1])
+    return matched_urls
 
             
 
 if __name__ == '__main__':
     #pass in the username of the account you want to download
-    for tweet in get_tweets('acmeteam',2):
+    for tweet in get_tweets('iyanaphakira',100):
         print tweet.text
 
     print '============================='
     
-    for user in get_followers('acmeteam4'):
+    for user in get_followers('jerkfight'):
         print user
 
     print '============================='
     
-    print get_follower_count('apple')
+    print get_follower_count('iyanaphakira')
 
     print '============================='
     
