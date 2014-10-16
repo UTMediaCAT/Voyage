@@ -28,9 +28,9 @@ Install all of the following api's on terminal/cmd
 
 Create a new script and import execute.py by `import srs/execute`
 
-```
-# Use one of the functions we have:
 
+Use one of the functions we have:
+```
 add_monitor_site(url, name, influence)
 add_foreign_site(url, name, influence)
 get_all_sites()
@@ -43,13 +43,15 @@ add_keyword(keyword)
 get_all_keywords()
 del_keyword(keyword)
 del_all_keywords()
-
-# After configuration and modification, start exploring by:
-
+```
+After configuration and modification, start exploring by:
+```
 run_article_explorer()
 run_twitter_explorer()
 
 ```
+Exploring may take a lot of time and resource depending on the site of the populated site
+For testing purpose, keep only 1 monitoring site with size < 500
 
 For more information, view `srs/execute.py`
 
