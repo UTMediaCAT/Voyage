@@ -182,7 +182,7 @@ def del_all_keywords():
 
 
 def run_article_explorer():
-    article_explorer.run(KEYWORDS_DB, SITES_DB, ARTICLES_DB)
+    article_explorer.explore(KEYWORDS_DB, SITES_DB, ARTICLES_DB)
 
 
 def run_twitter_explorer():
