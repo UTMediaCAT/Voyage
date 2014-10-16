@@ -8,7 +8,7 @@ wangx173 | Xiang Wang | rogerxiang.wang@gmail.com
 kbridge | Kyle Bridgemohansingh | bsingh.kyle@gmail.com
 ryanbelt | Ryan Pan | ryanbelt1993129@hotmail.com
 
-##Installation guide
+##Installation
 
 Install Python and PIP
 
@@ -24,6 +24,34 @@ Install all of the following api's on terminal/cmd
 * dateutil 1.5: [Click this](https://labix.org/download/python-dateutil/python-dateutil-1.5.tar.gz) to download, extract and then `python setup.py install`
 * Tweepy : 	`pip install tweepy`
 
+##Usage
+
+Create a new script and import execute.py by `import srs/execute`
+
+```
+# Use one of the functions we have:
+
+add_monitor_site(url, name, influence)
+add_foreign_site(url, name, influence)
+get_all_sites()
+get_monitor_sites()
+get_foreign_sites()
+set_sites_by_value(url, field, new_value)
+del_site(url)
+del_sites(urls=None)
+add_keyword(keyword)
+get_all_keywords()
+del_keyword(keyword)
+del_all_keywords()
+
+# After configuration and modification, start exploring by:
+
+run_article_explorer()
+run_twitter_explorer()
+
+```
+
+For more information, view `srs/execute.py`
 
 ##Task Board
 
