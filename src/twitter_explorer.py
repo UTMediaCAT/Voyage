@@ -140,14 +140,14 @@ def search_tweets(keyword, result_type, amount):
             continue
     return tweets
 
-def download_tweets(tweets, db_keywords, db_name):
+def download_tweets(tweets, sites, db_keywords, db_name):
     ''' (list of status, list of str, str) -> None
     Download tweets
     '''
     db.connect(db_name)
 
     keywords = get_keywords(tweets, db_keyword)
-    sources = get_sources(tweets)
+    sources = get_sources(tweets, sites)
 
 
     for status in tweets:
