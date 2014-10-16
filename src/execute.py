@@ -155,10 +155,13 @@ def del_keyword(key_word):
     """(str) -> None
     Connect to keyword collection and delete key_word from the list
     """
-    db.connect(KEYWORDS_DB)
-    db.del_keyword(key_word)
-    print "keyword " + key_word + " deleted."
-    db.close_connection()
+    if key_word not in get_all_keywords():
+        print "keyword " + key_word + " does not exist."
+    else:
+        db.connect(KEYWORDS_DB)
+        db.del_keyword(key_word)
+        print "keyword " + key_word + " deleted."
+        db.close_connection()
 
 
 def del_all_keywords():

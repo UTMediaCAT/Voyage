@@ -11,22 +11,23 @@ ACCESS_TOKEN = "2825329492-TKU4s0Mky7vazr60WKHQV7R6sJT2wYE4ysR3Gm3"
 ACCESS_TOKEN_SECRET = "I740fF6x6v0srzbY7LCAjNWXXOzZRMBFbkoiwZ5FgqC5s"
 
 #seconds to wait before retrying call
-WAIT_RATE = (60 *1) + 0
+WAIT_RATE = (60 * 1) + 0
+
 
 def authorize():
-    ''' (None) -> tweepy.API
+    """ (None) -> tweepy.API
     Will use global keys to allow use of API
-    '''
+    """
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
     return tweepy.API(auth)
     
 
 def get_tweets(screen_name, amount):
-    ''' (str, [int]) -> list of list
+    """ (str, [int]) -> list of list
     Gets amount tweets from specified users
     Returns list in format [uni tweet, uni user, str time_tweeted]
-    '''
+    """
     api = authorize()
     user = api.get_user(screen_name)
     
@@ -37,8 +38,7 @@ def get_tweets(screen_name, amount):
         #check how many more tweets is needed
         count = amount - len(tweets)
         try:
-            new_tweets = api.user_timeline(screen_name = screen_name,
-                                       count = count)
+            new_tweets = api.user_timeline(screen_name=screen_name, count=count)
 
             #If there are no more tweets, finish
             if not new_tweets:
@@ -52,26 +52,28 @@ def get_tweets(screen_name, amount):
         except tweepy.TweepError as e:
             print '=== Limit Reached ===.'
             print ('Resuming in ' + str(int(WAIT_RATE/60)) + ' minute(s) and '
-                   + str(WAIT_RATE%60) + ' second(s).')
+                   + str(WAIT_RATE % 60) + ' second(s).')
             time.sleep((15 * 60) + 10)
             continue
     return tweets
 
+
 def get_follower_count(screen_name):
-    ''' (str) -> int
+    """ (str) -> int
     Gets number of followers of screen_name's account
-    '''
+    """
     api = authorize()
     user = api.get_user(screen_name)
     return user.followers_count
 
+
 def get_followers(screen_name):
-    ''' (str) -> inicode
+    """ (str) -> inicode
     Returns list of all followers (unicode string) of user screen_name
 
     If limit for follower calling is reached, the function will sleep and notify
     with a print statement, later continuing the call(s).
-    '''
+    """
     api = authorize()
     
     followers = []
@@ -92,14 +94,14 @@ def get_followers(screen_name):
             if again:
                 print '=== Limit Still Not Over ===.'
             print ('Resuming in ' + str(int(WAIT_RATE/60)) + ' minute(s) and '
-                   + str(WAIT_RATE%60) + ' second(s).')
+                   + str(WAIT_RATE % 60) + ' second(s).')
             time.sleep(WAIT_RATE)
             again = True
             continue
             
             
 def search_tweets(keyword, result_type, amount):
-    '''(str, str, int) -> list of statuses
+    """(str, str, int) -> list of statuses
     Takes keyword, result_type ('mixed', 'recent', 'popular'), and amount.
     Will return tweets as status objects in a list. The number of statuses
     returned depends on how many are found and/or the predetermined amount
@@ -110,7 +112,7 @@ def search_tweets(keyword, result_type, amount):
 
     #NOTE: If any status update data includes keyword, or if the link included
     in the status contains the keyword that tweet will be used.
-    '''
+    """
     api = authorize()
     
     tweets = []
@@ -120,9 +122,9 @@ def search_tweets(keyword, result_type, amount):
         count = amount - len(tweets)
         try:
             new_tweets = api.search(q=keyword, count=count,
-                                    result_type = result_type,lang='en',
+                                    result_type=result_type, lang='en',
                                     max_id=str(last_id - 1),
-                                    show_user = True)
+                                    show_user=True)
 
             #If there are no more tweets, finish
             if not new_tweets:
@@ -136,50 +138,52 @@ def search_tweets(keyword, result_type, amount):
         except tweepy.TweepError as e:
             print '=== Limit Reached ===.'
             print ('Resuming in' + str(int(WAIT_RATE/60)) + ' minute(s) and '
-                   + str(WAIT_RATE%60) + ' second(s).')
+                   + str(WAIT_RATE % 60) + ' second(s).')
             time.sleep((15 * 60) + 10)
             continue
     return tweets
 
+
 def download_tweets(tweets, sites, db_keywords, db_name):
-    ''' (list of status, list of str, str) -> None
+    """ (list of status, list of str, str) -> None
     Download tweets
-    '''
+    """
     db.connect(db_name)
 
-    keywords = get_keywords(tweets, db_keyword)
+    keywords = get_keywords(tweets, db_keywords)
     sources = get_sources(tweets, sites)
-
 
     for status in tweets:
 
         date = tweet.date.strftime("%Y-%m-%d")
 
-        db.add_document({"_id":tweet.id, "date":date, "keywords":keywords,"sources":sources, "author":tweet.user.screen_name})
+        db.add_document({"_id": tweet.id, "date": date, "keywords": keywords,
+                         "sources": sources, "author": tweet.user.screen_name})
 
-    db.client.close()
+    db.close_connection()
 
 
 def get_keywords(tweet, keywords):
-    ''' (status, list of str) -> list of str
+    """ (status, list of str) -> list of str
     Searches and returns keywords contained in the tweet
     Returns empty list otherwise.
-    '''
+    """
     matched_keywords = []
     for key in keywords:
         if re.search(key, tweet.text, re.IGNORECASE):
             matched_keywords.append(key)
     return matched_keywords
 
+
 def get_sources(status, sites):
-    ''' (status, list of str) -> list of str
+    """ (status, list of str) -> list of str
     Searches and returns links redirected to sites within the html
     Returns empty list if none found
 
     Keyword arguments:
     html            -- string of html
     sites           -- List of site urls to look for
-    '''
+    """
     matched_urls = []
 
     for site in sites:
@@ -187,11 +191,10 @@ def get_sources(status, sites):
             matched_urls.append(url[6:-1])
     return matched_urls
 
-            
 
 if __name__ == '__main__':
     #pass in the username of the account you want to download
-    for tweet in get_tweets('apple',5):
+    for tweet in get_tweets('apple', 5):
         print tweet.text
 
     print '============================='
