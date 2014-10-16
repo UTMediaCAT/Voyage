@@ -33,10 +33,11 @@ Use one of the functions we have:
 ```
 add_monitor_site(url, name, influence)
 add_foreign_site(url, name, influence)
+get_sites_by_value(field, value)
 get_all_sites()
 get_monitor_sites()
 get_foreign_sites()
-set_sites_by_value(url, field, new_value)
+set_site_by_value(url, field, new_value)
 del_site(url)
 del_sites(urls=None)
 add_keyword(keyword)
