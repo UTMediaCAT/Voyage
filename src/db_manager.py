@@ -81,11 +81,11 @@ def del_all_documents():
 #Keyword functions
 
 
-def add_keyword(key_word):
+def add_keyword(keyword):
     """(str) -> None
-    Add a new key_word to the list in COLLECTION
+    Add a new keyword to the list in COLLECTION
     """
-    COLLECTION.update({'_id': 1}, {'$push': {"list": key_word}})
+    COLLECTION.update({'_id': 1}, {'$push': {"list": keyword}})
 
 
 def get_all_keywords():
@@ -96,11 +96,11 @@ def get_all_keywords():
     return keywords
 
 
-def del_keyword(key_word):
+def del_keyword(keyword):
     """(str) - > None
-    Delete key_word from the list in COLLECTION
+    Delete keyword from the list in COLLECTION
     """    
-    COLLECTION.update({'_id': 1}, {'$pull': {"list": key_word}})
+    COLLECTION.update({'_id': 1}, {'$pull': {"list": keyword}})
 
 
 def del_all_keywords():

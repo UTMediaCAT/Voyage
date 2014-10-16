@@ -71,7 +71,7 @@ def get_foreign_sites():
     return sites
 
 
-def get_sites(field, value):
+def get_sites_by_value(field, value):
     """(str, object) -> list of dict of objects
     Connect to sites collection and returns all the sites stored in the
     database that match the field and value query
@@ -87,7 +87,7 @@ def get_sites(field, value):
     return sites
 
 
-def set_site(url, field, new_value):
+def set_site_by_value(url, field, new_value):
     """(str, str, object) -> None
     Connect to sites collection and changes finds the site with id as url
     then changes the field with the new_value
@@ -131,18 +131,18 @@ def del_sites(urls=None):
     db.close_connection()
 
 
-def add_keyword(key_word):
+def add_keyword(keyword):
     """(str) -> None
-    Connect to keyword collection and add a new key_word to the list
+    Connect to keyword collection and add a new keyword to the list
     """
     # if keyword already exists
-    if key_word in get_all_keywords():
-        print "keyword " + key_word + " already exists."
+    if keyword in get_all_keywords():
+        print "keyword " + keyword + " already exists."
     # else add the keyword
     else:
         db.connect(KEYWORDS_DB)
-        db.add_keyword(key_word)
-        print "keyword " + key_word + " added."
+        db.add_keyword(keyword)
+        print "keyword " + keyword + " added."
         db.close_connection()
 
 
@@ -156,18 +156,18 @@ def get_all_keywords():
     return keywords
 
 
-def del_keyword(key_word):
+def del_keyword(keyword):
     """(str) -> None
-    Connect to keyword collection and delete key_word from the list
+    Connect to keyword collection and delete keyword from the list
     """
     # if keyword does not exist
-    if key_word not in get_all_keywords():
-        print "keyword " + key_word + " does not exist."
+    if keyword not in get_all_keywords():
+        print "keyword " + keyword + " does not exist."
     # else remove the keyword
     else:
         db.connect(KEYWORDS_DB)
-        db.del_keyword(key_word)
-        print "keyword " + key_word + " deleted."
+        db.del_keyword(keyword)
+        print "keyword " + keyword + " deleted."
         db.close_connection()
 
 
@@ -189,43 +189,45 @@ def run_twitter_explorer():
     pass
 
 if __name__ == '__main__':
-    add_monitor_site("https://news.google.com/", "Google News", 10)
-    add_site("http://cnn.com", "CNN", True, 2)
-    add_site("http://nytimes.com", "The New York Times", True, 2)
-    add_site("http://time.com", "TIME", True, 2)
-    add_site("http://aljazeera.com/", "Al Jazeera", False, 2)
-    add_site("http://ynetnews.com", "Ynetnews", False, 2)
-    set_site("http://cnn.com", "influence", 3)
-    del_site("https://news.google.com/")
-    #del_sites()     # Removes all sites in the collection
+    # add_monitor_site("https://news.google.com/", "Google News", 10)
+    # add_site("http://cnn.com", "CNN", True, 2)
+    # add_site("http://nytimes.com", "The New York Times", True, 2)
+    # add_site("http://time.com", "TIME", True, 2)
+    # add_site("http://aljazeera.com/", "Al Jazeera", False, 2)
+    # add_site("http://ynetnews.com", "Ynetnews", False, 2)
+    # set_site("http://cnn.com", "influence", 3)
+    # del_site("https://news.google.com/")
+    # #del_sites()     # Removes all sites in the collection
+    #
+    # print "\n"
+    # for site in get_all_sites():
+    #     print site
+    #
+    # print "\n"
+    # for site in get_monitor_sites():
+    #     print site
+    #
+    # print "\n"
+    # for site in get_foreign_sites():
+    #     print site
+    #
+    # print "\n"
+    # for site in get_sites("influence", 2):
+    #     print site
+    #
+    # add_keyword("Canada")
+    #
+    # print "\n"
+    # for keyword in get_all_keywords():
+    #     print keyword
+    #
+    # print "\n"
+    # del_site("http://cnn.com")
+    # del_site("http://nytimes.com")
+    #
+    # add_site("http://cnn.com", "CNN", False, 2)
+    # add_site("http://nytimes.com", "The New York Times", False, 2)
+    #
+    # run_article_explorer()
 
-    print "\n"
-    for site in get_all_sites():
-        print site
-
-    print "\n"
-    for site in get_monitor_sites():
-        print site
-
-    print "\n"
-    for site in get_foreign_sites():
-        print site
-
-    print "\n"
-    for site in get_sites("influence", 2):
-        print site
-
-    add_keyword("Canada")
-
-    print "\n"
-    for keyword in get_all_keywords():
-        print keyword
-
-    print "\n"
-    del_site("http://cnn.com")
-    del_site("http://nytimes.com")
-
-    add_site("http://cnn.com", "CNN", False, 2)
-    add_site("http://nytimes.com", "The New York Times", False, 2)
-
-    run_article_explorer()
+    pass
