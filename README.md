@@ -50,7 +50,7 @@ run_article_explorer()
 run_twitter_explorer()
 
 ```
-Exploring may take a lot of time and resource depending on the site of the populated site
+Exploring articles may take a lot of time and resource depending on the site of the populated site.
 For testing purpose, keep only 1 monitoring site with size < 500
 
 For more information, view `srs/execute.py`
