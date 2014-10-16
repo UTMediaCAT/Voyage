@@ -20,6 +20,7 @@ def add_site(url, name, is_monitor, influence):
                         "influence": influence})
         print url + " added."
 
+    # if url already exists
     except pymongo.errors.DuplicateKeyError:
         print url + " already exists."
 
@@ -118,10 +119,12 @@ def del_sites(urls=None):
     If no parameter passed then all sites are removed from the collection
     """
     db.connect(SITES_DB)
+    # if urls is not None
     if urls:
         for url in urls:
             db.del_document(url)
             print url + " removed."
+    # else empty sites db
     else:
         db.del_all_documents()
         print "All urls removed."
@@ -132,8 +135,10 @@ def add_keyword(key_word):
     """(str) -> None
     Connect to keyword collection and add a new key_word to the list
     """
+    # if keyword already exists
     if key_word in get_all_keywords():
         print "keyword " + key_word + " already exists."
+    # else add the keyword
     else:
         db.connect(KEYWORDS_DB)
         db.add_keyword(key_word)
@@ -155,8 +160,10 @@ def del_keyword(key_word):
     """(str) -> None
     Connect to keyword collection and delete key_word from the list
     """
+    # if keyword does not exist
     if key_word not in get_all_keywords():
         print "keyword " + key_word + " does not exist."
+    # else remove the keyword
     else:
         db.connect(KEYWORDS_DB)
         db.del_keyword(key_word)
