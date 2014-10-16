@@ -12,8 +12,7 @@ stored at another Mongo database specialized for Articles
 # newspaper, for populating articles of each site
 # and parsing most of the data.
 import newspaper
-from newspaper import news_pool
-from newspaper import Article
+# Used for newspaper's keep_article_html
 import lxml.html.clean
 
 # Regex, for parsing keywords and sources
@@ -138,7 +137,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
     total_threads   -- Number of threads to use for downloading per sites.
                        This can greatly increase the speed of download
     """
-    added, failed, no_match = 0, 0, 0
+    found, added, failed, no_match = 0, 0, 0, 0
     start = time.time()
     
     # connect to Article Database
@@ -181,6 +180,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
 
                 # If neither of keyword nor sources matched, then stop here and move on to next article
                 if not (keywords == [] and sources == []):
+                    found += 1
                     # Try to add all the data to the Article Database
                     try:
                         db.add_document({"_id": url, "date": today, "title": title,
@@ -198,8 +198,8 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
                 print "\tResult:    Failed to download!"
                 failed += 1
             # Some stats to look at while running the script
-            print("\nStatistics\n\tAdded: %i pgs  Failed: %i pgs  No Match: %i pgs  Time Elapsed: %is" %
-                  (added, failed, no_match, time.time() - start))
+            print("\n\tStatistics\n\tFound(+): %i(%i) | No Match: %i | Failed: %i | Time Elapsed: %is" %
+                  (found, added, no_match, failed, time.time() - start))
             print "+--------------------------------------------------------------------+"
 
 
