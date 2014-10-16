@@ -29,15 +29,17 @@ from dateutil import parser
 import db_manager as db
 
 
-def run(keyword_db, site_db, article_db):
+def run(keyword_db, site_db, article_db, store_all_sources=False):
     """ (str, str, str) -> None
     Connects to keyword and site database, crawls within monitoring sites,
     then pushes articles which matches the keywords or foreign sites to the article database
+    If store_all_sources is True, stores all links within the article which matched with the keywords
 
     Keyword arguments:
-    keyword_db      -- Keywords database name
-    site_db         -- Sites database name
-    article_db      -- Article database name
+    keyword_db          -- Keywords database name
+    site_db             -- Sites database name
+    article_db          -- Article database name
+    store_all_sources   -- boolean to specify to store all sources instead
     """
 
     print "+----------------------------------------------------------+"
@@ -91,7 +93,7 @@ def run(keyword_db, site_db, article_db):
     print "| Evaluating Articles ...                                  |"
     print "+----------------------------------------------------------+"
     # Parse the articles in all sites
-    parse_articles(populated_sites, keywords, foreign_sites, article_db)
+    parse_articles(populated_sites, keywords, foreign_sites, article_db, store_all_sources)
 
 
 def populate_sites(sites, from_start):
@@ -127,15 +129,16 @@ def populate_sites(sites, from_start):
     return new_sites
 
 
-def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
-    """ (list of [str, newspaper.source.Source], list of str, list of str, str) -> None
-    Download all articles from built sites and stores the metadata
-    to the database
+def parse_articles(populated_sites, db_keywords, foreign_sites, db_name, store_all_sources):
+    """ (list of [str, newspaper.source.Source], list of str, list of str, str, bool) -> None
+    Download all articles from built sites and stores information to the database
+    If store_all_sources is True, stores all links within the article which matched with the keywords
 
     Keyword arguments:
-    populated_sites -- List of [name, 'built_article'] of each site
-    total_threads   -- Number of threads to use for downloading per sites.
-                       This can greatly increase the speed of download
+    populated_sites     -- List of [name, 'built_article'] of each site
+    total_threads       -- Number of threads to use for downloading per sites.
+                           This can greatly increase the speed of download
+    store_all_sources   -- boolean to specify to store all sources instead
     """
     found, added, failed, no_match = 0, 0, 0, 0
     start = time.time()
@@ -145,7 +148,8 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
 
     # Collect today's date and time
     today = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M")
-    
+
+    print("\nStore All Sources: %s" % str(store_all_sources))
     # for each article in each sites, download and parse important data
     for site in populated_sites:
         print "\n%s" % site[0]
@@ -165,7 +169,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
                 # Regex the keyword from the article's text
                 keywords = get_keywords(art, db_keywords)
                 # Regex the links within article's html
-                sources = get_sources(art.article_html, foreign_sites)
+                sources = get_sources(art.article_html, foreign_sites, store_all_sources)
                 # Store parsed author
                 authors = art.authors
                 # Try to parse the published date
@@ -179,7 +183,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
                 print "\tSources:  ", sources
 
                 # If neither of keyword nor sources matched, then stop here and move on to next article
-                if not (keywords == [] and sources == []):
+                if not (keywords == [] and (sources == [] or store_all_sources)):
                     found += 1
                     # Try to add all the data to the Article Database
                     try:
@@ -188,9 +192,13 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
                                          "keywords": keywords, "sources": sources})
                         added += 1
                         print "\tResult:    Match detected! Added to the database."
-                    # Most common errors are document already existing, thus print accordingly
+                    # Most common errors are document already existing, thus delete then resubmit
                     except:
-                        print "\tResult:    Match detected! Article already in the database."
+                        db.del_document(url)
+                        db.add_document({"_id": url, "date": today, "title": title,
+                                         "pub_date": pub_date, "author": authors,
+                                         "keywords": keywords, "sources": sources})
+                        print "\tResult:    Match detected! Article already in database. Updating."
                 else:
                     no_match += 1
                     print "\tResult:    No Match Detected."
@@ -201,24 +209,33 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
             print("\n\tStatistics\n\tFound(+): %i(%i) | No Match: %i | Failed: %i | Time Elapsed: %is" %
                   (found, added, no_match, failed, time.time() - start))
             print "+--------------------------------------------------------------------+"
+    print("Finished parsing all sites!")
+    db.close_connection()
 
 
-def get_sources(html, sites):
-    """ (str, list of str) -> list of str
+def get_sources(html, sites, store_all_sources):
+    """ (str, list of str, bool) -> list of str
     Searches and returns links redirected to sites within the html
+    If store_all_sources is True, returns all links in the html
     Returns empty list if none found
 
     Keyword arguments:
-    html            -- string of html
-    sites           -- List of site urls to look for
+    html                -- string of html
+    sites               -- list of site urls to look for
+    store_all_sources   -- boolean to specify to store all sources instead
     """
     matched_urls = []
 
     # for each site, check if it exists within the html given
     for site in sites:
-        for url in re.findall("href=[\"\'][^\"\']*?" + re.escape(site) + "[^\"\']*?[\"\']", html, re.IGNORECASE):
-            # If it matches even once, append the site to the list
-            matched_urls.append(url[6:-1])
+        if store_all_sources:
+            for url in re.findall("href=[\"\'][^\"\']*?.*?[^\"\']*?[\"\']", html, re.IGNORECASE):
+                # If it matches even once, append the site to the list
+                matched_urls.append(url[6:-1])
+        else:
+            for url in re.findall("href=[\"\'][^\"\']*?" + re.escape(site) + "[^\"\']*?[\"\']", html, re.IGNORECASE):
+                # If it matches even once, append the site to the list
+                matched_urls.append(url[6:-1])
     # Return the list
     return matched_urls
 
@@ -272,6 +289,6 @@ def get_keywords(article, keywords):
 
 if __name__ == '__main__':
 
-    # run('keywords', 'sites', 'articles')
+    # run('keywords', 'sites', 'articles', store_all_sources=True)
 
     pass
