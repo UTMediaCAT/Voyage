@@ -32,24 +32,25 @@ def add_document(new_document):
     '''
     COLLECTION.insert(new_document)
 
-def get_document(url):
-    '''(str) -> dict
+def get_documents(field, value):
+    '''(str, object) -> list of dict
     Return a document from COLLECTION by given url
     '''
-    document = COLLECTION.find_one({"_id":url})
-    return document
+    list_doc = []
+    documents = COLLECTION.find({field:value})
+    for element in documents:
+        list_doc.append(element)
+    return list_doc
 
 def get_all_documents():
     '''(None) -> a list of dict
-    Return a lisr of documents from COLLECTION
+    Return a list of documents from COLLECTION
     '''    
-    list_doc =[]
+    list_doc = []
     documents = COLLECTION.find()
     for element in documents:
         list_doc.append(element)
     return list_doc
-         
-
 
 def set_field_value(url, field, value):
     '''(str, str, anyType) -> None
@@ -57,14 +58,17 @@ def set_field_value(url, field, value):
     '''
     COLLECTION.update({'_id':url},{'$set': {field:value}})
 
-
-
 def del_document(url):
     '''(str) -> None
     Delete the document given by url from the COLLECTION
     '''
     COLLECTION.remove({'_id':url})
 
+def del_all_documents():
+    '''(str) -> None
+    Delete the document given by url from the COLLECTION
+    '''
+    COLLECTION.remove({})
 
 #Keyword functions
 
