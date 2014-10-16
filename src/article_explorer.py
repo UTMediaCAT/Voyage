@@ -29,7 +29,7 @@ from dateutil import parser
 import db_manager as db
 
 
-def run(keyword_db, site_db, article_db, store_all_sources=False):
+def explore(keyword_db, site_db, article_db, store_all_sources=False):
     """ (str, str, str) -> None
     Connects to keyword and site database, crawls within monitoring sites,
     then pushes articles which matches the keywords or foreign sites to the article database
@@ -289,6 +289,6 @@ def get_keywords(article, keywords):
 
 if __name__ == '__main__':
 
-    # run('keywords', 'sites', 'articles', store_all_sources=True)
+    # explore('keywords', 'sites', 'articles', store_all_sources=True)
 
     pass
