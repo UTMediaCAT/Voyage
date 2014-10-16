@@ -2,6 +2,7 @@ import db_manager as db
 import datetime
 import tweepy
 import time
+import re
 
 # Twitter Developer API
 CONSUMER_KEY = "UITySH5N4iGOE3l6C0YgmwHVd"
@@ -101,7 +102,7 @@ def search_tweets(keyword, result_type, amount):
     '''(str, str, int) -> list of statuses
     Takes keyword, result_type ('mixed', 'recent', 'popular'), and amount.
     Will return tweets as status objects in a list. The number of statuses
-    returned deprends on how many are found and/or the predetermined amount
+    returned depends on how many are found and/or the predetermined amount
     requested
 
     If limit for tweet calling is reached, the function will sleep and notify
@@ -156,16 +157,16 @@ def download_tweets(tweets, sites, db_keywords, db_name):
 
         db.add_document({"_id":tweet.id, "date":date, "keywords":keywords,"sources":sources, "author":tweet.user.screen_name})
 
-    client.close()
+    db.client.close()
 
 
 def get_keywords(tweet, keywords):
     ''' (status, list of str) -> list of str
-    Searches and returns keywords containd in the tweet
+    Searches and returns keywords contained in the tweet
     Returns empty list otherwise.
     '''
     matched_keywords = []
-    for keyword in keywords:
+    for key in keywords:
         if re.search(key, tweet.text, re.IGNORECASE):
             matched_keywords.append(key)
     return matched_keywords
@@ -190,17 +191,17 @@ def get_sources(status, sites):
 
 if __name__ == '__main__':
     #pass in the username of the account you want to download
-    for tweet in get_tweets('iyanaphakira',100):
+    for tweet in get_tweets('apple',5):
         print tweet.text
 
     print '============================='
     
-    for user in get_followers('jerkfight'):
+    for user in get_followers('teamacme4'):
         print user
 
     print '============================='
     
-    print get_follower_count('iyanaphakira')
+    print get_follower_count('kylebsingh')
 
     print '============================='
     
