@@ -21,6 +21,7 @@ Install all of the following api's on terminal/cmd
 * PyMongo 2.7.2 :` pip install pymongo==2.7.2`
 * Django 1.7 : 	`pip install Django==1.7`
 * Newspaper : [click this](https://github.com/codelucas/newspaper/archive/master.zip) to download, extract and then                              `python setup.py install`
+* dateutil : [Click this](https://labix.org/download/python-dateutil/python-dateutil-1.5.tar.gz) to download, extract and then `python setup.py install`
 * Tweepy : 	`pip install tweepy`
 
 
