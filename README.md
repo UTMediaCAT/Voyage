@@ -26,7 +26,7 @@ Install all of the following api's on terminal/cmd
 
 ##Usage
 
-Create a new script and import execute.py by `import srs/execute`
+Create a new script and import execute.py by `import src/execute`
 
 
 Use one of the functions we have:
@@ -54,7 +54,7 @@ run_twitter_explorer()
 Exploring articles may take a lot of time and resource depending on the site of the populated site.
 For testing purpose, keep only 1 monitoring site with size < 500
 
-For more information, view `srs/execute.py`
+For more information, view `src/execute.py`
 
 ##Task Board
 
