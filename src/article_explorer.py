@@ -35,6 +35,15 @@ import db_manager as db
 STORE_ALL_SOURCES = False       # False             - Stores all links within articles which matched with the keywords
 FROM_START = True               # True              - True: Populate all articles from start
 DATE_FORMAT = "%Y-%m-%dT%H:%M"  # "%Y-%m-%dT%H:%M"  - Universal date format for consistency
+SITE_DB_ID = '_id'
+SITE_DB_NAME = 'name'
+ARTICLE_DB_ID = '_id'
+ARTICLE_DB_DATE = 'date'
+ARTICLE_DB_TITLE = 'title'
+ARTICLE_DB_PUBDATE = 'pub_date'
+ARTICLE_DB_AUTHORS = 'author'
+ARTICLE_DB_KEYWORDS = 'keywords'
+ARTICLE_DB_SOURCES = 'sources'
 
 
 def explore(keyword_db, site_db, article_db):
@@ -60,16 +69,16 @@ def explore(keyword_db, site_db, article_db):
     print "\nMonitoring Sites\n\t%-25s%-40s" % ("Name", "URL")
     for site in db.get_documents("is_monitor", True):
         # monitoring_sites is now in form [['Name', 'URL'], ...]
-        monitoring_sites.append([site['name'], site['_id']])
-        print("\t%-25s%-40s" % (site['name'], site['_id']))
+        monitoring_sites.append([site[SITE_DB_NAME], site[SITE_DB_ID]])
+        print("\t%-25s%-40s" % (site[SITE_DB_NAME], site[SITE_DB_ID]))
 
     foreign_sites = []
     # Retrieve, store, and print foreign site information
     print "\nForeign Sites\n\t%-25s%-40s" % ("Name", "URL")
     for site in db.get_documents("is_monitor", False):
         # foreign_sites is now in form ['URL', ...]
-        foreign_sites.append(site['_id'])
-        print("\t%-25s%-40s" % (site['name'], site['_id']))
+        foreign_sites.append(site[SITE_DB_ID])
+        print("\t%-25s%-40s" % (site['name'], site[SITE_DB_ID]))
         
     # Close connection with Site Database
     db.close_connection()
@@ -189,17 +198,17 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
                 if not (keywords == [] and (sources == [] or STORE_ALL_SOURCES)):
                     # Try to add all the data to the Article Database
                     try:
-                        db.add_document({"_id": url, "date": today, "title": title,
-                                         "pub_date": pub_date, "author": authors,
-                                         "keywords": keywords, "sources": sources})
+                        db.add_document({ARTICLE_DB_ID: url, ARTICLE_DB_DATE: today, ARTICLE_DB_TITLE: title,
+                                         ARTICLE_DB_PUBDATE: pub_date, ARTICLE_DB_AUTHORS: authors,
+                                         ARTICLE_DB_KEYWORDS: keywords, ARTICLE_DB_SOURCES: sources})
                         added += 1
                         print "\tResult:    Match detected! Added to the database."
                     # Most common errors are document already existing, thus delete then resubmit
                     except:
                         db.del_document(url)
-                        db.add_document({"_id": url, "date": today, "title": title,
-                                         "pub_date": pub_date, "author": authors,
-                                         "keywords": keywords, "sources": sources})
+                        db.add_document({ARTICLE_DB_ID: url, ARTICLE_DB_DATE: today, ARTICLE_DB_TITLE: title,
+                                         ARTICLE_DB_PUBDATE: pub_date, ARTICLE_DB_AUTHORS: authors,
+                                         ARTICLE_DB_KEYWORDS: keywords, ARTICLE_DB_SOURCES: sources})
                         print "\tResult:    Match detected! Article already in database. Updating."
                         updated += 1
                 else:
@@ -270,7 +279,7 @@ def get_pub_date(article):
 
 def get_keywords(article, keywords):
     """ (newspaper.article.Article, list of str) -> list of str
-    Searches and returns keywords which the article contained
+    Searches and returns keywords which the article's title or text contains
     Returns empty list otherwise
 
     Keyword arguments:
@@ -291,6 +300,4 @@ def get_keywords(article, keywords):
 if __name__ == '__main__':
 
     # explore('keywords', 'sites', 'articles')
-    print newspaper.hot()
-    print newspaper.popular_urls()
     pass
