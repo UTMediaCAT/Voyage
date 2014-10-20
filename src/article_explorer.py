@@ -28,18 +28,21 @@ from dateutil import parser
 # For connecting with the Database
 import db_manager as db
 
+# Settings that will be kept in config file later on
+STORE_ALL_SOURCES = False       # False             - Stores all links within articles which matched with the keywords
+FROM_START = False              # True              - True: Populate new articles from last time
+DATE_FORMAT = "%Y-%m-%dT%H:%M"  # "%Y-%m-%dT%H:%M"  - Universal date format for consistency
 
-def explore(keyword_db, site_db, article_db, store_all_sources=False):
+
+def explore(keyword_db, site_db, article_db):
     """ (str, str, str) -> None
     Connects to keyword and site database, crawls within monitoring sites,
     then pushes articles which matches the keywords or foreign sites to the article database
-    If store_all_sources is True, stores all links within the article which matched with the keywords
 
     Keyword arguments:
     keyword_db          -- Keywords database name
     site_db             -- Sites database name
     article_db          -- Article database name
-    store_all_sources   -- boolean to specify to store all sources instead
     """
 
     print "+----------------------------------------------------------+"
@@ -85,7 +88,7 @@ def explore(keyword_db, site_db, article_db, store_all_sources=False):
     print "| Populating sites ...                                     |"
     print "+----------------------------------------------------------+"
     # Populate the monitoring sites with articles
-    populated_sites = populate_sites(monitoring_sites, True)
+    populated_sites = populate_sites(monitoring_sites)
 
     print "\n"
 
@@ -93,17 +96,16 @@ def explore(keyword_db, site_db, article_db, store_all_sources=False):
     print "| Evaluating Articles ...                                  |"
     print "+----------------------------------------------------------+"
     # Parse the articles in all sites
-    parse_articles(populated_sites, keywords, foreign_sites, article_db, store_all_sources)
+    parse_articles(populated_sites, keywords, foreign_sites, article_db)
 
 
-def populate_sites(sites, from_start):
+def populate_sites(sites):
     """ (list of str, bool) -> list of [str, newspaper.source.Source]
     Searches through the sites using newspaper library and
     returns list of sites with available articles populated
 
     Keyword arguments:
     sites         -- List of [name, url] of each site
-    from_start    -- Boolean to search sites from scratch
     """
     new_sites = []
     
@@ -118,7 +120,7 @@ def populate_sites(sites, from_start):
 
         # Use the url and populate the site with articles
         new_sites[s].append((newspaper.build(sites[s][1],
-                                             memoize_articles=not from_start,
+                                             memoize_articles=not FROM_START,
                                              keep_article_html=True,
                                              fetch_images=False,
                                              language='en')))
@@ -129,16 +131,14 @@ def populate_sites(sites, from_start):
     return new_sites
 
 
-def parse_articles(populated_sites, db_keywords, foreign_sites, db_name, store_all_sources):
+def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
     """ (list of [str, newspaper.source.Source], list of str, list of str, str, bool) -> None
     Download all articles from built sites and stores information to the database
-    If store_all_sources is True, stores all links within the article which matched with the keywords
 
     Keyword arguments:
     populated_sites     -- List of [name, 'built_article'] of each site
     total_threads       -- Number of threads to use for downloading per sites.
                            This can greatly increase the speed of download
-    store_all_sources   -- boolean to specify to store all sources instead
     """
     found, added, failed, no_match = 0, 0, 0, 0
     start = time.time()
@@ -147,9 +147,9 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name, store_a
     db.connect(db_name)
 
     # Collect today's date and time
-    today = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M")
+    today = datetime.datetime.now().strftime(DATE_FORMAT)
 
-    print("\nStore All Sources: %s" % str(store_all_sources))
+    print("\nStore All Sources: %s" % str(STORE_ALL_SOURCES))
     # for each article in each sites, download and parse important data
     for site in populated_sites:
         print "\n%s" % site[0]
@@ -169,7 +169,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name, store_a
                 # Regex the keyword from the article's text
                 keywords = get_keywords(art, db_keywords)
                 # Regex the links within article's html
-                sources = get_sources(art.article_html, foreign_sites, store_all_sources)
+                sources = get_sources(art.article_html, foreign_sites)
                 # Store parsed author
                 authors = art.authors
                 # Try to parse the published date
@@ -183,7 +183,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name, store_a
                 print "\tSources:  ", sources
 
                 # If neither of keyword nor sources matched, then stop here and move on to next article
-                if not (keywords == [] and (sources == [] or store_all_sources)):
+                if not (keywords == [] and (sources == [] or STORE_ALL_SOURCES)):
                     found += 1
                     # Try to add all the data to the Article Database
                     try:
@@ -213,22 +213,20 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name, store_a
     db.close_connection()
 
 
-def get_sources(html, sites, store_all_sources):
+def get_sources(html, sites):
     """ (str, list of str, bool) -> list of str
     Searches and returns links redirected to sites within the html
-    If store_all_sources is True, returns all links in the html
     Returns empty list if none found
 
     Keyword arguments:
     html                -- string of html
     sites               -- list of site urls to look for
-    store_all_sources   -- boolean to specify to store all sources instead
     """
     matched_urls = []
 
     # for each site, check if it exists within the html given
     for site in sites:
-        if store_all_sources:
+        if STORE_ALL_SOURCES:
             for url in re.findall("href=[\"\'][^\"\']*?.*?[^\"\']*?[\"\']", html, re.IGNORECASE):
                 # If it matches even once, append the site to the list
                 matched_urls.append(url[6:-1])
@@ -255,7 +253,7 @@ def get_pub_date(article):
         if re.search("date", key, re.IGNORECASE):
             # If the key contains 'date', try to parse the value as date
             try:
-                dt = parser.parse(str(value)).date().strftime("%Y-%m-%dT%H:%M")
+                dt = parser.parse(str(value)).date().strftime(DATE_FORMAT)
                 # If parsing succeeded, then append it to the list
                 dates.append(dt)
             except:
@@ -289,6 +287,7 @@ def get_keywords(article, keywords):
 
 if __name__ == '__main__':
 
-    # explore('keywords', 'sites', 'articles', store_all_sources=True)
-
+    # explore('keywords', 'sites', 'articles')
+    print newspaper.hot()
+    print newspaper.popular_urls()
     pass
