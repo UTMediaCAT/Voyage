@@ -3,16 +3,19 @@
 This script retrieves monitoring site, foreign sites,
 and keywords from Mongo database and looks into the monitoring
 sites to find matching foreign sites or keywords.
-newspaper package is used as well to extract other useful data.
-If any keyword or foreign sites matched, all the data will be
-stored at another Mongo database specialized for Articles
+newspaper package is mainly used to extract useful data.
+If any keyword (of text) or foreign sites (of links) matched,
+all the relevant data will be stored at another Mongo database for Articles
 """
+
+__author__ = "ACME: CSCC01F14 Team 4"
+__authors__ = "Yuya Iwabuchi, Jai Sughand, Xiang Wang, Kyle Bridgemohansingh, Ryan Pan"
 
 
 # newspaper, for populating articles of each site
 # and parsing most of the data.
 import newspaper
-# Used for newspaper's keep_article_html
+# Used for newspaper's keep_article_html as it was causing error without it
 import lxml.html.clean
 
 # Regex, for parsing keywords and sources
@@ -28,9 +31,9 @@ from dateutil import parser
 # For connecting with the Database
 import db_manager as db
 
-# Settings that will be kept in config file later on
+# Settings that will be kept in database later on
 STORE_ALL_SOURCES = False       # False             - Stores all links within articles which matched with the keywords
-FROM_START = False              # True              - True: Populate new articles from last time
+FROM_START = True               # True              - True: Populate all articles from start
 DATE_FORMAT = "%Y-%m-%dT%H:%M"  # "%Y-%m-%dT%H:%M"  - Universal date format for consistency
 
 
@@ -100,7 +103,7 @@ def explore(keyword_db, site_db, article_db):
 
 
 def populate_sites(sites):
-    """ (list of str, bool) -> list of [str, newspaper.source.Source]
+    """ (list of str) -> list of [str, newspaper.source.Source]
     Searches through the sites using newspaper library and
     returns list of sites with available articles populated
 
@@ -132,7 +135,7 @@ def populate_sites(sites):
 
 
 def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
-    """ (list of [str, newspaper.source.Source], list of str, list of str, str, bool) -> None
+    """ (list of [str, newspaper.source.Source], list of str, list of str, str) -> None
     Download all articles from built sites and stores information to the database
 
     Keyword arguments:
@@ -140,7 +143,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
     total_threads       -- Number of threads to use for downloading per sites.
                            This can greatly increase the speed of download
     """
-    found, added, failed, no_match = 0, 0, 0, 0
+    added, updated, failed, no_match = 0, 0, 0, 0
     start = time.time()
     
     # connect to Article Database
@@ -184,7 +187,6 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
 
                 # If neither of keyword nor sources matched, then stop here and move on to next article
                 if not (keywords == [] and (sources == [] or STORE_ALL_SOURCES)):
-                    found += 1
                     # Try to add all the data to the Article Database
                     try:
                         db.add_document({"_id": url, "date": today, "title": title,
@@ -199,6 +201,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
                                          "pub_date": pub_date, "author": authors,
                                          "keywords": keywords, "sources": sources})
                         print "\tResult:    Match detected! Article already in database. Updating."
+                        updated += 1
                 else:
                     no_match += 1
                     print "\tResult:    No Match Detected."
@@ -206,15 +209,15 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
                 print "\tResult:    Failed to download!"
                 failed += 1
             # Some stats to look at while running the script
-            print("\n\tStatistics\n\tFound(+): %i(%i) | No Match: %i | Failed: %i | Time Elapsed: %is" %
-                  (found, added, no_match, failed, time.time() - start))
+            print("\n\tStatistics\n\tAdded: %i | Updated: %i | No Match: %i | Failed: %i | Time Elapsed: %is" %
+                  (added, updated, no_match, failed, time.time() - start))
             print "+--------------------------------------------------------------------+"
     print("Finished parsing all sites!")
     db.close_connection()
 
 
 def get_sources(html, sites):
-    """ (str, list of str, bool) -> list of str
+    """ (str, list of str) -> list of str
     Searches and returns links redirected to sites within the html
     Returns empty list if none found
 
