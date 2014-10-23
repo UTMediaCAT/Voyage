@@ -28,7 +28,7 @@ If any problem occurs, please contact one of us on the email address listed abov
 
 ##Usage
 
-Create a new script and import execute.py by `import src/execute`
+Create a new script and import executer.py by `import src/executer`
 
 
 Use one of the functions we have:
