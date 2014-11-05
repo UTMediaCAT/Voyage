@@ -8,21 +8,20 @@ wangx173 | Xiang Wang | rogerxiang.wang@gmail.com
 kbridge | Kyle Bridgemohansingh | bsingh.kyle@gmail.com
 ryanbelt | Ryan Pan | ryanbelt1993129@hotmail.com
 
-##Installation
-
-Install Python and PIP
+##Requirement
 
 * [Python 2.7.x](https://www.python.org/downloads/release/python-278/) 
-* [pip](https://pip.pypa.io/en/latest/installing.html)
 
+##Installation
+Download, extract the `master` then execute on terminal `python setup.py` 
 
-Install all of the following api's on terminal
-
-* PyMongo 2.7.2 :` pip install --user pymongo==2.7.2`
-* Django 1.7 : 	`pip install --user Django==1.7`
-* Newspaper 0.0.8: `pip install --user newspaper`
-* dateutil 1.5: [Click this](https://labix.org/download/python-dateutil/python-dateutil-1.5.tar.gz) to download, extract and then `python setup.py install --user`
-* Tweepy : 	`pip install --user tweepy`
+The following will be installed by this script:
+* pip
+* PyMongo 2.7.2
+* Django 1.7
+* Newspaper 0.0.8
+* dateutil 1.5
+* Tweepy 2.3.0
 
 If any problem occurs, please contact one of us on the email address listed above.
 
