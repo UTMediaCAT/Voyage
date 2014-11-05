@@ -195,7 +195,7 @@ if __name__ == '__main__':
     # add_site("http://time.com", "TIME", True, 2)
     # add_site("http://aljazeera.com/", "Al Jazeera", False, 2)
     # add_site("http://ynetnews.com", "Ynetnews", False, 2)
-    # set_site("http://cnn.com", "influence", 3)
+    # set_site_by_value("http://cnn.com", "influence", 3)
     # del_site("https://news.google.com/")
     # #del_sites()     # Removes all sites in the collection
     #
@@ -212,7 +212,7 @@ if __name__ == '__main__':
     #     print site
     #
     # print "\n"
-    # for site in get_sites("influence", 2):
+    # for site in get_sites_by_value("influence", 2):
     #     print site
     #
     # add_keyword("Canada")
