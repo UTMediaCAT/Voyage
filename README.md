@@ -18,11 +18,11 @@ Install Python and PIP
 
 Install all of the following api's on terminal
 
-* PyMongo 2.7.2 :` pip install pymongo==2.7.2`
-* Django 1.7 : 	`pip install Django==1.7`
-* Newspaper 0.0.8: [click this](https://github.com/codelucas/newspaper/archive/3573217c7468a23a2690aa9c3930e3f3990cb382.zip) to download, extract then run commands:`pip install -r requirements.txt` then `python setup.py install`
-* dateutil 1.5: [Click this](https://labix.org/download/python-dateutil/python-dateutil-1.5.tar.gz) to download, extract and then `python setup.py install`
-* Tweepy : 	`pip install tweepy`
+* PyMongo 2.7.2 :` pip install --user pymongo==2.7.2`
+* Django 1.7 : 	`pip install --user Django==1.7`
+* Newspaper 0.0.8: `pip install --user newspaper`
+* dateutil 1.5: [Click this](https://labix.org/download/python-dateutil/python-dateutil-1.5.tar.gz) to download, extract and then `python setup.py install --user`
+* Tweepy : 	`pip install --user tweepy`
 
 If any problem occurs, please contact one of us on the email address listed above.
 
