@@ -3,6 +3,9 @@ import datetime
 import tweepy
 import time
 import re
+import urllib2
+from tld import get_tld
+from tld.utils import update_tld_names
 
 __author__ = "ACME: CSCC01F14 Team 4"
 __authors__ = "Yuya Iwabuchi, Jai Sughand, Xiang Wang, Kyle Bridgemohansingh, Ryan Pan"
@@ -13,6 +16,7 @@ CONSUMER_SECRET = "H7lXeLBDQv3o7i4wISGJtukdAqC6X9Vr4EXTdaIAVVrN56Lwbh"
 ACCESS_TOKEN = "2825329492-TKU4s0Mky7vazr60WKHQV7R6sJT2wYE4ysR3Gm3"
 ACCESS_TOKEN_SECRET = "I740fF6x6v0srzbY7LCAjNWXXOzZRMBFbkoiwZ5FgqC5s"
 
+# Globals to be used for Database
 STORE_ALL_SOURCES = False
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 SITE_DB_ID = '_id'
@@ -25,8 +29,6 @@ TWEET_DB_KEYWORDS = 'keywords'
 TWEET_DB_SOURCES = 'sources'
 TWEET_DB_STOREDATE = 'store_date'
 
-
-
 #Seconds to wait before retrying call
 WAIT_RATE = (60 * 1) + 0
 
@@ -38,9 +40,6 @@ def authorize():
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
     return tweepy.API(auth)
-
-def explore(keyword_db, site_db, twitter_db):
-    pass
 
 def get_tweets(screen_name, amount):
     """ (str, [int]) -> list of list
@@ -125,16 +124,31 @@ def get_sources(status, sites):
     html            -- string of html
     sites           -- List of site urls to look for
     """
+    update_tld_names()
+    
     matched_urls = []
-    # for each site, check if it exists within the html given
+    tweet_urls = []
+    for url in status.entities['urls']:
+        try:
+            hold = urllib2.urlopen(url['expanded_url'])
+            tweet_urls.append(get_tld(hold.geturl()))
+            tweet_urls.append(url['expanded_url'])
+        except:
+            tweet_urls.append(get_tld(url['expanded_url']))
+    
+    # for each site, check if it exists within the urls given
+
     for site in sites:
+        site = get_tld(site)
         if STORE_ALL_SOURCES:
-            for url in re.findall("href=[\"\'][^\"\']*?.*?[^\"\']*?[\"\']", status.text.encode('utf8'), re.IGNORECASE):
-                matched_urls.append(url[6:-1])
+            for url in tweet_urls:
+                matched_urls.append(url.encode('utf8'))
+            return matched_urls
         else:
-            for url in re.findall("href=[\"\'][^\"\']*?" + re.escape(site) + "[^\"\']*?[\"\']", status.text.encode('utf8'), re.IGNORECASE):
+            for url in tweet_urls:
+                if re.search(site, url):
                 # If it matches even once, append the site to the list
-                matched_urls.append(url[6:-1])
+                    matched_urls.append(url.encode('utf8'))
     # Return the list
     return matched_urls
 
@@ -146,7 +160,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, db_name):
 
     for user in twitter_users:
         print "Parsing @" + user
-        tweets = get_tweets(user, 100)
+        tweets = get_tweets(user, 5)
         tweet_followers = get_follower_count(user)
 
         for tweet in tweets:
@@ -280,5 +294,5 @@ def explore(accounts_db, keyword_db, site_db, tweet_db):
 
     
 
-#parse_tweets(['CNN', 'TIME'], ['obama','hollywood', 'not', 'fire', 'president'], ['http://t.co/'], 'tweets')
+#parse_tweets(['CNN', 'TIME'], ['obama','hollywood', 'not', 'fire', 'president', 'activities'], ['http://cnn.com/', 'http://ti.me'], 'tweets')
 explore('taccounts', 'keywords', 'sites', 'tweets')
