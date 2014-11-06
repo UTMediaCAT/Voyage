@@ -22,6 +22,7 @@ The following will be installed by this script:
 * Newspaper 0.0.8
 * dateutil 1.5
 * Tweepy 2.3.0
+* tld 0.7.2
 
 If any problem occurs, please contact one of us on the email address listed above.
 
