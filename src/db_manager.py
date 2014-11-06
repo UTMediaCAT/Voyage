@@ -110,3 +110,33 @@ def del_all_keywords():
     keywords = COLLECTION.find_one()["list"]
     for keyword in keywords:
         COLLECTION.update({'_id': 1}, {'$pull': {"list": keyword}})
+
+def add_account(account):
+    """(str) -> None
+    Add a new account to the list in COLLECTION
+    """
+    COLLECTION.update({'_id': 1}, {'$push': {"list": account}})
+
+
+def get_all_accounts():
+    """(None) - > list of str
+    Return a list of accounts in COLLECTION
+    """
+    accounts = COLLECTION.find_one()["list"]
+    return accounts
+
+
+def del_account(account):
+    """(str) - > None
+    Delete account from the list in COLLECTION
+    """    
+    COLLECTION.update({'_id': 1}, {'$pull': {"list": account}})
+
+
+def del_all_accounts():
+    """(None) - > None
+    Empty the list of accounts in COLLECTION
+    """       
+    accounts = COLLECTION.find_one()["list"]
+    for account in accounts:
+        COLLECTION.update({'_id': 1}, {'$pull': {"list": account}})
