@@ -136,7 +136,7 @@ def add_keyword(keyword):
     Connect to keyword collection and add a new keyword to the list
     """
     # if keyword already exists
-    if keyword in get_all_keywords():
+    if keyword in get_all_elements():
         print "keyword " + keyword + " already exists."
     # else add the keyword
     else:
@@ -151,7 +151,7 @@ def get_all_keywords():
     Connect to keyword collection return a list of keywords
     """
     db.connect(KEYWORDS_DB)
-    keywords = db.get_all_keywords()
+    keywords = db.get_all_elements()
     db.close_connection()
     return keywords
 
@@ -161,12 +161,12 @@ def del_keyword(keyword):
     Connect to keyword collection and delete keyword from the list
     """
     # if keyword does not exist
-    if keyword not in get_all_keywords():
+    if keyword not in get_all_elementss():
         print "keyword " + keyword + " does not exist."
     # else remove the keyword
     else:
         db.connect(KEYWORDS_DB)
-        db.del_keyword(keyword)
+        db.del_elements(keyword)
         print "keyword " + keyword + " deleted."
         db.close_connection()
 
@@ -176,7 +176,7 @@ def del_all_keywords():
     Connect to keyword collection and empty the list of keywords
     """
     db.connect(KEYWORDS_DB)
-    db.del_all_keywords()
+    db.del_all_elements()
     print "All keywords deleted."
     db.close_connection()
 
