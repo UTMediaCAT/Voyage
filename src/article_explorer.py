@@ -86,7 +86,7 @@ def explore(keyword_db, site_db, article_db):
     # Connects to Keyword Database
     db.connect(keyword_db)
     # Retrieve all stored keywords
-    keywords = db.get_all_keywords()
+    keywords = db.get_all_elements()
     # Close connection with Keyord Database
     # Print all the keywords
     db.close_connection()

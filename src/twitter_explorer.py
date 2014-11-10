@@ -258,7 +258,7 @@ def explore(accounts_db, keyword_db, site_db, tweet_db):
     # Connects to Keyword Database
     db.connect(keyword_db)
     # Retrieve all stored keywords
-    keywords = db.get_all_keywords()
+    keywords = db.get_all_elements()
     # Close connection with Keyord Database
     # Print all the keywords
     db.close_connection()
@@ -274,7 +274,7 @@ def explore(accounts_db, keyword_db, site_db, tweet_db):
     # Connects to Accounts Database
     db.connect(accounts_db)
     # Retrieve all stored Accounts
-    accounts = db.get_all_accounts()
+    accounts = db.get_all_elements()
     for i in range(len(accounts)):
         accounts[i] = accounts[i].encode('utf8')
     # Close connection with Accounts Database
@@ -296,4 +296,4 @@ def explore(accounts_db, keyword_db, site_db, tweet_db):
 
 #parse_tweets(['CNN', 'TIME'], ['obama','hollywood', 'not', 'fire', 'president', 'activities'], ['http://cnn.com/', 'http://ti.me'], 'tweets')
 if __name__ == '__main__':
-    explore('taccounts', 'keywords', 'sites', 'tweets')
+    #explore('taccounts', 'keywords', 'sites', 'tweets')

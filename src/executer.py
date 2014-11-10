@@ -136,12 +136,12 @@ def add_keyword(keyword):
     Connect to keyword collection and add a new keyword to the list
     """
     # if keyword already exists
-    if keyword in get_all_elements():
+    if keyword in get_all_keywords():
         print "keyword " + keyword + " already exists."
     # else add the keyword
     else:
         db.connect(KEYWORDS_DB)
-        db.add_keyword(keyword)
+        db.add_element(keyword)
         print "keyword " + keyword + " added."
         db.close_connection()
 
@@ -161,12 +161,12 @@ def del_keyword(keyword):
     Connect to keyword collection and delete keyword from the list
     """
     # if keyword does not exist
-    if keyword not in get_all_elementss():
+    if keyword not in get_all_keywords():
         print "keyword " + keyword + " does not exist."
     # else remove the keyword
     else:
         db.connect(KEYWORDS_DB)
-        db.del_elements(keyword)
+        db.del_element(keyword)
         print "keyword " + keyword + " deleted."
         db.close_connection()
 
@@ -189,7 +189,7 @@ def run_twitter_explorer():
     pass
 
 if __name__ == '__main__':
-    # add_monitor_site("https://news.google.com/", "Google News", 10)
+    #add_monitor_site("https://news.google.com/", "Google News", 10)
     # add_site("http://cnn.com", "CNN", True, 2)
     # add_site("http://nytimes.com", "The New York Times", True, 2)
     # add_site("http://time.com", "TIME", True, 2)
@@ -228,6 +228,7 @@ if __name__ == '__main__':
     # add_site("http://cnn.com", "CNN", False, 2)
     # add_site("http://nytimes.com", "The New York Times", False, 2)
     #
-    # run_article_explorer()
+    #run_article_explorer()
+
 
     pass
