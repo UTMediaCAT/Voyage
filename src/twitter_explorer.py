@@ -295,4 +295,5 @@ def explore(accounts_db, keyword_db, site_db, tweet_db):
     
 
 #parse_tweets(['CNN', 'TIME'], ['obama','hollywood', 'not', 'fire', 'president', 'activities'], ['http://cnn.com/', 'http://ti.me'], 'tweets')
-explore('taccounts', 'keywords', 'sites', 'tweets')
+if __name__ == '__main__':
+    explore('taccounts', 'keywords', 'sites', 'tweets')
