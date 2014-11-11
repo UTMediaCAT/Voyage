@@ -5,7 +5,7 @@ from articles.models import Article
 
 
 def index(request):
-    latest_article_list = Article.objects.order_by('-date_added')[:5]
+    latest_article_list = Article.objects.order_by('date_added')
 
     # output = ', '.join([p.title for p in latest_article_list])
     # return HttpResponse(output)
