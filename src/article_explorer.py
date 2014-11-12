@@ -336,5 +336,5 @@ def get_keywords(article, keywords):
 
 if __name__ == '__main__':
 
-    # explore('explorer_keyword', 'explorer_msite', 'explorer_fsite', 'articles_article')
+    explore('explorer_keyword', 'explorer_msite', 'explorer_fsite', 'articles_article')
     pass
