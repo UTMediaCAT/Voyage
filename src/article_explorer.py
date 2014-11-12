@@ -28,10 +28,23 @@ import datetime
 # For extracting 'pub_date's
 from dateutil import parser
 
-# For connecting with the Database
-import sqlite3
-
+import sys
 import os
+import django
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'Frontend')))
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
+        
+# For connecting with the Database
+from articles.models import*
+from articles.models import Keyword as A_keyword
+
+from explorer.models import*
+
+from explorer.models import Keyword as E_keyword
+
 
 # Settings that will be kept in database later on
 STORE_ALL_SOURCES = False       # False             - Stores all links within articles which matched with the keywords
@@ -62,6 +75,7 @@ SOURCE_DB_ID_DB_AUTHOR = "source"
 DB_PATH = os.path.abspath(os.path.join(os.path.dirname( __file__), '..', 'Frontend\\db.sqlite3'))
 
 
+
 def explore(keyword_db, msite_db, fsite_db, article_db):
     """ (str, str, str) -> None
     Connects to keyword and site database, crawls within monitoring sites,
@@ -78,40 +92,40 @@ def explore(keyword_db, msite_db, fsite_db, article_db):
     print "+----------------------------------------------------------+"
 
     # Connects to Site Database
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
+    django.setup()
+
 
     monitoring_sites = []
     # Retrieve, store, and print monitoring site information
-    print "\nMonitoring Sites\n\t%-25s%-40s" % ("Name", "URL")
+    print "\nMonitoring Sites\n\t%-25s%-25s%-10s" % ("Name", "URL", "Influence")
 
-    msites = c.execute("SELECT "+SITE_DB_NAME + ","+SITE_DB_URL+" FROM "+msite_db+";")
+    msites = Msite.objects.all()
+
     for site in msites:
         # monitoring_sites is now in form [['Name', 'URL'], ...]
-        monitoring_sites.append([site[0], site[1]])
-        print("\t%-25s%-40s" % (site[0], site[1]))
+        monitoring_sites.append([site.name, site.url, site.influence])
+        print("\t%-25s%-25s%-10i" % (site.name, site.url, site.influence))
 
     foreign_sites = []
     # Retrieve, store, and print foreign site information
-    print "\nForeign Sites\n\t%-25s%-40s" % ("Name", "URL")
+    print "\nForeign Sites\n\t%-40s%-25s" % ("Name", "URL")
 
-    fsites = c.execute("SELECT "+SITE_DB_NAME + ","+SITE_DB_URL+" FROM "+fsite_db+";")
+    fsites = Fsite.objects.all()
     for site in fsites:
         # foreign_sites is now in form ['URL', ...]
-        foreign_sites.append(site[1])
-        print("\t%-25s%-40s" % (site[0], site[1]))
+        foreign_sites.append(site.url)
+        print("\t%-25s%-40s" % (site.name, site.url))
 
     # Retrieve all stored keywords
-    keywords = c.execute("SELECT keyword FROM "+keyword_db+";")
+    keywords = E_keyword.objects.all()
     keyword_list = []
     # Print all the keywords
 
     print "\nKeywords:"
     for key in keywords:
-        keyword_list.append(str(key[0]))
-        print "\t%s" % key[0]
+        keyword_list.append(str(key.keyword))
+        print "\t%s" % key.keyword
 
-    conn.close()
 
     print "\n"
 
@@ -155,6 +169,7 @@ def populate_sites(sites):
                                              keep_article_html=True,
                                              fetch_images=False,
                                              language='en')))
+        new_sites[s].append(sites[s][2])
         end = time.time()
         # report back the amount of articles found, and time it took
         print("%6i pgs%9is" % (new_sites[s][1].size(), end - start))
@@ -173,10 +188,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, table_name):
     """
     added, updated, failed, no_match = 0, 0, 0, 0
     start = time.time()
-    
-    # connect to Database
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
+
 
     # Collect today's date and time
     today = datetime.datetime.now().strftime(DATE_FORMAT)
@@ -218,26 +230,27 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, table_name):
                 if not (keywords == [] and (sources == [] or STORE_ALL_SOURCES)):
                     # Try to add all the data to the Article Database
 
-                        article_id = c.execute("SELECT COUNT(*) FROM articles_article;").fetchall()[0][0]
-                        c.execute("INSERT INTO articles_article values (?,?,?,?,?,?)", (article_id+1, url,
-                                                                                        title, today, 0, pub_date))
+                        
+                        article = Article(url=url, date_added = today, date_published = pub_date, influence = site[2] )
+                        article.save()
 
-                        for keyword in keywords:
-                            keyword_id = c.execute("SELECT COUNT(*) FROM articles_keyword;").fetchall()[0][0]
-                            c.execute("INSERT INTO articles_keyword values (?,?,?)", (keyword_id + 1,
-                                                                                      article_id, keyword))
+                        article =  Article.objects.get(id = Article.objects.count())
+                        
+                        for key in keywords:
+                            keyword = A_keyword (key)
+                            article.keyword_set.create(keyword = key)
+           
 
                         for author in authors:
-                            author_id = c.execute("SELECT COUNT(*) FROM articles_author;").fetchall()[0][0]
-                            c.execute("INSERT INTO articles_author values (?,?,?)", (author_id + 1,
-                                                                                     article_id, author))
+                            article.author_set.create(author = author)
+
 
                         for source in sources:
-                            source_id = c.execute("SELECT COUNT(*) FROM articles_source;").fetchall()[0][0]
-                            c.execute("INSERT INTO articles_source values (?,?,?)", (source_id + 1,
-                                                                                     article_id, source))
+                            article.source_set.create(source = source)
+
                         added += 1
-                        conn.commit()
+
+
                         print "\tResult:    Match detected! Added to the database."
 
                     # Most common errors are document already existing, thus delete then resubmit
@@ -311,7 +324,7 @@ def get_pub_date(article):
     # return the oldest date as new ones can be updated dates instead of published dates
     if dates:
         return min(dates)
-    return 'N/A'
+    return None
 
 
 def get_keywords(article, keywords):
