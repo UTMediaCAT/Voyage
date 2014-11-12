@@ -29,32 +29,48 @@ import datetime
 from dateutil import parser
 
 # For connecting with the Database
-import db_manager as db
+import sqlite3
+
+import os
 
 # Settings that will be kept in database later on
 STORE_ALL_SOURCES = False       # False             - Stores all links within articles which matched with the keywords
 FROM_START = True               # True              - True: Populate all articles from start
 DATE_FORMAT = "%Y-%m-%dT%H:%M"  # "%Y-%m-%dT%H:%M"  - Universal date format for consistency
-SITE_DB_ID = '_id'
+SITE_DB_URL = 'url'
 SITE_DB_NAME = 'name'
-ARTICLE_DB_ID = '_id'
-ARTICLE_DB_DATE = 'date'
+
+ARTICLE_DB_ID = 'id'
+ARTICLE_DB_URL = 'url'
+ARTICLE_DB_DATE = 'date_added'
 ARTICLE_DB_TITLE = 'title'
-ARTICLE_DB_PUBDATE = 'pub_date'
-ARTICLE_DB_AUTHORS = 'author'
-ARTICLE_DB_KEYWORDS = 'keywords'
-ARTICLE_DB_SOURCES = 'sources'
+ARTICLE_DB_PUBDATE = 'date_published'
+ARTICLE_DB_INFLUENCE = 'influence'
+
+KEYWORD_DB_ID = "id"
+KEYWORD_DB_ARTICLE_ID = "article_id"
+KEYWORD_DB_KEYWORD = "keyword"
+
+AUTHOR_DB_ID = "id"
+AUTHOR_DB_ARTICLE_ID = "article_id"
+AUTHOR_DB_AUTHOR = "author"
+
+SOURCE_DB_ID = "id"
+SOURCE_DB_ID_DB_ARTICLE_ID = "article_id"
+SOURCE_DB_ID_DB_AUTHOR = "source"
+
+DB_PATH = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'Frontend\\db.sqlite3'))
 
 
-def explore(keyword_db, site_db, article_db):
+def explore(keyword_db, msite_db, fsite_db, article_db):
     """ (str, str, str) -> None
     Connects to keyword and site database, crawls within monitoring sites,
     then pushes articles which matches the keywords or foreign sites to the article database
 
     Keyword arguments:
-    keyword_db          -- Keywords database name
-    site_db             -- Sites database name
-    article_db          -- Article database name
+    keyword_db          -- Keywords table name
+    msite_db             -- Monitor Sites table name
+    article_db          -- Article table name
     """
 
     print "+----------------------------------------------------------+"
@@ -62,37 +78,40 @@ def explore(keyword_db, site_db, article_db):
     print "+----------------------------------------------------------+"
 
     # Connects to Site Database
-    db.connect(site_db)
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
 
     monitoring_sites = []
     # Retrieve, store, and print monitoring site information
     print "\nMonitoring Sites\n\t%-25s%-40s" % ("Name", "URL")
-    for site in db.get_documents("is_monitor", True):
+
+    msites =  c.execute("SELECT "+SITE_DB_NAME + ","+SITE_DB_URL+" FROM "+msite_db+";")
+    for site in msites:
         # monitoring_sites is now in form [['Name', 'URL'], ...]
-        monitoring_sites.append([site[SITE_DB_NAME], site[SITE_DB_ID]])
-        print("\t%-25s%-40s" % (site[SITE_DB_NAME], site[SITE_DB_ID]))
+        monitoring_sites.append([site[0], site[1]])
+        print("\t%-25s%-40s" % (site[0], site[1]))
 
     foreign_sites = []
     # Retrieve, store, and print foreign site information
     print "\nForeign Sites\n\t%-25s%-40s" % ("Name", "URL")
-    for site in db.get_documents("is_monitor", False):
-        # foreign_sites is now in form ['URL', ...]
-        foreign_sites.append(site[SITE_DB_ID])
-        print("\t%-25s%-40s" % (site['name'], site[SITE_DB_ID]))
-        
-    # Close connection with Site Database
-    db.close_connection()
 
-    # Connects to Keyword Database
-    db.connect(keyword_db)
+    fsites =  c.execute("SELECT "+SITE_DB_NAME + ","+SITE_DB_URL+" FROM "+fsite_db+";")
+    for site in fsites:
+        # foreign_sites is now in form ['URL', ...]
+        foreign_sites.append(site[1])
+        print("\t%-25s%-40s" % (site[0], site[1]))
+
     # Retrieve all stored keywords
-    keywords = db.get_all_keywords()
-    # Close connection with Keyord Database
+    keywords = c.execute("SELECT keyword FROM "+keyword_db+";")
+    keyword_list = []
     # Print all the keywords
-    db.close_connection()
+
     print "\nKeywords:"
     for key in keywords:
-        print "\t%s" % key
+        keyword_list.append(str(key[0]))
+        print "\t%s" % key[0]
+
+    conn.close()
 
     print "\n"
 
@@ -108,7 +127,8 @@ def explore(keyword_db, site_db, article_db):
     print "| Evaluating Articles ...                                  |"
     print "+----------------------------------------------------------+"
     # Parse the articles in all sites
-    parse_articles(populated_sites, keywords, foreign_sites, article_db)
+    parse_articles(populated_sites, keyword_list, foreign_sites, article_db)
+
 
 
 def populate_sites(sites):
@@ -143,7 +163,7 @@ def populate_sites(sites):
     return new_sites
 
 
-def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
+def parse_articles(populated_sites, db_keywords, foreign_sites, table_name):
     """ (list of [str, newspaper.source.Source], list of str, list of str, str) -> None
     Download all articles from built sites and stores information to the database
 
@@ -155,8 +175,9 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
     added, updated, failed, no_match = 0, 0, 0, 0
     start = time.time()
     
-    # connect to Article Database
-    db.connect(db_name)
+    # connect to Database
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
 
     # Collect today's date and time
     today = datetime.datetime.now().strftime(DATE_FORMAT)
@@ -197,20 +218,34 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
                 # If neither of keyword nor sources matched, then stop here and move on to next article
                 if not (keywords == [] and (sources == [] or STORE_ALL_SOURCES)):
                     # Try to add all the data to the Article Database
-                    try:
-                        db.add_document({ARTICLE_DB_ID: url, ARTICLE_DB_DATE: today, ARTICLE_DB_TITLE: title,
-                                         ARTICLE_DB_PUBDATE: pub_date, ARTICLE_DB_AUTHORS: authors,
-                                         ARTICLE_DB_KEYWORDS: keywords, ARTICLE_DB_SOURCES: sources})
+
+                        article_id = c.execute("SELECT COUNT(*) FROM articles_article;").fetchall()[0][0]
+                        c.execute("INSERT INTO articles_article values (?,?,?,?,?,?)", (article_id+1,url,title,today,0,pub_date))
+
+
+                        for keyword in keywords:
+                            keyword_id = c.execute("SELECT COUNT(*) FROM articles_keyword;").fetchall()[0][0]
+                            c.execute("INSERT INTO articles_keyword values (?,?,?)",(keyword_id +1,article_id,keyword))
+
+                        for author in authors:
+                            author_id = c.execute("SELECT COUNT(*) FROM articles_author;").fetchall()[0][0]
+                            c.execute("INSERT INTO articles_author values (?,?,?)", (author_id +1,article_id,author))
+
+                        for source in sources:
+                            source_id = c.execute("SELECT COUNT(*) FROM articles_source;").fetchall()[0][0]
+                            c.execute("INSERT INTO articles_source values (?,?,?)", (source_id +1,article_id,source))
                         added += 1
+                        conn.commit()
                         print "\tResult:    Match detected! Added to the database."
+
                     # Most common errors are document already existing, thus delete then resubmit
-                    except:
-                        db.del_document(url)
-                        db.add_document({ARTICLE_DB_ID: url, ARTICLE_DB_DATE: today, ARTICLE_DB_TITLE: title,
-                                         ARTICLE_DB_PUBDATE: pub_date, ARTICLE_DB_AUTHORS: authors,
-                                         ARTICLE_DB_KEYWORDS: keywords, ARTICLE_DB_SOURCES: sources})
-                        print "\tResult:    Match detected! Article already in database. Updating."
-                        updated += 1
+                    #
+                        #db.del_document(url)
+                        #db.add_document({ARTICLE_DB_ID: url, ARTICLE_DB_DATE: today, ARTICLE_DB_TITLE: title,
+                        #                 ARTICLE_DB_PUBDATE: pub_date, ARTICLE_DB_AUTHORS: authors,
+                       #                  ARTICLE_DB_KEYWORDS: keywords, ARTICLE_DB_SOURCES: sources})
+                      #  print "\tResult:    Match detected! Article already in database. Updating."
+                     #   updated += 1
                 else:
                     no_match += 1
                     print "\tResult:    No Match Detected."
@@ -222,7 +257,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, db_name):
                   (added, updated, no_match, failed, time.time() - start))
             print "+--------------------------------------------------------------------+"
     print("Finished parsing all sites!")
-    db.close_connection()
+    conn.close()
 
 
 def get_sources(html, sites):
@@ -299,5 +334,5 @@ def get_keywords(article, keywords):
 
 if __name__ == '__main__':
 
-    # explore('keywords', 'sites', 'articles')
+    explore('explorer_keyword', 'explorer_msite', 'explorer_fsite','articles_article')
     pass
