@@ -13,3 +13,4 @@ pip install --user newspaper==0.0.8
 pip install --user tweepy==2.3.0
 pip install --user python-dateutil==1.5
 pip install --user tld==0.7.2
+pip install --user django-suit
