@@ -59,7 +59,7 @@ SOURCE_DB_ID = "id"
 SOURCE_DB_ID_DB_ARTICLE_ID = "article_id"
 SOURCE_DB_ID_DB_AUTHOR = "source"
 
-DB_PATH = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'Frontend\\db.sqlite3'))
+DB_PATH = os.path.abspath(os.path.join(os.path.dirname( __file__), '..', 'Frontend\\db.sqlite3'))
 
 
 def explore(keyword_db, msite_db, fsite_db, article_db):
@@ -85,7 +85,7 @@ def explore(keyword_db, msite_db, fsite_db, article_db):
     # Retrieve, store, and print monitoring site information
     print "\nMonitoring Sites\n\t%-25s%-40s" % ("Name", "URL")
 
-    msites =  c.execute("SELECT "+SITE_DB_NAME + ","+SITE_DB_URL+" FROM "+msite_db+";")
+    msites = c.execute("SELECT "+SITE_DB_NAME + ","+SITE_DB_URL+" FROM "+msite_db+";")
     for site in msites:
         # monitoring_sites is now in form [['Name', 'URL'], ...]
         monitoring_sites.append([site[0], site[1]])
@@ -95,7 +95,7 @@ def explore(keyword_db, msite_db, fsite_db, article_db):
     # Retrieve, store, and print foreign site information
     print "\nForeign Sites\n\t%-25s%-40s" % ("Name", "URL")
 
-    fsites =  c.execute("SELECT "+SITE_DB_NAME + ","+SITE_DB_URL+" FROM "+fsite_db+";")
+    fsites = c.execute("SELECT "+SITE_DB_NAME + ","+SITE_DB_URL+" FROM "+fsite_db+";")
     for site in fsites:
         # foreign_sites is now in form ['URL', ...]
         foreign_sites.append(site[1])
@@ -128,7 +128,6 @@ def explore(keyword_db, msite_db, fsite_db, article_db):
     print "+----------------------------------------------------------+"
     # Parse the articles in all sites
     parse_articles(populated_sites, keyword_list, foreign_sites, article_db)
-
 
 
 def populate_sites(sites):
@@ -220,20 +219,23 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, table_name):
                     # Try to add all the data to the Article Database
 
                         article_id = c.execute("SELECT COUNT(*) FROM articles_article;").fetchall()[0][0]
-                        c.execute("INSERT INTO articles_article values (?,?,?,?,?,?)", (article_id+1,url,title,today,0,pub_date))
-
+                        c.execute("INSERT INTO articles_article values (?,?,?,?,?,?)", (article_id+1, url,
+                                                                                        title, today, 0, pub_date))
 
                         for keyword in keywords:
                             keyword_id = c.execute("SELECT COUNT(*) FROM articles_keyword;").fetchall()[0][0]
-                            c.execute("INSERT INTO articles_keyword values (?,?,?)",(keyword_id +1,article_id,keyword))
+                            c.execute("INSERT INTO articles_keyword values (?,?,?)", (keyword_id + 1,
+                                                                                      article_id, keyword))
 
                         for author in authors:
                             author_id = c.execute("SELECT COUNT(*) FROM articles_author;").fetchall()[0][0]
-                            c.execute("INSERT INTO articles_author values (?,?,?)", (author_id +1,article_id,author))
+                            c.execute("INSERT INTO articles_author values (?,?,?)", (author_id + 1,
+                                                                                     article_id, author))
 
                         for source in sources:
                             source_id = c.execute("SELECT COUNT(*) FROM articles_source;").fetchall()[0][0]
-                            c.execute("INSERT INTO articles_source values (?,?,?)", (source_id +1,article_id,source))
+                            c.execute("INSERT INTO articles_source values (?,?,?)", (source_id + 1,
+                                                                                     article_id, source))
                         added += 1
                         conn.commit()
                         print "\tResult:    Match detected! Added to the database."
@@ -334,5 +336,5 @@ def get_keywords(article, keywords):
 
 if __name__ == '__main__':
 
-    explore('explorer_keyword', 'explorer_msite', 'explorer_fsite','articles_article')
+    # explore('explorer_keyword', 'explorer_msite', 'explorer_fsite', 'articles_article')
     pass

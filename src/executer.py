@@ -141,7 +141,7 @@ def add_keyword(keyword):
     # else add the keyword
     else:
         db.connect(KEYWORDS_DB)
-        db.add_keyword(keyword)
+        db.add_element(keyword)
         print "keyword " + keyword + " added."
         db.close_connection()
 
@@ -151,7 +151,7 @@ def get_all_keywords():
     Connect to keyword collection return a list of keywords
     """
     db.connect(KEYWORDS_DB)
-    keywords = db.get_all_keywords()
+    keywords = db.get_all_elements()
     db.close_connection()
     return keywords
 
@@ -166,7 +166,7 @@ def del_keyword(keyword):
     # else remove the keyword
     else:
         db.connect(KEYWORDS_DB)
-        db.del_keyword(keyword)
+        db.del_element(keyword)
         print "keyword " + keyword + " deleted."
         db.close_connection()
 
@@ -176,7 +176,7 @@ def del_all_keywords():
     Connect to keyword collection and empty the list of keywords
     """
     db.connect(KEYWORDS_DB)
-    db.del_all_keywords()
+    db.del_all_elements()
     print "All keywords deleted."
     db.close_connection()
 
@@ -189,7 +189,7 @@ def run_twitter_explorer():
     pass
 
 if __name__ == '__main__':
-    # add_monitor_site("https://news.google.com/", "Google News", 10)
+    #add_monitor_site("https://news.google.com/", "Google News", 10)
     # add_site("http://cnn.com", "CNN", True, 2)
     # add_site("http://nytimes.com", "The New York Times", True, 2)
     # add_site("http://time.com", "TIME", True, 2)
@@ -228,6 +228,7 @@ if __name__ == '__main__':
     # add_site("http://cnn.com", "CNN", False, 2)
     # add_site("http://nytimes.com", "The New York Times", False, 2)
     #
-    # run_article_explorer()
+    #run_article_explorer()
+
 
     pass
