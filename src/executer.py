@@ -73,6 +73,39 @@ def status_format(status):
         return 'Waiting'
     return None
 
+def run(status, explorer):
+    if status == 'Paused':
+        comm_write(explorer, 'WR')
+        return format('Run: %s - Resuming' % name)
+    elif status == 'Stopped':
+        a = Popen(['python', os.path.abspath(os.path.dirname( __file__ )) + '/' + explorer.lower() + '_explorer.py'], 
+            cwd=os.path.abspath(os.path.dirname( __file__ )))
+        return format('Run: %s - Started Running' % name)
+    elif status == 'Running':
+        return format('Run: %s - Already Running' % name)
+
+def pause(status, explorer):
+    if status == 'Paused':
+        return format('Pause: %s - Already in Pause' % name)
+    elif status == 'Stopped':
+        return format('Pause: %s - Cannot pause non-Started Instance' % name)
+    elif status == 'Running':
+        comm_write(explorer, 'WP')
+        return format('Pause: %s - Pausing' % name)
+
+def stop(status, explorer):
+    if status == 'Paused':
+        comm_write(explorer, 'WS')
+        return format('Stop: %s - Stopping Paused Explorer' % name)
+    elif status == 'Stopped':
+        return format('Stop: %s - Cannot Stop non-Started Explorer' % name)
+    elif status == 'Running':
+        comm_write(explorer, 'WS')
+        return format('Stop: %s - Stopping' % name)
+
+def status_output(status, explorer):
+    return format('%s - %s' % (name, status))
+
 if __name__ == '__main__':
     if len(sys.argv) == 3:
 
@@ -83,7 +116,7 @@ if __name__ == '__main__':
             raise_input_error()
 
         s = comm_read(explorer)
-        name = explorer[0].upper() + explorer[1:]
+        name = explorer[0].upper() + explorer[1:] + ' Explorer'
 
         status = status_format(get_status(explorer))
 
@@ -96,34 +129,13 @@ if __name__ == '__main__':
             sys.exit(0)
 
         if command == 'status':
-            print ('Status: %s - %s' % (name + ' Explorer', status))
+            print status_output(status, explorer)
 
         elif command == 'run':
-            if status == 'Paused':
-                comm_write(explorer, 'WR')
-                print ('Run: %s - Resuming' % name)
-            elif status == 'Stopped':
-                a = Popen(['python', os.path.abspath(os.path.dirname( __file__ )) + '/' + explorer.lower() + '_explorer.py'], 
-                    cwd=os.path.abspath(os.path.dirname( __file__ )))
-                print ('Run: %s - Started Running' % name)
-            elif status == 'Running':
-                print ('Run: %s - Already Running' % name)
+            print run(status, explorer)
 
         elif command == 'pause':
-            if status == 'Paused':
-                print ('Pause: %s - Already in Pause' % name)
-            elif status == 'Stopped':
-                print ('Pause: %s - Cannot pause non-Started Instance' % name)
-            elif status == 'Running':
-                comm_write(explorer, 'WP')
-                print ('Pause: %s - Pausing' % name)
+            print pause(status, explorer)
 
         elif command == 'stop':
-            if status == 'Paused':
-                comm_write(explorer, 'WS')
-                print ('Stop: %s - Stopping Paused Explorer' % name)
-            elif status == 'Stopped':
-                print ('Stop: %s - Cannot Stop non-Started Explorer' % name)
-            elif status == 'Running':
-                comm_write(explorer, 'WS')
-                print ('Stop: %s - Stopping' % name)
+            print stop(status, explorer)
