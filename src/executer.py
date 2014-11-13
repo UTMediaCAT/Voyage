@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import sys
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import Popen
 import time
 import os
 
@@ -91,8 +91,9 @@ if __name__ == '__main__':
             raise_input_error()
 
         if status == 'Waiting':
-            print ('Run: %s - Last Command Not Processed Yet' % name)
-            sys.exit()
+            print ('%s: %s - Last Command Not Processed Yet' % 
+                   (command[0].upper() + command[1:], name))
+            sys.exit(0)
 
         if command == 'status':
             print ('Status: %s - %s' % (name + ' Explorer', status))
@@ -110,19 +111,19 @@ if __name__ == '__main__':
 
         elif command == 'pause':
             if status == 'Paused':
-                print ('Run: %s - Already in Pause' % name)
+                print ('Pause: %s - Already in Pause' % name)
             elif status == 'Stopped':
-                print ('Run: %s - Cannot pause non-Started Instance' % name)
+                print ('Pause: %s - Cannot pause non-Started Instance' % name)
             elif status == 'Running':
                 comm_write(explorer, 'WP')
-                print ('Run: %s - Pausing' % name)
+                print ('Pause: %s - Pausing' % name)
 
         elif command == 'stop':
             if status == 'Paused':
                 comm_write(explorer, 'WS')
-                print ('Run: %s - Stopping Paused Explorer' % name)
+                print ('Stop: %s - Stopping Paused Explorer' % name)
             elif status == 'Stopped':
-                print ('Run: %s - Cannot Stop non-Started Explorer' % name)
+                print ('Stop: %s - Cannot Stop non-Started Explorer' % name)
             elif status == 'Running':
                 comm_write(explorer, 'WS')
-                print ('Run: %s - Stopping' % name)
+                print ('Stop: %s - Stopping' % name)
