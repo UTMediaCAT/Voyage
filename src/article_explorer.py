@@ -53,38 +53,17 @@ DATE_FORMAT = "%Y-%m-%dT%H:%M"  # "%Y-%m-%dT%H:%M"  - Universal date format for 
 SITE_DB_URL = 'url'
 SITE_DB_NAME = 'name'
 
-ARTICLE_DB_ID = 'id'
-ARTICLE_DB_URL = 'url'
-ARTICLE_DB_DATE = 'date_added'
-ARTICLE_DB_TITLE = 'title'
-ARTICLE_DB_PUBDATE = 'date_published'
-ARTICLE_DB_INFLUENCE = 'influence'
-
-KEYWORD_DB_ID = "id"
-KEYWORD_DB_ARTICLE_ID = "article_id"
-KEYWORD_DB_KEYWORD = "keyword"
-
-AUTHOR_DB_ID = "id"
-AUTHOR_DB_ARTICLE_ID = "article_id"
-AUTHOR_DB_AUTHOR = "author"
-
-SOURCE_DB_ID = "id"
-SOURCE_DB_ID_DB_ARTICLE_ID = "article_id"
-SOURCE_DB_ID_DB_AUTHOR = "source"
 
 DB_PATH = os.path.abspath(os.path.join(os.path.dirname( __file__), '..', 'Frontend\\db.sqlite3'))
 
 
 
-def explore(keyword_db, msite_db, fsite_db, article_db):
+def explore():
     """ (str, str, str) -> None
     Connects to keyword and site database, crawls within monitoring sites,
     then pushes articles which matches the keywords or foreign sites to the article database
 
-    Keyword arguments:
-    keyword_db          -- Keywords table name
-    msite_db             -- Monitor Sites table name
-    article_db          -- Article table name
+  
     """
 
     print "+----------------------------------------------------------+"
@@ -141,7 +120,7 @@ def explore(keyword_db, msite_db, fsite_db, article_db):
     print "| Evaluating Articles ...                                  |"
     print "+----------------------------------------------------------+"
     # Parse the articles in all sites
-    parse_articles(populated_sites, keyword_list, foreign_sites, article_db)
+    parse_articles(populated_sites, keyword_list, foreign_sites)
 
 
 def populate_sites(sites):
@@ -177,7 +156,7 @@ def populate_sites(sites):
     return new_sites
 
 
-def parse_articles(populated_sites, db_keywords, foreign_sites, table_name):
+def parse_articles(populated_sites, db_keywords, foreign_sites):
     """ (list of [str, newspaper.source.Source], list of str, list of str, str) -> None
     Download all articles from built sites and stores information to the database
 
@@ -233,7 +212,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, table_name):
                     articel_list = Article.objects.filter(url = url)
                     if (not articel_list): 
 
-                        article = Article(url=url, date_added = today, date_published = pub_date, influence = site[2] )
+                        article = Article(titile = title,url=url, date_added = today, date_published = pub_date, influence = site[2] )
                         article.save()
 
                         article =  Article.objects.get(id = Article.objects.count())
@@ -255,8 +234,9 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, table_name):
                         print "\tResult:    Match detected! Added to the database."
 
                     else:
-
+                        
                         article = articel_list[0]
+                        article.title = title
                         article.url = url 
                         article.date_added = today
                         article.date_published = pub_date
@@ -368,5 +348,4 @@ def get_keywords(article, keywords):
 
 if __name__ == '__main__':
 
-    explore('explorer_keyword', 'explorer_msite', 'explorer_fsite', 'articles_article')
-    pass
+    explore( )
