@@ -78,65 +78,35 @@ def del_all_documents():
     """
     COLLECTION.remove({})
 
-#Keyword functions
 
+#DB list functions
 
-def add_keyword(keyword):
+def add_element(elements):
     """(str) -> None
-    Add a new keyword to the list in COLLECTION
+    Add a new element to the list in COLLECTION
     """
-    COLLECTION.update({'_id': 1}, {'$push': {"list": keyword}})
+    COLLECTION.update({'_id': 1}, {'$push': {"list": elements}})
 
 
-def get_all_keywords():
+def get_all_elements():
     """(None) - > list of str
-    Return a list of keywords in COLLECTION
+    Return a list of elements in COLLECTION
     """
-    keywords = COLLECTION.find_one()["list"]
-    return keywords
+    elements = COLLECTION.find_one()["list"]
+    return elements
 
-
-def del_keyword(keyword):
+def del_element(element):
     """(str) - > None
-    Delete keyword from the list in COLLECTION
-    """    
-    COLLECTION.update({'_id': 1}, {'$pull': {"list": keyword}})
+    Delete element from the list in COLLECTION
+    """
+    COLLECTION.update({'_id': 1}, {'$pull': {"list": element}})
 
-
-def del_all_keywords():
+def del_all_elements():
     """(None) - > None
     Empty the list of keywords in COLLECTION
-    """       
-    keywords = COLLECTION.find_one()["list"]
-    for keyword in keywords:
-        COLLECTION.update({'_id': 1}, {'$pull': {"list": keyword}})
-
-def add_account(account):
-    """(str) -> None
-    Add a new account to the list in COLLECTION
     """
-    COLLECTION.update({'_id': 1}, {'$push': {"list": account}})
+    elements = COLLECTION.find_one()["list"]
+    for element in elements:
+        COLLECTION.update({'_id': 1}, {'$pull': {"list": element}})
 
 
-def get_all_accounts():
-    """(None) - > list of str
-    Return a list of accounts in COLLECTION
-    """
-    accounts = COLLECTION.find_one()["list"]
-    return accounts
-
-
-def del_account(account):
-    """(str) - > None
-    Delete account from the list in COLLECTION
-    """    
-    COLLECTION.update({'_id': 1}, {'$pull': {"list": account}})
-
-
-def del_all_accounts():
-    """(None) - > None
-    Empty the list of accounts in COLLECTION
-    """       
-    accounts = COLLECTION.find_one()["list"]
-    for account in accounts:
-        COLLECTION.update({'_id': 1}, {'$pull': {"list": account}})

@@ -233,6 +233,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, db_name):
 	db.close_connection()
 
 def explore(accounts_db, keyword_db, site_db, tweet_db):
+<<<<<<< HEAD
 	""" (str, str, str, str) -> None
 	Connects to accounts, keyword and site database, crawls within monitoring sites,
 	then pushes articles which matches the keywords or foreign sites to the tweet database
@@ -306,9 +307,90 @@ def explore(accounts_db, keyword_db, site_db, tweet_db):
 		print "+----------------------------------------------------------+"
 		# Parse the articles in all sites
 		parse_tweets(accounts, keywords, foreign_sites, tweet_db)
+=======
+    """ (str, str, str, str) -> None
+    Connects to accounts, keyword and site database, crawls within monitoring sites,
+    then pushes articles which matches the keywords or foreign sites to the tweet database
+
+    Keyword arguments:
+    accounts_db         -- Twitter Accounts database name
+    keyword_db          -- Keywords database name
+    site_db             -- Sites database name
+    tweet_db            -- Tweet database name
+    """
+
+    print "+----------------------------------------------------------+"
+    print "| Retrieving data from Database ...                        |"
+    print "+----------------------------------------------------------+"
+
+    # Connects to Site Database
+    db.connect(site_db)
+
+    monitoring_sites = []
+    # Retrieve, store, and print monitoring site information
+    print "\nMonitoring Sites\n\t%-25s%-40s" % ("Name", "URL")
+    for site in db.get_documents("is_monitor", True):
+        # monitoring_sites is now in form [['Name', 'URL'], ...]
+        monitoring_sites.append([site[SITE_DB_NAME], site[SITE_DB_ID]])
+        print("\t%-25s%-40s" % (site[SITE_DB_NAME], site[SITE_DB_ID]))
+
+    foreign_sites = []
+    # Retrieve, store, and print foreign site information
+    print "\nForeign Sites\n\t%-25s%-40s" % ("Name", "URL")
+    for site in db.get_documents("is_monitor", False):
+        # foreign_sites is now in form ['URL', ...]
+        foreign_sites.append(site[SITE_DB_ID])
+        print("\t%-25s%-40s" % (site['name'], site[SITE_DB_ID]))
+        
+    # Close connection with Site Database
+    db.close_connection()
+
+    # Connects to Keyword Database
+    db.connect(keyword_db)
+    # Retrieve all stored keywords
+    keywords = db.get_all_elements()
+    # Close connection with Keyord Database
+    # Print all the keywords
+    db.close_connection()
+    print "\nKeywords:"
+    for key in keywords:
+        print "\t%s" % key
+
+    print "\n"
+
+    print "+----------------------------------------------------------+"
+    print "| Populating Accounts ...                                  |"
+    print "+----------------------------------------------------------+"
+    # Connects to Accounts Database
+    db.connect(accounts_db)
+    # Retrieve all stored Accounts
+    accounts = db.get_all_elements()
+    for i in range(len(accounts)):
+        accounts[i] = accounts[i].encode('utf8')
+    # Close connection with Accounts Database
+    # Print all the Accounts
+    db.close_connection()
+    print "\nTwitter Accounts:"
+    for account in accounts:
+        print "\t%s" % account
+
+    print "\n"
+
+    print "+----------------------------------------------------------+"
+    print "| Evaluating Tweets ...                                    |"
+    print "+----------------------------------------------------------+"
+    # Parse the articles in all sites
+    parse_tweets(accounts, keywords, foreign_sites, tweet_db)
+
+    
+>>>>>>> origin/django
 
 if __name__ == '__main__':
+<<<<<<< HEAD
 	pass
 
 explore('taccounts', 'keywords', 'sites', 'tweets')
 #parse_tweets(['CNN', 'TIME'], ['obama','hollywood', 'not', 'fire', 'president', 'activities'], ['http://cnn.com/', 'http://ti.me'], 'tweets')
+=======
+    #explore('taccounts', 'keywords', 'sites', 'tweets')
+>>>>>>> origin/django

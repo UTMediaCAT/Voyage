@@ -4,9 +4,9 @@ from django.db import models
 
 class Article(models.Model):
     url = models.URLField(max_length=200)
-    title = models.CharField(max_length=200)
-    date_added = models.DateField('Date Added')
-    date_published = models.DateField('Date Published')
+    title = models.CharField(max_length=200, blank=True)
+    date_added = models.DateTimeField('Date Added', blank=True, null=True)
+    date_published = models.DateTimeField('Date Published', blank=True, null=True)
     influence = models.IntegerField(default=0)
 
     def __unicode__(self):

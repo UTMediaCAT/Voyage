@@ -1,9 +1,10 @@
 {% if latest_article_list %}
+	<h1>All Collected Articles</h1>
     <ul>
     {% for article in latest_article_list %}
-        <li><a href="/articles/{{ article.id }}/">{{ article }}</a></li>
+        <li><a href="/articles/{{ article.id }}/">{{ article.title }}</a></li>
     {% endfor %}
     </ul>
 {% else %}
-    <p>No articles are available.</p>
+    <h1>No articles are available.</h1>
 {% endif %}
