@@ -4,6 +4,7 @@ from django.db import models
 
 class Tweet(models.Model):
     tweet_id = models.CharField(max_length=200)
+    text = models.CharField(max_length=200, default='')
     user = models.CharField(max_length=200)
     date_added = models.DateTimeField('Date Added', blank=True, null=True)
     date_published = models.DateTimeField('Date Published', blank=True, null=True)
