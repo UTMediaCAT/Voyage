@@ -63,7 +63,11 @@ def command_format(arg2):
     return None 
 
 def status_format(status):
-    if status == 'R':
+    if status == 'Waiting':
+        return ('%s: %s - Last Command Not Processed Yet' % 
+           (command[0].upper() + command[1:], name))
+        sys.exit(0)
+    elif status == 'R':
         return 'Running'
     elif status == 'P':
         return 'Paused'
@@ -73,8 +77,12 @@ def status_format(status):
         return 'Waiting'
     return None
 
-def run(status, explorer):
-    if status == 'Paused':
+def run(status, explorer, name):
+    if status == 'Waiting':
+        return ('%s - Last Command Not Processed Yet' % 
+           (name))
+        sys.exit(0)
+    elif status == 'Paused':
         comm_write(explorer, 'WR')
         return format('Run: %s - Resuming' % name)
     elif status == 'Stopped':
@@ -84,8 +92,12 @@ def run(status, explorer):
     elif status == 'Running':
         return format('Run: %s - Already Running' % name)
 
-def pause(status, explorer):
-    if status == 'Paused':
+def pause(status, explorer, name):
+    if status == 'Waiting':
+        return ('%s - Last Command Not Processed Yet' % 
+           (name))
+        sys.exit(0)
+    elif status == 'Paused':
         return format('Pause: %s - Already in Pause' % name)
     elif status == 'Stopped':
         return format('Pause: %s - Cannot pause non-Started Instance' % name)
@@ -93,8 +105,12 @@ def pause(status, explorer):
         comm_write(explorer, 'WP')
         return format('Pause: %s - Pausing' % name)
 
-def stop(status, explorer):
-    if status == 'Paused':
+def stop(status, explorer, name):
+    if status == 'Waiting':
+        return ('%s - Last Command Not Processed Yet' % 
+           (name))
+        sys.exit(0)
+    elif status == 'Paused':
         comm_write(explorer, 'WS')
         return format('Stop: %s - Stopping Paused Explorer' % name)
     elif status == 'Stopped':
@@ -103,7 +119,7 @@ def stop(status, explorer):
         comm_write(explorer, 'WS')
         return format('Stop: %s - Stopping' % name)
 
-def status_output(status, explorer):
+def status_output(status, explorer, name):
     return format('%s - %s' % (name, status))
 
 if __name__ == '__main__':
@@ -123,19 +139,14 @@ if __name__ == '__main__':
         if not status:
             raise_input_error()
 
-        if status == 'Waiting':
-            print ('%s: %s - Last Command Not Processed Yet' % 
-                   (command[0].upper() + command[1:], name))
-            sys.exit(0)
-
         if command == 'status':
-            print status_output(status, explorer)
+            print status_output(status, explorer, name)
 
         elif command == 'run':
-            print run(status, explorer)
+            print run(status, explorer, name)
 
         elif command == 'pause':
-            print pause(status, explorer)
+            print pause(status, explorer, name)
 
         elif command == 'stop':
-            print stop(status, explorer)
+            print stop(status, explorer, name)
