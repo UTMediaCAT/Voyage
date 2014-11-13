@@ -110,7 +110,7 @@ def get_keywords(tweet, keywords):
 	Searches and returns keywords contained in the tweet
 	Returns empty list otherwise.
 
-		Keyword arguments:
+	Keyword arguments:
 	tweet    		-- Status structre to be searched through
 	sites           -- List of keywords to look for
 		"""
@@ -233,7 +233,6 @@ def parse_tweets(twitter_users, keywords, foreign_sites, db_name):
 	db.close_connection()
 
 def explore(accounts_db, keyword_db, site_db, tweet_db):
-<<<<<<< HEAD
 	""" (str, str, str, str) -> None
 	Connects to accounts, keyword and site database, crawls within monitoring sites,
 	then pushes articles which matches the keywords or foreign sites to the tweet database
@@ -307,7 +306,7 @@ def explore(accounts_db, keyword_db, site_db, tweet_db):
 		print "+----------------------------------------------------------+"
 		# Parse the articles in all sites
 		parse_tweets(accounts, keywords, foreign_sites, tweet_db)
-=======
+
     """ (str, str, str, str) -> None
     Connects to accounts, keyword and site database, crawls within monitoring sites,
     then pushes articles which matches the keywords or foreign sites to the tweet database
@@ -382,15 +381,7 @@ def explore(accounts_db, keyword_db, site_db, tweet_db):
     # Parse the articles in all sites
     parse_tweets(accounts, keywords, foreign_sites, tweet_db)
 
-    
->>>>>>> origin/django
-
 if __name__ == '__main__':
-<<<<<<< HEAD
 	pass
-
-explore('taccounts', 'keywords', 'sites', 'tweets')
-#parse_tweets(['CNN', 'TIME'], ['obama','hollywood', 'not', 'fire', 'president', 'activities'], ['http://cnn.com/', 'http://ti.me'], 'tweets')
-=======
+	#parse_tweets(['CNN', 'TIME'], ['obama','hollywood', 'not', 'fire', 'president', 'activities'], ['http://cnn.com/', 'http://ti.me'], 'tweets')
     #explore('taccounts', 'keywords', 'sites', 'tweets')
->>>>>>> origin/django
