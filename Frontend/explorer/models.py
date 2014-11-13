@@ -34,5 +34,8 @@ class Keyword(models.Model):
 class Taccount(models.Model):
     account = models.CharField(max_length=200, unique=True)
 
+    class Meta:
+        verbose_name = 'Twitter Accounts'
+
     def __unicode__(self):
         return self.account
