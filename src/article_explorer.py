@@ -230,14 +230,15 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, table_name):
                 if not (keywords == [] and (sources == [] or STORE_ALL_SOURCES)):
                     # Try to add all the data to the Article Database
 
-                        
+                    articel_list = Article.objects.filter(url = url)
+                    if (not articel_list): 
+
                         article = Article(url=url, date_added = today, date_published = pub_date, influence = site[2] )
                         article.save()
 
                         article =  Article.objects.get(id = Article.objects.count())
                         
                         for key in keywords:
-                            keyword = A_keyword (key)
                             article.keyword_set.create(keyword = key)
            
 
@@ -249,18 +250,37 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, table_name):
                             article.source_set.create(source = source)
 
                         added += 1
-
+               
 
                         print "\tResult:    Match detected! Added to the database."
 
-                    # Most common errors are document already existing, thus delete then resubmit
-                    #
-                        #db.del_document(url)
-                        #db.add_document({ARTICLE_DB_ID: url, ARTICLE_DB_DATE: today, ARTICLE_DB_TITLE: title,
-                        #                 ARTICLE_DB_PUBDATE: pub_date, ARTICLE_DB_AUTHORS: authors,
-                       #                  ARTICLE_DB_KEYWORDS: keywords, ARTICLE_DB_SOURCES: sources})
-                      #  print "\tResult:    Match detected! Article already in database. Updating."
-                     #   updated += 1
+                    else:
+
+                        article = articel_list[0]
+                        article.url = url 
+                        article.date_added = today
+                        article.date_published = pub_date
+                        article.influence = site[2]
+                        article.save()
+
+                        for key in keywords:
+                            if not Keyword.objects.filter(keyword = key): 
+                                article.keyword_set.create(keyword = key)
+           
+
+                        for author in authors:
+                            if not Author.objects.filter(author = author): 
+                                article.author_set.create(author = author)
+
+
+                        for source in sources:
+                            if not Source.objects.filter(source = source): 
+                                article.source_set.create(source = source)
+
+                        print "\tResult:    Match detected! Article already in database. Updating."
+                        updated += 1
+
+
                 else:
                     no_match += 1
                     print "\tResult:    No Match Detected."
@@ -272,7 +292,6 @@ def parse_articles(populated_sites, db_keywords, foreign_sites, table_name):
                   (added, updated, no_match, failed, time.time() - start))
             print "+--------------------------------------------------------------------+"
     print("Finished parsing all sites!")
-    conn.close()
 
 
 def get_sources(html, sites):
