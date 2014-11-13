@@ -12,15 +12,15 @@ class KeywordInline(admin.TabularInline):
 
 class TweetAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None,               {'fields': ['tweet_id', 'user', 'followers']}),
+        (None,               {'fields': ['tweet_id', 'user', 'text', 'followers']}),
         ('Date information', {'fields': ['date_added', 'date_published']})
         ]
 
     inlines = [SourceInline, KeywordInline]
 
-    list_display = ('tweet_id', 'user', 'followers', 'get_keywords', 'get_sources', 'date_published', 'date_added')
+    list_display = ('tweet_id', 'text', 'user', 'followers', 'get_keywords', 'get_sources', 'date_published', 'date_added')
 
-    search_fields = ['tweet_id', 'user', 'followers', 'keyword__keyword', 'source__source']
+    search_fields = ['tweet_id', 'text', 'user', 'followers', 'keyword__keyword', 'source__source']
     list_filter = ['keyword__keyword']
     ordering = ['-date_added']
 
