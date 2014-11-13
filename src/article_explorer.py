@@ -50,7 +50,12 @@ STORE_ALL_SOURCES = False       # False             - Stores all links within ar
 FROM_START = True               # True              - True: Populate all articles from start
 DATE_FORMAT = "%Y-%m-%dT%H:%M"  # "%Y-%m-%dT%H:%M"  - Universal date format for consistency
 
-MIN_ITERATION_TIME = 600
+MIN_ITERATION_TIME = 0
+
+COMM_FILE = '_comm.stream'
+RETRY_COUNT = 10
+RETRY_DELTA = 1
+SLEEP_TIME = 5
 
 
 
@@ -68,7 +73,10 @@ def explore(is_from_start):
 
     # Connects to Site Database
     django.setup()
-       
+    
+    # Initialize Communication Stream
+    comm_init()
+
     while (1):
         start = timeit.default_timer()
 
@@ -182,6 +190,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
     for site in populated_sites:
         print "\n%s" % site[0]
         for art in site[1].articles:
+            check_command()
             url = art.url
             print "\n\tURL:      ", url
             print "\tEvaluating ...\r",
@@ -249,7 +258,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                         article.save()
 
                         for key in keywords:
-                            if not Keyword.objects.filter(keyword = key): 
+                            if not A_keyword.objects.filter(keyword = key): 
                                 article.keyword_set.create(keyword = key)
            
 
@@ -349,6 +358,49 @@ def get_keywords(article, keywords):
             matched_keywords.append(key)
     # Return the list
     return matched_keywords
+
+def comm_write(text):
+    for i in range(RETRY_COUNT):
+        try:
+            comm = open('article' + COMM_FILE, 'w')
+            comm.write(text)
+            comm.close()
+            return None
+        except:
+            time.sleep(RETRY_DELTA)
+
+def comm_read():
+    for i in range(RETRY_COUNT):
+        try:
+            comm = open('article' + COMM_FILE, 'r')
+            msg = comm.read()
+            comm.close()
+            return msg
+        except:
+            time.sleep(RETRY_DELTA)
+
+def comm_init():
+    comm_write('RR')
+
+def check_command():
+    msg = comm_read()
+
+    if msg[0] == 'W':
+        command = msg[1]
+        if command == 'S':
+            print ('Stopping Explorer...')
+            comm_write('SS')
+            sys.exit(0)
+        elif command == 'P':
+            print ('Pausing ...')
+            comm_write('PP')
+            while comm_read()[1] == 'P':
+                print ('Waiting %i seconds ...' % SLEEP_TIME)
+                time.sleep(SLEEP_TIME)
+            check_command()
+        elif command == 'R':
+            print ('Resuming ...')
+            comm_write('RR')
 
 
 if __name__ == '__main__':
