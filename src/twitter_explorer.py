@@ -43,6 +43,13 @@ MIN_ITERATION_TIME = 600
 #Seconds to wait before retrying call
 WAIT_RATE = (60 * 1) + 0
 
+# Used for commmunication stream
+COMM_FILE = '_comm.stream'
+RETRY_COUNT = 10
+RETRY_DELTA = 1
+SLEEP_TIME = 5
+
+
 def authorize():
     """ (None) -> tweepy.API
     Will use global keys to allow use of API
@@ -332,15 +339,66 @@ def explore(accounts_db, keyword_db, site_db, tweet_number):
     # Parse the articles in all sites
     parse_tweets(accounts_list, keyword_list, foreign_sites, tweet_number)
 
+def comm_write(text):
+    for i in range(RETRY_COUNT):
+        try:
+            comm = open('twitter' + COMM_FILE, 'w')
+            comm.write(text)
+            comm.close()
+            return None
+        except:
+            time.sleep(RETRY_DELTA)
+
+def comm_read():
+    for i in range(RETRY_COUNT):
+        try:
+            comm = open('twitter' + COMM_FILE, 'r')
+            msg = comm.read()
+            comm.close()
+            return msg
+        except:
+            time.sleep(RETRY_DELTA)
+
+def comm_init():
+    comm_write('RR')
+
+def check_command():
+    msg = comm_read()
+
+    if msg[0] == 'W':
+        command = msg[1]
+        if command == 'S':
+            print ('Stopping Explorer...')
+            comm_write('SS')
+            sys.exit(0)
+        elif command == 'P':
+            print ('Pausing ...')
+            comm_write('PP')
+            while comm_read()[1] == 'P':
+                print ('Waiting %i seconds ...' % SLEEP_TIME)
+                time.sleep(SLEEP_TIME)
+            check_command()
+        elif command == 'R':
+            print ('Resuming ...')
+            comm_write('RR')
 
 if __name__ == '__main__':
     
     #parse_tweets(['CNN', 'TIME'], ['obama','hollywood', 'not', 'fire', 'president', 'activities'], ['http://cnn.com/', 'http://ti.me'], 'tweets')
+    
+    # Initialize Communication Stream
+    comm_init()
+
+    fs = FROM_START
+    
     while 1:
+        # Check for any new command on communication stream
+        check_command()   
+
         start = timeit.default_timer()
-        if (FROM_START == True ):
+        if (fs == True ):
             explore('taccounts', 'keywords', 'sites', INIT_TWEET_COUNT)
-            FROM_START = False
+            fs = False
         else:
             explore('taccounts', 'keywords', 'sites', ITER_TWEET_COUNT)
 

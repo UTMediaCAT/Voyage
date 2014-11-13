@@ -52,88 +52,11 @@ DATE_FORMAT = "%Y-%m-%dT%H:%M"  # "%Y-%m-%dT%H:%M"  - Universal date format for 
 
 MIN_ITERATION_TIME = 0
 
+# Used for commmunicating stream
 COMM_FILE = '_comm.stream'
 RETRY_COUNT = 10
 RETRY_DELTA = 1
 SLEEP_TIME = 5
-
-
-
-def explore(is_from_start):
-    """ () -> None
-    Connects to keyword and site tables in database, crawls within monitoring sites,
-    then pushes articles which matches the keywords or foreign sites to the article database
-
-  
-    """
-
-    print "+----------------------------------------------------------+"
-    print "| Retrieving data from Database ...                        |"
-    print "+----------------------------------------------------------+"
-
-    # Connects to Site Database
-    django.setup()
-    
-    # Initialize Communication Stream
-    comm_init()
-
-    while (1):
-        start = timeit.default_timer()
-
-
-        monitoring_sites = []
-        # Retrieve, store, and print monitoring site information
-        print "\nMonitoring Sites\n\t%-25s%-25s%-10s" % ("Name", "URL", "Influence")
-
-        msites = Msite.objects.all()
-
-        for site in msites:
-            # monitoring_sites is now in form [['Name', 'URL'], ...]
-            monitoring_sites.append([site.name, site.url, site.influence])
-            print("\t%-25s%-25s%-10i" % (site.name, site.url, site.influence))
-
-        foreign_sites = []
-        # Retrieve, store, and print foreign site information
-        print "\nForeign Sites\n\t%-40s%-25s" % ("Name", "URL")
-
-        fsites = Fsite.objects.all()
-        for site in fsites:
-            # foreign_sites is now in form ['URL', ...]
-            foreign_sites.append(site.url)
-            print("\t%-25s%-40s" % (site.name, site.url))
-
-        # Retrieve all stored keywords
-        keywords = E_keyword.objects.all()
-        keyword_list = []
-        # Print all the keywords
-
-        print "\nKeywords:"
-        for key in keywords:
-            keyword_list.append(str(key.keyword))
-            print "\t%s" % key.keyword
-
-
-        print "\n"
-
-        print "+----------------------------------------------------------+"
-        print "| Populating sites ...                                     |"
-        print "+----------------------------------------------------------+"
-        # Populate the monitoring sites with articles
-        populated_sites = populate_sites(monitoring_sites, is_from_start)
-
-        print "\n"
-
-        print "+----------------------------------------------------------+"
-        print "| Evaluating Articles ...                                  |"
-        print "+----------------------------------------------------------+"
-        # Parse the articles in all sites
-        parse_articles(populated_sites, keyword_list, foreign_sites)
-
-        end = timeit.default_timer()
-        delta_time = end - start
-        time.sleep(max(MIN_ITERATION_TIME-delta_time, 0))
-        
-
 
 
 def populate_sites(sites, is_from_start):
@@ -190,7 +113,9 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
     for site in populated_sites:
         print "\n%s" % site[0]
         for art in site[1].articles:
+            # Check for any new command on communication stream
             check_command()
+
             url = art.url
             print "\n\tURL:      ", url
             print "\tEvaluating ...\r",
@@ -224,9 +149,9 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                     # Try to add all the data to the Article Database
 
                     articel_list = Article.objects.filter(url = url)
-                    if (not articel_list): 
+                    if not articel_list:
 
-                        article = Article(title = title,url=url, date_added = today, date_published = pub_date, influence = site[2] )
+                        article = Article(title = title, url=url, date_added = today, date_published = pub_date, influence = site[2] )
                         article.save()
 
                         article =  Article.objects.get(url=url)
@@ -359,6 +284,67 @@ def get_keywords(article, keywords):
     # Return the list
     return matched_keywords
 
+def explore(is_from_start):
+    """ () -> None
+    Connects to keyword and site tables in database, crawls within monitoring sites,
+    then pushes articles which matches the keywords or foreign sites to the article database
+
+  
+    """
+
+    print "+----------------------------------------------------------+"
+    print "| Retrieving data from Database ...                        |"
+    print "+----------------------------------------------------------+"
+
+    monitoring_sites = []
+    # Retrieve, store, and print monitoring site information
+    print "\nMonitoring Sites\n\t%-25s%-25s%-10s" % ("Name", "URL", "Influence")
+
+    msites = Msite.objects.all()
+
+    for site in msites:
+        # monitoring_sites is now in form [['Name', 'URL'], ...]
+        monitoring_sites.append([site.name, site.url, site.influence])
+        print("\t%-25s%-25s%-10i" % (site.name, site.url, site.influence))
+
+    foreign_sites = []
+    # Retrieve, store, and print foreign site information
+    print "\nForeign Sites\n\t%-40s%-25s" % ("Name", "URL")
+
+    fsites = Fsite.objects.all()
+    for site in fsites:
+        # foreign_sites is now in form ['URL', ...]
+        foreign_sites.append(site.url)
+        print("\t%-25s%-40s" % (site.name, site.url))
+
+    # Retrieve all stored keywords
+    keywords = E_keyword.objects.all()
+    keyword_list = []
+    # Print all the keywords
+
+    print "\nKeywords:"
+    for key in keywords:
+        keyword_list.append(str(key.keyword))
+        print "\t%s" % key.keyword
+
+
+    print "\n"
+
+    print "+----------------------------------------------------------+"
+    print "| Populating sites ...                                     |"
+    print "+----------------------------------------------------------+"
+    # Populate the monitoring sites with articles
+    populated_sites = populate_sites(monitoring_sites, is_from_start)
+
+    print "\n"
+
+    print "+----------------------------------------------------------+"
+    print "| Evaluating Articles ...                                  |"
+    print "+----------------------------------------------------------+"
+    # Parse the articles in all sites
+    parse_articles(populated_sites, keyword_list, foreign_sites)
+
+
 def comm_write(text):
     for i in range(RETRY_COUNT):
         try:
@@ -404,5 +390,23 @@ def check_command():
 
 
 if __name__ == '__main__':
+    # Connects to Site Database
+    django.setup()
+    
+    # Initialize Communication Stream
+    comm_init()
 
-    explore(FROM_START)
+    fs = FROM_START
+
+    while (1):
+        start = timeit.default_timer()
+        
+        if (fs == True ):
+            explore(fs)
+            fs = False
+        else:
+            explore(fs)
+
+        end = timeit.default_timer()
+        delta_time = end - start
+        time.sleep(max(MIN_ITERATION_TIME-delta_time, 0))
