@@ -33,8 +33,8 @@ import sys
 import os
 import django
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'Frontend')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Frontend')))
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
         
@@ -74,7 +74,7 @@ def populate_sites(sites, is_from_start):
     for s in range(len(sites)):
         print("\t%-24s" % (sites[s][0])),
         # To count the time
-        start = time.time()
+        start_t = time.time()
         # Duplicate the name of the sites
         new_sites.append([sites[s][0]])
 
@@ -85,9 +85,9 @@ def populate_sites(sites, is_from_start):
                                              fetch_images=False,
                                              language='en')))
         new_sites[s].append(sites[s][2])
-        end = time.time()
+        end_t = time.time()
         # report back the amount of articles found, and time it took
-        print("%6i pgs%9is" % (new_sites[s][1].size(), end - start))
+        print("%6i pgs%9is" % (new_sites[s][1].size(), end_t - start_t))
     # return the list
     return new_sites
 
@@ -102,8 +102,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                            This can greatly increase the speed of download
     """
     added, updated, failed, no_match = 0, 0, 0, 0
-    start = time.time()
-
+    start_t = time.time()
 
     # Collect today's date and time
     today = datetime.datetime.now().strftime(DATE_FORMAT)
@@ -148,27 +147,25 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                 if not (keywords == [] and (sources == [] or STORE_ALL_SOURCES)):
                     # Try to add all the data to the Article Database
 
-                    articel_list = Article.objects.filter(url = url)
-                    if not articel_list:
+                    article_list = Article.objects.filter(url=url)
+                    if not article_list:
 
-                        article = Article(title = title, url=url, date_added = today, date_published = pub_date, influence = site[2] )
+                        article = Article(title=title, url=url, date_added=today,
+                                          date_published=pub_date, influence=site[2])
                         article.save()
 
-                        article =  Article.objects.get(url=url)
+                        article = Article.objects.get(url=url)
                         
                         for key in keywords:
-                            article.keyword_set.create(keyword = key)
-           
+                            article.keyword_set.create(keyword=key)
 
                         for author in authors:
-                            article.author_set.create(author = author)
-
+                            article.author_set.create(author=author)
 
                         for source in sources:
-                            article.source_set.create(source = source)
+                            article.source_set.create(source=source)
 
                         added += 1
-               
 
                         print "\tResult:    Match detected! Added to the database."
 
@@ -183,22 +180,19 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                         article.save()
 
                         for key in keywords:
-                            if not A_keyword.objects.filter(keyword = key): 
-                                article.keyword_set.create(keyword = key)
-           
+                            if not A_keyword.objects.filter(keyword=key):
+                                article.keyword_set.create(keyword=key)
 
                         for author in authors:
-                            if not Author.objects.filter(author = author): 
-                                article.author_set.create(author = author)
-
+                            if not Author.objects.filter(author=author):
+                                article.author_set.create(author=author)
 
                         for source in sources:
-                            if not Source.objects.filter(source = source): 
-                                article.source_set.create(source = source)
+                            if not Source.objects.filter(source=source):
+                                article.source_set.create(source=source)
 
                         print "\tResult:    Match detected! Article already in database. Updating."
                         updated += 1
-
 
                 else:
                     no_match += 1
@@ -208,7 +202,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                 failed += 1
             # Some stats to look at while running the script
             print("\n\tStatistics\n\tAdded: %i | Updated: %i | No Match: %i | Failed: %i | Time Elapsed: %is" %
-                  (added, updated, no_match, failed, time.time() - start))
+                  (added, updated, no_match, failed, time.time() - start_t))
             print "+--------------------------------------------------------------------+"
     print("Finished parsing all sites!")
 
@@ -284,6 +278,7 @@ def get_keywords(article, keywords):
     # Return the list
     return matched_keywords
 
+
 def explore(is_from_start):
     """ () -> None
     Connects to keyword and site tables in database, crawls within monitoring sites,
@@ -327,7 +322,6 @@ def explore(is_from_start):
         keyword_list.append(str(key.keyword))
         print "\t%s" % key.keyword
 
-
     print "\n"
 
     print "+----------------------------------------------------------+"
@@ -355,6 +349,7 @@ def comm_write(text):
         except:
             time.sleep(RETRY_DELTA)
 
+
 def comm_read():
     for i in range(RETRY_COUNT):
         try:
@@ -365,8 +360,10 @@ def comm_read():
         except:
             time.sleep(RETRY_DELTA)
 
+
 def comm_init():
     comm_write('RR')
+
 
 def check_command():
     msg = comm_read()
@@ -374,18 +371,18 @@ def check_command():
     if msg[0] == 'W':
         command = msg[1]
         if command == 'S':
-            print ('Stopping Explorer...')
+            print('Stopping Explorer...')
             comm_write('SS')
             sys.exit(0)
         elif command == 'P':
-            print ('Pausing ...')
+            print('Pausing ...')
             comm_write('PP')
             while comm_read()[1] == 'P':
-                print ('Waiting %i seconds ...' % SLEEP_TIME)
+                print('Waiting %i seconds ...' % SLEEP_TIME)
                 time.sleep(SLEEP_TIME)
             check_command()
         elif command == 'R':
-            print ('Resuming ...')
+            print('Resuming ...')
             comm_write('RR')
 
 
@@ -398,10 +395,10 @@ if __name__ == '__main__':
 
     fs = FROM_START
 
-    while (1):
+    while 1:
         start = timeit.default_timer()
         
-        if (fs == True ):
+        if fs:
             explore(fs)
             fs = False
         else:
