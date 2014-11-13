@@ -10,6 +10,9 @@ class MsiteAdmin(admin.ModelAdmin):
 
 
 	list_display = ('name', 'url', 'influence')
+	search_fields = ['name', 'url', 'influence']
+	ordering = ['influence']
+	list_filter = ['influence']
 
 class FsiteAdmin(admin.ModelAdmin):
 	fieldsets = [
@@ -18,6 +21,9 @@ class FsiteAdmin(admin.ModelAdmin):
 
 
 	list_display = ('name', 'url', 'influence')
+	search_fields = ['name', 'url', 'influence']
+	ordering = ['influence']
+	list_filter = ['influence']
 
 class KeywordAdmin(admin.ModelAdmin):
 	fieldsets = [
@@ -26,6 +32,7 @@ class KeywordAdmin(admin.ModelAdmin):
 
 
 	list_display = ['keyword']
+	search_fields = ['keyword']
 
 class TaccountAdmin(admin.ModelAdmin):
 	fieldsets = [
@@ -34,6 +41,7 @@ class TaccountAdmin(admin.ModelAdmin):
 
 
 	list_display = ['account']
+	search_fields = ['account']
 
 admin.site.register(Msite, MsiteAdmin)
 admin.site.register(Fsite, FsiteAdmin)
