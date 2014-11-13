@@ -55,8 +55,8 @@ def quit_app():
 #---Widgets---#
 #buttons
 Button(window, text="Install Api", command = install_api).pack()
-Button(window, text="Runing Server", command = tun).pack()
-Button(window, text="Close Server", command = vlose).pack()
+Button(window, text="Runing Server", command = run).pack()
+Button(window, text="Close Server", command = close).pack()
 Button(window, text="Open Web", command = open_web).pack()
 Button(text='Quit', command=quit_app).pack()
 
