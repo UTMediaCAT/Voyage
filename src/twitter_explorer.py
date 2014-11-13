@@ -228,7 +228,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                 else:
 
                     tweet = tweet_list[0]
-                    tweet= tweet_text
+                    tweet.tweet_text= tweet_text
                     tweet.tweet_id = tweet_id
                     tweet.user = tweet_user 
                     tweet.date_added = tweet_store_date
