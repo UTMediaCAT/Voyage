@@ -100,15 +100,6 @@ def get_follower_count(screen_name):
     """ (str) -> int
     Gets number of followers of screen_name's account
 
-    Keyword arguments:
-    screen_name import sys
-import os
-import django
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'Frontend')))
-
-os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'  -- String of twitter handle
     """
     api = authorize()
     while True:
@@ -126,7 +117,7 @@ def get_keywords(tweet, keywords):
     Keyword arguments:
     tweet           -- Status structre to be searched through
     sites           -- List of keywords to look for
-        """
+    """
     matched_keywords = []
     for key in keywords:
         if re.search(key, tweet.text.encode('utf8'), re.IGNORECASE):
@@ -340,4 +331,4 @@ def explore(accounts_db, keyword_db, site_db, tweet_number):
 if __name__ == '__main__':
     
     #parse_tweets(['CNN', 'TIME'], ['obama','hollywood', 'not', 'fire', 'president', 'activities'], ['http://cnn.com/', 'http://ti.me'], 'tweets')
-    explore('taccounts', 'keywords', 'sites', 600)
+    explore('taccounts', 'keywords', 'sites', 1000)

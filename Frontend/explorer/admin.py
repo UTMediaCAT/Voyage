@@ -4,44 +4,44 @@ from explorer.models import Msite, Fsite, Keyword, Taccount
 
 
 class MsiteAdmin(admin.ModelAdmin):
-	fieldsets = [
-		(None,               {'fields': ['url', 'name', 'influence']})
-		]
+    fieldsets = [
+        (None,               {'fields': ['url', 'name', 'influence']})
+        ]
 
 
-	list_display = ('name', 'url', 'influence')
-	search_fields = ['name', 'url', 'influence']
-	ordering = ['influence']
-	list_filter = ['influence']
+    list_display = ('name', 'url', 'influence')
+    search_fields = ['name', 'url', 'influence']
+    ordering = ['influence']
+    list_filter = ['influence']
 
 class FsiteAdmin(admin.ModelAdmin):
-	fieldsets = [
-		(None,               {'fields': ['url', 'name', 'influence']})
-		]
+    fieldsets = [
+        (None,               {'fields': ['url', 'name', 'influence']})
+        ]
 
 
-	list_display = ('name', 'url', 'influence')
-	search_fields = ['name', 'url', 'influence']
-	ordering = ['influence']
-	list_filter = ['influence']
+    list_display = ('name', 'url', 'influence')
+    search_fields = ['name', 'url', 'influence']
+    ordering = ['influence']
+    list_filter = ['influence']
 
 class KeywordAdmin(admin.ModelAdmin):
-	fieldsets = [
-		(None,               {'fields': ['keyword']})
-		]
+    fieldsets = [
+        (None,               {'fields': ['keyword']})
+        ]
 
 
-	list_display = ['keyword']
-	search_fields = ['keyword']
+    list_display = ['keyword']
+    search_fields = ['keyword']
 
 class TaccountAdmin(admin.ModelAdmin):
-	fieldsets = [
-		(None,               {'fields': ['account']})
-		]
+    fieldsets = [
+        (None,               {'fields': ['account']})
+        ]
 
 
-	list_display = ['account']
-	search_fields = ['account']
+    list_display = ['account']
+    search_fields = ['account']
 
 admin.site.register(Msite, MsiteAdmin)
 admin.site.register(Fsite, FsiteAdmin)
