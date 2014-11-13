@@ -23,6 +23,7 @@ import re
 
 # For counting seconds
 import time
+import timeit
 # For getting today's date
 import datetime
 # For extracting 'pub_date's
@@ -37,12 +38,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
         
-# For connecting with the Database
+# For Models connecting with the Database
 from articles.models import*
 from articles.models import Keyword as A_keyword
-
 from explorer.models import*
-
 from explorer.models import Keyword as E_keyword
 
 
@@ -50,17 +49,14 @@ from explorer.models import Keyword as E_keyword
 STORE_ALL_SOURCES = False       # False             - Stores all links within articles which matched with the keywords
 FROM_START = True               # True              - True: Populate all articles from start
 DATE_FORMAT = "%Y-%m-%dT%H:%M"  # "%Y-%m-%dT%H:%M"  - Universal date format for consistency
-SITE_DB_URL = 'url'
-SITE_DB_NAME = 'name'
 
-
-DB_PATH = os.path.abspath(os.path.join(os.path.dirname( __file__), '..', 'Frontend\\db.sqlite3'))
+MIN_ITERATION_TIME = 600
 
 
 
-def explore():
-    """ (str, str, str) -> None
-    Connects to keyword and site database, crawls within monitoring sites,
+def explore(is_from_start):
+    """ () -> None
+    Connects to keyword and site tables in database, crawls within monitoring sites,
     then pushes articles which matches the keywords or foreign sites to the article database
 
   
@@ -72,58 +68,67 @@ def explore():
 
     # Connects to Site Database
     django.setup()
+       
+    while (1):
+        start = timeit.default_timer()
 
 
-    monitoring_sites = []
-    # Retrieve, store, and print monitoring site information
-    print "\nMonitoring Sites\n\t%-25s%-25s%-10s" % ("Name", "URL", "Influence")
+        monitoring_sites = []
+        # Retrieve, store, and print monitoring site information
+        print "\nMonitoring Sites\n\t%-25s%-25s%-10s" % ("Name", "URL", "Influence")
 
-    msites = Msite.objects.all()
+        msites = Msite.objects.all()
 
-    for site in msites:
-        # monitoring_sites is now in form [['Name', 'URL'], ...]
-        monitoring_sites.append([site.name, site.url, site.influence])
-        print("\t%-25s%-25s%-10i" % (site.name, site.url, site.influence))
+        for site in msites:
+            # monitoring_sites is now in form [['Name', 'URL'], ...]
+            monitoring_sites.append([site.name, site.url, site.influence])
+            print("\t%-25s%-25s%-10i" % (site.name, site.url, site.influence))
 
-    foreign_sites = []
-    # Retrieve, store, and print foreign site information
-    print "\nForeign Sites\n\t%-40s%-25s" % ("Name", "URL")
+        foreign_sites = []
+        # Retrieve, store, and print foreign site information
+        print "\nForeign Sites\n\t%-40s%-25s" % ("Name", "URL")
 
-    fsites = Fsite.objects.all()
-    for site in fsites:
-        # foreign_sites is now in form ['URL', ...]
-        foreign_sites.append(site.url)
-        print("\t%-25s%-40s" % (site.name, site.url))
+        fsites = Fsite.objects.all()
+        for site in fsites:
+            # foreign_sites is now in form ['URL', ...]
+            foreign_sites.append(site.url)
+            print("\t%-25s%-40s" % (site.name, site.url))
 
-    # Retrieve all stored keywords
-    keywords = E_keyword.objects.all()
-    keyword_list = []
-    # Print all the keywords
+        # Retrieve all stored keywords
+        keywords = E_keyword.objects.all()
+        keyword_list = []
+        # Print all the keywords
 
-    print "\nKeywords:"
-    for key in keywords:
-        keyword_list.append(str(key.keyword))
-        print "\t%s" % key.keyword
-
-
-    print "\n"
-
-    print "+----------------------------------------------------------+"
-    print "| Populating sites ...                                     |"
-    print "+----------------------------------------------------------+"
-    # Populate the monitoring sites with articles
-    populated_sites = populate_sites(monitoring_sites)
-
-    print "\n"
-
-    print "+----------------------------------------------------------+"
-    print "| Evaluating Articles ...                                  |"
-    print "+----------------------------------------------------------+"
-    # Parse the articles in all sites
-    parse_articles(populated_sites, keyword_list, foreign_sites)
+        print "\nKeywords:"
+        for key in keywords:
+            keyword_list.append(str(key.keyword))
+            print "\t%s" % key.keyword
 
 
-def populate_sites(sites):
+        print "\n"
+
+        print "+----------------------------------------------------------+"
+        print "| Populating sites ...                                     |"
+        print "+----------------------------------------------------------+"
+        # Populate the monitoring sites with articles
+        populated_sites = populate_sites(monitoring_sites, is_from_start)
+
+        print "\n"
+
+        print "+----------------------------------------------------------+"
+        print "| Evaluating Articles ...                                  |"
+        print "+----------------------------------------------------------+"
+        # Parse the articles in all sites
+        parse_articles(populated_sites, keyword_list, foreign_sites)
+
+        end = timeit.default_timer()
+        delta_time = end - start
+        time.sleep(max(MIN_ITERATION_TIME-delta_time, 0))
+        
+
+
+
+def populate_sites(sites, is_from_start):
     """ (list of str) -> list of [str, newspaper.source.Source]
     Searches through the sites using newspaper library and
     returns list of sites with available articles populated
@@ -144,7 +149,7 @@ def populate_sites(sites):
 
         # Use the url and populate the site with articles
         new_sites[s].append((newspaper.build(sites[s][1],
-                                             memoize_articles=not FROM_START,
+                                             memoize_articles=not is_from_start,
                                              keep_article_html=True,
                                              fetch_images=False,
                                              language='en')))
@@ -212,10 +217,10 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                     articel_list = Article.objects.filter(url = url)
                     if (not articel_list): 
 
-                        article = Article(titile = title,url=url, date_added = today, date_published = pub_date, influence = site[2] )
+                        article = Article(title = title,url=url, date_added = today, date_published = pub_date, influence = site[2] )
                         article.save()
 
-                        article =  Article.objects.get(id = Article.objects.count())
+                        article =  Article.objects.get(url=url)
                         
                         for key in keywords:
                             article.keyword_set.create(keyword = key)
@@ -348,4 +353,4 @@ def get_keywords(article, keywords):
 
 if __name__ == '__main__':
 
-    explore( )
+    explore(FROM_START)
