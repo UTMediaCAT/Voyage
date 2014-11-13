@@ -15,7 +15,7 @@ ryanbelt | Ryan Pan | ryanbelt1993129@hotmail.com
 ##Installation
 Download, extract the `master` then execute on terminal `python setup.py` 
 
-The following will be installed by this script:
+click `install api` in the pop up GUI. The following will be installed by this script:
 * pip
 * PyMongo 2.7.2
 * Django 1.7
@@ -25,13 +25,10 @@ The following will be installed by this script:
 * tld 0.7.2
 
 If any problem occurs, please contact one of us on the email address listed above.
-
 ##Usage
+Download, extract the `master` then execute on terminal `python setup.py` 
 
-Create a new script and import executer.py by `import src/executer`
-
-
-Use one of the functions we have:
+click `OpenServer` in the pop up GUI and then click `open website`
 ```
 add_monitor_site(url, name, influence)
 add_foreign_site(url, name, influence)
