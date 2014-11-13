@@ -5,7 +5,7 @@ import re
 import urllib2
 from tld import get_tld
 from tld.utils import update_tld_names
-
+import timeit
 
 import sys
 import os
@@ -35,7 +35,11 @@ ACCESS_TOKEN_SECRET = "I740fF6x6v0srzbY7LCAjNWXXOzZRMBFbkoiwZ5FgqC5s"
 STORE_ALL_SOURCES = False
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
+INIT_TWEET_COUNT=1000
+ITER_TWEET_COUNT=100
 
+FROM_START = True  
+MIN_ITERATION_TIME = 600
 #Seconds to wait before retrying call
 WAIT_RATE = (60 * 1) + 0
 
@@ -191,6 +195,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
             tweet_store_date = datetime.datetime.now().strftime(DATE_FORMAT)
             tweet_keywords = get_keywords(tweet, keywords)
             tweet_sources = get_sources(tweet, foreign_sites)
+            tweet_text = tweet.text
 
             print "\tTweet:    ", tweet.text
             print "\tAuthor:   ", tweet_user
@@ -204,7 +209,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                 tweet_list = Tweet.objects.filter(tweet_id = tweet_id)
                 if (not tweet_list): 
 
-                    tweet = Tweet(tweet_id = tweet_id, user=tweet_user, date_added = tweet_store_date, date_published = tweet_date, followers = tweet_followers)
+                    tweet = Tweet(tweet_id = tweet_id, user=tweet_user, date_added = tweet_store_date, date_published = tweet_date, followers = tweet_followers, text=tweet_text )
                     tweet.save()
 
 
@@ -223,6 +228,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                 else:
 
                     tweet = tweet_list[0]
+                    tweet.tweet_text= tweet_text
                     tweet.tweet_id = tweet_id
                     tweet.user = tweet_user 
                     tweet.date_added = tweet_store_date
@@ -261,74 +267,83 @@ def explore(accounts_db, keyword_db, site_db, tweet_number):
     site_db             -- Sites database name
     tweet_db            -- Tweet database name
     """
-    while True:
-        print "+----------------------------------------------------------+"
-        print "| Retrieving data from Database ...                        |"
-        print "+----------------------------------------------------------+"
+    print "+----------------------------------------------------------+"
+    print "| Retrieving data from Database ...                        |"
+    print "+----------------------------------------------------------+"
 
-        # Connects to Site Database
-
-
-        monitoring_sites = []
-        msites = Msite.objects.all()
-        # Retrieve, store, and print monitoring site information
-        print "\nMonitoring Sites\n\t%-25s%-40s" % ("Name", "URL")
-        for site in msites:
-            # monitoring_sites is now in form [['Name', 'URL'], ...]
-            monitoring_sites.append([site.name, site.url])
-            print("\t%-25s%-40s" % (site.name, site.url))
-
-        foreign_sites = []
-        # Retrieve, store, and print foreign site information
-        fsites = Fsite.objects.all()
-        print "\nForeign Sites\n\t%-25s%-40s" % ("Name", "URL")
-        for site in fsites:
-            # foreign_sites is now in form ['URL', ...]
-            foreign_sites.append(site.url)
-            print("\t%-25s%-40s" % (site.name, site.url))
+    # Connects to Site Database
 
 
-        # Retrieve all stored keywords
-        keywords = E_keyword.objects.all()
-        keyword_list = []
+    monitoring_sites = []
+    msites = Msite.objects.all()
+    # Retrieve, store, and print monitoring site information
+    print "\nMonitoring Sites\n\t%-25s%-40s" % ("Name", "URL")
+    for site in msites:
+        # monitoring_sites is now in form [['Name', 'URL'], ...]
+        monitoring_sites.append([site.name, site.url])
+        print("\t%-25s%-40s" % (site.name, site.url))
 
-        # Print all the keywords
-        print "\nKeywords:"
+    foreign_sites = []
+    # Retrieve, store, and print foreign site information
+    fsites = Fsite.objects.all()
+    print "\nForeign Sites\n\t%-25s%-40s" % ("Name", "URL")
+    for site in fsites:
+        # foreign_sites is now in form ['URL', ...]
+        foreign_sites.append(site.url)
+        print("\t%-25s%-40s" % (site.name, site.url))
 
-        for key in keywords:
-            keyword_list.append(str(key.keyword))
-            print "\t%s" % key.keyword
 
-        print "\n"
+    # Retrieve all stored keywords
+    keywords = E_keyword.objects.all()
+    keyword_list = []
 
-        print "+----------------------------------------------------------+"
-        print "| Populating Accounts ...                                  |"
-        print "+----------------------------------------------------------+"
+    # Print all the keywords
+    print "\nKeywords:"
 
-        # Retrieve all stored Accounts
-        accounts = Taccount.objects.all()
-        accounts_list = []
+    for key in keywords:
+        keyword_list.append(str(key.keyword))
+        print "\t%s" % key.keyword
 
+    print "\n"
+
+    print "+----------------------------------------------------------+"
+    print "| Populating Accounts ...                                  |"
+    print "+----------------------------------------------------------+"
+
+    # Retrieve all stored Accounts
+    accounts = Taccount.objects.all()
+    accounts_list = []
 
 
 
-        # Print all the Accounts
-        print "\nTwitter Accounts:"
-        for account in accounts:
-            accounts_list.append(str(account.account))
-            print "\t%s" % account.account
+
+    # Print all the Accounts
+    print "\nTwitter Accounts:"
+    for account in accounts:
+        accounts_list.append(str(account.account))
+        print "\t%s" % account.account
 
 
-        print "\n"
+    print "\n"
 
-        print "+----------------------------------------------------------+"
-        print "| Evaluating Tweets ...                                    |"
-        print "+----------------------------------------------------------+"
-        # Parse the articles in all sites
-        parse_tweets(accounts_list, keyword_list, foreign_sites, tweet_number)
+    print "+----------------------------------------------------------+"
+    print "| Evaluating Tweets ...                                    |"
+    print "+----------------------------------------------------------+"
+    # Parse the articles in all sites
+    parse_tweets(accounts_list, keyword_list, foreign_sites, tweet_number)
 
 
 if __name__ == '__main__':
     
     #parse_tweets(['CNN', 'TIME'], ['obama','hollywood', 'not', 'fire', 'president', 'activities'], ['http://cnn.com/', 'http://ti.me'], 'tweets')
-    explore('taccounts', 'keywords', 'sites', 1000)
+    while 1:
+        start = timeit.default_timer()
+        if (FROM_START == True ):
+            explore('taccounts', 'keywords', 'sites', INIT_TWEET_COUNT)
+            FROM_START = False
+        else:
+            explore('taccounts', 'keywords', 'sites', ITER_TWEET_COUNT)
+
+        end = timeit.default_timer()
+        delta_time = end - start
+        time.sleep(max(MIN_ITERATION_TIME-delta_time, 0))
