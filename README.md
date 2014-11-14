@@ -38,6 +38,9 @@ If any problem occurs, please contact one of us on the email address listed abov
 * Execute on terminal `python Frontend/manage.py runserver`
 * Ctr-C to stop the server
 
+Go to http://127.0.0.1:8000/admin
+
+
 __Login Credentials:__
 * User: acme
 * Password: cscc01
