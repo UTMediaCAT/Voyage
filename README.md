@@ -1,3 +1,8 @@
+##Voyage
+Voyage currently has 2 components:
+* __Web Server__ is capable of editing and displaying all the stored data as well as scopes you will provide to _Explorer_, through your favorite browser. 
+* __Explorer__ searches the web using scopes given through to the _Web Server_ and goes for exploring for you. It will automatically store all relevant informations found on the way, so that you can show all the loot through _Web Server_.
+
 ##Team ACME
 
 Username  |Name | Email
@@ -13,63 +18,43 @@ ryanbelt | Ryan Pan | ryanbelt1993129@hotmail.com
 * [Python 2.7.x](https://www.python.org/downloads/release/python-278/) 
 
 ##Installation
-Download, extract the `master` then execute on terminal `python setup.py` 
+####Method 1: Through tkinter
+Download, extract the `master` then execute on terminal `python gui.py`
+click `Install` in the pop up GUI.
+Done!
 
-click `install api` in the pop up GUI. The following will be installed by this script:
-* pip
-* PyMongo 2.7.2
-* Django 1.7
-* Newspaper 0.0.8
-* dateutil 1.5
-* Tweepy 2.3.0
-* tld 0.7.2
+####Method 2: Through terminal
+Download, extract the `master` then execute on terminal `python setup.py` 
+Done!
 
 If any problem occurs, please contact one of us on the email address listed above.
-##Usage
-Download, extract the `master` then execute on terminal `python setup.py` 
 
-click `OpenServer` in the pop up GUI and then click `open website`
-```
-add_monitor_site(url, name, influence)
-add_foreign_site(url, name, influence)
-get_sites_by_value(field, value)
-get_all_sites()
-get_monitor_sites()
-get_foreign_sites()
-set_site_by_value(url, field, new_value)
-del_site(url)
-del_sites(urls=None)
-add_keyword(keyword)
-get_all_keywords()
-del_keyword(keyword)
-del_all_keywords()
-```
-After configuration and modification, start exploring by:
-```
-run_article_explorer()
-run_twitter_explorer() (coming soon)
+##Usage: Run Web Server
+####Method 1: Through tkinter
+Execute on terminal `python gui.py` then click the button(s) to proceed
 
-```
-Exploring articles may take a lot of time and resource depending on the site of the populated site.
-For testing purpose, keep only 1 monitoring site with size < 500
+####Method 2: Through terminal
+Execute on terminal `python Frontend/manage.py runserver`
 
-For more information, view `src/execute.py`
+##Usage: Explorers
+####Articles
+* To Check Status: `python src/executer.py article status`
+* To Run: `python src/executer.py article run`
+* To Pause: `python src/executer.py article pause`
+* To Stop: `python src/executer.py article stop`
+
+####Tweets:
+* To Check Status: `python src/executer.py twitter status`
+* To Run: `python src/executer.py twitter run`
+* To Pause: `python src/executer.py twitter pause`
+* To Stop: `python src/executer.py twitter stop`
 
 ##Task Board
-
 Our Task Board and Assignment progress is on [Trello](https://trello.com/b/Y08lMCXy/cscc01-acme)
 
 USER: **acmeteam4@gmail.com** Password: **acmeteam4**
 
 In My Boards click **CSCC01-ACME** to see the progress
-
-##Database 
-
-All our articles and tweets are stored on [MongoDB](https://mongolab.com)
-
-USER: **acmeteam4** Password: **acmeteam4**
-
-click **CSCC01-ACME** to access the database
 
 ##Website
 
