@@ -38,6 +38,10 @@ If any problem occurs, please contact one of us on the email address listed abov
 * Execute on terminal `python Frontend/manage.py runserver`
 * Ctr-C to stop the server
 
+__Login Credentials:__
+* User: acme
+* Password: cscc01
+
 ##Usage: Explorers
 ####Articles
 * To Check Status: `python src/executer.py article status`
