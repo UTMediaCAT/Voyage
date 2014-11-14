@@ -218,6 +218,9 @@ def status_output(explorer):
 
 
 if __name__ == '__main__':
+    path = os.path.abspath(os.path.dirname(__file__))
+    os.chdir(path)
+    
     # To be able to run the script with arguments
     if len(sys.argv) == 3:
 
