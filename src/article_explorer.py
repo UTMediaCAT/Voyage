@@ -362,10 +362,17 @@ def comm_read():
 
 
 def comm_init():
+    """ (None) -> None
+    Initialize The communication file
+    """
     comm_write('RR')
 
 
 def check_command():
+    """ (None) -> None
+    Check the communication file for any commands given.
+    Execute according to the commands.
+    """
     msg = comm_read()
 
     if msg[0] == 'W':
