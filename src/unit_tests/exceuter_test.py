@@ -1,7 +1,9 @@
 __author__ = 'ryan'
 
 import os,sys
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(path)
+os.chdir(path)
 import unittest
 import executer as ex
 EXP="article"
