@@ -1,4 +1,5 @@
 {% extends "admin/base.html" %}
+{% load explorer_tags %}
 
 {% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
@@ -6,29 +7,45 @@
 <h1 id="site-name" align="center"><a href="{% url 'admin:index' %}">Voyage</a></h1>
 {% endblock %}
 
-{% block nav-global %}
-<button type="button">Click Me!</button>
-{% endblock %}
-
-
 {# Footer links (left side) #}
 {% block footer_links %}
-	<a href="/docs/" class="icon"><i class="icon-question-sign"></i>Documentation</a>
+    <a href="/docs/" class="icon"><i class="icon-question-sign"></i>Documentation</a>
 {% endblock %}
 
 {# Additional header content like notifications or language switcher #}
 {% block header_content %}
     {{ block.super }}
-    <div class="header-content">
+    <div class="header-content" align="center">
         <!-- First icon column -->
         <div class="header-column icon">
-            <i class="icon-home"></i><br>
-            <i class="icon-cog"></i>
+            <i class="icon-globe"></i>
         </div>
+
         <div class="header-column" style="margin-right: 20px">
-            <a href="/" class="grey">Front-end</a><br>
-            <a href="" class="grey">One more link</a>
+            {% get_article_run_status %}
         </div>
+
+        <form method="get" action={{ request.get_full_path }}>
+            <input type="submit" value="Run" name="acommand">
+            <input type="submit" value="Pause" name="acommand">
+            <input type="submit" value="Stop" name="acommand">
+        </form>
+    </div>
+    <div class="header-content" align="center">
+        <!-- First icon column -->
+        <div class="header-column icon">
+            <i class="icon-plane"></i>
+        </div>
+
+        <div class="header-column" style="margin-right: 20px">
+            {% get_article_run_status %}
+        </div>
+
+        <form method="get" action={{ request.get_full_path }}>
+            <input type="submit" value="Run" name="tcommand">
+            <input type="submit" value="Pause" name="tcommand">
+            <input type="submit" value="Stop" name="tcommand">
+        </form>
     </div>
 {% endblock %}
 
