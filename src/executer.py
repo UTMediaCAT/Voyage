@@ -1,234 +1,236 @@
-import pymongo
-import db_manager as db
-import article_explorer
-import twitter_explorer
+#!/usr/bin/python
+# Backend script to communicate with explorers.
+# This script allows running, pausing, stopping explorers which are already running.
+#
+# Comm file format: (Status)(Command)
+# Status Type: (R)unning, (P)aused, (S)topped, (W)aiting
+# Command Type: (R)esume, (P)ause, (S)top/exit
+#
+# This script also supports executing using arguments. Ex. 'python executer.py article status'
 
-SITES_DB = "sites"
-KEYWORDS_DB = "keywords"
-ARTICLES_DB = "articles"
+import sys
+from subprocess import Popen
+import time
+import os
+
+# Global variables for settings
+COMM_FILE = '_comm.stream'
+RETRY_COUNT = 10
+RETRY_DELTA = 1
 
 
-def add_site(url, name, is_monitor, influence):
-    """(str, str, bool, int) -> None
-    Connect to sites collection and add a new site with url as key
+class InputError(Exception):
+    """ (None) -> None
+    Custom Exception to raise when input is wrong
     """
-    db.connect(SITES_DB)
-    try:
-        db.add_document({"_id": url,
-                        "name": name,
-                        "is_monitor": is_monitor,
-                        "influence": influence})
-        print url + " added."
-
-    # if url already exists
-    except pymongo.errors.DuplicateKeyError:
-        print url + " already exists."
-
-    db.close_connection()
-
-
-def add_monitor_site(url, name, influence):
-    """(str, str, int) -> None
-    Connect to sites collection and add a new monitor site with url as key
-    """
-    add_site(url, name, True, influence)
-
-
-def add_foreign_site(url, name, influence):
-    """(str, str, int) -> None
-    Connect to sites collection and add a new foreign site with url as key
-    """
-    add_site(url, name, False, influence)
-
-
-def get_all_sites():
-    """(None) -> list of dict of objects
-    Connect to sites collection and returns all the sites stored in the database
-    """
-    db.connect(SITES_DB)
-    sites = db.get_all_documents()
-    db.close_connection()
-    return sites
-
-
-def get_monitor_sites():
-    """(None) -> list of dict of objects
-    Connect to sites collection and returns all the monitor sites stored in the database
-    """
-    db.connect(SITES_DB)
-    sites = db.get_documents("is_monitor", True)
-    db.close_connection()
-    return sites
-
-
-def get_foreign_sites():
-    """(None) -> list of dict of objects
-    Connect to sites collection and returns all the foreign sites stored in the database
-    """
-    db.connect(SITES_DB)
-    sites = db.get_documents("is_monitor", False)
-    db.close_connection()
-    return sites
-
-
-def get_sites_by_value(field, value):
-    """(str, object) -> list of dict of objects
-    Connect to sites collection and returns all the sites stored in the
-    database that match the field and value query
-    Field       : Value
-    "_id"       : str
-    "name"      : str
-    "is_monitor": bool
-    "influence" : int
-    """
-    db.connect(SITES_DB)
-    sites = db.get_documents(field, value)
-    db.close_connection()
-    return sites
-
-
-def set_site_by_value(url, field, new_value):
-    """(str, str, object) -> None
-    Connect to sites collection and changes finds the site with id as url
-    then changes the field with the new_value
-    Field       : Value
-    "_id"       : str
-    "name"      : str
-    "is_monitor": bool
-    "influence" : int
-    """
-    db.connect(SITES_DB)
-    db.set_field_value(url, field, new_value)
-    print field + " of " + url + " changed to " + str(new_value)
-    db.close_connection()
-
-
-def del_site(url):
-    """(str) -> None
-    Connect to sites collection and removes a site specified by url
-    """
-    db.connect(SITES_DB)
-    db.del_document(url)
-    db.close_connection()
-    print url + " removed."
-
-
-def del_sites(urls=None):
-    """(list of str) -> None
-    Connect to sites collection and removes all sites specified by url in the list
-    If no parameter passed then all sites are removed from the collection
-    """
-    db.connect(SITES_DB)
-    # if urls is not None
-    if urls:
-        for url in urls:
-            db.del_document(url)
-            print url + " removed."
-    # else empty sites db
-    else:
-        db.del_all_documents()
-        print "All urls removed."
-    db.close_connection()
-
-
-def add_keyword(keyword):
-    """(str) -> None
-    Connect to keyword collection and add a new keyword to the list
-    """
-    # if keyword already exists
-    if keyword in get_all_keywords():
-        print "keyword " + keyword + " already exists."
-    # else add the keyword
-    else:
-        db.connect(KEYWORDS_DB)
-        db.add_element(keyword)
-        print "keyword " + keyword + " added."
-        db.close_connection()
-
-
-def get_all_keywords():
-    """(None) -> list of str
-    Connect to keyword collection return a list of keywords
-    """
-    db.connect(KEYWORDS_DB)
-    keywords = db.get_all_elements()
-    db.close_connection()
-    return keywords
-
-
-def del_keyword(keyword):
-    """(str) -> None
-    Connect to keyword collection and delete keyword from the list
-    """
-    # if keyword does not exist
-    if keyword not in get_all_keywords():
-        print "keyword " + keyword + " does not exist."
-    # else remove the keyword
-    else:
-        db.connect(KEYWORDS_DB)
-        db.del_element(keyword)
-        print "keyword " + keyword + " deleted."
-        db.close_connection()
-
-
-def del_all_keywords():
-    """(None) -> None
-    Connect to keyword collection and empty the list of keywords
-    """
-    db.connect(KEYWORDS_DB)
-    db.del_all_elements()
-    print "All keywords deleted."
-    db.close_connection()
-
-
-def run_article_explorer():
-    article_explorer.explore(KEYWORDS_DB, SITES_DB, ARTICLES_DB)
-
-
-def run_twitter_explorer():
     pass
+
+class TimeoutError(Exception):
+    """ (None) -> None
+    Custom Exception to raise when timeout occurs when communicating with the stream
+    """
+    pass
+
+def raise_input_error():
+    """ (None) -> None
+    Raise InputError wtih the proper usage of this script
+    """
+    raise InputError("Usage: python executer.py [article|twitter] [status|run|pause|stop]")
+
+
+def raise_timeout_error():
+    """ (None) -> None
+    Raise TimeoutError with message
+    """
+    raise TimeoutError("Could not access the communication stream file")
+
+
+def comm_read(explorer):
+    """ (Str) -> Str
+    Open, read and return the content on the comunication stream file
+    Raise TimeoutError if reading was not accomplished within the time limit
+    """
+    for i in range(RETRY_COUNT):
+        try:
+            comm = open(explorer + COMM_FILE, 'r')
+            msg = comm.read()
+            comm.close()
+            return msg
+        except:
+            time.sleep(RETRY_DELTA)
+    raise_timeout_error()
+
+
+def comm_write(explorer, text):
+    """ (Str, Str) -> None
+    Open, read and write on the comunication stream file
+    Raise TimeoutError if writing was not accomplished within the time limit
+    """
+    for i in range(RETRY_COUNT):
+        try:
+            comm = open(explorer + COMM_FILE, 'w')
+            comm.write(text)
+            comm.close()
+            return None
+        except:
+            time.sleep(RETRY_DELTA)
+    raise_timeout_error()
+
+
+def get_status(explorer):
+    """ (Str) -> Str
+    Extract and return the status section of the communication stream
+    """
+    return comm_read(explorer_format(explorer))[0]
+
+
+def explorer_format(arg1):
+    """ (Str) -> Str
+    Formats and checks the explorer input
+    """
+
+    if arg1.lower() == 'article':
+        return 'article'
+    elif arg1.lower() == 'twitter':
+        return 'twitter'
+    return None
+
+
+def command_format(arg2):
+    """ (Str) -> Str
+    Formats and checks the command input
+    """
+
+    if arg2.lower() == 'status':
+        return 'status'
+    elif arg2.lower() == 'run':
+        return 'run'
+    elif arg2.lower() == 'pause':
+        return 'pause'
+    elif arg2.lower() == 'stop':
+        return 'stop'
+    return None 
+
+
+def status_format(raw_status):
+    """ (Str) -> Str
+    Formats and checks the status output
+    """
+
+    if raw_status == 'R':
+        return 'Running'
+    elif raw_status == 'P':
+        return 'Paused'
+    elif raw_status == 'S':
+        return 'Stopped'
+    elif raw_status == 'W':
+        return 'Waiting'
+    return None
+
+
+def input_format(arg1, arg2):
+    """ (Str, Str) -> Str, Str
+    Formats and checks the inputs
+    """
+    exp = explorer_format(arg1)
+    com = command_format(arg2)
+    if not exp or not com:
+        raise_input_error()
+    return exp, com
+
+
+def name_format(explorer):
+    """ (Str) -> Str
+    Formats and adds ' Explorer' after the explorer
+    """
+    return explorer[0].upper() + explorer[1:] + ' Explorer'
+
+
+def run(explorer):
+    """ (Str) -> Str
+    Run explorer depending on the status and return it's status
+    """
+
+    status = status_format(get_status(explorer))
+    name = name_format(explorer)
+
+    if status == 'Waiting':
+        return format('%s - Last Command Not Processed Yet' % name)
+    elif status == 'Paused':
+        comm_write(explorer, 'WR')
+        return format('Run: %s - Resuming' % name)
+    elif status == 'Stopped':
+        Popen(['python', os.path.abspath(os.path.dirname(__file__)) + '/' + explorer.lower() + '_explorer.py'],
+              cwd=os.path.abspath(os.path.dirname(__file__)))
+        return format('Run: %s - Started Running' % name)
+    elif status == 'Running':
+        return format('Run: %s - Already Running' % name)
+
+
+def pause(explorer):
+    """ (Str) -> Str
+    Pause explorer depending on the status and return it's status
+    """
+
+    status = status_format(get_status(explorer))
+    name = name_format(explorer)
+
+    if status == 'Waiting':
+        return format('%s - Last Command Not Processed Yet' % name)
+    elif status == 'Paused':
+        return format('Pause: %s - Already in Pause' % name)
+    elif status == 'Stopped':
+        return format('Pause: %s - Cannot pause non-Started Instance' % name)
+    elif status == 'Running':
+        comm_write(explorer, 'WP')
+        return format('Pause: %s - Pausing' % name)
+
+
+def stop(explorer):
+    """ (Str) -> Str
+    Stop explorer depending on the status and return it's status
+    """
+
+    status = status_format(get_status(explorer))
+    name = name_format(explorer)
+
+    if status == 'Waiting':
+        return format('%s - Last Command Not Processed Yet' % name)
+    elif status == 'Paused':
+        comm_write(explorer, 'WS')
+        return format('Stop: %s - Stopping Paused Explorer' % name)
+    elif status == 'Stopped':
+        return format('Stop: %s - Cannot Stop non-Started Explorer' % name)
+    elif status == 'Running':
+        comm_write(explorer, 'WS')
+        return format('Stop: %s - Stopping' % name)
+
+
+def status_output(explorer):
+    """ (Str, Str) -> Str
+    Checks and returns explorer's status
+    """
+    tmp_exp = explorer_format(explorer)
+    status = status_format(get_status(tmp_exp))
+    name = name_format(tmp_exp)
+
+    return format('%s - %s' % (name, status))
+
 
 if __name__ == '__main__':
-    #add_monitor_site("https://news.google.com/", "Google News", 10)
-    # add_site("http://cnn.com", "CNN", True, 2)
-    # add_site("http://nytimes.com", "The New York Times", True, 2)
-    # add_site("http://time.com", "TIME", True, 2)
-    # add_site("http://aljazeera.com/", "Al Jazeera", False, 2)
-    # add_site("http://ynetnews.com", "Ynetnews", False, 2)
-    # set_site_by_value("http://cnn.com", "influence", 3)
-    # del_site("https://news.google.com/")
-    # #del_sites()     # Removes all sites in the collection
-    #
-    # print "\n"
-    # for site in get_all_sites():
-    #     print site
-    #
-    # print "\n"
-    # for site in get_monitor_sites():
-    #     print site
-    #
-    # print "\n"
-    # for site in get_foreign_sites():
-    #     print site
-    #
-    # print "\n"
-    # for site in get_sites_by_value("influence", 2):
-    #     print site
-    #
-    # add_keyword("Canada")
-    #
-    # print "\n"
-    # for keyword in get_all_keywords():
-    #     print keyword
-    #
-    # print "\n"
-    # del_site("http://cnn.com")
-    # del_site("http://nytimes.com")
-    #
-    # add_site("http://cnn.com", "CNN", False, 2)
-    # add_site("http://nytimes.com", "The New York Times", False, 2)
-    #
-    #run_article_explorer()
+    # To be able to run the script with arguments
+    if len(sys.argv) == 3:
 
+        exp, com = input_format(sys.argv[1], sys.argv[2])
 
-    pass
+        if com == 'status':
+            print status_output(exp)
+
+        elif com == 'run':
+            print run(exp)
+
+        elif com == 'pause':
+            print pause(exp)
+
+        elif com == 'stop':
+            print stop(exp)
