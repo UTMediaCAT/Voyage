@@ -8,7 +8,7 @@ import unittest
 import executer as ex
 EXP="article"
 
-class ExecuterTest (unittest.TestCase):
+class TestExecuter (unittest.TestCase):
     def test_run(self):
         ex.comm_write(EXP,"RR")
         self.assertEqual(format('Run: %s - Already Running' % ex.name_format(EXP)),ex.run(EXP))
