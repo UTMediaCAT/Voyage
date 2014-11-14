@@ -28,3 +28,23 @@ def pause_article_explorer():
 def stop_article_explorer():
     os.chdir(path)
     executer.stop("article")
+
+@register.simple_tag
+def get_twitter_run_status():
+    os.chdir(path)
+    return executer.status_output("twitter")
+
+@register.simple_tag
+def run_twitter_explorer():
+    os.chdir(path)
+    executer.run("twitter")
+
+@register.simple_tag
+def pause_twitter_explorer():
+    os.chdir(path)
+    executer.pause("twitter")
+
+@register.simple_tag
+def stop_twitter_explorer():
+    os.chdir(path)
+    executer.stop("twitter")

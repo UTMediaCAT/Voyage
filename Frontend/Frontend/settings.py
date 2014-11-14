@@ -101,6 +101,5 @@ SUIT_CONFIG = {
         {'label': 'Data', 'icon':'icon-book', 'models': ('articles.article', 'tweets.tweet')},
         {'label': 'Settings', 'icon':'icon-cog', 'models': ('auth.user', 'auth.group')},
         {'label': 'Authorization', 'icon':'icon-lock', 'models': ('auth.user', 'auth.group')},
-        {'label': 'Run', 'url': '../articles/', 'icon':'icon-glass'},
     )
 }
