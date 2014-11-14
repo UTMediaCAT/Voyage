@@ -171,7 +171,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
 
                     else:
                         
-                        article = articel_list[0]
+                        article = article_list[0]
                         article.title = title
                         article.url = url 
                         article.date_added = today
