@@ -1,25 +1,55 @@
 #!/usr/bin/python
+# Backend script to communicate with explorers.
+# This script allows running, pausing, stopping explorers which are already running.
+#
+# Comm file format: (Status)(Command)
+# Status Type: (R)unning, (P)aused, (S)topped, (W)aiting
+# Command Type: (R)esume, (P)ause, (S)top/exit
+#
+# This script also supports executing using arguments. Ex. 'python executer.py article status'
 
 import sys
 from subprocess import Popen
 import time
 import os
 
-# Comm file format: (Status)(Command)
-# Status Type: (R)unning, (P)aused, (S)topped, (W)aiting
-# Command Type: (R)esume, (P)ause, (S)top/exit
-
+# Global variables for settings
 COMM_FILE = '_comm.stream'
 RETRY_COUNT = 10
 RETRY_DELTA = 1
 
+
 class InputError(Exception):
+    """ (None) -> None
+    Custom Exception to raise when input is wrong
+    """
+    pass
+
+class TimeoutError(Exception):
+    """ (None) -> None
+    Custom Exception to raise when timeout occurs when communicating with the stream
+    """
     pass
 
 def raise_input_error():
+    """ (None) -> None
+    Raise InputError wtih the proper usage of this script
+    """
     raise InputError("Usage: python executer.py [article|twitter] [status|run|pause|stop]")
 
+
+def raise_timeout_error():
+    """ (None) -> None
+    Raise TimeoutError with message
+    """
+    raise TimeoutError("Could not access the communication stream file")
+
+
 def comm_read(explorer):
+    """ (Str) -> Str
+    Open, read and return the content on the comunication stream file
+    Raise TimeoutError if reading was not accomplished within the time limit
+    """
     for i in range(RETRY_COUNT):
         try:
             comm = open(explorer + COMM_FILE, 'r')
@@ -28,8 +58,14 @@ def comm_read(explorer):
             return msg
         except:
             time.sleep(RETRY_DELTA)
+    raise_timeout_error()
+
 
 def comm_write(explorer, text):
+    """ (Str, Str) -> None
+    Open, read and write on the comunication stream file
+    Raise TimeoutError if writing was not accomplished within the time limit
+    """
     for i in range(RETRY_COUNT):
         try:
             comm = open(explorer + COMM_FILE, 'w')
@@ -38,11 +74,20 @@ def comm_write(explorer, text):
             return None
         except:
             time.sleep(RETRY_DELTA)
+    raise_timeout_error()
+
 
 def get_status(explorer):
+    """ (Str) -> Str
+    Extract and return the status section of the communication stream
+    """
     return comm_read(explorer_format(explorer))[0]
 
+
 def explorer_format(arg1):
+    """ (Str) -> Str
+    Formats and checks the explorer input
+    """
 
     if arg1.lower() == 'article':
         return 'article'
@@ -50,7 +95,11 @@ def explorer_format(arg1):
         return 'twitter'
     return None
 
+
 def command_format(arg2):
+    """ (Str) -> Str
+    Formats and checks the command input
+    """
 
     if arg2.lower() == 'status':
         return 'status'
@@ -62,41 +111,72 @@ def command_format(arg2):
         return 'stop'
     return None 
 
-def status_format(status):
-    if status == 'Waiting':
-        return ('%s: %s - Last Command Not Processed Yet' % 
-           (command[0].upper() + command[1:], name))
-        sys.exit(0)
-    elif status == 'R':
+
+def status_format(raw_status):
+    """ (Str) -> Str
+    Formats and checks the status output
+    """
+
+    if raw_status == 'R':
         return 'Running'
-    elif status == 'P':
+    elif raw_status == 'P':
         return 'Paused'
-    elif status == 'S':
+    elif raw_status == 'S':
         return 'Stopped'
-    elif status == 'W':
+    elif raw_status == 'W':
         return 'Waiting'
     return None
 
-def run(status, explorer, name):
+
+def input_format(arg1, arg2):
+    """ (Str, Str) -> Str, Str
+    Formats and checks the inputs
+    """
+    exp = explorer_format(arg1)
+    com = command_format(arg2)
+    if not exp or not com:
+        raise_input_error()
+    return exp, com
+
+
+def name_format(explorer):
+    """ (Str) -> Str
+    Formats and adds ' Explorer' after the explorer
+    """
+    return explorer[0].upper() + explorer[1:] + ' Explorer'
+
+
+def run(explorer):
+    """ (Str) -> Str
+    Run explorer depending on the status and return it's status
+    """
+
+    status = status_format(get_status(explorer))
+    name = name_format(explorer)
+
     if status == 'Waiting':
-        return ('%s - Last Command Not Processed Yet' % 
-           (name))
-        sys.exit(0)
+        return format('%s - Last Command Not Processed Yet' % name)
     elif status == 'Paused':
         comm_write(explorer, 'WR')
         return format('Run: %s - Resuming' % name)
     elif status == 'Stopped':
-        a = Popen(['python', os.path.abspath(os.path.dirname( __file__ )) + '/' + explorer.lower() + '_explorer.py'], 
-            cwd=os.path.abspath(os.path.dirname( __file__ )))
+        Popen(['python', os.path.abspath(os.path.dirname(__file__)) + '/' + explorer.lower() + '_explorer.py'],
+              cwd=os.path.abspath(os.path.dirname(__file__)))
         return format('Run: %s - Started Running' % name)
     elif status == 'Running':
         return format('Run: %s - Already Running' % name)
 
-def pause(status, explorer, name):
+
+def pause(explorer):
+    """ (Str) -> Str
+    Pause explorer depending on the status and return it's status
+    """
+
+    status = status_format(get_status(explorer))
+    name = name_format(explorer)
+
     if status == 'Waiting':
-        return ('%s - Last Command Not Processed Yet' % 
-           (name))
-        sys.exit(0)
+        return format('%s - Last Command Not Processed Yet' % name)
     elif status == 'Paused':
         return format('Pause: %s - Already in Pause' % name)
     elif status == 'Stopped':
@@ -105,11 +185,17 @@ def pause(status, explorer, name):
         comm_write(explorer, 'WP')
         return format('Pause: %s - Pausing' % name)
 
-def stop(status, explorer, name):
+
+def stop(explorer):
+    """ (Str) -> Str
+    Stop explorer depending on the status and return it's status
+    """
+
+    status = status_format(get_status(explorer))
+    name = name_format(explorer)
+
     if status == 'Waiting':
-        return ('%s - Last Command Not Processed Yet' % 
-           (name))
-        sys.exit(0)
+        return format('%s - Last Command Not Processed Yet' % name)
     elif status == 'Paused':
         comm_write(explorer, 'WS')
         return format('Stop: %s - Stopping Paused Explorer' % name)
@@ -119,34 +205,32 @@ def stop(status, explorer, name):
         comm_write(explorer, 'WS')
         return format('Stop: %s - Stopping' % name)
 
-def status_output(status, explorer, name):
+
+def status_output(explorer):
+    """ (Str, Str) -> Str
+    Checks and returns explorer's status
+    """
+    tmp_exp = explorer_format(explorer)
+    status = status_format(get_status(tmp_exp))
+    name = name_format(tmp_exp)
+
     return format('%s - %s' % (name, status))
 
+
 if __name__ == '__main__':
+    # To be able to run the script with arguments
     if len(sys.argv) == 3:
 
-        explorer = explorer_format(sys.argv[1])
-        command = command_format(sys.argv[2])
+        exp, com = input_format(sys.argv[1], sys.argv[2])
 
-        if not explorer or not command:
-            raise_input_error()
+        if com == 'status':
+            print status_output(exp)
 
-        s = comm_read(explorer)
-        name = explorer[0].upper() + explorer[1:] + ' Explorer'
+        elif com == 'run':
+            print run(exp)
 
-        status = status_format(get_status(explorer))
+        elif com == 'pause':
+            print pause(exp)
 
-        if not status:
-            raise_input_error()
-
-        if command == 'status':
-            print status_output(status, explorer, name)
-
-        elif command == 'run':
-            print run(status, explorer, name)
-
-        elif command == 'pause':
-            print pause(status, explorer, name)
-
-        elif command == 'stop':
-            print stop(status, explorer, name)
+        elif com == 'stop':
+            print stop(exp)
