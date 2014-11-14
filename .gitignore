@@ -17,3 +17,6 @@ lib64
 
 # Pycharm
 .idea
+
+# Database
+*.sqlite3
