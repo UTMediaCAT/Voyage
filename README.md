@@ -29,12 +29,14 @@ Done!
 
 If any problem occurs, please contact one of us on the email address listed above.
 
-##Usage: Run Web Server
+##Usage: Web Server
 ####Method 1: Through tkinter
-Execute on terminal `python gui.py` then click the button(s) to proceed
+Execute on terminal `python gui.py` then click `Run Server`
+`Stop Server` to stop the server
 
 ####Method 2: Through terminal
 Execute on terminal `python Frontend/manage.py runserver`
+Ctr-C to stop the server
 
 ##Usage: Explorers
 ####Articles
