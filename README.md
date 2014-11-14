@@ -19,24 +19,24 @@ ryanbelt | Ryan Pan | ryanbelt1993129@hotmail.com
 
 ##Installation
 ####Method 1: Through tkinter
-Download, extract the `master` then execute on terminal `python gui.py`
-click `Install` in the pop up GUI.
-Done!
+* Download, extract the `master` then execute on terminal `python gui.py`
+* click `Install` in the pop up GUI.
+* Done!
 
 ####Method 2: Through terminal
-Download, extract the `master` then execute on terminal `python setup.py` 
-Done!
+* Download, extract the `master` then execute on terminal `python setup.py` 
+* Done!
 
 If any problem occurs, please contact one of us on the email address listed above.
 
 ##Usage: Web Server
 ####Method 1: Through tkinter
-Execute on terminal `python gui.py` then click `Run Server`
-`Stop Server` to stop the server
+* Execute on terminal `python gui.py` then click `Run Server`
+* `Stop Server` to stop the server
 
 ####Method 2: Through terminal
-Execute on terminal `python Frontend/manage.py runserver`
-Ctr-C to stop the server
+* Execute on terminal `python Frontend/manage.py runserver`
+* Ctr-C to stop the server
 
 ##Usage: Explorers
 ####Articles
