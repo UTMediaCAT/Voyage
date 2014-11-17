@@ -83,7 +83,8 @@ def populate_sites(sites, is_from_start):
                                              memoize_articles=not is_from_start,
                                              keep_article_html=True,
                                              fetch_images=False,
-                                             language='en')))
+                                             language='en',
+                                             number_thread=1)))
         new_sites[s].append(sites[s][2])
         end_t = time.time()
         # report back the amount of articles found, and time it took
@@ -225,9 +226,13 @@ def get_sources(html, sites):
                 # If it matches even once, append the site to the list
                 matched_urls.append(url[6:-1])
         else:
-            for url in re.findall("href=[\"\'][^\"\']*?" + re.escape(site) + "[^\"\']*?[\"\']", html, re.IGNORECASE):
-                # If it matches even once, append the site to the list
-                matched_urls.append(url[6:-1])
+            for url in re.findall("href=[\"\'][^\"\']*?.*?[^\"\']*?[\"\']", html, re.IGNORECASE):
+                # Format the site to use only the domain name for searching
+                formatted_site = re.search("([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}",
+                                           site, re.IGNORECASE).group(0)
+                if formatted_site in url:
+                    # If it matches even once, append the site to the list
+                    matched_urls.append(url[6:-1])
     # Return the list
     return matched_urls
 
@@ -362,10 +367,17 @@ def comm_read():
 
 
 def comm_init():
+    """ (None) -> None
+    Initialize The communication file
+    """
     comm_write('RR')
 
 
 def check_command():
+    """ (None) -> None
+    Check the communication file for any commands given.
+    Execute according to the commands.
+    """
     msg = comm_read()
 
     if msg[0] == 'W':

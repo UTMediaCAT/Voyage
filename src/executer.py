@@ -13,6 +13,10 @@ from subprocess import Popen
 import time
 import os
 
+# Change current working directory to src/ folder
+path = os.path.abspath(os.path.dirname(__file__))
+os.chdir(path)
+
 # Global variables for settings
 COMM_FILE = '_comm.stream'
 RETRY_COUNT = 10
@@ -160,8 +164,9 @@ def run(explorer):
         comm_write(explorer, 'WR')
         return format('Run: %s - Resuming' % name)
     elif status == 'Stopped':
-        Popen(['python', os.path.abspath(os.path.dirname(__file__)) + '/' + explorer.lower() + '_explorer.py'],
-              cwd=os.path.abspath(os.path.dirname(__file__)))
+        print 'hi'
+        print os.path.abspath(os.path.dirname(__file__))
+        Popen(['python', explorer.lower() + '_explorer.py'])
         return format('Run: %s - Started Running' % name)
     elif status == 'Running':
         return format('Run: %s - Already Running' % name)
@@ -218,6 +223,7 @@ def status_output(explorer):
 
 
 if __name__ == '__main__':
+ 
     # To be able to run the script with arguments
     if len(sys.argv) == 3:
 
