@@ -16,10 +16,6 @@ def index(request):
     #     'latest_question_list': latest_article_list,
     # })
     # return HttpResponse(template.render(context))
-    
-    path = os.path.dirname(os.path.realpath(__file__))
-
-    #Popen(["python", path + "/jai.py"], cwd=path)
 
     context = {'latest_article_list': latest_article_list}
     return render(request, 'articles/index.html', context)
