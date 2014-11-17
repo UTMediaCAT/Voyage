@@ -12,6 +12,7 @@ class creat_crawl():
         crawl.write("cd $BASEDIR \n")
         crawl.write("python crawler.py -u "+url+"\n")
         crawl.write("cd ..\n")
+        crawl.write("mkdir -p warc\n")
         crawl.write("mv ./src/out.warc.gz ./warc/\n")
         crawl.write("cd ./warc \n")
         add_url=add_url.replace("http://","")
