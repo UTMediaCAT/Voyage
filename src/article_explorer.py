@@ -50,7 +50,7 @@ STORE_ALL_SOURCES = False       # False             - Stores all links within ar
 FROM_START = True               # True              - True: Populate all articles from start
 DATE_FORMAT = "%Y-%m-%dT%H:%M"  # "%Y-%m-%dT%H:%M"  - Universal date format for consistency
 
-MIN_ITERATION_TIME = 0
+MIN_ITERATION_TIME = 600
 
 # Used for commmunicating stream
 COMM_FILE = '_comm.stream'
@@ -70,9 +70,9 @@ def populate_sites(sites, is_from_start):
     new_sites = []
     
     # Populate each Sites, then print the amount of articles and time it took
-    print "\n\t%-25s%10s%10s" % ("Site", "Articles", "Time")
+    # print "\n\t%-25s%10s%10s" % ("Site", "Articles", "Time")
     for s in range(len(sites)):
-        print("\t%-24s" % (sites[s][0])),
+        # print("\t%-24s" % (sites[s][0])),
         # To count the time
         start_t = time.time()
         # Duplicate the name of the sites
@@ -88,7 +88,7 @@ def populate_sites(sites, is_from_start):
         new_sites[s].append(sites[s][2])
         end_t = time.time()
         # report back the amount of articles found, and time it took
-        print("%6i pgs%9is" % (new_sites[s][1].size(), end_t - start_t))
+        # print("%6i pgs%9is" % (new_sites[s][1].size(), end_t - start_t))
     # return the list
     return new_sites
 
@@ -108,17 +108,18 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
     # Collect today's date and time
     today = datetime.datetime.now().strftime(DATE_FORMAT)
 
-    print("\nStore All Sources: %s" % str(STORE_ALL_SOURCES))
+    # print("\nStore All Sources: %s" % str(STORE_ALL_SOURCES))
     # for each article in each sites, download and parse important data
     for site in populated_sites:
-        print "\n%s" % site[0]
+        # print "\n%s" % site[0]
         for art in site[1].articles:
             # Check for any new command on communication stream
             check_command()
 
             url = art.url
-            print "\n\tURL:      ", url
-            print "\tEvaluating ...\r",
+            # print "\n\tURL:      ", url
+            # print "\tEvaluating ...\r",
+            
             # Try to download and extract the useful data
             try:
                 art.download()
@@ -138,11 +139,11 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                 pub_date = get_pub_date(art)
 
                 # Print all data accordingly
-                print "\tTitle:    ", title
-                print "\tAuthor:   ", authors
-                print "\tDate:     ", pub_date
-                print "\tKeywords: ", keywords
-                print "\tSources:  ", sources
+                # print "\tTitle:    ", title
+                # print "\tAuthor:   ", authors
+                # print "\tDate:     ", pub_date
+                # print "\tKeywords: ", keywords
+                # print "\tSources:  ", sources
 
                 # If neither of keyword nor sources matched, then stop here and move on to next article
                 if not (keywords == [] and (sources == [] or STORE_ALL_SOURCES)):
@@ -168,7 +169,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
 
                         added += 1
 
-                        print "\tResult:    Match detected! Added to the database."
+                        # print "\tResult:    Match detected! Added to the database."
 
                     else:
                         
@@ -192,20 +193,20 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                             if not Source.objects.filter(source=source):
                                 article.source_set.create(source=source)
 
-                        print "\tResult:    Match detected! Article already in database. Updating."
+                        # print "\tResult:    Match detected! Article already in database. Updating."
                         updated += 1
 
                 else:
                     no_match += 1
-                    print "\tResult:    No Match Detected."
+                    # print "\tResult:    No Match Detected."
             else:
-                print "\tResult:    Failed to download!"
+                # print "\tResult:    Failed to download!"
                 failed += 1
             # Some stats to look at while running the script
-            print("\n\tStatistics\n\tAdded: %i | Updated: %i | No Match: %i | Failed: %i | Time Elapsed: %is" %
-                  (added, updated, no_match, failed, time.time() - start_t))
-            print "+--------------------------------------------------------------------+"
-    print("Finished parsing all sites!")
+    #         print("\n\tStatistics\n\tAdded: %i | Updated: %i | No Match: %i | Failed: %i | Time Elapsed: %is" %
+    #               (added, updated, no_match, failed, time.time() - start_t))
+    #         print "+--------------------------------------------------------------------+"
+    # print("Finished parsing all sites!")
 
 
 def get_sources(html, sites):
@@ -292,13 +293,13 @@ def explore(is_from_start):
   
     """
 
-    print "+----------------------------------------------------------+"
-    print "| Retrieving data from Database ...                        |"
-    print "+----------------------------------------------------------+"
+    # print "+----------------------------------------------------------+"
+    # print "| Retrieving data from Database ...                        |"
+    # print "+----------------------------------------------------------+"
 
     monitoring_sites = []
     # Retrieve, store, and print monitoring site information
-    print "\nMonitoring Sites\n\t%-25s%-25s%-10s" % ("Name", "URL", "Influence")
+    # print "\nMonitoring Sites\n\t%-25s%-25s%-10s" % ("Name", "URL", "Influence")
 
     msites = Msite.objects.all()
 
@@ -309,37 +310,37 @@ def explore(is_from_start):
 
     foreign_sites = []
     # Retrieve, store, and print foreign site information
-    print "\nForeign Sites\n\t%-40s%-25s" % ("Name", "URL")
+    # print "\nForeign Sites\n\t%-40s%-25s" % ("Name", "URL")
 
     fsites = Fsite.objects.all()
     for site in fsites:
         # foreign_sites is now in form ['URL', ...]
         foreign_sites.append(site.url)
-        print("\t%-25s%-40s" % (site.name, site.url))
+        # print("\t%-25s%-40s" % (site.name, site.url))
 
     # Retrieve all stored keywords
     keywords = E_keyword.objects.all()
     keyword_list = []
     # Print all the keywords
 
-    print "\nKeywords:"
+    # print "\nKeywords:"
     for key in keywords:
         keyword_list.append(str(key.keyword))
-        print "\t%s" % key.keyword
+        # print "\t%s" % key.keyword
 
-    print "\n"
+    # print "\n"
 
-    print "+----------------------------------------------------------+"
-    print "| Populating sites ...                                     |"
-    print "+----------------------------------------------------------+"
+    # print "+----------------------------------------------------------+"
+    # print "| Populating sites ...                                     |"
+    # print "+----------------------------------------------------------+"
     # Populate the monitoring sites with articles
     populated_sites = populate_sites(monitoring_sites, is_from_start)
 
-    print "\n"
+    # print "\n"
 
-    print "+----------------------------------------------------------+"
-    print "| Evaluating Articles ...                                  |"
-    print "+----------------------------------------------------------+"
+    # print "+----------------------------------------------------------+"
+    # print "| Evaluating Articles ...                                  |"
+    # print "+----------------------------------------------------------+"
     # Parse the articles in all sites
     parse_articles(populated_sites, keyword_list, foreign_sites)
 
@@ -408,6 +409,9 @@ if __name__ == '__main__':
     fs = FROM_START
 
     while 1:
+        # Check for any new command on communication stream
+        check_command()
+
         start = timeit.default_timer()
         
         if fs:
@@ -418,4 +422,6 @@ if __name__ == '__main__':
 
         end = timeit.default_timer()
         delta_time = end - start
-        time.sleep(max(MIN_ITERATION_TIME-delta_time, 0))
+        sleep_time = max(MIN_ITERATION_TIME-delta_time, 0)
+        for i in sleep_time//5:
+            time.sleep(5)
