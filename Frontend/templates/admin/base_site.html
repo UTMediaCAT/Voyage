@@ -25,7 +25,8 @@
             {% get_article_run_status %}
         </div>
 
-        <form method="get" action={{ request.get_full_path }}>
+        <form method="post" action="/explorer/">
+            {% csrf_token %}
             <input type="submit" value="Run" name="acommand">
             <input type="submit" value="Pause" name="acommand">
             <input type="submit" value="Stop" name="acommand">
@@ -41,7 +42,8 @@
             {% get_twitter_run_status %}
         </div>
 
-        <form method="get" action={{ request.get_full_path }}>
+        <form method="post" action="/explorer/">
+            {% csrf_token %}
             <input type="submit" value="Run" name="tcommand">
             <input type="submit" value="Pause" name="tcommand">
             <input type="submit" value="Stop" name="tcommand">
