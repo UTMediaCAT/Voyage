@@ -47,16 +47,16 @@ __Login Credentials:__
 
 ##Usage: Explorers
 ####Articles
-* To Check Status: `python src/executer.py article status`
-* To Run: `python src/executer.py article run`
-* To Pause: `python src/executer.py article pause`
-* To Stop: `python src/executer.py article stop`
+* To Check Status: `cd src; python executer.py article status; cd ..`
+* To Run: `cd src; python executer.py article run; cd ..`
+* To Pause: `cd src; python executer.py article pause; cd ..`
+* To Stop: `cd src; python executer.py article stop; cd ..`
 
 ####Tweets:
-* To Check Status: `python src/executer.py twitter status`
-* To Run: `python src/executer.py twitter run`
-* To Pause: `python src/executer.py twitter pause`
-* To Stop: `python src/executer.py twitter stop`
+* To Check Status: `cd src; python executer.py twitter status; cd ..`
+* To Run: `cd src; python executer.py twitter run; cd ..`
+* To Pause: `cd src; python executer.py twitter pause; cd ..`
+* To Stop: `cd src; python executer.py twitter stop; cd ..`
 
 ##Task Board
 Our Task Board and Assignment progress is on [Trello](https://trello.com/b/Y08lMCXy/cscc01-acme)
