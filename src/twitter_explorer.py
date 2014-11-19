@@ -129,16 +129,21 @@ def get_keywords(tweet, keywords):
     tweet           -- Status structure to be searched through
     sites           -- List of keywords to look for
     """
-    matched_keywords = []
     for key in keywords:
         if re.search(key, tweet.text.encode('utf8'), re.IGNORECASE):
             matched_keywords.append(key)
-    return matched_keywords
+
+    #Uses get_sources, but instead of searching tweets, searches
+
+    matched_keywords_in_urls = get_sources(tweet, keywords)
+
+    return matched_keywords + matched_keywords_in_urls
 
 
 def get_sources(tweet, sites):
     """ (status, list of str) -> list of str
-    Searches and returns links redirected to sites within the html
+    Searches and returns links redirected to sites within the urls
+    of the tweet
     Returns empty list if none found
 
     Keyword arguments:
@@ -159,7 +164,8 @@ def get_sources(tweet, sites):
 
     #substring, expanded includes scheme, display may not
     for site in sites:
-        if site in expanded_urls or site in display_urls:
+        if re.search(key, expanded_url), re.IGNORECASE) or
+         re.search(key, display_url, re.IGNORECASE):
             matched_urls.append(site)
 
     return matched_urls
