@@ -11,6 +11,15 @@ all the relevant data will be stored at another Mongo database for Articles
 __author__ = "ACME: CSCC01F14 Team 4"
 __authors__ = "Yuya Iwabuchi, Jai Sughand, Xiang Wang, Kyle Bridgemohansingh, Ryan Pan"
 
+import sys
+import os
+
+# Add Django directories in the Python paths
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Frontend')))
+
+# Append local python lib to the front to assure locallibrary to be used
+sys.path.insert(0, os.path.join(os.environ['HOME'], '.local/lib/python2.7/site-packages'))
 
 # newspaper, for populating articles of each site
 # and parsing most of the data.
@@ -29,21 +38,17 @@ import datetime
 # For extracting 'pub_date's
 from dateutil import parser
 
-import sys
-import os
+# To connect and modify the database of django
 import django
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Frontend')))
-
 os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
         
-# For Models connecting with the Database
+# For Models connecting with the Django Database
 from articles.models import*
 from articles.models import Keyword as A_keyword
 from explorer.models import*
 from explorer.models import Keyword as E_keyword
 
+import threading
 
 # Settings that will be kept in database later on
 STORE_ALL_SOURCES = False       # False             - Stores all links within articles which matched with the keywords
@@ -102,7 +107,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
     total_threads       -- Number of threads to use for downloading per sites.
                            This can greatly increase the speed of download
     """
-    added, updated, failed, no_match = 0, 0, 0, 0
+    added, updated, failed, no_match, processed = 0, 0, 0, 0, 0
     start_t = time.time()
 
     # Collect today's date and time
@@ -112,7 +117,12 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
     # for each article in each sites, download and parse important data
     for site in populated_sites:
         # print "\n%s" % site[0]
+        article_count = site[1].size()
         for art in site[1].articles:
+
+            # Stop any print statements, even newspaper's warning messages
+            sys.stdout = open(os.devnull, "w")
+
             # Check for any new command on communication stream
             check_command()
 
@@ -202,7 +212,15 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
             else:
                 # print "\tResult:    Failed to download!"
                 failed += 1
+            processed += 1
+
+            # Let the output print back to normal for minimal ui
+            sys.stdout = sys.__stdout__
+
+            sys.stdout.write("(%s) %i/%i\r" % (site[0], processed, article_count))
+            sys.stdout.flush()
             # Some stats to look at while running the script
+        print("(%s) %i/%i\r" % (site[0], processed, article_count))
     #         print("\n\tStatistics\n\tAdded: %i | Updated: %i | No Match: %i | Failed: %i | Time Elapsed: %is" %
     #               (added, updated, no_match, failed, time.time() - start_t))
     #         print "+--------------------------------------------------------------------+"
@@ -306,7 +324,7 @@ def explore(is_from_start):
     for site in msites:
         # monitoring_sites is now in form [['Name', 'URL'], ...]
         monitoring_sites.append([site.name, site.url, site.influence])
-        print("\t%-25s%-25s%-10i" % (site.name, site.url, site.influence))
+        # print("\t%-25s%-25s%-10i" % (site.name, site.url, site.influence))
 
     foreign_sites = []
     # Retrieve, store, and print foreign site information
@@ -402,26 +420,29 @@ def check_command():
 if __name__ == '__main__':
     # Connects to Site Database
     django.setup()
-    
+
     # Initialize Communication Stream
     comm_init()
 
     fs = FROM_START
 
-    while 1:
-        # Check for any new command on communication stream
-        check_command()
+    # Check for any new command on communication stream
+    check_command()
 
-        start = timeit.default_timer()
-        
-        if fs:
-            explore(fs)
-            fs = False
-        else:
-            explore(fs)
+    start = timeit.default_timer()
+    
+    if fs:
+        explore(fs)
+        fs = False
+    else:
+        explore(fs)
 
-        end = timeit.default_timer()
-        delta_time = end - start
-        sleep_time = max(MIN_ITERATION_TIME-delta_time, 0)
-        for i in sleep_time//5:
-            time.sleep(5)
+    end = timeit.default_timer()
+    delta_time = end - start
+    sleep_time = max(MIN_ITERATION_TIME-delta_time, 0)
+    for i in range(int(sleep_time//5)):
+        time.sleep(5)
+
+    # Re run the program to avoid thread to increase
+    os.chmod('article_explorer_run.sh', 0700)
+    os.execl('article_explorer_run.sh', '')
