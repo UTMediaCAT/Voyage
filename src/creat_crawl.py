@@ -18,5 +18,5 @@ def creat_url(url):
     os.chmod('./CreatWarc.sh', 0700)
     subprocess.call(['./CreatWarc.sh'])
 
-if __name__ == '__main__':
-    creat_url("http://www.stormbrewing.org/")
+#if __name__ == '__main__':
+    #creat_url("http://www.stormbrewing.org/")
