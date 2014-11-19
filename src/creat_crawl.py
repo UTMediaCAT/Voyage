@@ -12,11 +12,11 @@ def creat_url(url):
     crawl.write("mkdir -p warc\n")
     crawl.write("mv ./src/crawler/out.warc.gz ./warc/\n")
     crawl.write("cd ./warc \n")
-    add_url=add_url.replace("/","\\\\")
-    crawl.write("mv out.warc.gz "+add_url+".warc.gz\n")
+    add_url=add_url.replace("/","\\")
+    crawl.write("mv out.warc.gz '"+add_url+"'.warc.gz\n")
     crawl.close()
     os.chmod('./CreatWarc.sh', 0700)
     subprocess.call(['./CreatWarc.sh'])
 
-#if __name__ == '__main__':
-    #creat_url("http://www.naturalnews.com/045495_assassination_drones_autonomous_killing_facial_recognition.html")
+if __name__ == '__main__':
+    creat_url("http://www.stormbrewing.org/")
