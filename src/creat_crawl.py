@@ -15,7 +15,7 @@ class creat_crawl():
         crawl.write("mkdir -p warc\n")
         crawl.write("mv ./src/out.warc.gz ./warc/\n")
         crawl.write("cd ./warc \n")
-        add_url=add_url.replace("http://","")
+        add_url=add_url.replace("/","\\")
         crawl.write("mv out.warc.gz "+add_url+".warc.gz\n")
         crawl.close()
         os.chmod('./Crawl.sh', 0700)
