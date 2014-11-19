@@ -87,7 +87,7 @@ def get_tweets(screen_name, amount):
 
     tweets = []
     last_id = -1
-    #incase user asks for more tweets than avaliable
+    #incase user asks for more tweets than available
     while len(tweets) < amount and len(tweets) != user.statuses_count:
         #check how many more tweets is needed
         count = amount - len(tweets)
@@ -126,7 +126,7 @@ def get_keywords(tweet, keywords):
     Returns empty list otherwise.
 
     Keyword arguments:
-    tweet           -- Status structre to be searched through
+    tweet           -- Status structure to be searched through
     sites           -- List of keywords to look for
     """
     matched_keywords = []
@@ -142,36 +142,26 @@ def get_sources(tweet, sites):
     Returns empty list if none found
 
     Keyword arguments:
-    tweet           -- Status structre to be searched through
+    tweet           -- Status structure to be searched through
     sites           -- List of site urls to look for
     """
-    update_tld_names()
-
     matched_urls = []
-    tweet_urls = []
+    expanded_urls = ''
+    display_urls = ''
     for url in tweet.entities['urls']:
         try:
-            hold = urllib2.urlopen(url['expanded_url'])
-            tweet_urls.append(get_tld(hold.geturl()))
-            tweet_urls.append(url['expanded_url'])
+            # tries to get full url on shortened urls
+            expanded_urls += urllib2.urlopen(url['expanded_url']).geturl() + ' '
+            expanded_urls += urllib2.urlopen(url['display_url']).geturl() + ' '
         except:
-            tweet_urls.append(get_tld(url['expanded_url']))
-            continue
+            expanded_urls += url['expanded_url'] + ' '
+            display_urls += url['display_url'] + ' '
 
-    # for each site, check if it exists within the urls given
-
+    #substring, expanded includes scheme, display may not
     for site in sites:
-        site = get_tld(site)
-        if STORE_ALL_SOURCES:
-            for url in tweet_urls:
-                matched_urls.append(url.encode('utf8'))
-            return matched_urls
-        else:
-            for url in tweet_urls:
-                if re.search(site, url):
-                # If it matches even once, append the site to the list
-                    matched_urls.append(url.encode('utf8'))
-    # Return the list
+        if site in expanded_urls or site in display_urls:
+            matched_urls.append(site)
+
     return matched_urls
 
 def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
@@ -248,7 +238,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                             tweet.keyword_set.create(keyword = key)
 
                     for source in tweet_sources:
-                        if not Source.objects.filter(source = source): 
+                        if not Source.objects.filter(source = source):
                             tweet.source_set.create(source = source)
                     print "\tResult:    Match detected! Tweet already in database. Updating."
                     updated += 1
@@ -383,25 +373,25 @@ def check_command():
             comm_write('RR')
 
 if __name__ == '__main__':
-    
-    #parse_tweets(['CNN', 'TIME'], ['obama','hollywood', 'not', 'fire', 'president', 'activities'], ['http://cnn.com/', 'http://ti.me'], 'tweets')
-    
-    # Initialize Communication Stream
-    comm_init()
-
-    fs = FROM_START
-    
-    while 1:
-        # Check for any new command on communication stream
-        check_command()   
-
-        start = timeit.default_timer()
-        if (fs == True ):
-            explore('taccounts', 'keywords', 'sites', INIT_TWEET_COUNT)
-            fs = False
-        else:
-            explore('taccounts', 'keywords', 'sites', ITER_TWEET_COUNT)
-
-        end = timeit.default_timer()
-        delta_time = end - start
-        time.sleep(max(MIN_ITERATION_TIME-delta_time, 0))
+    pass
+    # parse_tweets(['CNN', 'TIME'], ['obama','hollywood', 'not', 'fire', 'president', 'activities'], ['http://cnn.com/', 'http://ti.me'], 'tweets')
+    #
+    #  Initialize Communication Stream
+    # comm_init()
+    #
+    # fs = FROM_START
+    #
+    # while 1:
+    #     # Check for any new command on communication stream
+    #     check_command()
+    #
+    #     start = timeit.default_timer()
+    #     if (fs == True ):
+    #         explore('taccounts', 'keywords', 'sites', INIT_TWEET_COUNT)
+    #         fs = False
+    #     else:
+    #         explore('taccounts', 'keywords', 'sites', ITER_TWEET_COUNT)
+    #
+    #     end = timeit.default_timer()
+    #     delta_time = end - start
+    #     time.sleep(max(MIN_ITERATION_TIME-delta_time, 0))
