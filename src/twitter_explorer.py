@@ -129,6 +129,8 @@ def get_keywords(tweet, keywords):
     tweet           -- Status structure to be searched through
     sites           -- List of keywords to look for
     """
+    matched_keywords = []
+
     for key in keywords:
         if re.search(key, tweet.text.encode('utf8'), re.IGNORECASE):
             matched_keywords.append(key)
@@ -164,8 +166,7 @@ def get_sources(tweet, sites):
 
     #substring, expanded includes scheme, display may not
     for site in sites:
-        if re.search(key, expanded_url), re.IGNORECASE) or
-         re.search(key, display_url, re.IGNORECASE):
+        if re.search(site, expanded_urls, re.IGNORECASE) or re.search(site, display_urls, re.IGNORECASE):
             matched_urls.append(site)
 
     return matched_urls
@@ -231,7 +232,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                 else:
 
                     tweet = tweet_list[0]
-                    tweet.tweet_text= tweet_text
+                    tweet.text= tweet_text
                     tweet.tweet_id = tweet_id
                     tweet.user = tweet_user 
                     tweet.date_added = tweet_store_date
