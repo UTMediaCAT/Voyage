@@ -1,9 +1,7 @@
 from django.shortcuts import render, HttpResponse
 from django.template import RequestContext, loader
-from subprocess import Popen
-from django.core.serializers import serialize
 from articles.models import Article,Keyword, Source, Author
-import sys, os, time, json, datetime
+import sys, os, time, json
 
 def index(request):
     latest_article_list = Article.objects.order_by('date_added')
