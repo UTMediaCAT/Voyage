@@ -51,18 +51,27 @@ from explorer.models import Keyword as E_keyword
 import threading
 
 # Settings that will be kept in database later on
-STORE_ALL_SOURCES = False       # False             - Stores all links within articles which matched with the keywords
+#STORE_ALL_SOURCES = False       # False             - Stores all links within articles which matched with the keywords
 FROM_START = True               # True              - True: Populate all articles from start
-DATE_FORMAT = "%Y-%m-%dT%H:%M"  # "%Y-%m-%dT%H:%M"  - Universal date format for consistency
+#DATE_FORMAT = "%Y-%m-%dT%H:%M"  # "%Y-%m-%dT%H:%M"  - Universal date format for consistency
 
 MIN_ITERATION_TIME = 600
 
-# Used for commmunicating stream
-COMM_FILE = '_comm.stream'
-RETRY_COUNT = 10
-RETRY_DELTA = 1
-SLEEP_TIME = 5
+# Used for communicating stream
+#COMM_FILE = '_comm.stream'
+#RETRY_COUNT = 10
+#RETRY_DELTA = 1
+#SLEEP_TIME = 5
 
+def configuration():
+    """ (None) -> dict
+    Returns a dictionary containing the micro settings from the
+    config.yaml file located in the directory containing this file
+    """
+    config_yaml = open("../config.yaml", 'r')
+    config = yaml.load(config_yaml)
+    config_yaml.close()
+    return config
 
 def populate_sites(sites, is_from_start):
     """ (list of str) -> list of [str, newspaper.source.Source]
@@ -107,13 +116,14 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
     total_threads       -- Number of threads to use for downloading per sites.
                            This can greatly increase the speed of download
     """
+    config = configuration()['storage']
     added, updated, failed, no_match, processed = 0, 0, 0, 0, 0
     start_t = time.time()
 
     # Collect today's date and time
-    today = datetime.datetime.now().strftime(DATE_FORMAT)
+    today = datetime.datetime.now().strftime(config['date_format'])
 
-    # print("\nStore All Sources: %s" % str(STORE_ALL_SOURCES))
+    # print("\nStore All Sources: %s" % str(config['store_all_sources']))
     # for each article in each sites, download and parse important data
     for site in populated_sites:
         # print "\n%s" % site[0]
@@ -156,7 +166,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                 # print "\tSources:  ", sources
 
                 # If neither of keyword nor sources matched, then stop here and move on to next article
-                if not (keywords == [] and (sources == [] or STORE_ALL_SOURCES)):
+                if not (keywords == [] and (sources == [] or config['store_all_sources'])):
                     # Try to add all the data to the Article Database
 
                     article_list = Article.objects.filter(url=url)
@@ -237,10 +247,11 @@ def get_sources(html, sites):
     sites               -- list of site urls to look for
     """
     matched_urls = []
+    config = configuration()['storage']
 
     # for each site, check if it exists within the html given
     for site in sites:
-        if STORE_ALL_SOURCES:
+        if config['store_all_sources']:
             for url in re.findall("href=[\"\'][^\"\']*?.*?[^\"\']*?[\"\']", html, re.IGNORECASE):
                 # If it matches even once, append the site to the list
                 matched_urls.append(url[6:-1])
@@ -264,6 +275,7 @@ def get_pub_date(article):
     Keyword arguments:
     article         -- 'Newspaper.Article' object of article
     """
+    date_format = configuration()['storage']['date_format']
     dates = []
 
     # For each metadata stored by newspaper's parsing ability, check if any of the key contains 'date'
@@ -271,7 +283,7 @@ def get_pub_date(article):
         if re.search("date", key, re.IGNORECASE):
             # If the key contains 'date', try to parse the value as date
             try:
-                dt = parser.parse(str(value)).date().strftime(DATE_FORMAT)
+                dt = parser.parse(str(value)).date().strftime(date_format)
                 # If parsing succeeded, then append it to the list
                 dates.append(dt)
             except:
@@ -364,9 +376,10 @@ def explore(is_from_start):
 
 
 def comm_write(text):
+    config = configuration()['communication']
     for i in range(RETRY_COUNT):
         try:
-            comm = open('article' + COMM_FILE, 'w')
+            comm = open('article' + config['comm_file'], 'w')
             comm.write(text)
             comm.close()
             return None
@@ -375,14 +388,15 @@ def comm_write(text):
 
 
 def comm_read():
-    for i in range(RETRY_COUNT):
+    config = configuration()['communication']
+    for i in range(config['retry_count']):
         try:
-            comm = open('article' + COMM_FILE, 'r')
+            comm = open('article' + config['comm_file'], 'r')
             msg = comm.read()
             comm.close()
             return msg
         except:
-            time.sleep(RETRY_DELTA)
+            time.sleep(config['retry_delta'])
 
 
 def comm_init():
@@ -397,6 +411,7 @@ def check_command():
     Check the communication file for any commands given.
     Execute according to the commands.
     """
+    config = configuration()['communication']
     msg = comm_read()
 
     if msg[0] == 'W':
@@ -409,8 +424,8 @@ def check_command():
             print('Pausing ...')
             comm_write('PP')
             while comm_read()[1] == 'P':
-                print('Waiting %i seconds ...' % SLEEP_TIME)
-                time.sleep(SLEEP_TIME)
+                print('Waiting %i seconds ...' % config['sleep_time'])
+                time.sleep(config['sleep_time'])
             check_command()
         elif command == 'R':
             print('Resuming ...')

@@ -10,6 +10,7 @@ import timeit
 import sys
 import os
 import django
+import yaml
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'Frontend')))
@@ -26,39 +27,53 @@ __author__ = "ACME: CSCC01F14 Team 4"
 __authors__ = "Yuya Iwabuchi, Jai Sughand, Xiang Wang, Kyle Bridgemohansingh, Ryan Pan"
 
 # Twitter Developer API
-CONSUMER_KEY = "UITySH5N4iGOE3l6C0YgmwHVd"
-CONSUMER_SECRET = "H7lXeLBDQv3o7i4wISGJtukdAqC6X9Vr4EXTdaIAVVrN56Lwbh"
-ACCESS_TOKEN = "2825329492-TKU4s0Mky7vazr60WKHQV7R6sJT2wYE4ysR3Gm3"
-ACCESS_TOKEN_SECRET = "I740fF6x6v0srzbY7LCAjNWXXOzZRMBFbkoiwZ5FgqC5s"
+#CONSUMER_KEY = "UITySH5N4iGOE3l6C0YgmwHVd"
+#CONSUMER_SECRET = "H7lXeLBDQv3o7i4wISGJtukdAqC6X9Vr4EXTdaIAVVrN56Lwbh"
+#ACCESS_TOKEN = "2825329492-TKU4s0Mky7vazr60WKHQV7R6sJT2wYE4ysR3Gm3"
+#ACCESS_TOKEN_SECRET = "I740fF6x6v0srzbY7LCAjNWXXOzZRMBFbkoiwZ5FgqC5s"
 
 # Globals to be used for Database
-STORE_ALL_SOURCES = False
-DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+#STORE_ALL_SOURCES = False
+#DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
+
 
 INIT_TWEET_COUNT=1000
 ITER_TWEET_COUNT=100
 
 FROM_START = True  
 MIN_ITERATION_TIME = 600
+
 #Seconds to wait before retrying call
 WAIT_RATE = (60 * 1) + 0
 
 # Used for commmunication stream
-COMM_FILE = '_comm.stream'
-RETRY_COUNT = 10
-RETRY_DELTA = 1
-SLEEP_TIME = 5
+#COMM_FILE = '_comm.stream'
+#RETRY_COUNT = 10
+#RETRY_DELTA = 1
+#SLEEP_TIME = 5
 
+def configuration():
+    """ (None) -> dict
+    Returns a dictionary containing the micro settings from the
+    config.yaml file located in the directory containing this file
+    """
+    config_yaml = open("../config.yaml", 'r')
+    config = yaml.load(config_yaml)
+    config_yaml.close()
+    return config
 
 def authorize():
     """ (None) -> tweepy.API
     Will use global keys to allow use of API
     """
-    auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-    auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+    config = configuration()['twitter']
+    auth = tweepy.OAuthHandler(config['consumer_key'], config['consumer_secret'])
+    auth.set_access_token(config['access_token'], config['access_token_secret'])
+    #auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+    #auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
     return tweepy.API(auth)
 
-def rate_reached():
+def wait_and_resume():
     """ (None) -> None
     Helper function to be called when a rate limit has been reached.
     """
@@ -83,7 +98,7 @@ def get_tweets(screen_name, amount):
             user = api.get_user(screen_name)
             rate_reached = False
         except:
-            rate_reached()
+            wait_and_resume()
 
     tweets = []
     last_id = -1
@@ -102,7 +117,7 @@ def get_tweets(screen_name, amount):
                 tweets.append(tweet)
             last_id = tweets[-1].id
         except:
-            rate_reached()
+            wait_and_resume()
         return tweets
 
 
@@ -118,7 +133,7 @@ def get_follower_count(screen_name):
             user = api.get_user(screen_name)
             return user.followers_count
         except:
-            rate_reached()
+            wait_and_resume()
 
 def get_keywords(tweet, keywords):
     """ (status, list of str) -> list of str
@@ -154,22 +169,32 @@ def get_sources(tweet, sites):
     tweet           -- Status structure to be searched through
     sites           -- List of site urls to look for
     """
+    store_all = configuration()['storage']['store_all_sources']
+
     matched_urls = []
     expanded_urls = ''
     display_urls = ''
-    for url in tweet.entities['urls']:
-        try:
-            # tries to get full url on shortened urls
-            expanded_urls += urllib2.urlopen(url['expanded_url']).geturl() + ' '
-            expanded_urls += urllib2.urlopen(url['display_url']).geturl() + ' '
-        except:
-            expanded_urls += url['expanded_url'] + ' '
-            display_urls += url['display_url'] + ' '
+    if store_all == False:
+        for url in tweet.entities['urls']:
+            try:
+                # tries to get full url on shortened urls
+                expanded_urls += urllib2.urlopen(url['expanded_url']).geturl() + ' '
+                expanded_urls += urllib2.urlopen(url['display_url']).geturl() + ' '
+            except:
+                expanded_urls += url['expanded_url'] + ' '
+                display_urls += url['display_url'] + ' '
 
-    #substring, expanded includes scheme, display may not
-    for site in sites:
-        if re.search(site, expanded_urls, re.IGNORECASE) or re.search(site, display_urls, re.IGNORECASE):
-            matched_urls.append(site)
+        #substring, expanded includes scheme, display may not
+        for site in sites:
+            if re.search(site, expanded_urls, re.IGNORECASE) or re.search(site, display_urls, re.IGNORECASE):
+                matched_urls.append(site)
+    elif store_all == True:
+        for url in tweet.entities['urls']:
+            try:
+                # tries to get full url on shortened urls
+                matched_urls.append(urllib2.urlopen(url['expanded_url']).geturl())
+            except:
+                matched_urls.append(url['expanded_url'])
 
     return matched_urls
 
@@ -184,6 +209,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
     foreign_sites   -- List of strings as sources to search for
     db_name         -- String of Database
     """
+    config = configuration()['storage']
     django.setup()
     added, updated, no_match = 0, 0, 0
     start = time.time()
@@ -198,7 +224,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
             tweet_id = tweet.id
             tweet_date = str(tweet.created_at)
             tweet_user = tweet.user.screen_name
-            tweet_store_date = datetime.datetime.now().strftime(DATE_FORMAT)
+            tweet_store_date = datetime.datetime.now().strftime(config['date_format'])
             tweet_keywords = get_keywords(tweet, keywords)
             tweet_sources = get_sources(tweet, foreign_sites)
             tweet_text = tweet.text
@@ -210,7 +236,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
             print "\tSources:  ", tweet_sources
             print "\n"
 
-            if not(tweet_keywords == [] and (tweet_sources ==[] or STORE_ALL_SOURCES)):
+            if not(tweet_keywords == [] and (tweet_sources ==[] or config['store_all_sources'])):
 
                 tweet_list = Tweet.objects.filter(tweet_id = tweet_id)
                 if (not tweet_list): 
@@ -339,29 +365,32 @@ def explore(accounts_db, keyword_db, site_db, tweet_number):
     parse_tweets(accounts_list, keyword_list, foreign_sites, tweet_number)
 
 def comm_write(text):
-    for i in range(RETRY_COUNT):
+    config = configuration()['communication']
+    for i in range(config['retry_count']):
         try:
-            comm = open('twitter' + COMM_FILE, 'w')
+            comm = open('twitter' + config['comm_file'], 'w')
             comm.write(text)
             comm.close()
             return None
         except:
-            time.sleep(RETRY_DELTA)
+            time.sleep(config['retry_delta'])
 
 def comm_read():
-    for i in range(RETRY_COUNT):
+    config = configuration()['communication']
+    for i in range(config['retry_count']):
         try:
-            comm = open('twitter' + COMM_FILE, 'r')
+            comm = open('twitter' + config['comm_file'], 'r')
             msg = comm.read()
             comm.close()
             return msg
         except:
-            time.sleep(RETRY_DELTA)
+            time.sleep(config['retry_delta'])
 
 def comm_init():
     comm_write('RR')
 
 def check_command():
+    config = configuration()['communication']
     msg = comm_read()
 
     if msg[0] == 'W':
@@ -374,33 +403,37 @@ def check_command():
             print ('Pausing ...')
             comm_write('PP')
             while comm_read()[1] == 'P':
-                print ('Waiting %i seconds ...' % SLEEP_TIME)
-                time.sleep(SLEEP_TIME)
+                print ('Waiting %i seconds ...' % config['sleep_time'])
+                time.sleep(config['sleep_time'])
             check_command()
         elif command == 'R':
             print ('Resuming ...')
             comm_write('RR')
 
 if __name__ == '__main__':
-    pass
+    # print configuration()
+    # x = get_tweets('kylebsingh',2)
+    # for g in x:
+    #     print g.text
+
     # parse_tweets(['CNN', 'TIME'], ['obama','hollywood', 'not', 'fire', 'president', 'activities'], ['http://cnn.com/', 'http://ti.me'], 'tweets')
     #
     #  Initialize Communication Stream
-    # comm_init()
+    comm_init()
     #
-    # fs = FROM_START
+    fs = FROM_START
     #
-    # while 1:
-    #     # Check for any new command on communication stream
-    #     check_command()
+    while 1:
+        # Check for any new command on communication stream
+        check_command()
     #
-    #     start = timeit.default_timer()
-    #     if (fs == True ):
-    #         explore('taccounts', 'keywords', 'sites', INIT_TWEET_COUNT)
-    #         fs = False
-    #     else:
-    #         explore('taccounts', 'keywords', 'sites', ITER_TWEET_COUNT)
+        start = timeit.default_timer()
+        if (fs == True ):
+            explore('taccounts', 'keywords', 'sites', INIT_TWEET_COUNT)
+            fs = False
+        else:
+            explore('taccounts', 'keywords', 'sites', ITER_TWEET_COUNT)
     #
-    #     end = timeit.default_timer()
-    #     delta_time = end - start
-    #     time.sleep(max(MIN_ITERATION_TIME-delta_time, 0))
+        end = timeit.default_timer()
+        delta_time = end - start
+        time.sleep(max(MIN_ITERATION_TIME-delta_time, 0))
