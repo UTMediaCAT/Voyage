@@ -1,6 +1,8 @@
+from django.shortcuts import HttpResponse
 from django.http import HttpResponseRedirect
 from subprocess import Popen
-import sys, os
+from explorer.models import Msite, Fsite, Keyword, Taccount
+import sys, os, time, json
 
 def command(request):
     if request.method == 'POST':
@@ -30,3 +32,26 @@ def command(request):
 
 
     return HttpResponseRedirect("/admin")
+
+def getJson(request):
+    scope = {'monitoring_sites':{}, 'foreign_sites': {}, 
+             'keywords': [], 'twitter_accounts': []}
+
+    for site in Msite.objects.all():
+        scope['monitoring_sites'][site.url] = {'name': site.name,
+                                              'influence': site.influence}
+
+    for site in Fsite.objects.all():
+        scope['foreign_sites'][site.url] = {'name': site.name,
+                                           'influence': site.influence}
+
+    for key in Keyword.objects.all():
+        scope['keywords'].append(key.keyword)
+
+    for acc in Taccount.objects.all():
+        scope['twitter_accounts'].append(acc.account)
+
+    res = HttpResponse(json.dumps(scope, indent=2, sort_keys=True))
+    res['Content-Disposition'] = format('attachment; filename=scope-%s.json' 
+                                        % time.strftime("%Y%m%d-%H%M%S"))
+    return res
