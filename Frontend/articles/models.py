@@ -14,9 +14,6 @@ class Article(models.Model):
             return self.title[:27] + '...'
         return self.title
 
-    def natural_key(self):
-        return self.url
-
 
 class Author(models.Model):
     article = models.ForeignKey(Article)

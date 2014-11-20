@@ -3,7 +3,7 @@ from django.template import RequestContext, loader
 from subprocess import Popen
 from django.core.serializers import serialize
 from articles.models import Article,Keyword, Source, Author
-import sys, os, time
+import sys, os, time, json, datetime
 
 def index(request):
     latest_article_list = Article.objects.order_by('date_added')
@@ -23,11 +23,21 @@ def index(request):
 
 
 def getJson(request):
-    json = serialize('json', 
-                     list(Article.objects.all()) + list(Keyword.objects.all()) + 
-                     list(Source.objects.all()) + list(Author.objects.all()),
-                     use_natural_foreign_keys=True, use_natural_primary_keys=True)
-    res = HttpResponse(json)
+    articles = {}
+    for art in Article.objects.all():      
+        articles[art.url] = {'title': art.title, 'date_added': str(art.date_added),
+                             'date_published': str(art.date_published),
+                             'influence': art.influence, 'matched_keywords': [],
+                             'matched_sources': [], 'authors': []}
+
+    for key in Keyword.objects.all():
+        articles[key.article.url]['matched_keywords'].append(key.keyword)
+    for src in Source.objects.all():
+        articles[src.article.url]['matched_sources'].append(src.source)
+    for ath in Author.objects.all():
+        articles[ath.article.url]['authors'].append(ath.author)
+
+    res = HttpResponse(json.dumps(articles, indent=2, sort_keys=True))
     res['Content-Disposition'] = format('attachment; filename=articles-%s.json' 
                                         % time.strftime("%Y%m%d-%H%M%S"))
     return res
