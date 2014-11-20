@@ -419,21 +419,21 @@ if __name__ == '__main__':
     # parse_tweets(['CNN', 'TIME'], ['obama','hollywood', 'not', 'fire', 'president', 'activities'], ['http://cnn.com/', 'http://ti.me'], 'tweets')
     #
     #  Initialize Communication Stream
-    comm_init()
+    # comm_init()
     #
-    fs = FROM_START
+    # fs = FROM_START
     #
-    while 1:
+    # while 1:
         # Check for any new command on communication stream
-        check_command()
+    #     check_command()
     #
-        start = timeit.default_timer()
-        if (fs == True ):
-            explore('taccounts', 'keywords', 'sites', INIT_TWEET_COUNT)
-            fs = False
-        else:
-            explore('taccounts', 'keywords', 'sites', ITER_TWEET_COUNT)
+    #     start = timeit.default_timer()
+    #     if (fs == True ):
+    #         explore('taccounts', 'keywords', 'sites', INIT_TWEET_COUNT)
+    #         fs = False
+    #     else:
+    #         explore('taccounts', 'keywords', 'sites', ITER_TWEET_COUNT)
     #
-        end = timeit.default_timer()
-        delta_time = end - start
-        time.sleep(max(MIN_ITERATION_TIME-delta_time, 0))
+    #     end = timeit.default_timer()
+    #     delta_time = end - start
+    #     time.sleep(max(MIN_ITERATION_TIME-delta_time, 0))
