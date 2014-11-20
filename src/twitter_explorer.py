@@ -138,8 +138,10 @@ def get_keywords(tweet, keywords):
     #Uses get_sources, but instead of searching tweets, searches
 
     matched_keywords_in_urls = get_sources(tweet, keywords)
+    all_matches = matched_keywords + matched_keywords_in_urls
+    all_matches = set(all_matches)
+    return list(all_matches)
 
-    return matched_keywords + matched_keywords_in_urls
 
 
 def get_sources(tweet, sites):
