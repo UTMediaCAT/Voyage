@@ -1,3 +1,8 @@
+{% extends "admin/base_site.html" %}
+
+{% load explorer_tags %}
+
+{% block content %}
 {% if latest_article_list %}
 	<h1>All Collected Articles</h1>
     <ul>
@@ -8,3 +13,4 @@
 {% else %}
     <h1>No articles are available.</h1>
 {% endif %}
+{% endblock %}
