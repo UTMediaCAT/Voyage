@@ -211,30 +211,36 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
     """
     config = configuration()['storage']
     django.setup()
-    added, updated, no_match = 0, 0, 0
+    added, updated, no_match, processed = 0, 0, 0, 0
     start = time.time()
 
     for user in twitter_users:
-        print "Parsing @" + user
+        # Check for any new command on communication stream
+        check_command()
+
+        # print "Parsing @" + user
         tweets = get_tweets(user, tweet_number)
         tweet_followers = get_follower_count(user)
-
+        tweet_count = len(tweets)
         for tweet in tweets:
-            print '\tEvaluating ...\r'
+            # Check for any new command on communication stream
+            check_command()
+
+            # print '\tEvaluating ...\r'
             tweet_id = tweet.id
             tweet_date = str(tweet.created_at)
             tweet_user = tweet.user.screen_name
-            tweet_store_date = datetime.datetime.now().strftime(config['date_format'])
+            tweet_store_date = datetime.datetime.now().strftime(config['date_format'][1:])
             tweet_keywords = get_keywords(tweet, keywords)
             tweet_sources = get_sources(tweet, foreign_sites)
             tweet_text = tweet.text
 
-            print "\tTweet:    ", tweet.text
-            print "\tAuthor:   ", tweet_user
-            print "\tDate:     ", tweet_date
-            print "\tKeywords: ", tweet_keywords
-            print "\tSources:  ", tweet_sources
-            print "\n"
+            # print "\tTweet:    ", tweet.text
+            # print "\tAuthor:   ", tweet_user
+            # print "\tDate:     ", tweet_date
+            # print "\tKeywords: ", tweet_keywords
+            # print "\tSources:  ", tweet_sources
+            # print "\n"
 
             if not(tweet_keywords == [] and (tweet_sources ==[] or config['store_all_sources'])):
 
@@ -244,23 +250,21 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                     tweet = Tweet(tweet_id = tweet_id, user=tweet_user, date_added = tweet_store_date, date_published = tweet_date, followers = tweet_followers, text=tweet_text )
                     tweet.save()
 
-
                     tweet =  Tweet.objects.get(tweet_id=tweet_id)
                     
                     for key in tweet_keywords:
                         tweet.keyword_set.create(keyword = key)
        
-
                     for source in tweet_sources:
                         tweet.source_set.create(source = source)
 
                     added += 1
-                    print "\tResult:    Match detected! Added to the database."
+                    # print "\tResult:    Match detected! Added to the database."
 
                 else:
 
                     tweet = tweet_list[0]
-                    tweet.text= tweet_text
+                    tweet.text = tweet_text
                     tweet.tweet_id = tweet_id
                     tweet.user = tweet_user 
                     tweet.date_added = tweet_store_date
@@ -275,17 +279,21 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                     for source in tweet_sources:
                         if not Source.objects.filter(source = source):
                             tweet.source_set.create(source = source)
-                    print "\tResult:    Match detected! Tweet already in database. Updating."
+                    # print "\tResult:    Match detected! Tweet already in database. Updating."
                     updated += 1
 
             else:
                 no_match += 1
-                print "\tResult:    No Match Detected."
-        print("\n\tStatistics\n\tAdded: %i | Updated: %i | No Match: %i | Time Elapsed: %is" %
-          (added, updated, no_match, time.time() - start))
-        print "+--------------------------------------------------------------------+"
+            processed += 1
+            sys.stdout.write("(%s) %i/%i\r" % (user, processed, tweet_count))
+            sys.stdout.flush()
+        print format("(%s) %i/%i\r" % (user, processed, tweet_count))
+        #         print "\tResult:    No Match Detected."
+        # print("\n\tStatistics\n\tAdded: %i | Updated: %i | No Match: %i | Time Elapsed: %is" %
+          # (added, updated, no_match, time.time() - start))
+    #     print "+--------------------------------------------------------------------+"
 
-    print("Finished parsing all users!")
+    # print("Finished parsing all users!")
 
 
 def explore(accounts_db, keyword_db, site_db, tweet_number):
@@ -299,9 +307,9 @@ def explore(accounts_db, keyword_db, site_db, tweet_number):
     site_db             -- Sites database name
     tweet_db            -- Tweet database name
     """
-    print "+----------------------------------------------------------+"
-    print "| Retrieving data from Database ...                        |"
-    print "+----------------------------------------------------------+"
+    # print "+----------------------------------------------------------+"
+    # print "| Retrieving data from Database ...                        |"
+    # print "+----------------------------------------------------------+"
 
     # Connects to Site Database
 
@@ -309,20 +317,20 @@ def explore(accounts_db, keyword_db, site_db, tweet_number):
     monitoring_sites = []
     msites = Msite.objects.all()
     # Retrieve, store, and print monitoring site information
-    print "\nMonitoring Sites\n\t%-25s%-40s" % ("Name", "URL")
+    # print "\nMonitoring Sites\n\t%-25s%-40s" % ("Name", "URL")
     for site in msites:
         # monitoring_sites is now in form [['Name', 'URL'], ...]
         monitoring_sites.append([site.name, site.url])
-        print("\t%-25s%-40s" % (site.name, site.url))
+        # print("\t%-25s%-40s" % (site.name, site.url))
 
     foreign_sites = []
     # Retrieve, store, and print foreign site information
     fsites = Fsite.objects.all()
-    print "\nForeign Sites\n\t%-25s%-40s" % ("Name", "URL")
+    # print "\nForeign Sites\n\t%-25s%-40s" % ("Name", "URL")
     for site in fsites:
         # foreign_sites is now in form ['URL', ...]
         foreign_sites.append(site.url)
-        print("\t%-25s%-40s" % (site.name, site.url))
+        # print("\t%-25s%-40s" % (site.name, site.url))
 
 
     # Retrieve all stored keywords
@@ -330,17 +338,17 @@ def explore(accounts_db, keyword_db, site_db, tweet_number):
     keyword_list = []
 
     # Print all the keywords
-    print "\nKeywords:"
+    # print "\nKeywords:"
 
     for key in keywords:
         keyword_list.append(str(key.keyword))
-        print "\t%s" % key.keyword
+    #     print "\t%s" % key.keyword
 
-    print "\n"
+    # print "\n"
 
-    print "+----------------------------------------------------------+"
-    print "| Populating Accounts ...                                  |"
-    print "+----------------------------------------------------------+"
+    # print "+----------------------------------------------------------+"
+    # print "| Populating Accounts ...                                  |"
+    # print "+----------------------------------------------------------+"
 
     # Retrieve all stored Accounts
     accounts = Taccount.objects.all()
@@ -350,17 +358,17 @@ def explore(accounts_db, keyword_db, site_db, tweet_number):
 
 
     # Print all the Accounts
-    print "\nTwitter Accounts:"
+    # print "\nTwitter Accounts:"
     for account in accounts:
         accounts_list.append(str(account.account))
-        print "\t%s" % account.account
+        # print "\t%s" % account.account
 
 
-    print "\n"
+    # print "\n"
 
-    print "+----------------------------------------------------------+"
-    print "| Evaluating Tweets ...                                    |"
-    print "+----------------------------------------------------------+"
+    # print "+----------------------------------------------------------+"
+    # print "| Evaluating Tweets ...                                    |"
+    # print "+----------------------------------------------------------+"
     # Parse the articles in all sites
     parse_tweets(accounts_list, keyword_list, foreign_sites, tweet_number)
 
@@ -387,7 +395,7 @@ def comm_read():
             time.sleep(config['retry_delta'])
 
 def comm_init():
-    comm_write('RR')
+    comm_write('RR %s' % os.getpid())
 
 def check_command():
     config = configuration()['communication']
@@ -397,18 +405,18 @@ def check_command():
         command = msg[1]
         if command == 'S':
             print ('Stopping Explorer...')
-            comm_write('SS')
+            comm_write('SS %s' % os.getpid())
             sys.exit(0)
         elif command == 'P':
             print ('Pausing ...')
-            comm_write('PP')
+            comm_write('PP %s' % os.getpid())
             while comm_read()[1] == 'P':
                 print ('Waiting %i seconds ...' % config['sleep_time'])
                 time.sleep(config['sleep_time'])
             check_command()
         elif command == 'R':
             print ('Resuming ...')
-            comm_write('RR')
+            comm_write('RR %s' % os.getpid())
 
 if __name__ == '__main__':
     # print configuration()
@@ -417,23 +425,23 @@ if __name__ == '__main__':
     #     print g.text
 
     # parse_tweets(['CNN', 'TIME'], ['obama','hollywood', 'not', 'fire', 'president', 'activities'], ['http://cnn.com/', 'http://ti.me'], 'tweets')
-    #
-    #  Initialize Communication Stream
-    # comm_init()
-    #
-    # fs = FROM_START
-    #
-    # while 1:
+    
+    # Initialize Communication Stream
+    comm_init()
+    
+    fs = FROM_START
+    
+    while 1:
         # Check for any new command on communication stream
-    #     check_command()
-    #
-    #     start = timeit.default_timer()
-    #     if (fs == True ):
-    #         explore('taccounts', 'keywords', 'sites', INIT_TWEET_COUNT)
-    #         fs = False
-    #     else:
-    #         explore('taccounts', 'keywords', 'sites', ITER_TWEET_COUNT)
-    #
-    #     end = timeit.default_timer()
-    #     delta_time = end - start
-    #     time.sleep(max(MIN_ITERATION_TIME-delta_time, 0))
+        check_command()
+    
+        start = timeit.default_timer()
+        if (fs == True ):
+            explore('taccounts', 'keywords', 'sites', INIT_TWEET_COUNT)
+            fs = False
+        else:
+            explore('taccounts', 'keywords', 'sites', ITER_TWEET_COUNT)
+    
+        end = timeit.default_timer()
+        delta_time = end - start
+        time.sleep(max(MIN_ITERATION_TIME-delta_time, 0))
