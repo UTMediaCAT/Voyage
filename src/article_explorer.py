@@ -186,7 +186,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                         article = article_list[0]
                         article.title = title
                         article.url = url
-                        article.date_added = today
+                        # article.date_added = today
                         article.date_published = pub_date
                         article.influence = site[2]
                         article.save()
