@@ -9,7 +9,7 @@
 # This script also supports executing using arguments. Ex. 'python executer.py article status'
 
 import sys
-from subprocess import Popen
+import subprocess
 import time
 import os
 
@@ -113,6 +113,8 @@ def command_format(arg2):
         return 'pause'
     elif arg2.lower() == 'stop':
         return 'stop'
+    elif arg2.lower() == 'fstop':
+        return 'fstop'
     return None 
 
 
@@ -166,7 +168,7 @@ def run(explorer):
     elif status == 'Stopped':
         print 'hi'
         print os.path.abspath(os.path.dirname(__file__))
-        Popen(['python', explorer.lower() + '_explorer.py'])
+        subprocess.Popen(['python', explorer.lower() + '_explorer.py'])
         return format('Run: %s - Started Running' % name)
     elif status == 'Running':
         return format('Run: %s - Already Running' % name)
@@ -210,6 +212,15 @@ def stop(explorer):
         comm_write(explorer, 'WS')
         return format('Stop: %s - Stopping' % name)
 
+def force_stop(explorer):
+
+    pid = comm_read(explorer).split(' ')[1]
+    name = name_format(explorer)
+
+    subprocess.call(['kill', '-9', pid])
+    comm_write(explorer, 'SS')
+    return format('Force Stop: %s - %s' % (name, pid))
+
 
 def status_output(explorer):
     """ (Str, Str) -> Str
@@ -240,3 +251,6 @@ if __name__ == '__main__':
 
         elif com == 'stop':
             print stop(exp)
+
+        elif com == 'fstop':
+            print force_stop(exp)

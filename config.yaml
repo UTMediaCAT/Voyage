@@ -1,0 +1,22 @@
+twitter:
+    initial_tweet_count: 1000
+    iteration_tweet_count: 100
+    from_start:  True
+    min_iteration_time: 600
+    consumer_key: UITySH5N4iGOE3l6C0YgmwHVd
+    consumer_secret: H7lXeLBDQv3o7i4wISGJtukdAqC6X9Vr4EXTdaIAVVrN56Lwbh
+    access_token: 2825329492-TKU4s0Mky7vazr60WKHQV7R6sJT2wYE4ysR3Gm3
+    access_token_secret: I740fF6x6v0srzbY7LCAjNWXXOzZRMBFbkoiwZ5FgqC5s
+article:
+    min_iteration_time: 600
+    from_start: True # True    - True: Populate all articles from start
+storage:
+    store_all_sources: False
+    # False   - Stores all links within articles which matched with the keywords
+    date_format: _%Y-%m-%dT%H:%M #leave _ at the start
+    # "%Y-%m-%dT%H:%M"  - Universal date format for consistency
+communication:
+    comm_file: _comm.stream
+    retry_count: 10
+    retry_delta: 1
+    sleep_time: 5
