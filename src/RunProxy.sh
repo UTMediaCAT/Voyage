@@ -3,5 +3,5 @@
 BASEDIR=$(dirname $0)
 cd $BASEDIR
 
-cd ../Frontend
-python manage.py runserver 7999
+cd warc_proxy
+python warcproxy.py

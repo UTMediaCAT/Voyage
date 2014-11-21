@@ -21,3 +21,4 @@ pip install --user queuelib==1.0
 pip install --user twisted==12.2.0
 pip install --user w3lib==1.3
 pip install --user zope.interface==4.0.5
+pip install --user tornado
