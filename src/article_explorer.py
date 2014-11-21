@@ -432,7 +432,6 @@ def check_command():
 
 
 if __name__ == '__main__':
-    print os.getpid()
     # Load the relevant configs
     config = configuration()['article']
     # Connects to Site Database
