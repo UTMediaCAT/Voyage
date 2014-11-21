@@ -18,7 +18,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Frontend')))
 
-# Append local python lib to the front to assure locallibrary to be used
+# Append local python lib to the front to assure local library to be used
 sys.path.insert(0, os.path.join(os.environ['HOME'], '.local/lib/python2.7/site-packages'))
 
 # newspaper, for populating articles of each site
@@ -48,20 +48,10 @@ from articles.models import Keyword as A_keyword
 from explorer.models import*
 from explorer.models import Keyword as E_keyword
 
-import threading
+# To load configurations
+import yaml
 
-# Settings that will be kept in database later on
-#STORE_ALL_SOURCES = False       # False             - Stores all links within articles which matched with the keywords
-FROM_START = True               # True              - True: Populate all articles from start
-#DATE_FORMAT = "%Y-%m-%dT%H:%M"  # "%Y-%m-%dT%H:%M"  - Universal date format for consistency
 
-MIN_ITERATION_TIME = 600
-
-# Used for communicating stream
-#COMM_FILE = '_comm.stream'
-#RETRY_COUNT = 10
-#RETRY_DELTA = 1
-#SLEEP_TIME = 5
 
 def configuration():
     """ (None) -> dict
@@ -120,8 +110,8 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
     added, updated, failed, no_match, processed = 0, 0, 0, 0, 0
     start_t = time.time()
 
-    # Collect today's date and time
-    today = datetime.datetime.now().strftime(config['date_format'])
+    # Load the relevant configs and collect today's date and time
+    today = datetime.datetime.now().strftime(config['date_format'][1:])
 
     # print("\nStore All Sources: %s" % str(config['store_all_sources']))
     # for each article in each sites, download and parse important data
@@ -195,7 +185,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                         
                         article = article_list[0]
                         article.title = title
-                        article.url = url 
+                        article.url = url
                         article.date_added = today
                         article.date_published = pub_date
                         article.influence = site[2]
@@ -246,8 +236,10 @@ def get_sources(html, sites):
     html                -- string of html
     sites               -- list of site urls to look for
     """
-    matched_urls = []
+    # Load the relevant configs
     config = configuration()['storage']
+
+    matched_urls = []
 
     # for each site, check if it exists within the html given
     for site in sites:
@@ -275,7 +267,8 @@ def get_pub_date(article):
     Keyword arguments:
     article         -- 'Newspaper.Article' object of article
     """
-    date_format = configuration()['storage']['date_format']
+    # Load the relevant configs
+    date_format = configuration()['storage']['date_format'][1:]
     dates = []
 
     # For each metadata stored by newspaper's parsing ability, check if any of the key contains 'date'
@@ -376,18 +369,20 @@ def explore(is_from_start):
 
 
 def comm_write(text):
+    # Load the relevant configs
     config = configuration()['communication']
-    for i in range(RETRY_COUNT):
+    for i in range(config['retry_count']):
         try:
             comm = open('article' + config['comm_file'], 'w')
             comm.write(text)
             comm.close()
             return None
         except:
-            time.sleep(RETRY_DELTA)
+            time.sleep(config['retry_delta'])
 
 
 def comm_read():
+    # Load the relevant configs
     config = configuration()['communication']
     for i in range(config['retry_count']):
         try:
@@ -403,7 +398,7 @@ def comm_init():
     """ (None) -> None
     Initialize The communication file
     """
-    comm_write('RR')
+    comm_write('RR %s' % os.getpid())
 
 
 def check_command():
@@ -411,52 +406,59 @@ def check_command():
     Check the communication file for any commands given.
     Execute according to the commands.
     """
+    # Load the relevant configs
     config = configuration()['communication']
     msg = comm_read()
+
+    # Let the output print back to normal for printing status
+    sys.stdout = sys.__stdout__
 
     if msg[0] == 'W':
         command = msg[1]
         if command == 'S':
             print('Stopping Explorer...')
-            comm_write('SS')
+            comm_write('SS %s' % os.getpid())
             sys.exit(0)
         elif command == 'P':
             print('Pausing ...')
-            comm_write('PP')
+            comm_write('PP %s' % os.getpid())
             while comm_read()[1] == 'P':
                 print('Waiting %i seconds ...' % config['sleep_time'])
                 time.sleep(config['sleep_time'])
-            check_command()
+                check_command()
         elif command == 'R':
             print('Resuming ...')
-            comm_write('RR')
+            comm_write('RR %s' % os.getpid())
 
 
 if __name__ == '__main__':
+    print os.getpid()
+    # Load the relevant configs
+    config = configuration()['article']
     # Connects to Site Database
     django.setup()
 
     # Initialize Communication Stream
     comm_init()
 
-    fs = FROM_START
+    from_start = config['from_start']
 
     # Check for any new command on communication stream
     check_command()
 
     start = timeit.default_timer()
-    
-    if fs:
-        explore(fs)
-        fs = False
-    else:
-        explore(fs)
+
+    explore(from_start)
 
     end = timeit.default_timer()
     delta_time = end - start
-    sleep_time = max(MIN_ITERATION_TIME-delta_time, 0)
+    sleep_time = max(config['min_iteration_time']-delta_time, 0)
+    sleep_time = 0
     for i in range(int(sleep_time//5)):
         time.sleep(5)
+        check_command()
+
+    check_command()
 
     # Re run the program to avoid thread to increase
     os.chmod('article_explorer_run.sh', 0700)
