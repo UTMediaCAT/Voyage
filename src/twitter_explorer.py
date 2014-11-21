@@ -211,13 +211,13 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
     """
     config = configuration()['storage']
     django.setup()
-    added, updated, no_match, processed = 0, 0, 0, 0
+    added, updated, no_match = 0, 0, 0
     start = time.time()
 
     for user in twitter_users:
         # Check for any new command on communication stream
         check_command()
-
+        processed = 0
         # print "Parsing @" + user
         tweets = get_tweets(user, tweet_number)
         tweet_followers = get_follower_count(user)

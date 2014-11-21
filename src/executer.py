@@ -166,8 +166,6 @@ def run(explorer):
         comm_write(explorer, 'WR')
         return format('Run: %s - Resuming' % name)
     elif status == 'Stopped':
-        print 'hi'
-        print os.path.abspath(os.path.dirname(__file__))
         subprocess.Popen(['python', explorer.lower() + '_explorer.py'])
         return format('Run: %s - Started Running' % name)
     elif status == 'Running':
