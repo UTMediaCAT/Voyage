@@ -4,7 +4,7 @@
 #
 # Comm file format: (Status)(Command)
 # Status Type: (R)unning, (P)aused, (S)topped, (W)aiting
-# Command Type: (R)esume, (P)ause, (S)top/exit
+# Command Type: (R)esume, (P)ause, (S)top
 #
 # This script also supports executing using arguments. Ex. 'python executer.py article status'
 
@@ -39,7 +39,7 @@ def raise_input_error():
     """ (None) -> None
     Raise InputError wtih the proper usage of this script
     """
-    raise InputError("Usage: python executer.py [article|twitter] [status|run|pause|stop]")
+    raise InputError("Usage: python executer.py [article|twitter] [status|run|pause|stop|fstop]")
 
 
 def raise_timeout_error():
@@ -254,3 +254,7 @@ if __name__ == '__main__':
 
         elif com == 'fstop':
             print force_stop(exp)
+        else:
+            raise_input_error()
+    else:
+        raise_input_error()
