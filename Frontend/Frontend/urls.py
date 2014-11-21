@@ -17,6 +17,8 @@ urlpatterns = patterns('',
 
     url(r'^articles/', include('articles.urls')),
 
+    url(r'^tweets/', include('tweets.urls')),
+
     url(r'^explorer/', include('explorer.urls')),
 
     url(r'^statistics/', include('statistics.urls')),

@@ -1,8 +1,7 @@
 from django.conf.urls import patterns, url
 
-from articles import views
+from tweets import views
 
 urlpatterns = patterns('',
-    url(r'^$', views.index, name='index'),
     url(r'^getJson', views.getJson, name='getJson'),
 )

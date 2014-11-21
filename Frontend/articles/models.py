@@ -14,6 +14,7 @@ class Article(models.Model):
             return self.title[:27] + '...'
         return self.title
 
+
 class Author(models.Model):
     article = models.ForeignKey(Article)
     author = models.CharField(max_length=200)
