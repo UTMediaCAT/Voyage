@@ -3,7 +3,6 @@
 {% load explorer_tags %}
 
 {% block content %}
-{% if latest_article_list %}
     <head>
         <!--Load the AJAX API-->
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -39,14 +38,4 @@
     </head>
     <!--Div that will hold the pie chart-->
     <div id="chart_div"></div>
-
-    <h1>All Collected Articles</h1>
-    <ul>
-    {% for article in latest_article_list %}
-        <li><a href="/articles/{{ article.id }}/">{{ article.title }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <h1>No articles are available.</h1>
-{% endif %}
 {% endblock %}

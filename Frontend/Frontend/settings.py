@@ -41,6 +41,8 @@ INSTALLED_APPS = (
     'articles',
     'tweets',
     'explorer',
+    'statistics',
+    'visualizations',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -98,8 +100,21 @@ SUIT_CONFIG = {
 
     'MENU': (
         {'label': 'Scope', 'icon':'icon-screenshot', 'models': ('explorer.keyword', 'explorer.fsite', 'explorer.msite', 'explorer.taccount')},
+        
         {'label': 'Data', 'icon':'icon-book', 'models': ('articles.article', 'tweets.tweet')},
+
+        {'label': 'Statistics', 'icon':'icon-signal', 'models': (
+            {'label': 'Articles', 'url': '/statistics/articles'},
+            {'label': 'Tweets', 'url': '/statistics/tweets'},
+        )},
+
+        {'label': 'Visualizations', 'icon':'icon-fullscreen', 'models': (
+            {'label': 'Articles', 'url': '/visualizations/articles'},
+            {'label': 'Tweets', 'url': '/visualizations/tweets'},
+        )},
+
         {'label': 'Settings', 'icon':'icon-cog', 'models': ('auth.user', 'auth.group')},
+
         {'label': 'Authorization', 'icon':'icon-lock', 'models': ('auth.user', 'auth.group')},
     )
 }

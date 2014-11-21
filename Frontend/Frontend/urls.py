@@ -19,6 +19,10 @@ urlpatterns = patterns('',
 
     url(r'^explorer/', include('explorer.urls')),
 
+    url(r'^statistics/', include('statistics.urls')),
+
+    url(r'^visualizations/', include('visualizations.urls')),
+
     url(r'^admin/', include(admin.site.urls)),
 )
 
