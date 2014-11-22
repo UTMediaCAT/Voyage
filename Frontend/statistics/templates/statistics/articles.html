@@ -36,6 +36,28 @@
             }
         </script>
     </head>
+
+    <head>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript">
+          google.load("visualization", "1", {packages:["table"]});
+          google.setOnLoadCallback(drawTable);
+
+          function drawTable() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Keywords');
+            data.addColumn('number', 'Number of matches');
+
+            data.addRows( {{ data|safe }} );
+
+            var table = new google.visualization.Table(document.getElementById('table_div'));
+
+            table.draw(data, {showRowNumber: true});
+          }
+        </script>
+    </head>
+
     <!--Div that will hold the pie chart-->
-    <div id="chart_div"></div>
+    <div id="chart_div" ></div>
+    <div id="table_div" ></div>
 {% endblock %}
