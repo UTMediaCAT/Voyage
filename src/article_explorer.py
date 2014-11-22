@@ -107,7 +107,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                            This can greatly increase the speed of download
     """
     config = configuration()['storage']
-    added, updated, failed, no_match, processed = 0, 0, 0, 0, 0
+    added, updated, failed, no_match = 0, 0, 0, 0
     start_t = time.time()
 
     # Load the relevant configs and collect today's date and time
@@ -118,10 +118,12 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
     for site in populated_sites:
         # print "\n%s" % site[0]
         article_count = site[1].size()
-        for art in site[1].articles:
-
+        processed = 0
+        for i in range(len(site[1].articles)):
+            art = site[1].articles[i]
             # Stop any print statements, even newspaper's warning messages
             sys.stdout = open(os.devnull, "w")
+            sys.stderr = open(os.devnull, "w")
 
             # Check for any new command on communication stream
             check_command()
@@ -186,7 +188,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                         article = article_list[0]
                         article.title = title
                         article.url = url
-                        article.date_added = today
+                        # article.date_added = today
                         article.date_published = pub_date
                         article.influence = site[2]
                         article.save()
@@ -219,8 +221,10 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
 
             sys.stdout.write("(%s) %i/%i\r" % (site[0], processed, article_count))
             sys.stdout.flush()
+            site[1].articles[i] = None
             # Some stats to look at while running the script
         print("(%s) %i/%i\r" % (site[0], processed, article_count))
+
     #         print("\n\tStatistics\n\tAdded: %i | Updated: %i | No Match: %i | Failed: %i | Time Elapsed: %is" %
     #               (added, updated, no_match, failed, time.time() - start_t))
     #         print "+--------------------------------------------------------------------+"
@@ -412,6 +416,7 @@ def check_command():
 
     # Let the output print back to normal for printing status
     sys.stdout = sys.__stdout__
+    sys.stderr = sys.__stderr__
 
     if msg[0] == 'W':
         command = msg[1]
@@ -432,7 +437,6 @@ def check_command():
 
 
 if __name__ == '__main__':
-    print os.getpid()
     # Load the relevant configs
     config = configuration()['article']
     # Connects to Site Database
@@ -453,7 +457,6 @@ if __name__ == '__main__':
     end = timeit.default_timer()
     delta_time = end - start
     sleep_time = max(config['min_iteration_time']-delta_time, 0)
-    sleep_time = 0
     for i in range(int(sleep_time//5)):
         time.sleep(5)
         check_command()

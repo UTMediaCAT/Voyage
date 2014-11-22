@@ -35,7 +35,7 @@ class Taccount(models.Model):
     account = models.CharField(max_length=200, unique=True)
 
     class Meta:
-        verbose_name = 'Twitter Accounts'
+        verbose_name = 'Twitter Account'
 
     def __unicode__(self):
         return self.account
