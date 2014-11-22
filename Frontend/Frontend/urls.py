@@ -25,6 +25,8 @@ urlpatterns = patterns('',
 
     url(r'^visualizations/', include('visualizations.urls')),
 
+    url(r'^options/', include('options.urls')),
+
     url(r'^admin/', include(admin.site.urls)),
 )
 

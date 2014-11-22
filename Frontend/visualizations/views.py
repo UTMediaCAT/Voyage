@@ -16,7 +16,6 @@ def articles(request):
             data_dict[ele.keyword] = 0
         else:
             data_dict[ele.keyword] +=1
-    print data_dict
 
     data = []
     for ele in data_dict.keys():
@@ -40,7 +39,6 @@ def tweets(request):
             data_dict[ele.keyword] = 0
         else:
             data_dict[ele.keyword] +=1
-    print data_dict
 
     data = []
     for ele in data_dict.keys():

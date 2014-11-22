@@ -1,5 +1,6 @@
 from django import template
 from subprocess import Popen, PIPE
+import time
 import sys
 import os
 
@@ -15,19 +16,11 @@ def get_article_run_status():
     return executer.status_output("article")
 
 @register.simple_tag
-def run_article_explorer():
-    os.chdir(path)
-    executer.run("article")
-
-@register.simple_tag
-def pause_article_explorer():
-    os.chdir(path)
-    executer.pause("article")
-
-@register.simple_tag
-def stop_article_explorer():
-    os.chdir(path)
-    executer.stop("article")
+def stop_button_article_explorer():
+    if "Waiting" in get_article_run_status():
+        return "Force Stop"
+    else:
+        return "Stop"
 
 @register.simple_tag
 def get_twitter_run_status():
@@ -35,16 +28,8 @@ def get_twitter_run_status():
     return executer.status_output("twitter")
 
 @register.simple_tag
-def run_twitter_explorer():
-    os.chdir(path)
-    executer.run("twitter")
-
-@register.simple_tag
-def pause_twitter_explorer():
-    os.chdir(path)
-    executer.pause("twitter")
-
-@register.simple_tag
-def stop_twitter_explorer():
-    os.chdir(path)
-    executer.stop("twitter")
+def stop_button_twitter_explorer():
+    if "Waiting" in get_twitter_run_status():
+        return "Force Stop"
+    else:
+        return "Stop"

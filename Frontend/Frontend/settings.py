@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'tweets',
     'explorer',
     'statistics',
+    'options',
     'visualizations',
 )
 
@@ -112,6 +113,8 @@ SUIT_CONFIG = {
             {'label': 'Articles', 'url': '/visualizations/articles'},
             {'label': 'Tweets', 'url': '/visualizations/tweets'},
         )},
+
+        {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
 
         {'label': 'Settings', 'icon':'icon-cog', 'models': ('auth.user', 'auth.group')},
 
