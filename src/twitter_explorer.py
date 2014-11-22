@@ -65,17 +65,19 @@ def configuration():
     config_yaml = open("../config.yaml", 'r')
     config = yaml.load(config_yaml)
     config_yaml.close()
+    #Config is returned as a dictionary, which you can navigate through later to get
+    #a specific setting
     return config
 
 def authorize():
     """ (None) -> tweepy.API
     Will use global keys to allow use of API
     """
+    #Get's config settings for twitter
     config = configuration()['twitter']
+    #Authorizing use with twitter development api
     auth = tweepy.OAuthHandler(config['consumer_key'], config['consumer_secret'])
     auth.set_access_token(config['access_token'], config['access_token_secret'])
-    #auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-    #auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
     return tweepy.API(auth)
 
 def wait_and_resume():
@@ -107,16 +109,19 @@ def get_tweets(screen_name, amount):
     if amount > 3190 or amount > user.statuses_count:
         amount = min(3190, user.statuses_count)
 
+    #Basically acts as an iterator
     items = tweepy.Cursor(api.user_timeline,id= screen_name,
                           count = 200, include_rts=True).items()
 
     count = 0
     while count != amount:
         try:
+            #Get's next tweet and appends to holder
             item = next(items)
             count += 1
             tweet_holder.append(item)
         except:
+            #If error occurs (timeout)
             wait_and_resume()
             continue
     return tweet_holder
@@ -147,18 +152,38 @@ def get_keywords(tweet, keywords):
     """
     matched_keywords = []
 
+    #Searches if keyword is in tweet regardless of casing
     for key in keywords:
         if re.search(key, tweet.text.encode('utf8'), re.IGNORECASE):
             matched_keywords.append(key)
 
-    #Uses get_sources, but instead of searching tweets, searches
+    #Searches if keyword is found in any of the urls in the tweet
+    store_all = configuration()['storage']['store_all_sources']
 
-    matched_keywords_in_urls = get_sources(tweet, keywords)
-    all_matches = matched_keywords + matched_keywords_in_urls
+    matched_in_url = []
+    expanded_urls = ''
+    display_urls = ''
+    if store_all == False:
+        for url in tweet.entities['urls']:
+            try:
+                # tries to get full url on shortened urls
+                expanded_urls += urllib2.urlopen(url['expanded_url']).geturl() + ' '
+                expanded_urls += urllib2.urlopen(url['display_url']).geturl() + ' '
+            except:
+                #if not just take normal url
+                expanded_urls += url['expanded_url'] + ' '
+                display_urls += url['display_url'] + ' '
+
+        #substring, expanded includes scheme, display may not
+        #uses two large url strings, rather than having n^2 complexity
+        for keyword in keywords:
+            if re.search(keyword, expanded_urls, re.IGNORECASE) or re.search(keyword, display_urls, re.IGNORECASE):
+                matched_in_url.append(keyword)
+    #Uses get_sources, but instead of searching tweets, searches
+    #Adds both searches
+    all_matches = matched_keywords + matched_in_url
     all_matches = set(all_matches)
     return list(all_matches)
-
-
 
 def get_sources(tweet, sites):
     """ (status, list of str) -> list of str
@@ -182,13 +207,16 @@ def get_sources(tweet, sites):
                 expanded_urls += urllib2.urlopen(url['expanded_url']).geturl() + ' '
                 expanded_urls += urllib2.urlopen(url['display_url']).geturl() + ' '
             except:
+                #if not just take normal url
                 expanded_urls += url['expanded_url'] + ' '
                 display_urls += url['display_url'] + ' '
 
         #substring, expanded includes scheme, display may not
+        #uses two large url strings, rather than having n^2 complexity
         for site in sites:
             if re.search(site, expanded_urls, re.IGNORECASE) or re.search(site, display_urls, re.IGNORECASE):
                 matched_urls.append(site)
+    # if store_all option is on, store all urls in tweet
     elif store_all == True:
         for url in tweet.entities['urls']:
             try:
