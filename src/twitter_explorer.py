@@ -26,6 +26,9 @@ from explorer.models import Keyword as E_keyword
 __author__ = "ACME: CSCC01F14 Team 4"
 __authors__ = "Yuya Iwabuchi, Jai Sughand, Xiang Wang, Kyle Bridgemohansingh, Ryan Pan"
 
+## FOLLOWING GLOBAL VARIABLES ARE NOW HANDLED BY config.yaml
+##  and configuration()
+# -----------------------------------------------------------------------
 # Twitter Developer API
 #CONSUMER_KEY = "UITySH5N4iGOE3l6C0YgmwHVd"
 #CONSUMER_SECRET = "H7lXeLBDQv3o7i4wISGJtukdAqC6X9Vr4EXTdaIAVVrN56Lwbh"
@@ -37,20 +40,22 @@ __authors__ = "Yuya Iwabuchi, Jai Sughand, Xiang Wang, Kyle Bridgemohansingh, Ry
 #DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
-INIT_TWEET_COUNT=1000
-ITER_TWEET_COUNT=100
+#INIT_TWEET_COUNT=1000
+#ITER_TWEET_COUNT=100
 
-FROM_START = True  
-MIN_ITERATION_TIME = 600
+#FROM_START = True
+#MIN_ITERATION_TIME = 600
 
 #Seconds to wait before retrying call
-WAIT_RATE = (60 * 1) + 0
+#WAIT_RATE = (60 * 1) + 0
 
 # Used for commmunication stream
 #COMM_FILE = '_comm.stream'
 #RETRY_COUNT = 10
 #RETRY_DELTA = 1
 #SLEEP_TIME = 5
+
+# -----------------------------------------------------------------------
 
 def configuration():
     """ (None) -> dict
@@ -77,10 +82,11 @@ def wait_and_resume():
     """ (None) -> None
     Helper function to be called when a rate limit has been reached.
     """
+    wait_rate = configuration()["twitter"]['wait_rate_seconds']
     print ('Twitter Rate Limit Reached, Attempting to Continue.')
-    print ('Resuming in ' + str(int(WAIT_RATE/60)) + ' minute(s) and '
-                   + str(WAIT_RATE % 60) + ' second(s).')
-    time.sleep(WAIT_RATE)
+    print ('Resuming in ' + str(int(wait_rate/60)) + ' minute(s) and '
+                   + str(wait_rate % 60) + ' second(s).')
+    time.sleep(wait_rate)
 
 def get_tweets(screen_name, amount):
     """ (str, [int]) -> list of list
@@ -91,41 +97,36 @@ def get_tweets(screen_name, amount):
     screen_name     -- string of twitter handle
     sites           -- List of string site urls to look for
     """
+
+    tweet_holder=[]
     api = authorize()
-    rate_reached = True
-    while rate_reached:
+
+    #Make sure 3190 is max tweets to get, while making sure
+    #the amount of tweets to get is under the amount the user has.
+    user = api.get_user(screen_name)
+    if amount > 3190 or amount > user.statuses_count:
+        amount = min(3190, user.statuses_count)
+
+    items = tweepy.Cursor(api.user_timeline,id= screen_name,
+                          count = 200, include_rts=True).items()
+
+    count = 0
+    while count != amount:
         try:
-            user = api.get_user(screen_name)
-            rate_reached = False
+            item = next(items)
+            count += 1
+            tweet_holder.append(item)
         except:
             wait_and_resume()
-
-    tweets = []
-    last_id = -1
-    #incase user asks for more tweets than available
-    while len(tweets) < amount and len(tweets) != user.statuses_count:
-        #check how many more tweets is needed
-        count = amount - len(tweets)
-        try:
-            new_tweets = api.user_timeline(screen_name=screen_name, count=count)
-
-            #If there are no more tweets, finish
-            if not new_tweets:
-                break
-            #Add new tweets
-            for tweet in new_tweets:
-                tweets.append(tweet)
-            last_id = tweets[-1].id
-        except:
-            wait_and_resume()
-        return tweets
-
-
+            continue
+    return tweet_holder
 
 def get_follower_count(screen_name):
     """ (str) -> int
     Gets number of followers of screen_name's account
 
+    Keyword arguments:
+    screen_name     -- string of twitter handle
     """
     api = authorize()
     while True:
@@ -420,28 +421,32 @@ def check_command():
 
 if __name__ == '__main__':
     # print configuration()
-    # x = get_tweets('kylebsingh',2)
+    # y = get_tweets('acmeteam4', 6000)
+    # x = get_tweets('kylebsingh',6000)
+
     # for g in x:
     #     print g.text
 
     # parse_tweets(['CNN', 'TIME'], ['obama','hollywood', 'not', 'fire', 'president', 'activities'], ['http://cnn.com/', 'http://ti.me'], 'tweets')
     
-    # Initialize Communication Stream
+    #Initialize Communication Stream
     comm_init()
-    
-    fs = FROM_START
-    
+    config = configuration()['twitter']
+
+    fs = config['from_start']
+
     while 1:
         # Check for any new command on communication stream
         check_command()
-    
+
         start = timeit.default_timer()
+
         if (fs == True ):
-            explore('taccounts', 'keywords', 'sites', INIT_TWEET_COUNT)
+            explore('taccounts', 'keywords', 'sites', config['initial_tweet_count'])
             fs = False
         else:
-            explore('taccounts', 'keywords', 'sites', ITER_TWEET_COUNT)
-    
+            explore('taccounts', 'keywords', 'sites', config['iteration_tweet_count'])
+
         end = timeit.default_timer()
         delta_time = end - start
-        time.sleep(max(MIN_ITERATION_TIME-delta_time, 0))
+        time.sleep(max(config['min_iteration_time']-delta_time, 0))
