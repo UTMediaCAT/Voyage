@@ -8,6 +8,7 @@ class AuthorInline(admin.TabularInline):
 
 class SourceInline(admin.TabularInline):
     model = Source
+    fields = ['url']
     extra = 0
 
 class KeywordInline(admin.TabularInline):
@@ -38,7 +39,7 @@ class ArticleAdmin(admin.ModelAdmin):
     def get_sources(self, obj):
         sources = ''
         for src in obj.source_set.all():
-            sources += src.source + ', '
+            sources += src.url + ', '
         return sources[:-2]
 
     get_sources.short_description = 'Matched Sources'

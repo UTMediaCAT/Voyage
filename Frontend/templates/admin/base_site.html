@@ -18,6 +18,17 @@
     <div class="header-content" align="center">
         <!-- First icon column -->
         <div class="header-column icon">
+            <i class="icon-refresh"></i>
+        </div>
+
+        <form method="post" action="{{ request.get_full_path }}">
+            {% csrf_token %}
+            <input type="submit" value="Refresh">
+        </form>
+    </div>
+    <div class="header-content" align="center">
+        <!-- First icon column -->
+        <div class="header-column icon">
             <i class="icon-globe"></i>
         </div>
 
@@ -29,7 +40,7 @@
             {% csrf_token %}
             <input type="submit" value="Run" name="acommand">
             <input type="submit" value="Pause" name="acommand">
-            <input type="submit" value="Stop" name="acommand">
+            <input type="submit" value="{% stop_button_article_explorer %}" name="acommand">
         </form>
     </div>
     <div class="header-content" align="center">
@@ -46,7 +57,7 @@
             {% csrf_token %}
             <input type="submit" value="Run" name="tcommand">
             <input type="submit" value="Pause" name="tcommand">
-            <input type="submit" value="Stop" name="tcommand">
+            <input type="submit" value="{% stop_button_twitter_explorer %}" name="tcommand">
         </form>
     </div>
 {% endblock %}

@@ -4,17 +4,10 @@ from articles.models import Article, Keyword, Source, Author
 import sys, os, time, json
 
 def index(request):
+    if not request.user.is_authenticated():
+        return redirect('/admin/login/?next=%s' % request.path)
+
     latest_article_list = Article.objects.order_by('date_added')
-
-    # output = ', '.join([p.title for p in latest_article_list])
-    # return HttpResponse(output)
-
-
-    # template = loader.get_template('articles/index.html')
-    # context = RequestContext(request, {
-    #     'latest_question_list': latest_article_list,
-    # })
-    # return HttpResponse(template.render(context))
 
     context = {'latest_article_list': latest_article_list}
     return render(request, 'articles/index.html', context)

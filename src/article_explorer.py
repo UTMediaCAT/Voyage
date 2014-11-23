@@ -89,7 +89,9 @@ def populate_sites(sites, is_from_start):
                                              fetch_images=False,
                                              language='en',
                                              number_thread=1)))
-        new_sites[s].append(sites[s][2])
+        new_sites[s].append(sites[s][1]) # Append site url
+        new_sites[s].append(sites[s][2]) # Append site influence
+
         end_t = time.time()
         # report back the amount of articles found, and time it took
         # print("%6i pgs%9is" % (new_sites[s][1].size(), end_t - start_t))
@@ -164,8 +166,8 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                     article_list = Article.objects.filter(url=url)
                     if not article_list:
 
-                        article = Article(title=title, url=url, date_added=today,
-                                          date_published=pub_date, influence=site[2])
+                        article = Article(title=title, url=url, url_origin=site[2], date_added=today,
+                                          date_published=pub_date, influence=site[3])
                         article.save()
 
                         article = Article.objects.get(url=url)
@@ -177,7 +179,8 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                             article.author_set.create(author=author)
 
                         for source in sources:
-                            article.source_set.create(source=source)
+                            src = article.source_set.create(url=source[0], 
+                                                            url_origin=source[1])
 
                         added += 1
 
@@ -188,9 +191,10 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                         article = article_list[0]
                         article.title = title
                         article.url = url
+                        article.url_origin = site[2]
                         # article.date_added = today
                         article.date_published = pub_date
-                        article.influence = site[2]
+                        article.influence = site[3]
                         article.save()
 
                         for key in keywords:
@@ -202,8 +206,9 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                                 article.author_set.create(author=author)
 
                         for source in sources:
-                            if not Source.objects.filter(source=source):
-                                article.source_set.create(source=source)
+                            if not Source.objects.filter(url=source[0]):
+                                src = article.source_set.create(url=source[0])
+                                src.url_origin = source[1]
 
                         # print "\tResult:    Match detected! Article already in database. Updating."
                         updated += 1
@@ -219,11 +224,11 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
             # Let the output print back to normal for minimal ui
             sys.stdout = sys.__stdout__
 
-            sys.stdout.write("(%s) %i/%i\r" % (site[0], processed, article_count))
+            sys.stdout.write("(%s) %i/%i          \r" % (site[0], processed, article_count))
             sys.stdout.flush()
             site[1].articles[i] = None
             # Some stats to look at while running the script
-        print("(%s) %i/%i\r" % (site[0], processed, article_count))
+        print("(%s) %i/%i          " % (site[0], processed, article_count))
 
     #         print("\n\tStatistics\n\tAdded: %i | Updated: %i | No Match: %i | Failed: %i | Time Elapsed: %is" %
     #               (added, updated, no_match, failed, time.time() - start_t))
@@ -244,7 +249,6 @@ def get_sources(html, sites):
     config = configuration()['storage']
 
     matched_urls = []
-
     # for each site, check if it exists within the html given
     for site in sites:
         if config['store_all_sources']:
@@ -256,9 +260,11 @@ def get_sources(html, sites):
                 # Format the site to use only the domain name for searching
                 formatted_site = re.search("([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}",
                                            site, re.IGNORECASE).group(0)
+                if formatted_site[:3] == 'www':
+                    formatted_site = formatted_site[3:]
                 if formatted_site in url:
                     # If it matches even once, append the site to the list
-                    matched_urls.append(url[6:-1])
+                    matched_urls.append([url[6:-1], site])
     # Return the list
     return matched_urls
 

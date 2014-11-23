@@ -18,6 +18,10 @@ def command(request):
             path = os.path.dirname(os.path.realpath(__file__))
             Popen(["python", path + "/../../src/executer.py", "article", "stop"], cwd=path)
 
+        if request.POST.get('acommand') == 'Force Stop':
+            path = os.path.dirname(os.path.realpath(__file__))
+            Popen(["python", path + "/../../src/executer.py", "article", "fstop"], cwd=path)
+
         if request.POST.get('tcommand') == 'Run':
             path = os.path.dirname(os.path.realpath(__file__))
             Popen(["python", path + "/../../src/executer.py", "twitter", "run"], cwd=path)
@@ -29,6 +33,10 @@ def command(request):
         if request.POST.get('tcommand') == 'Stop':
             path = os.path.dirname(os.path.realpath(__file__))
             Popen(["python", path + "/../../src/executer.py", "twitter", "stop"], cwd=path)
+
+        if request.POST.get('tcommand') == 'Force Stop':
+            path = os.path.dirname(os.path.realpath(__file__))
+            Popen(["python", path + "/../../src/executer.py", "twitter", "fstop"], cwd=path)
 
 
     return HttpResponseRedirect("/admin")
