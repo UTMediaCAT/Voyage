@@ -216,7 +216,7 @@ def force_stop(explorer):
     name = name_format(explorer)
 
     subprocess.call(['kill', '-9', pid])
-    comm_write(explorer, 'SS')
+    comm_write(explorer, 'SS 12345')
     return format('Force Stop: %s - %s' % (name, pid))
 
 
