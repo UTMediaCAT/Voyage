@@ -186,15 +186,18 @@ def get_sources(tweet, sites):
 
         #substring, expanded includes scheme, display may not
         for site in sites:
-            if re.search(site, expanded_urls, re.IGNORECASE) or re.search(site, display_urls, re.IGNORECASE):
-                matched_urls.append(site)
+            if (re.search(site, expanded_urls, re.IGNORECASE) or 
+                re.search(site, display_urls, re.IGNORECASE)):
+                matched_urls.append([site, site]) # should store [whole source, 'site' url]
     elif store_all == True:
         for url in tweet.entities['urls']:
             try:
                 # tries to get full url on shortened urls
-                matched_urls.append(urllib2.urlopen(url['expanded_url']).geturl())
+                matched_urls.append([urllib2.urlopen(url['expanded_url']).geturl(), 
+                                    site]) # should store [whole source, 'site' url]
             except:
-                matched_urls.append(url['expanded_url'])
+                matched_urls.append([url['expanded_url'], 
+                                    site])  # should store [whole source, 'site' url]
 
     return matched_urls
 
@@ -247,7 +250,10 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                 tweet_list = Tweet.objects.filter(tweet_id = tweet_id)
                 if (not tweet_list): 
 
-                    tweet = Tweet(tweet_id = tweet_id, user=tweet_user, date_added = tweet_store_date, date_published = tweet_date, followers = tweet_followers, text=tweet_text )
+                    tweet = Tweet(tweet_id = tweet_id, user=tweet_user, 
+                                  date_added = tweet_store_date, 
+                                  date_published = tweet_date, 
+                                  followers = tweet_followers, text=tweet_text)
                     tweet.save()
 
                     tweet =  Tweet.objects.get(tweet_id=tweet_id)
@@ -256,7 +262,8 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                         tweet.keyword_set.create(keyword = key)
        
                     for source in tweet_sources:
-                        tweet.source_set.create(source = source)
+                        tweet.source_set.create(url = source[0], 
+                                                url_origin=source[1])
 
                     added += 1
                     # print "\tResult:    Match detected! Added to the database."
@@ -273,12 +280,12 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                     tweet.save()
 
                     for key in tweet_keywords:
-                        if not T_keyword.objects.filter(keyword = key): 
-                            tweet.keyword_set.create(keyword = key)
+                        if not T_keyword.objects.filter(keyword=key): 
+                            tweet.keyword_set.create(keyword=key)
 
                     for source in tweet_sources:
-                        if not Source.objects.filter(source = source):
-                            tweet.source_set.create(source = source)
+                        if not Source.objects.filter(url=source[0]):
+                            tweet.source_set.create(url=source[0], url_origin=source[1])
                     # print "\tResult:    Match detected! Tweet already in database. Updating."
                     updated += 1
 
