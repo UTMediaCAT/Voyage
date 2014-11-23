@@ -224,11 +224,11 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
             # Let the output print back to normal for minimal ui
             sys.stdout = sys.__stdout__
 
-            sys.stdout.write("(%s) %i/%i          \r" % (site[0], processed, article_count))
+            sys.stdout.write("(Article|%s) %i/%i          \r" % (site[0], processed, article_count))
             sys.stdout.flush()
             site[1].articles[i] = None
             # Some stats to look at while running the script
-        print("(%s) %i/%i          " % (site[0], processed, article_count))
+        print("(Article|%s) %i/%i          " % (site[0], processed, article_count))
 
     #         print("\n\tStatistics\n\tAdded: %i | Updated: %i | No Match: %i | Failed: %i | Time Elapsed: %is" %
     #               (added, updated, no_match, failed, time.time() - start_t))

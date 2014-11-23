@@ -23,7 +23,7 @@ class ArticleAdmin(admin.ModelAdmin):
     inlines = [AuthorInline, SourceInline, KeywordInline]
 
     list_display = ('title', 'url', 'get_authors', 'get_keywords', 'get_sources', 'date_published', 'date_added')
-    search_fields = ['url', 'title', 'keyword__keyword', 'source__source']
+    search_fields = ['url', 'title', 'keyword__keyword', 'source__url']
     list_filter = ['keyword__keyword']
     ordering = ['-date_added']
 
@@ -43,7 +43,7 @@ class ArticleAdmin(admin.ModelAdmin):
         return sources[:-2]
 
     get_sources.short_description = 'Matched Sources'
-    get_sources.admin_order_field = 'source__source'
+    get_sources.admin_order_field = 'source__url'
 
     def get_authors(self, obj):
         authors = ''

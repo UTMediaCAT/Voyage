@@ -258,7 +258,8 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
 
             # print '\tEvaluating ...\r'
             tweet_id = tweet.id
-            tweet_date = str(tweet.created_at)
+            tweet_date = tweet.created_at
+            tweet_date
             tweet_user = tweet.user.screen_name
             tweet_store_date = datetime.datetime.now().strftime(config['date_format'][1:])
             tweet_keywords = get_keywords(tweet, keywords)
@@ -319,9 +320,9 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
             else:
                 no_match += 1
             processed += 1
-            sys.stdout.write("(%s) %i/%i\r" % (user, processed, tweet_count))
+            sys.stdout.write("(Twitter|%s) %i/%i          \r" % (user, processed, tweet_count))
             sys.stdout.flush()
-        print format("(%s) %i/%i\r" % (user, processed, tweet_count))
+        print format("(Twitter|%s) %i/%i          " % (user, processed, tweet_count))
         #         print "\tResult:    No Match Detected."
         # print("\n\tStatistics\n\tAdded: %i | Updated: %i | No Match: %i | Time Elapsed: %is" %
           # (added, updated, no_match, time.time() - start))
