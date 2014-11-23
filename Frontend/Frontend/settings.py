@@ -90,6 +90,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'staticfiles'),
+)
+
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 
 TEMPLATE_CONTEXT_PROCESSORS = TCP + (
@@ -110,8 +114,9 @@ SUIT_CONFIG = {
         )},
 
         {'label': 'Visualizations', 'icon':'icon-fullscreen', 'models': (
-            {'label': 'Articles', 'url': '/visualizations/articles'},
-            {'label': 'Tweets', 'url': '/visualizations/tweets'},
+            {'label': 'Article Hyper Tree', 'url': '/visualizations/article_hypertree'},
+            {'label': 'Article Space Tree', 'url': '/visualizations/article_spacetree'},
+            {'label': 'Tweet Hyper Tree', 'url': '/visualizations/tweet_hypertree'},
         )},
 
         {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
