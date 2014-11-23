@@ -215,7 +215,7 @@ def get_sources(tweet, sites):
         #uses two large url strings, rather than having n^2 complexity
         for site in sites:
             if re.search(site, expanded_urls, re.IGNORECASE) or re.search(site, display_urls, re.IGNORECASE):
-                matched_urls.append(site)
+                matched_urls.append([site, site]) # should store [whole source, 'site' url]
     elif store_all == True:
         for url in tweet.entities['urls']:
             try:
