@@ -8,6 +8,7 @@ class AuthorInline(admin.TabularInline):
 
 class SourceInline(admin.TabularInline):
     model = Source
+    fields = ['url']
     extra = 0
 
 class KeywordInline(admin.TabularInline):
