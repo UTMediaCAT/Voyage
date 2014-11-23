@@ -38,7 +38,7 @@ class ArticleAdmin(admin.ModelAdmin):
     def get_sources(self, obj):
         sources = ''
         for src in obj.source_set.all():
-            sources += src.source + ', '
+            sources += src.url + ', '
         return sources[:-2]
 
     get_sources.short_description = 'Matched Sources'
