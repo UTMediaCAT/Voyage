@@ -15,10 +15,11 @@ class Tweet(models.Model):
 
 class Source(models.Model):
     tweet = models.ForeignKey(Tweet)
-    source = models.CharField(max_length=200)
+    url = models.CharField(max_length=200)
+    url_origin = models.URLField(max_length=200)
 
     def __unicode__(self):
-        return self.source
+        return self.url
 
 class Keyword(models.Model):
     tweet = models.ForeignKey(Tweet)
