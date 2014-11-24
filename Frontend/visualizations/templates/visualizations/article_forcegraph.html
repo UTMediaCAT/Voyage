@@ -1,0 +1,24 @@
+{% extends "admin/base_site.html" %}
+{% load staticfiles %}
+{% load explorer_tags %}
+
+{% block content %}
+	
+	<head>
+		<script language="javascript" type="text/javascript">
+			function resizeIframe(obj) {
+				obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+			}
+		</script>
+	</head>
+
+	<form method="post" action="/visualizations/article_forcegraph_js">
+        {% csrf_token %}
+        <input type="submit" value="View Full Screen">
+    </form>
+
+    <div id="forcegraph">
+        <iframe width="100%" frameborder="0" onload="resizeIframe(this);" src="/visualizations/article_forcegraph_js"></iframe>
+    </div>
+
+{% endblock %}
