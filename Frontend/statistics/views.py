@@ -4,56 +4,15 @@ from subprocess import Popen
 from articles.models import *
 from explorer.models import Msite
 import sys, os, datetime, time, re
+import analyzer
 
 def articles(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
 
-    data_dict = {}
+    keywords_pie_chart = analyzer.keywords_pie_chart()
+    articles_annotation_chart = analyzer.articles_annotation_chart()
+    msites_bar_chart = analyzer.msites_bar_chart()
 
-    keywords = Keyword.objects.all()
-    for ele in keywords:
-        if not ele.keyword in data_dict.keys():
-            data_dict[ele.keyword] = 0
-        else:
-            data_dict[ele.keyword] +=1
-
-    keyword_count = []
-    for ele in data_dict.keys():
-        new=[]
-        new.append(ele.encode("utf-8"))
-        new.append(data_dict[ele])
-        keyword_count.append(new)
-
-    article_by_date = []
-    sites = []
-    for s in Msite.objects.all():
-        sites.append(re.search("([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}",
-                     s.url, re.IGNORECASE).group(0).encode("ascii"))
-
-    for art in Article.objects.all():
-        added = False
-        date = art.date_added.strftime("%Y-%m-%d")
-        for index in range(len(article_by_date)):
-            if date == article_by_date[index][0]:
-                added = True
-                for i in range(len(sites)):
-                    if sites[i] in art.url.encode("ascii"):
-                        article_by_date[index][i+1] += 1
-                        break
-            if added:
-                break
-
-        if not added:
-            article_by_date.append([date] + [0]*len(sites))
-            for i in range(len(sites)):
-                if sites[i] in art.url:
-                    article_by_date[-1][i+1] += 1
-                    break
-
-
-    context = {'keyword_count': keyword_count, 'monitoring_sites': sites, 'article_by_date': article_by_date}
-
+    context = {'keywords_pie_chart':  keywords_pie_chart, 'monitoring_sites': articles_annotation_chart[0], 'article_by_date': articles_annotation_chart[1], 'msites_bar_chart': msites_bar_chart,'msites_bar_table':msites_bar_chart[1:]}
 
     return render(request, 'statistics/articles.html', context)
 
