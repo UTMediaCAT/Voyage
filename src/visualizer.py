@@ -9,12 +9,10 @@ from explorer.models import Keyword as E_Keyword
 from tweets.models import*
 from tweets.models import Keyword as T_Keyword
 
-def articles_keywords_pie_chart():
-    data_dict = {}
-    
-    keywords = A_Keyword.objects.all()
+def article_hypertree(request):
+    data = {}
 
-    for ele in keywords:
+    for article in Article.objects.all()::
         if not ele.keyword in data_dict.keys():
             data_dict[ele.keyword] = 1
         else:
@@ -29,10 +27,49 @@ def articles_keywords_pie_chart():
 
     return data
 
-def tweets_keywords_pie_chart():
+def article_spacetree(request):
+    if not request.user.is_authenticated():
+        return redirect('/admin/login/?next=%s' % request.path)
+
+def article_weightedtree(request):
+    if not request.user.is_authenticated():
+        return redirect('/admin/login/?next=%s' % request.path)
+
+def article_rgraph(request):
+    if not request.user.is_authenticated():
+        return redirect('/admin/login/?next=%s' % request.path)
+
+def article_forcegraph(request):
+    if not request.user.is_authenticated():
+        return redirect('/admin/login/?next=%s' % request.path)
+
+def tweet_hypertree(request):
+    if not request.user.is_authenticated():
+        return redirect('/admin/login/?next=%s' % request.path)
+
+def tweet_spacetree(request):
+    if not request.user.is_authenticated():
+        return redirect('/admin/login/?next=%s' % request.path)
+
+def tweet_weightedtree(request):
+    if not request.user.is_authenticated():
+        return redirect('/admin/login/?next=%s' % request.path)
+
+def tweet_rgraph(request):
+    if not request.user.is_authenticated():
+        return redirect('/admin/login/?next=%s' % request.path)
+
+def tweet_forcegraph(request):
+    if not request.user.is_authenticated():
+        return redirect('/admin/login/?next=%s' % request.path)
+
+def keywords_pie_chart(is_A):
     data_dict = {}
      
-    keywords = T_Keyword.objects.all()
+    if is_A:
+        keywords = A_Keyword.objects.all()
+    else:
+        keywords = T_Keyword.objects.all()
     for ele in keywords:
         if not ele.keyword in data_dict.keys():
             data_dict[ele.keyword] = 1

@@ -6,6 +6,10 @@ from explorer.models import *
 import sys, os
 import json
 
+path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '../../', 'src'))
+sys.path.append(path)
+import analyzer
+
 def article_hypertree(request):
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)

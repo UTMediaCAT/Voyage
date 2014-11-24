@@ -1,8 +1,6 @@
 from django.shortcuts import render, redirect
 from django.template import RequestContext, loader
 from subprocess import Popen
-from articles.models import *
-from explorer.models import Msite
 import sys, os, datetime, time, re
 
 path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '../../', 'src'))
@@ -13,7 +11,7 @@ def articles(request):
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)
 
-    keywords_pie_chart = analyzer.keywords_pie_chart(True)
+    keywords_pie_chart = analyzer.articles_keywords_pie_chart()
     articles_annotation_chart = analyzer.articles_annotation_chart()
     msites_bar_chart = analyzer.msites_bar_chart()
 
@@ -30,7 +28,7 @@ def tweets(request):
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)
 
-    keywords_pie_chart = analyzer.keywords_pie_chart(False)
+    keywords_pie_chart = analyzer.tweets_keywords_pie_chart()
     tweets_annotation_chart =analyzer.tweets_annotation_chart()
     follower_bar_chart = analyzer.follower_bar_chart()
 
