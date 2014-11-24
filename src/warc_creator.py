@@ -13,5 +13,3 @@ def create_warc(url,folderName):
     rename_url=url.replace("/","\\")
     os.chmod('./CreateWarc.sh', 0700)
     subprocess.call(['./CreateWarc.sh',url,rename_url,folderName])
-
-create_warc("http://nation.time.com/2013/01/08/an-army-ranger-turned-refugee-helper/","jai")
