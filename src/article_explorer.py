@@ -51,6 +51,8 @@ from explorer.models import Keyword as E_keyword
 # To load configurations
 import yaml
 
+# To create warc files
+import warc_creator
 
 
 def configuration():
@@ -211,6 +213,8 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
 
                         # print "\tResult:    Match detected! Article already in database. Updating."
                         updated += 1
+
+                    warc_creator.create_article_warc(url)
 
                 else:
                     no_match += 1
