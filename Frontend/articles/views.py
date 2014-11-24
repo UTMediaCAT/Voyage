@@ -16,7 +16,8 @@ def index(request):
 def getJson(request):
     articles = {}
     for art in Article.objects.all():      
-        articles[art.url] = {'title': art.title, 'date_added': str(art.date_added),
+        articles[art.url] = {'site': art.url_origin, 'title': art.title, 
+                             'date_added': str(art.date_added),
                              'date_published': str(art.date_published),
                              'influence': art.influence, 'matched_keywords': [],
                              'matched_sources': [], 'authors': []}
@@ -25,7 +26,7 @@ def getJson(request):
         articles[key.article.url]['matched_keywords'].append(key.keyword)
     for src in Source.objects.all():
         articles[src.article.url]['matched_sources'].append({'url':src.url, 
-                                                             'url_site': srl.url_origin})
+                                                             'site': srl.url_origin})
     for ath in Author.objects.all():
         articles[ath.article.url]['authors'].append(ath.author)
 
