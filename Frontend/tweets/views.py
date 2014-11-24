@@ -15,7 +15,8 @@ def getJson(request):
     for key in Keyword.objects.all():
         tweets[key.tweet.tweet_id]['matched_keywords'].append(key.keyword)
     for src in Source.objects.all():
-        tweets[src.tweet.tweet_id]['matched_sources'].append(src.source)
+        tweets[src.tweet.tweet_id]['matched_sources'].append({'url':src.url, 
+                                                             'url_site': srl.url_origin})
 
     res = HttpResponse(json.dumps(tweets, indent=2, sort_keys=True))
     res['Content-Disposition'] = format('attachment; filename=tweets-%s.json' 
