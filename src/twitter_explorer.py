@@ -195,36 +195,34 @@ def get_sources(tweet, sites):
     tweet           -- Status structure to be searched through
     sites           -- List of site urls to look for
     """
-    store_all = configuration()['storage']['store_all_sources']
+    # store_all = configuration()['storage']['store_all_sources']
 
     matched_urls = []
-    expanded_urls = ''
-    display_urls = ''
-    if store_all == False:
-        for url in tweet.entities['urls']:
-            try:
-                # tries to get full url on shortened urls
-                expanded_urls += urllib2.urlopen(url['expanded_url']).geturl() + ' '
-                expanded_urls += urllib2.urlopen(url['display_url']).geturl() + ' '
-            except:
-                #if not just take normal url
-                expanded_urls += url['expanded_url'] + ' '
-                display_urls += url['display_url'] + ' '
+    tweet_urls = []
+    #if store_all == False:
+    for url in tweet.entities['urls']:
+        try:
+            # tries to get full url on shortened urls
+            tweet_urls.append(urllib2.urlopen(url['expanded_url']).geturl())
+        except:
+            #if not just take normal url
+            tweet_urls.append(url['expanded_url'])
 
-        #substring, expanded includes scheme, display may not
-        #uses two large url strings, rather than having n^2 complexity
-        for site in sites:
-            if re.search(site, expanded_urls, re.IGNORECASE) or re.search(site, display_urls, re.IGNORECASE):
-                matched_urls.append([site, site]) # should store [whole source, 'site' url]
-    elif store_all == True:
-        for url in tweet.entities['urls']:
-            try:
-                # tries to get full url on shortened urls
-                matched_urls.append([urllib2.urlopen(url['expanded_url']).geturl(), 
-                                    site]) # should store [whole source, 'site' url]
-            except:
-                matched_urls.append([url['expanded_url'], 
-                                    site])  # should store [whole source, 'site' url]
+    #substring, expanded includes scheme, display may not
+    for site in sites:
+        for url in tweet_urls:
+            if re.search(site, url, re.IGNORECASE) or re.search(site, url, re.IGNORECASE):
+                matched_urls.append([url, site]) # should store [whole source, 'site' url]
+    # elif store_all == True:
+    #     for url in tweet.entities['urls']:
+    #         try:
+    #             # tries to get full url on shortened urls
+    #             matched_urls.append([urllib2.urlopen(url['expanded_url']).geturl(),
+    #                                 site]) # should store [whole source, 'site' url]
+    #
+    #         except:
+    #             matched_urls.append([url['expanded_url'],
+    #                                 site])  # should store [whole source, 'site' url]
 
     return matched_urls
 
