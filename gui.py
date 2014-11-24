@@ -49,7 +49,8 @@ def open_web():
     ()-->None
     open the django web UI
     '''
-    webbrowser.open('http://127.0.0.1:8000/admin')
+    config = server.configuration()['server']
+    webbrowser.open(format('http://%s:%i/admin' % (config['ip_address'], config['port'])))
 
 def quit_app():
     window.destroy()
