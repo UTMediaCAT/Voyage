@@ -111,7 +111,7 @@ def follower_bar_chart():
 
     accounts = Taccount.objects.all()
     for account in accounts:
-        source_number = Tweet.objects.filter(user = account.account).count()
+        source_number = Tweet.objects.filter(user = account.account)[0].followers
         data.append([account.account.encode("utf-8"),source_number])
 
     return data
