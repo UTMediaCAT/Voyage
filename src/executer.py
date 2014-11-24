@@ -158,12 +158,13 @@ def run(explorer):
     """
 
     status = status_format(get_status(explorer))
+    pid = comm_read(explorer).split(' ')[1]
     name = name_format(explorer)
 
     if status == 'Waiting':
         return format('%s - Last Command Not Processed Yet' % name)
     elif status == 'Paused':
-        comm_write(explorer, 'WR')
+        comm_write(explorer, format('WR %s' % pid))
         return format('Run: %s - Resuming' % name)
     elif status == 'Stopped':
         subprocess.Popen(['python', explorer.lower() + '_explorer.py'])
@@ -178,6 +179,7 @@ def pause(explorer):
     """
 
     status = status_format(get_status(explorer))
+    pid = comm_read(explorer).split(' ')[1]
     name = name_format(explorer)
 
     if status == 'Waiting':
@@ -187,7 +189,7 @@ def pause(explorer):
     elif status == 'Stopped':
         return format('Pause: %s - Cannot pause non-Started Instance' % name)
     elif status == 'Running':
-        comm_write(explorer, 'WP')
+        comm_write(explorer, format('WP %s' % pid))
         return format('Pause: %s - Pausing' % name)
 
 
@@ -197,17 +199,18 @@ def stop(explorer):
     """
 
     status = status_format(get_status(explorer))
+    pid = comm_read(explorer).split(' ')[1]
     name = name_format(explorer)
 
     if status == 'Waiting':
         return format('%s - Last Command Not Processed Yet' % name)
     elif status == 'Paused':
-        comm_write(explorer, 'WS')
+        comm_write(explorer, format('WS %s' % pid))
         return format('Stop: %s - Stopping Paused Explorer' % name)
     elif status == 'Stopped':
         return format('Stop: %s - Cannot Stop non-Started Explorer' % name)
     elif status == 'Running':
-        comm_write(explorer, 'WS')
+        comm_write(explorer, format('WS %s' % pid))
         return format('Stop: %s - Stopping' % name)
 
 def force_stop(explorer):
