@@ -40,5 +40,5 @@ def tweets(request):
                 'tweet_by_date': tweets_annotation_chart[1],
                 'follower_bar_chart':follower_bar_chart,
                 'follower_bar_table':follower_bar_chart[1:],
-                'bar_chart_height': max((len(msites_bar_chart) - 1) * 3,30)}
+                'bar_chart_height': max((len(follower_bar_chart) - 1) * 3,30)}
     return render(request, 'statistics/tweets.html', context)
