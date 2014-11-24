@@ -13,10 +13,7 @@ twitter:
     access_token_secret: I740fF6x6v0srzbY7LCAjNWXXOzZRMBFbkoiwZ5FgqC5s
 article:
     min_iteration_time: 600
-    from_start: True # True    - True: Populate all articles from start
 storage:
-    store_all_sources: False
-    # False   - Stores all links within articles which matched with the keywords
     date_format: _%Y-%m-%dT%H:%M #leave _ at the start
     # "%Y-%m-%dT%H:%M"  - Universal date format for consistency
 communication:
