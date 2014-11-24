@@ -29,7 +29,5 @@ def create_twitter_warc(url):
     rename_url=url.replace("/","\\")
     url_split=url.split("/")
     rename_html=url_split[len(url_split)-1]
-    print(rename_html)
     os.chmod('./CreateTwitterWarc.sh', 0700)
-    subprocess.call(['./CreateTwitterWarc.sh',url,rename_url,rename_html,TWITTER_WARC_DIR])    
-
+    subprocess.call(['./CreateTwitterWarc.sh',url,rename_url,rename_html,TWITTER_WARC_DIR])  

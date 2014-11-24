@@ -4,5 +4,5 @@ BASEDIR=$(dirname $0)
 cd ..
 mkdir -p $3
 cd $3
-wget $url --warc-file=$2
+wget $url --warc-file=$2 2> /dev/null 
 rm index.html 2> /dev/null 
