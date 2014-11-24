@@ -4,6 +4,7 @@ from tweets.models import Tweet, Source, Keyword
 
 class SourceInline(admin.TabularInline):
     model = Source
+    fields = ['url']
     extra = 0
 
 class KeywordInline(admin.TabularInline):
@@ -20,7 +21,7 @@ class TweetAdmin(admin.ModelAdmin):
 
     list_display = ('tweet_id', 'text', 'user', 'followers', 'get_keywords', 'get_sources', 'date_published', 'date_added')
 
-    search_fields = ['tweet_id', 'text', 'user', 'followers', 'keyword__keyword', 'source__source']
+    search_fields = ['tweet_id', 'text', 'user', 'followers', 'keyword__keyword', 'source__url']
     list_filter = ['keyword__keyword']
     ordering = ['-date_added']
 
@@ -36,10 +37,10 @@ class TweetAdmin(admin.ModelAdmin):
     def get_sources(self, obj):
         sources = ''
         for src in obj.source_set.all():
-            sources += src.source + ', '
+            sources += src.url + ', '
         return sources[:-2]
 
     get_sources.short_description = 'Matched Sources'
-    get_sources.admin_order_field = 'source__source'
+    get_sources.admin_order_field = 'source__url'
 
 admin.site.register(Tweet, TweetAdmin)

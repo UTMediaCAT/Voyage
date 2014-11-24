@@ -4,6 +4,7 @@ from django.db import models
 
 class Article(models.Model):
     url = models.URLField(max_length=200)
+    url_origin = models.URLField(max_length=200)
     title = models.CharField(max_length=200, blank=True)
     date_added = models.DateTimeField('Date Added', blank=True, null=True)
     date_published = models.DateTimeField('Date Published', blank=True, null=True)
@@ -14,6 +15,7 @@ class Article(models.Model):
             return self.title[:27] + '...'
         return self.title
 
+
 class Author(models.Model):
     article = models.ForeignKey(Article)
     author = models.CharField(max_length=200)
@@ -23,10 +25,11 @@ class Author(models.Model):
 
 class Source(models.Model):
     article = models.ForeignKey(Article)
-    source = models.CharField(max_length=200)
+    url = models.CharField(max_length=200)
+    url_origin = models.URLField(max_length=200)
 
     def __unicode__(self):
-        return self.source
+        return self.url
 
 class Keyword(models.Model):
     article = models.ForeignKey(Article)
