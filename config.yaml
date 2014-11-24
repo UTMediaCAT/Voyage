@@ -21,3 +21,6 @@ communication:
     retry_count: 10
     retry_delta: 1
     sleep_time: 5
+warc:
+    article_dir: warc/article
+    twitter_dir: warc/twitter
