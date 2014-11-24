@@ -130,6 +130,11 @@
     </head>
 
     <body onload="init();">
+        <form method="post" action="/visualizations/article_hypertree_js">
+        {% csrf_token %}
+        <input type="submit" value="View Full Screen">
+        </form>
+        
         <div id="container">
 
         <div id="left-container">

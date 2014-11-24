@@ -9,61 +9,266 @@ from explorer.models import Keyword as E_Keyword
 from tweets.models import*
 from tweets.models import Keyword as T_Keyword
 
-def article_hypertree(request):
-    data = {}
+def article_hypertree():
+    msites = []
 
-    for article in Article.objects.all()::
-        if not ele.keyword in data_dict.keys():
-            data_dict[ele.keyword] = 1
-        else:
-            data_dict[ele.keyword] += 1
+    for msite in Msite.objects.all():
+        data = {}
+        data["id"] = msite.url
+        data["name"] = msite.name
+        data["children"] = []
+        data["data"] = {"relation": "Sourced"}
 
-    data = []
-    for ele in data_dict.keys():
-        new=[]
-        new.append(ele.encode("utf-8"))
-        new.append(data_dict[ele])
-        data.append(new)
+        fsites_dict = {}
+        for article in Article.objects.filter(url_origin = msite.url):
+            fsites = A_Source.objects.filter(article = article)
+
+            for fsite in fsites:
+                if fsite.url_origin in fsites_dict.keys():
+                    fsites_dict[fsite.url_origin].append(fsite)
+                else:
+                    fsites_dict[fsite.url_origin] = [fsite]   
+
+        for fsite in fsites_dict.keys():
+            fsites_data = {}
+            fsites_data["id"] = fsite
+            fsites_data["name"] = fsite
+            fsites_data["children"] = []
+            fsites_data["data"] = {"relation": "Sourced"}
+            data["children"].append(fsites_data)
+
+        msites.append(data)
+
+    data = {"id": "Msites", "name": "Monitoring Sites", "children": msites, "relation": "Monitoring Sites"}
 
     return data
 
-def article_spacetree(request):
+def article_spacetree():
+    msites = []
+
+    for msite in Msite.objects.all():
+        data = {}
+        data["id"] = msite.url
+        data["name"] = msite.name
+        data["children"] = []
+        data["data"] = {"relation": "Sourced"}
+
+        keywords_dict = {}
+        fsites_dict = {}
+        for article in Article.objects.filter(url_origin = msite.url):
+            keywords = A_Keyword.objects.filter(article = article)
+
+            for keyword in keywords:
+                if keyword.keyword in keywords_dict.keys():
+                    keywords_dict[keyword.keyword].append(keyword)
+                else:
+                    keywords_dict[keyword.keyword] = [keyword]
+                
+        for keyword in keywords_dict.keys():
+            keywords_data = {}
+            keywords_data["id"] = keyword
+            keywords_data["name"] = keyword
+            keywords_data["children"] = []
+            keywords_data["data"] = {"relation": "Sourced"}
+            data["children"].append(keywords_data)
+
+        msites.append(data)
+
+    data = {"id": "Msites", "name": "Monitoring Sites", "children": msites, "relation": "Monitoring Sites"}
+
+    return data
+
+def article_weightedtree():
+    msites = []
+
+    for msite in Msite.objects.all():
+        data = {}
+        data["id"] = msite.url
+        data["name"] = msite.name
+        data["adjacencies"] = []
+        data["data"] = {"$dim": msite.influence, "$type": "triangle"}
+
+        keywords_dict = {}
+        fsites_dict = {}
+        for article in Article.objects.filter(url_origin = msite.url):
+            keywords = A_Keyword.objects.filter(article = article)
+
+            for keyword in keywords:
+                if keyword.keyword in keywords_dict.keys():
+                    keywords_dict[keyword.keyword].append(keyword)
+                else:
+                    keywords_dict[keyword.keyword] = [keyword]
+                
+        for keyword in keywords_dict.keys():
+            keywords_data = {}
+            keywords_data["id"] = keyword
+            keywords_data["name"] = keyword
+            keywords_data["nodeTo"] = msite.url
+            keywords_data["data"] = {"name": keyword, "weight": len(keywords_dict[keyword])}
+            data["adjacencies"].append(keywords_data)
+
+        msites.append(data)
+
+    data = msites
+    print data
+    data = [{
+                "id": "node0",
+                "name": "node0 name",
+                "data": {
+                    "$dim": 16.759175934208628,
+                    "some other key": "some other value"
+                },
+                "adjacencies": [{
+                    "nodeTo": "node1",
+                    "data": {
+                        "weight": 3
+                    }
+                }, {
+                    "nodeTo": "node2",
+                    "data": {
+                        "weight": 3
+                    }
+                }, {
+                    "nodeTo": "node3",
+                    "data": {
+                        "weight": 3
+                    }
+                }]
+            }, {
+                "id": "node1",
+                "name": "node1 name",
+                "data": {
+                    "$dim": 13.077119090372014,
+                    "$type": "square",
+                    "some other key": "some other value"
+                },
+                "adjacencies": [{
+                    "nodeTo": "node0",
+                    "data": {
+                        "weight": 3
+                    }
+                }, {
+                    "nodeTo": "node2",
+                    "data": {
+                        "weight": 1
+                    }
+                }, {
+                    "nodeTo": "node3",
+                    "data": {
+                        "weight": 3
+                    }
+                }]
+            }, {
+                "id": "node2",
+                "name": "node2 name",
+                "data": {
+                    "$dim": 24.937383149648717,
+                    "$type": "triangle",
+                    "some other key": "some other value"
+                },
+                "adjacencies": [{
+                    "nodeTo": "node0",
+                    "data": {
+                        "weight": 3
+                    }
+                }, {
+                    "nodeTo": "node1",
+                    "data": {
+                        "weight": 1
+                    }
+                }, {
+                    "nodeTo": "node3",
+                    "data": {
+                        "weight": 3
+                    }
+                }]
+            }, {
+                "id": "node3",
+                "name": "node3 name",
+                "data": {
+                    "$dim": 10.53272740718869,
+                    "some other key": "some other value"
+                },
+                "adjacencies": [{
+                    "nodeTo": "node0",
+                    "data": {
+                        "weight": 3
+                    }
+                }, {
+                    "nodeTo": "node1",
+                    "data": {
+                        "weight": 3
+                    }
+                }, {
+                    "nodeTo": "node2",
+                    "data": {
+                        "weight": 3
+                    }
+                }]
+            }]
+    return data
+
+def article_rgraph():
+    msites = []
+
+    for msite in Msite.objects.all():
+        data = {}
+        data["id"] = msite.url
+        data["name"] = msite.name
+        data["children"] = []
+        data["data"] = {"relation": "Sourced"}
+
+        keywords_dict = {}
+        fsites_dict = {}
+        for article in Article.objects.filter(url_origin = msite.url):
+            keywords = A_Keyword.objects.filter(article = article)
+
+            for keyword in keywords:
+                if keyword.keyword in keywords_dict.keys():
+                    keywords_dict[keyword.keyword].append(keyword)
+                else:
+                    keywords_dict[keyword.keyword] = [keyword]
+                
+        for keyword in keywords_dict.keys():
+            keywords_data = {}
+            keywords_data["id"] = keyword
+            keywords_data["name"] = keyword
+            keywords_data["children"] = []
+            keywords_data["data"] = {"relation": "Sourced"}
+            data["children"].append(keywords_data)
+
+        msites.append(data)
+
+    data = {"id": "Msites", "name": "Monitoring Sites", "children": msites, "relation": "Monitoring Sites"}
+
+    return data
+
+def article_forcegraph():
+    data = {}
+
+    return data
+
+def tweet_hypertree():
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)
 
-def article_weightedtree(request):
+def tweet_spacetree():
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)
 
-def article_rgraph(request):
+def tweet_weightedtree():
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)
 
-def article_forcegraph(request):
+def tweet_rgraph():
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)
 
-def tweet_hypertree(request):
+def tweet_forcegraph():
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)
 
-def tweet_spacetree(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
-
-def tweet_weightedtree(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
-
-def tweet_rgraph(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
-
-def tweet_forcegraph(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
-
-def keywords_pie_chart(is_A):
+def keywords_pie_chart():
     data_dict = {}
      
     if is_A:
