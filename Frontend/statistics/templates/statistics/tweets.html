@@ -22,20 +22,146 @@
                 var data = new google.visualization.DataTable();
                 data.addColumn('string', 'Topping');
                 data.addColumn('number', 'Slices');
-                data.addRows( {{ data|safe }} );
+                data.addRows( {{ keywords_pie_chart|safe }} );
 
 
                 // Set chart options
-                var options = {'title':'keywords distribution',
+                var options = {'title':'Keywords Dateistribution',
                                'width':600,
                                'height':450};
 
                 // Instantiate and draw our chart, passing in some options.
                 var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
                 chart.draw(data, options);
+                var chart2 = new google.visualization.PieChart(document.getElementById('chart_div2'));
+                chart2.draw(data, options);
+
             }
         </script>
     </head>
+
+    <head>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript">
+          google.load("visualization", "1", {packages:["table"]});
+          google.setOnLoadCallback(drawTable);
+
+          function drawTable() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Keywords');
+            data.addColumn('number', 'Number of matches');
+
+            data.addRows( {{ keywords_pie_chart|safe }} );
+
+            var table = new google.visualization.Table(document.getElementById('table_div'));
+            table.draw(data, {showRowNumber: true});
+            var table2 = new google.visualization.Table(document.getElementById('table_div2'));
+
+            table2.draw(data, {showRowNumber: true});
+          }
+        </script>
+    </head>
+
+  <head>
+    <script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1','packages':['annotationchart']}]}"></script>
+    <script type='text/javascript'>
+      google.load('visualization', '1', {'packages':['annotationchart']});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+
+            data.addColumn('date', 'Date');            
+            var sites = {{ monitoring_acounts|safe }}.slice(0)
+            for (var i=0; i < sites.length; i++) {
+                data.addColumn('number', String(sites[i]));
+            }
+
+            var new_data = {{ tweet_by_date|safe }}.slice(0)
+            for (var i=0; i < new_data.length; i++) {
+                new_data[i][0] = new Date(new_data[i][0]);
+            }
+            data.addRows( new_data );
+
+
+        var chart = new google.visualization.AnnotationChart(document.getElementById('annot_div'));
+
+        var options = {
+          displayAnnotations: true
+        };
+
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+
+
+
+  <head>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable({{follower_bar_chart|safe}});
+
+        var options = {
+          title: 'Number of followers',
+          vAxis: {title: 'Accounts',  titleTextStyle: {color: 'red'}}
+        };
+
+        var chart = new google.visualization.BarChart(document.getElementById('chart_bar'));
+
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+
+    <head>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript">
+          google.load("visualization", "1", {packages:["table"]});
+          google.setOnLoadCallback(drawTable);
+
+          function drawTable() {
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Accounts');
+            data.addColumn('number', 'Number of followers');
+
+            data.addRows( {{ follower_bar_table|safe }});
+
+
+            var table = new google.visualization.Table(document.getElementById('table_bar'));
+
+            table.draw(data, {showRowNumber: true});
+          }
+        </script>
+    </head>
+
+
     <!--Div that will hold the pie chart-->
-    <div id="chart_div"></div>
+    <div>
+        <div style="width: 100%; height: 45em; position: relative">
+            <div style='width: inherit; height: inherit'>
+                <div id="annot_div" align=center style="width: 90%; height: 80%; margin: 5%"></div>
+            </div>
+        </div>            
+        <div style="width: 100%; height: 45em; position: relative">
+            <div style="width:50%; float:left;">
+                <div id="chart_div" align=center style="margin: 5%"></div>
+            </div>
+            <div style="width:50%; height: 70%; float:right;">
+                <div id="table_div" align=center style="margin: 5%"></div>
+                <div style="margin: 5%; font-size: 150%"><p>This div will contain some explanation to these charts<p></div>
+            </div>
+        </div>
+
+        <div style="width: 100%; height: 45em; position: relative">
+            <div style="width:50%; float:left;">
+                <div id="chart_bar" align=center style="margin: 5%; height: 100%;"></div>
+            </div>
+            <div style="width:50%; float:right;">
+                <div id="table_bar" align=center style="margin: 5%"></div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
