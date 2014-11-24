@@ -451,8 +451,8 @@ def check_command():
 if __name__ == '__main__':
     # print configuration()
     # y = get_tweets('acmeteam4', 6000)
-    x = get_tweets('kylebsingh',2)
-    print get_keywords(x[0],['google.com', 'http://', 'goo'])
+    # x = get_tweets('kylebsingh',2)
+    # print get_keywords(x[0],['google.com', 'http://', 'goo'])
 
     # for g in x:
     #     print g.text
