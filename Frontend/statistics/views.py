@@ -4,6 +4,9 @@ from subprocess import Popen
 from articles.models import *
 from explorer.models import Msite
 import sys, os, datetime, time, re
+
+path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '../../', 'src'))
+sys.path.append(path)
 import analyzer
 
 def articles(request):

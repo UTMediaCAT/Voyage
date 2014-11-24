@@ -5,15 +5,20 @@ import re
 
 from articles.models import*
 from articles.models import Keyword as A_Keyword
-from explorer.models import *
+from explorer.models import*
 from explorer.models import Keyword as E_Keyword
+from tweets.models import*
+from tweets.models import Keyword as T_Keyword
 
 
 
-def keywords_pie_chart():
+def keywords_pie_chart(is_A):
     data_dict = {}
-
-    keywords = A_Keyword.objects.all()
+     
+    if is_A:
+        keywords = A_Keyword.objects.all()
+    else:
+        keywords = T_Keyword.objects.all()
     for ele in keywords:
         if not ele.keyword in data_dict.keys():
             data_dict[ele.keyword] = 1
@@ -55,6 +60,7 @@ def articles_annotation_chart():
                 if sites[i] in art.url:
                     article_by_date[-1][i+1] += 1
                     break
+
     return sites, article_by_date
 
 
@@ -66,14 +72,47 @@ def msites_bar_chart():
     fsites = Fsite.objects.all()
     for site in fsites:
         source_number = Source.objects.filter(url_origin = site.url).count()
-        print source_number
         data.append([site.name.encode("utf-8"),source_number])
-
+    print data
     return data
 
 
 
 
+def tweets_annotation_chart():
+    Taccounts  = Taccount.objects.all()
+    accounts = []
+    for element in Taccounts:
+        accounts.append(element.account.encode("utf-8"))
 
+    data = []
+
+    pre_date = None
+
+    for twt in Tweet.objects.all():
+        new=[]
+        date = twt.date_added.strftime("%B %d, %Y")
+        if date == pre_date:
+            break;
+        else:
+            pre_date = date
+            new.append(date)
+            for account in accounts:
+                new.append(Tweet.objects.filter(date_added = twt.date_added).count())
+            data.append(new)
+    return accounts, data
+
+
+def follower_bar_chart():
+
+    data = []
+    data.append (["foreign sites","Number of source matched"])
+
+    accounts = Taccount.objects.all()
+    for account in accounts:
+        source_number = Tweet.objects.filter(user = account.account).count()
+        data.append([account.account.encode("utf-8"),source_number])
+
+    return data
 
 
