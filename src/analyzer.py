@@ -5,6 +5,7 @@ import re
 
 from articles.models import*
 from articles.models import Keyword as A_Keyword
+from articles.models import Source as A_Source
 from explorer.models import*
 from explorer.models import Keyword as E_Keyword
 from tweets.models import*
@@ -69,11 +70,11 @@ def msites_bar_chart():
     data = []
     data.append (["foreign sites","Number of source matched"])
 
+
     fsites = Fsite.objects.all()
     for site in fsites:
-        source_number = Source.objects.filter(url_origin = site.url).count()
+        source_number = A_Source.objects.filter(url_origin = site.url).count()
         data.append([site.name.encode("utf-8"),source_number])
-    print data
     return data
 
 
