@@ -22,4 +22,4 @@ lib64
 *.sqlite3
 
 # Executer Comm Files
-*.comm
+*.stream
