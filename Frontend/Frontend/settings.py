@@ -116,7 +116,14 @@ SUIT_CONFIG = {
         {'label': 'Visualizations', 'icon':'icon-fullscreen', 'models': (
             {'label': 'Article Hyper Tree', 'url': '/visualizations/article_hypertree'},
             {'label': 'Article Space Tree', 'url': '/visualizations/article_spacetree'},
+            {'label': 'Article Weighted Tree', 'url': '/visualizations/article_weightedtree'},
+            {'label': 'Article RGraph', 'url': '/visualizations/article_rgraph'},
+            {'label': 'Article Force Graph', 'url': '/visualizations/article_forcegraph'},
             {'label': 'Tweet Hyper Tree', 'url': '/visualizations/tweet_hypertree'},
+            {'label': 'Tweet Space Tree', 'url': '/visualizations/tweet_spacetree'},
+            {'label': 'Tweet Weighted Tree', 'url': '/visualizations/tweet_weightedtree'},
+            {'label': 'Tweet RGraph', 'url': '/visualizations/tweet_rgraph'},
+            {'label': 'Tweet Force Graph', 'url': '/visualizations/tweet_forcegraph'},
         )},
 
         {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
