@@ -20,3 +20,6 @@ lib64
 
 # Database
 *.sqlite3
+
+# Executer Comm Files
+*.comm
