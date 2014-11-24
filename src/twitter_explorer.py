@@ -157,28 +157,25 @@ def get_keywords(tweet, keywords):
         if re.search(key, tweet.text.encode('utf8'), re.IGNORECASE):
             matched_keywords.append(key)
 
-    #Searches if keyword is found in any of the urls in the tweet
-    store_all = configuration()['storage']['store_all_sources']
 
     matched_in_url = []
     expanded_urls = ''
     display_urls = ''
-    if store_all == False:
-        for url in tweet.entities['urls']:
-            try:
-                # tries to get full url on shortened urls
-                expanded_urls += urllib2.urlopen(url['expanded_url']).geturl() + ' '
-                expanded_urls += urllib2.urlopen(url['display_url']).geturl() + ' '
-            except:
-                #if not just take normal url
-                expanded_urls += url['expanded_url'] + ' '
-                display_urls += url['display_url'] + ' '
+    for url in tweet.entities['urls']:
+        try:
+            # tries to get full url on shortened urls
+            expanded_urls += urllib2.urlopen(url['expanded_url']).geturl() + ' '
+            expanded_urls += urllib2.urlopen(url['display_url']).geturl() + ' '
+        except:
+            #if not just take normal url
+            expanded_urls += url['expanded_url'] + ' '
+            display_urls += url['display_url'] + ' '
 
-        #substring, expanded includes scheme, display may not
-        #uses two large url strings, rather than having n^2 complexity
-        for keyword in keywords:
-            if re.search(keyword, expanded_urls, re.IGNORECASE) or re.search(keyword, display_urls, re.IGNORECASE):
-                matched_in_url.append(keyword)
+    #substring, expanded includes scheme, display may not
+    #uses two large url strings, rather than having n^2 complexity
+    for keyword in keywords:
+        if re.search(keyword, expanded_urls, re.IGNORECASE) or re.search(keyword, display_urls, re.IGNORECASE):
+            matched_in_url.append(keyword)
     #Uses get_sources, but instead of searching tweets, searches
     #Adds both searches
     all_matches = matched_keywords + matched_in_url
@@ -454,7 +451,8 @@ def check_command():
 if __name__ == '__main__':
     # print configuration()
     # y = get_tweets('acmeteam4', 6000)
-    # x = get_tweets('kylebsingh',6000)
+    x = get_tweets('kylebsingh',2)
+    print get_keywords(x[0],['google.com', 'http://', 'goo'])
 
     # for g in x:
     #     print g.text
