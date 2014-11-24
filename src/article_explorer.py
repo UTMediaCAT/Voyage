@@ -63,7 +63,7 @@ def configuration():
     config_yaml.close()
     return config
 
-def populate_sites(sites, is_from_start):
+def populate_sites(sites):
     """ (list of str) -> list of [str, newspaper.source.Source]
     Searches through the sites using newspaper library and
     returns list of sites with available articles populated
@@ -84,7 +84,7 @@ def populate_sites(sites, is_from_start):
 
         # Use the url and populate the site with articles
         new_sites[s].append((newspaper.build(sites[s][1],
-                                             memoize_articles=not is_from_start,
+                                             memoize_articles=False,
                                              keep_article_html=True,
                                              fetch_images=False,
                                              language='en',
@@ -115,7 +115,6 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
     # Load the relevant configs and collect today's date and time
     today = datetime.datetime.now().strftime(config['date_format'][1:])
 
-    # print("\nStore All Sources: %s" % str(config['store_all_sources']))
     # for each article in each sites, download and parse important data
     for site in populated_sites:
         # print "\n%s" % site[0]
@@ -160,7 +159,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                 # print "\tSources:  ", sources
 
                 # If neither of keyword nor sources matched, then stop here and move on to next article
-                if not (keywords == [] and (sources == [] or config['store_all_sources'])):
+                if not (keywords == [] and sources == []):
                     # Try to add all the data to the Article Database
 
                     article_list = Article.objects.filter(url=url)
@@ -251,20 +250,15 @@ def get_sources(html, sites):
     matched_urls = []
     # for each site, check if it exists within the html given
     for site in sites:
-        if config['store_all_sources']:
-            for url in re.findall("href=[\"\'][^\"\']*?.*?[^\"\']*?[\"\']", html, re.IGNORECASE):
+        for url in re.findall("href=[\"\'][^\"\']*?.*?[^\"\']*?[\"\']", html, re.IGNORECASE):
+            # Format the site to use only the domain name for searching
+            formatted_site = re.search("([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}",
+                                       site, re.IGNORECASE).group(0)
+            if formatted_site[:3] == 'www':
+                formatted_site = formatted_site[3:]
+            if formatted_site in url:
                 # If it matches even once, append the site to the list
-                matched_urls.append(url[6:-1])
-        else:
-            for url in re.findall("href=[\"\'][^\"\']*?.*?[^\"\']*?[\"\']", html, re.IGNORECASE):
-                # Format the site to use only the domain name for searching
-                formatted_site = re.search("([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}",
-                                           site, re.IGNORECASE).group(0)
-                if formatted_site[:3] == 'www':
-                    formatted_site = formatted_site[3:]
-                if formatted_site in url:
-                    # If it matches even once, append the site to the list
-                    matched_urls.append([url[6:-1], site])
+                matched_urls.append([url[6:-1], site])
     # Return the list
     return matched_urls
 
@@ -318,7 +312,7 @@ def get_keywords(article, keywords):
     return matched_keywords
 
 
-def explore(is_from_start):
+def explore():
     """ () -> None
     Connects to keyword and site tables in database, crawls within monitoring sites,
     then pushes articles which matches the keywords or foreign sites to the article database
@@ -367,7 +361,7 @@ def explore(is_from_start):
     # print "| Populating sites ...                                     |"
     # print "+----------------------------------------------------------+"
     # Populate the monitoring sites with articles
-    populated_sites = populate_sites(monitoring_sites, is_from_start)
+    populated_sites = populate_sites(monitoring_sites)
 
     # print "\n"
 
@@ -451,14 +445,12 @@ if __name__ == '__main__':
     # Initialize Communication Stream
     comm_init()
 
-    from_start = config['from_start']
-
     # Check for any new command on communication stream
     check_command()
 
     start = timeit.default_timer()
 
-    explore(from_start)
+    explore()
 
     end = timeit.default_timer()
     delta_time = end - start
