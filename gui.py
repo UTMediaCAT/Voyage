@@ -5,6 +5,8 @@ from Tkinter import *
 from tkMessageBox import *
 import webbrowser
 import setup
+import server
+
 #+=========GUI===========GUI============GUI===========+
 #---Window---#
 #make window
@@ -29,8 +31,8 @@ def run():
     ()-->None
     allow using python connect to CMD and run the sh script to open the django server
     '''
-    os.chmod('./src/RunServer.sh', 0700)
-    subprocess.Popen(['./src/RunServer.sh'], shell=True, stdout=subprocess.PIPE)
+    config = server.configuration()['server']
+    server.run_server(config['ip_address'], config['port'])
     showinfo("Notice", "Server on!")
 
 def close():
@@ -38,8 +40,8 @@ def close():
     ()-->None
     allow using python connect to CMD and run the sh script to close the django server
     '''
-    os.chmod('./src/CloseServer.sh', 0700)
-    subprocess.Popen(['./src/CloseServer.sh'], shell=True, stdout=subprocess.PIPE)
+    config = server.configuration()['server']
+    server.stop_server(config['port'])
     showinfo("Notice", "Server off!")
 
 def open_web():
