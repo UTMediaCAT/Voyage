@@ -26,7 +26,7 @@ def getJson(request):
         articles[key.article.url]['matched_keywords'].append(key.keyword)
     for src in Source.objects.all():
         articles[src.article.url]['matched_sources'].append({'url':src.url, 
-                                                             'site': srl.url_origin})
+                                                             'site': src.url_origin})
     for ath in Author.objects.all():
         articles[ath.article.url]['authors'].append(ath.author)
 
