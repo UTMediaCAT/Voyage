@@ -92,7 +92,6 @@ def populate_sites(sites):
                                              language='en',
                                              number_thread=1)))
         new_sites[s].append(sites[s][1]) # Append site url
-        new_sites[s].append(sites[s][2]) # Append site influence
 
         end_t = time.time()
         # report back the amount of articles found, and time it took
@@ -168,7 +167,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                     if not article_list:
 
                         article = Article(title=title, url=url, url_origin=site[2], date_added=today,
-                                          date_published=pub_date, influence=site[3])
+                                          date_published=pub_date)
                         article.save()
 
                         article = Article.objects.get(url=url)
@@ -195,7 +194,6 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                         article.url_origin = site[2]
                         # article.date_added = today
                         article.date_published = pub_date
-                        article.influence = site[3]
                         article.save()
 
                         for key in keywords:
@@ -330,14 +328,14 @@ def explore():
 
     monitoring_sites = []
     # Retrieve, store, and print monitoring site information
-    # print "\nMonitoring Sites\n\t%-25s%-25s%-10s" % ("Name", "URL", "Influence")
+    # print "\nMonitoring Sites\n\t%-25s%-25s%-10s" % ("Name", "URL")
 
     msites = Msite.objects.all()
 
     for site in msites:
         # monitoring_sites is now in form [['Name', 'URL'], ...]
-        monitoring_sites.append([site.name, site.url, site.influence])
-        # print("\t%-25s%-25s%-10i" % (site.name, site.url, site.influence))
+        monitoring_sites.append([site.name, site.url])
+        # print("\t%-25s%-25s%-10i" % (site.name, site.url))
 
     foreign_sites = []
     # Retrieve, store, and print foreign site information

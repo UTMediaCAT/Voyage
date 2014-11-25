@@ -26,7 +26,7 @@ def create_article_warc(url):
 
     rename_url=url.replace("/","\\")
     os.chmod('./CreateArticleWarc.sh', 0700)
-    subprocess.call(['./CreateArticleWarc.sh',url,rename_url,config['article_dir']])
+    subprocess.call(['./CreateArticleWarc.sh',url,rename_url, config['dir'] + "/" + config['article_subdir']])
     
 def create_twitter_warc(url):
     '''
@@ -43,4 +43,4 @@ def create_twitter_warc(url):
     url_split=url.split("/")
     rename_html=url_split[len(url_split)-1]
     os.chmod('./CreateTwitterWarc.sh', 0700)
-    subprocess.call(['./CreateTwitterWarc.sh',url,rename_url,rename_html,config['twitter_dir']])  
+    subprocess.call(['./CreateTwitterWarc.sh',url,rename_url,rename_html, config['dir'] + "/" + config['twitter_subdir']])  
