@@ -24,7 +24,7 @@ class ArticleAdmin(admin.ModelAdmin):
 
     inlines = [AuthorInline, SourceInline, KeywordInline]
 
-    list_display = ('title', 'link_url', 'get_authors', 'get_keywords', 'get_sources', 'date_published', 'date_added', 'link_warc')
+    list_display = ('link_url', 'title', 'get_authors', 'get_keywords', 'get_sources', 'date_published', 'date_added', 'link_warc')
     search_fields = ['url', 'title', 'author__author', 'keyword__keyword', 'source__url']
     list_filter = ['keyword__keyword', 'url_origin']
     ordering = ['-date_added']
@@ -57,7 +57,7 @@ class ArticleAdmin(admin.ModelAdmin):
     get_authors.admin_order_field = 'author__author'
 
     def link_url(self, obj):
-        return format('<a href="%s">%s</a>' % (obj.url, obj.url))
+        return format('<a href="%s" target="_blank">%s</a>' % (obj.url, obj.url))
 
     link_url.allow_tags = True
     link_url.admin_order_field = 'url'
@@ -69,10 +69,10 @@ class ArticleAdmin(admin.ModelAdmin):
         config_yaml.close()
 
         path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', config['dir']))
-        return format('<a href="/articles/warc/%s" >Download</a>' % (obj.url.replace('/', '\\')))
+        return format('<a href="/articles/warc/%s">Download</a>' % (obj.url.replace('/', '\\')))
 
 
     link_warc.allow_tags = True
-    link_warc.short_description = "WARC"
+    link_warc.short_description = "Archived WARC"
 
 admin.site.register(Article, ArticleAdmin)

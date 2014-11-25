@@ -13,10 +13,11 @@ class Tweet(models.Model):
     def __unicode__(self):
         return self.tweet_id
 
+
 class Source(models.Model):
     tweet = models.ForeignKey(Tweet)
     url = models.CharField(max_length=2000)
-    url_origin = models.URLField(max_length=200, verbose_name="Site")
+    url_origin = models.URLField(max_length=2000, verbose_name="Site")
 
     def __unicode__(self):
         return self.url
