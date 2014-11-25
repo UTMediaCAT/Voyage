@@ -23,7 +23,7 @@ class ArticleAdmin(admin.ModelAdmin):
     inlines = [AuthorInline, SourceInline, KeywordInline]
 
     list_display = ('title', 'url', 'get_authors', 'get_keywords', 'get_sources', 'date_published', 'date_added')
-    search_fields = ['url', 'title', 'keyword__keyword', 'source__url']
+    search_fields = ['url', 'title', 'author__author', 'keyword__keyword', 'source__url']
     list_filter = ['keyword__keyword']
     ordering = ['-date_added']
 
