@@ -314,7 +314,6 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                             tweet.source_set.create(url=source[0], url_origin=source[1])
                     # print "\tResult:    Match detected! Tweet already in database. Updating."
                     updated += 1
-                print "https://twitter.com/" + tweet_user + "/status/" + str(tweet_id)
                 warc_creator.create_twitter_warc("https://twitter.com/" + tweet_user + "/status/" + str(tweet_id))
 
             else:
