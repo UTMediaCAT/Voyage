@@ -104,7 +104,8 @@ SUIT_CONFIG = {
     'ADMIN_NAME': 'Voyage',
 
     'MENU': (
-        {'label': 'Scope', 'icon':'icon-screenshot', 'models': ('explorer.keyword', 'explorer.fsite', 'explorer.msite', 'explorer.taccount')},
+        {'label': 'Scope', 'icon':'icon-screenshot', 
+         'models': ('explorer.msite', 'explorer.taccount', 'explorer.fsite', 'explorer.keyword')},
         
         {'label': 'Data', 'icon':'icon-book', 'models': ('articles.article', 'tweets.tweet')},
 
