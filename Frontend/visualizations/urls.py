@@ -12,9 +12,6 @@ urlpatterns = patterns('',
     url(r'^article_weightedtree$', views.article_weightedtree, name='article_weightedtree'),
     url(r'^article_weightedtree_js$', views.article_weightedtree_js, name='article_weightedtree_js'),
 
-    url(r'^article_rgraph$', views.article_rgraph, name='article_rgraph'),
-    url(r'^article_rgraph_js$', views.article_rgraph_js, name='article_rgraph_js'),
-
 	url(r'^article_forcegraph$', views.article_forcegraph, name='article_forcegraph'),
     url(r'^article_forcegraph_js$', views.article_forcegraph_js, name='article_forcegraph_js'),
 
@@ -26,9 +23,6 @@ urlpatterns = patterns('',
 
     url(r'^tweet_weightedtree$', views.tweet_weightedtree, name='tweet_weightedtree'),
     url(r'^tweet_weightedtree_js$', views.tweet_weightedtree_js, name='tweet_weightedtree_js'),
-
-    url(r'^tweet_rgraph$', views.tweet_rgraph, name='tweet_rgraph'),
-    url(r'^tweet_rgraph_js$', views.tweet_rgraph_js, name='tweet_rgraph_js'),
 
 	url(r'^tweet_forcegraph$', views.tweet_forcegraph, name='tweet_forcegraph'),
     url(r'^tweet_forcegraph_js$', views.tweet_forcegraph_js, name='tweet_forcegraph_js'),

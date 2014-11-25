@@ -134,27 +134,38 @@
 
         <div id="left-container">
 
-            <div class="text">
+            <div class="text">                
                 <h4>
                 Article Weighted Tree    
                 </h4> 
                 Clicking on a node should move the tree and center that node.<br /><br />
                 The centered node's children are displayed in a relations list in the right column.
+
+                <h4>Monitoring Site</h4>
+                <form method="post" action="/visualizations/article_weightedtree_js">
+                    {% csrf_token %}
+                    <select name="msite" onchange="this.form.submit()">
+                        <option type="submit" value="NONE">Select</option>
+                    {% for site in msites %}
+                        <option type="submit" value="{{ site.name }}">{{ site.name }}</option>
+                    {% endfor %}
+                    </select>
+                </form>
             </div>
 
             <div id="id-list"></div>
                             
-            </div>
+        </div>
 
-            <div id="center-container">
-                <div id="infovis"></div>    
-            </div>
+        <div id="center-container">
+            <div id="infovis"></div>    
+        </div>
 
-            <div id="right-container">
+        <div id="right-container">
 
             <div id="inner-details"></div>
 
-            </div>
+        </div>
 
         <div id="log"></div>
         </div>

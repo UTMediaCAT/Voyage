@@ -60,8 +60,8 @@
                     //set overridable=true for styling individual
                     //nodes or edges
                     Node: {
-                        height: 20,
-                        width: 60,
+                        height: 30,
+                        width: 80,
                         type: 'rectangle',
                         color: '#aaa',
                         overridable: true
@@ -95,7 +95,7 @@
                         };
                         //set label styles
                         var style = label.style;
-                        style.width = 60 + 'px';
+                        style.width = 80 + 'px';
                         style.height = 17 + 'px';            
                         style.cursor = 'pointer';
                         style.color = '#333';
@@ -184,6 +184,7 @@
         <div id="container">
             <div id="left-container">
               <div class="text">
+
               <h4>
               Article Space Tree    
               </h4> 
@@ -193,6 +194,17 @@
                           <em>Set as Root</em>.<br /><br />
                           <b>Drag and Drop the canvas</b> to do some panning.<br /><br />
                           Leaves color depend on the number of children they actually have.
+
+              <h4>Monitoring Site</h4>
+              <form method="post" action="/visualizations/article_spacetree_js">
+                  {% csrf_token %}
+                  <select name="msite" onchange="this.form.submit()">
+                      <option type="submit" value="NONE">Select</option>
+                  {% for site in msites %}
+                      <option type="submit" value="{{ site.name }}">{{ site.name }}</option>
+                  {% endfor %}
+                  </select>
+              </form>
                           
             </div>
               <div id="id-list"></div>

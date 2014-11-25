@@ -40,10 +40,14 @@ def article_spacetree_js(request):
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)
 
-    data = visualizer.article_spacetree()
+    if request.method == 'POST':
+        data, msites = visualizer.article_spacetree(request.POST.get('msite'))
+    else:
+        data, msites = visualizer.article_spacetree(None)
+
     data = json.dumps(data)
 
-    context = {'data': data}
+    context = {'data': data, 'msites': msites}
     return render(request, 'visualizations/article_spacetree_js.html', context)
 
 def article_weightedtree(request):
@@ -58,29 +62,14 @@ def article_weightedtree_js(request):
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)
 
-    data = visualizer.article_weightedtree()
+    if request.method == 'POST':
+        data, msites = visualizer.article_weightedtree(request.POST.get('msite'))
+    else:
+        data, msites = visualizer.article_weightedtree(None)
     data = json.dumps(data)
 
-    context = {'data': data}
+    context = {'data': data, 'msites': msites}
     return render(request, 'visualizations/article_weightedtree_js.html', context)
-
-def article_rgraph(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
-
-    data = []
-    context = {'data': data}
-    return render(request, 'visualizations/article_rgraph.html', context)
-
-def article_rgraph_js(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
-
-    data = visualizer.article_rgraph()
-    data = json.dumps(data)
-
-    context = {'data': data}
-    return render(request, 'visualizations/article_rgraph_js.html', context)
 
 def article_forcegraph(request):
     if not request.user.is_authenticated():
@@ -94,9 +83,13 @@ def article_forcegraph_js(request):
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)
 
-    data = visualizer.article_forcegraph()
+    if request.method == 'POST':
+        data, msites = visualizer.article_forcegraph(request.POST.get('msite'))
+    else:
+        data, msites = visualizer.article_forcegraph(None)
     data = json.dumps(data)
-    context = {'data': data}
+
+    context = {'data': data, 'msites': msites}
 
     return render(request, 'visualizations/article_forcegraph_js.html', context)
 
