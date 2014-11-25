@@ -69,7 +69,7 @@ class TweetAdmin(admin.ModelAdmin):
         config_yaml.close()
 
         path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', config['dir']))
-        return format('<a href="/tweets/html/%s" >Download</a>' % 
+        return format('<a href="/tweets/html/%s">Download</a>' % 
                       ("https://twitter.com/" + obj.user + "/status/" + str(obj.tweet_id)).replace('/', '\\'))
 
 
