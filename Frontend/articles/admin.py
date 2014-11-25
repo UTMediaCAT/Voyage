@@ -2,6 +2,8 @@ from django.contrib import admin
 from articles.models import Article, Author, Source, Keyword
 # Register your models here.
 
+import yaml, os
+
 class AuthorInline(admin.TabularInline):
     model = Author
     extra = 0
@@ -57,13 +59,20 @@ class ArticleAdmin(admin.ModelAdmin):
     def link_url(self, obj):
         return format('<a href="%s">%s</a>' % (obj.url, obj.url))
 
+    link_url.allow_tags = True
+    link_url.admin_order_field = 'url'
+    link_url.short_description = "URL"
 
     def link_warc(self, obj):
-        return format('<a href="/articles/warc/%s" target="_blank">Download</a>' % (obj.url.replace('/', '\\')))
+        config_yaml = open(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../',"config.yaml")), 'r')
+        config = yaml.load(config_yaml)['warc']
+        config_yaml.close()
+
+        path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', config['dir']))
+        return format('<a href="/articles/warc/%s" >Download</a>' % (obj.url.replace('/', '\\')))
 
 
-    link_url.allow_tags = True
     link_warc.allow_tags = True
-
+    link_warc.short_description = "WARC"
 
 admin.site.register(Article, ArticleAdmin)
