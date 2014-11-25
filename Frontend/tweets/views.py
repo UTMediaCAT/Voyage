@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse
 from tweets.models import Tweet, Source, Keyword
-import sys, os, time, json
+import sys, os, time, json, yaml
 
 # Create your views here.
 
@@ -22,3 +22,24 @@ def getJson(request):
     res['Content-Disposition'] = format('attachment; filename=tweets-%s.json' 
                                         % time.strftime("%Y%m%d-%H%M%S"))
     return res
+
+def getHtml(request, filename):
+    config = configuration()['warc']
+
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', config['dir'] + "/" + config['twitter_subdir']))
+    filename_ext = path + "/" + filename + ".html"
+    html = open(filename_ext, "rb")
+    res = HttpResponse(html)
+    html.close()
+    res['Content-Disposition'] = 'attachment; ' + filename + '.html'
+    return res
+
+def configuration():
+    """ (None) -> dict
+    Returns a dictionary containing the micro settings from the
+    config.yaml file located in the directory containing this file
+    """
+    config_yaml = open(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../',"config.yaml")), 'r')
+    config = yaml.load(config_yaml)
+    config_yaml.close()
+    return config

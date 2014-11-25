@@ -2,6 +2,8 @@ from django.contrib import admin
 from tweets.models import Tweet, Source, Keyword
 # Register your models here.
 
+import os, yaml
+
 class SourceInline(admin.TabularInline):
     model = Source
     fields = ['url']
@@ -19,7 +21,7 @@ class TweetAdmin(admin.ModelAdmin):
 
     inlines = [SourceInline, KeywordInline]
 
-    list_display = ('tweet_id', 'text', 'user', 'followers', 'get_keywords', 'get_sources', 'date_published', 'date_added')
+    list_display = ('tweet_id', 'text', 'user', 'followers', 'get_keywords', 'get_sources', 'date_published', 'date_added', 'link_html')
 
     search_fields = ['tweet_id', 'text', 'user', 'followers', 'keyword__keyword', 'source__url']
     list_filter = ['keyword__keyword']
@@ -42,5 +44,19 @@ class TweetAdmin(admin.ModelAdmin):
 
     get_sources.short_description = 'Matched Sources'
     get_sources.admin_order_field = 'source__url'
+
+
+    def link_html(self, obj):
+        config_yaml = open(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../',"config.yaml")), 'r')
+        config = yaml.load(config_yaml)['warc']
+        config_yaml.close()
+
+        path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', config['dir']))
+        return format('<a href="/tweets/html/%s" >Download</a>' % 
+                      ("https://twitter.com/" + obj.user + "/status/" + str(obj.tweet_id)).replace('/', '\\'))
+
+
+    link_html.allow_tags = True
+    link_html.short_description = "HTML"
 
 admin.site.register(Tweet, TweetAdmin)
