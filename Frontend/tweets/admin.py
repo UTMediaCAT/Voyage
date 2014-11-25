@@ -21,11 +21,12 @@ class TweetAdmin(admin.ModelAdmin):
 
     inlines = [SourceInline, KeywordInline]
 
-    list_display = ('tweet_id', 'text', 'user', 'followers', 'get_keywords', 'get_sources', 'date_published', 'date_added', 'link_html')
+    list_display = ('link_url', 'text', 'user', 'get_keywords', 'get_sources', 'date_published', 'date_added', 'link_html')
 
-    search_fields = ['tweet_id', 'text', 'user', 'followers', 'keyword__keyword', 'source__url']
+    search_fields = ['tweet_id', 'text', 'user', 'keyword__keyword', 'source__url']
     list_filter = ['keyword__keyword']
     ordering = ['-date_added']
+
 
     def get_keywords(self, obj):
         keywords = ''
@@ -44,6 +45,14 @@ class TweetAdmin(admin.ModelAdmin):
 
     get_sources.short_description = 'Matched Sources'
     get_sources.admin_order_field = 'source__url'
+
+    def link_url(self, obj):
+        return format('<a href="%s">%s</a>' % ("https://twitter.com/" + obj.user + "/status/" + str(obj.tweet_id),
+                                               obj.tweet_id))
+
+    link_url.allow_tags = True
+    link_url.admin_order_field = 'tweet_id'
+    link_url.short_description = "Tweet ID"
 
 
     def link_html(self, obj):
