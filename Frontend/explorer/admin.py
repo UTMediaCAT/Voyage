@@ -5,25 +5,23 @@ from explorer.models import Msite, Fsite, Keyword, Taccount
 
 class MsiteAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None,               {'fields': ['url', 'name', 'influence']})
+        (None,               {'fields': ['url', 'name']})
         ]
 
 
-    list_display = ('name', 'url', 'influence')
-    search_fields = ['name', 'url', 'influence']
-    ordering = ['influence']
-    list_filter = ['influence']
+    list_display = ('name', 'url')
+    search_fields = ['name', 'url']
+    ordering = ['name']
 
 class FsiteAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None,               {'fields': ['url', 'name', 'influence']})
+        (None,               {'fields': ['url', 'name']})
         ]
 
 
-    list_display = ('name', 'url', 'influence')
-    search_fields = ['name', 'url', 'influence']
-    ordering = ['influence']
-    list_filter = ['influence']
+    list_display = ('name', 'url')
+    search_fields = ['name', 'url']
+    ordering = ['name']
 
 class KeywordAdmin(admin.ModelAdmin):
     fieldsets = [

@@ -22,9 +22,9 @@ class ArticleAdmin(admin.ModelAdmin):
 
     inlines = [AuthorInline, SourceInline, KeywordInline]
 
-    list_display = ('title', 'url', 'get_authors', 'get_keywords', 'get_sources', 'date_published', 'date_added')
+    list_display = ('title', 'link_url', 'get_authors', 'get_keywords', 'get_sources', 'date_published', 'date_added', 'link_warc')
     search_fields = ['url', 'title', 'author__author', 'keyword__keyword', 'source__url']
-    list_filter = ['keyword__keyword']
+    list_filter = ['keyword__keyword', 'url_origin']
     ordering = ['-date_added']
 
     def get_keywords(self, obj):
@@ -53,5 +53,17 @@ class ArticleAdmin(admin.ModelAdmin):
 
     get_authors.short_description = 'Authors'
     get_authors.admin_order_field = 'author__author'
+
+    def link_url(self, obj):
+        return format('<a href="%s">%s</a>' % (obj.url, obj.url))
+
+
+    def link_warc(self, obj):
+        return format('<a href="/articles/warc/%s" target="_blank">Download</a>' % (obj.url.replace('/', '\\')))
+
+
+    link_url.allow_tags = True
+    link_warc.allow_tags = True
+
 
 admin.site.register(Article, ArticleAdmin)
