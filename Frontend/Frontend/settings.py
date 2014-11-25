@@ -128,8 +128,6 @@ SUIT_CONFIG = {
 
         {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
 
-        {'label': 'Settings', 'icon':'icon-cog', 'models': ('auth.user', 'auth.group')},
-
         {'label': 'Authorization', 'icon':'icon-lock', 'models': ('auth.user', 'auth.group')},
     )
 }
