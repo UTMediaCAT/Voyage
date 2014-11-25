@@ -21,10 +21,10 @@ class TweetAdmin(admin.ModelAdmin):
 
     inlines = [SourceInline, KeywordInline]
 
-    list_display = ('link_url', 'text', 'user', 'get_keywords', 'get_sources', 'date_published', 'date_added', 'link_html')
+    list_display = ('link_user', 'link_id', 'text', 'get_keywords', 'get_sources', 'date_published', 'date_added', 'link_html')
 
     search_fields = ['tweet_id', 'text', 'user', 'keyword__keyword', 'source__url']
-    list_filter = ['keyword__keyword']
+    list_filter = ['keyword__keyword', 'user']
     ordering = ['-date_added']
 
 
@@ -46,13 +46,21 @@ class TweetAdmin(admin.ModelAdmin):
     get_sources.short_description = 'Matched Sources'
     get_sources.admin_order_field = 'source__url'
 
-    def link_url(self, obj):
-        return format('<a href="%s">%s</a>' % ("https://twitter.com/" + obj.user + "/status/" + str(obj.tweet_id),
+    def link_id(self, obj):
+        return format('<a href="%s" target="_blank">%s</a>' % ("https://twitter.com/" + obj.user + "/status/" + str(obj.tweet_id),
                                                obj.tweet_id))
 
-    link_url.allow_tags = True
-    link_url.admin_order_field = 'tweet_id'
-    link_url.short_description = "Tweet ID"
+    link_id.allow_tags = True
+    link_id.admin_order_field = 'tweet_id'
+    link_id.short_description = "Tweet ID"
+
+    def link_user(self, obj):
+        return format('<a href="%s" target="_blank">%s</a>' % ("https://twitter.com/" + obj.user,
+                                               obj.user))
+
+    link_user.allow_tags = True
+    link_user.admin_order_field = 'user'
+    link_user.short_description = "User"
 
 
     def link_html(self, obj):
@@ -66,6 +74,6 @@ class TweetAdmin(admin.ModelAdmin):
 
 
     link_html.allow_tags = True
-    link_html.short_description = "HTML"
+    link_html.short_description = "Archived HTML"
 
 admin.site.register(Tweet, TweetAdmin)
