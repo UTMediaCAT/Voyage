@@ -75,7 +75,7 @@
                     onBeforePlotLine: function(adj){
                         //Set random lineWidth for edges.
                         if (!adj.data.$lineWidth) 
-                            adj.data.$lineWidth = Math.random() * 7 + 1;
+                            adj.data.$lineWidth = 2;
                     },
                     
                     onBeforeCompute: function(node){
@@ -136,8 +136,14 @@
 
             <div class="text">                
                 <h4>
-                Article Weighted Tree    
+                Article - Weighted    
                 </h4> 
+
+                This graph has a node for all Monitoring Sites connected with the
+                Foreign Sites and Keywords that were used in them. The size of the node is determined
+                by the number of times that Keyword/Foreign Site was used in the Monitoring Site. 
+                You can also choose a particular 
+                Monitoring Site using the drop down list below.<br /><br />
                 Clicking on a node should move the tree and center that node.<br /><br />
                 The centered node's children are displayed in a relations list in the right column.
 

@@ -75,7 +75,7 @@
                     onBeforePlotLine: function(adj){
                         //Set random lineWidth for edges.
                         if (!adj.data.$lineWidth) 
-                            adj.data.$lineWidth = Math.random() * 7 + 1;
+                            adj.data.$lineWidth = 2;
                     },
                     
                     onBeforeCompute: function(node){
@@ -136,10 +136,27 @@
 
             <div class="text">
                 <h4>
-                Tweet Weighted Tree    
+                Tweet - Weighted    
                 </h4> 
+                This graph has a node for all Monitoring Twitter Accounts connected with the
+                Foreign Sites and Keywords that were used in them. The size of the node is determined
+                by the number of times that Keyword/Foreign Site was used in tweets. 
+                You can also choose a particular 
+                Twitter Account using the drop down list below.<br /><br />
+
                 Clicking on a node should move the tree and center that node.<br /><br />
                 The centered node's children are displayed in a relations list in the right column.
+
+                <h4>Monitoring Twitter Account</h4>
+                <form method="post" action="/visualizations/tweet_weightedtree_js">
+                  {% csrf_token %}
+                  <select name="taccount" onchange="this.form.submit()">
+                      <option type="submit" value="NONE">Select</option>
+                  {% for taccount in taccounts %}
+                      <option type="submit" value="{{ taccount.account }}">{{ taccount.account }}</option>
+                  {% endfor %}
+                  </select>
+                </form> 
             </div>
 
             <div id="id-list"></div>

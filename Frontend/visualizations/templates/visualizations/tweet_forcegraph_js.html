@@ -213,13 +213,29 @@
 
         <div class="text">
             <h4>
-            Tweet Force Graph    
+            Tweet - Movable  
             </h4> 
+            This graph has a node for all Monitoring Twitter Accounts connected with the
+            Foreign Sites and Keywords that were used in them. The size of the node is determined
+            by the number of times that Keyword/Foreign Site was used in the tweets. 
+            You can also choose a particular 
+            Twitter Account using the drop down list below.<br /><br />
 
             You can <b>zoom</b> and <b>pan</b> the visualization by <b>scrolling</b> and <b>dragging</b>.<br /><br />
-            You can <b>change node positions</b> by <b>dragging the nodes around</b>.<br /><br />
+            You can <b>change node positions</b> by <b>dragging the nodes around</b>.
             <b>Click on the 'x' link</b> to delete a node.<br /><br />
-            The clicked node's connections are displayed in a relations list in the right column.<br /><br />
+            The clicked node's connections are displayed in the right column.<br /><br />
+
+            <h4>Monitoring Twitter Account</h4>
+            <form method="post" action="/visualizations/tweet_forcegraph_js">
+              {% csrf_token %}
+              <select name="taccount" onchange="this.form.submit()">
+                  <option type="submit" value="NONE">Select</option>
+              {% for taccount in taccounts %}
+                  <option type="submit" value="{{ taccount.account }}">{{ taccount.account }}</option>
+              {% endfor %}
+              </select>
+            </form> 
                     
         </div>
 
