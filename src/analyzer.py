@@ -71,6 +71,7 @@ def tweets_keywords_pie_chart():
     return data
 
 def articles_annotation_chart():
+    '''
     article_by_date = []
     sites = []
     for s in Msite.objects.all():
@@ -98,7 +99,40 @@ def articles_annotation_chart():
                     break
 
     return sites, article_by_date
+    '''
 
+
+    Msites  = Msite.objects.all()
+    urls = []
+    for element in Msites:
+        urls.append([element.url.encode("utf-8"), Article.objects.filter(url = element.url).count()])
+
+    urls.sort(key = lambda x: x[1], reverse=True)
+    urls = urls[0:10]
+    for a in range(len(urls)):
+        urls[a] = urls[a][0]
+
+
+    data = []
+
+    pre_date = None
+    
+    for art in Article.objects.all():
+        new=[]
+        date = art.date_added.strftime("%B %d, %Y")
+        day = art.date_added.strftime("%d")
+        month = art.date_added.strftime("%m")
+        year = art.date_added.strftime("%Y")
+
+        if date != pre_date:
+            pre_date = date
+            new.append(date)
+            for url in urls:
+                new.append(Article.objects.filter(url_origin = url, date_added__day = day, date_added__month = month, date_added__year = year).count())
+            data.append(new)
+    print data
+
+    return urls, data
 
 def msites_bar_chart():
 
@@ -118,26 +152,37 @@ def msites_bar_chart():
 
 
 def tweets_annotation_chart():
+
     Taccounts  = Taccount.objects.all()
     accounts = []
     for element in Taccounts:
-        accounts.append(element.account.encode("utf-8"))
+        accounts.append([element.account.encode("utf-8"), Tweet.objects.filter(user = element.account).count()])
+
+    accounts.sort(key = lambda x: x[1], reverse=True)
+    accounts = accounts[0:10]
+    for a in range(len(accounts)):
+        accounts[a] = accounts[a][0]
+
 
     data = []
 
     pre_date = None
-
+    
     for twt in Tweet.objects.all():
         new=[]
         date = twt.date_added.strftime("%B %d, %Y")
+        day = twt.date_added.strftime("%d")
+        month = twt.date_added.strftime("%m")
+        year = twt.date_added.strftime("%Y")
+
         if date != pre_date:
             pre_date = date
             new.append(date)
             for account in accounts:
-                new.append(Tweet.objects.filter(user = account,date_added = twt.date_added).count())
+                new.append(Tweet.objects.filter(user = account, date_added__day = day, date_added__month = month, date_added__year = year).count())
             data.append(new)
-    return accounts, data
 
+    return accounts, data
 
 def follower_bar_chart():
 
