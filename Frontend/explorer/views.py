@@ -18,7 +18,7 @@ def command(request):
             path = os.path.dirname(os.path.realpath(__file__))
             Popen(["python", path + "/../../src/executer.py", "article", "stop"], cwd=path)
 
-        if request.POST.get('acommand') == 'Force Stop':
+        if request.POST.get('acommand') == '[F]Stop':
             path = os.path.dirname(os.path.realpath(__file__))
             Popen(["python", path + "/../../src/executer.py", "article", "fstop"], cwd=path)
 
@@ -34,7 +34,7 @@ def command(request):
             path = os.path.dirname(os.path.realpath(__file__))
             Popen(["python", path + "/../../src/executer.py", "twitter", "stop"], cwd=path)
 
-        if request.POST.get('tcommand') == 'Force Stop':
+        if request.POST.get('tcommand') == '[F]Stop':
             path = os.path.dirname(os.path.realpath(__file__))
             Popen(["python", path + "/../../src/executer.py", "twitter", "fstop"], cwd=path)
 

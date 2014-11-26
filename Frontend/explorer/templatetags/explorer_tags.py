@@ -18,7 +18,7 @@ def get_article_run_status():
 @register.simple_tag
 def stop_button_article_explorer():
     if "Waiting" in get_article_run_status():
-        return "Force Stop"
+        return "[F]Stop"
     else:
         return "Stop"
 
@@ -30,6 +30,6 @@ def get_twitter_run_status():
 @register.simple_tag
 def stop_button_twitter_explorer():
     if "Waiting" in get_twitter_run_status():
-        return "Force Stop"
+        return "[F]Stop"
     else:
         return "Stop"
