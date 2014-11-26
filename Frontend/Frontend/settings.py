@@ -114,6 +114,8 @@ SUIT_CONFIG = {
             {'label': 'Tweets', 'url': '/statistics/tweets'},
         )},
 
+        {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
+
         {'label': 'Visualizations', 'icon':'icon-fullscreen', 'models': (
             {'label': 'Article - Foreign Site', 'url': '/visualizations/article_hypertree'},
             {'label': 'Article - Keyword', 'url': '/visualizations/article_spacetree'},
@@ -124,8 +126,6 @@ SUIT_CONFIG = {
             {'label': 'Tweet - Weighted', 'url': '/visualizations/tweet_weightedtree'},
             {'label': 'Tweet - Movable', 'url': '/visualizations/tweet_forcegraph'},
         )},
-
-        {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
 
         {'label': 'Authorization', 'icon':'icon-lock', 'models': ('auth.user', 'auth.group')},
     )
