@@ -109,12 +109,12 @@ SUIT_CONFIG = {
         
         {'label': 'Data', 'icon':'icon-book', 'models': ('articles.article', 'tweets.tweet')},
 
+        {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
+
         {'label': 'Statistics', 'icon':'icon-signal', 'models': (
             {'label': 'Articles', 'url': '/statistics/articles'},
             {'label': 'Tweets', 'url': '/statistics/tweets'},
         )},
-
-        {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
 
         {'label': 'Visualizations', 'icon':'icon-fullscreen', 'models': (
             {'label': 'Article - Foreign Site', 'url': '/visualizations/article_hypertree'},
