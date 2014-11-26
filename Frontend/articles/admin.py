@@ -42,11 +42,17 @@ class ArticleAdmin(admin.ModelAdmin):
     def get_sources(self, obj):
         sources = ''
         for src in obj.source_set.all():
-            sources += src.url + ', '
-        return sources[:-2]
+            if 'http://www.' in src.url:
+                link = 'http://' + src.url[11:]
+            else:
+                link = src.url
+            sources += format('<a href="%s" target="_blank">%s</a>' % (link, link))
+            sources += '<br>'
+        return sources[:-4]
 
     get_sources.short_description = 'Matched Sources'
     get_sources.admin_order_field = 'source__url'
+    get_sources.allow_tags = True
 
     def get_authors(self, obj):
         authors = ''
