@@ -2,8 +2,8 @@ server:
     ip_address: 127.0.0.1
     port: 8000
 twitter:
-    initial_tweet_count: 1000
-    iteration_tweet_count: 100
+    initial_tweet_count: 3000
+    iteration_tweet_count: 200
     from_start:  True
     min_iteration_time: 600
     wait_rate_seconds: 60

@@ -6,15 +6,14 @@ import urllib2
 from tld import get_tld
 from tld.utils import update_tld_names
 import timeit
-
-
-import sys, os
+import sys
+import os
 import django
 import yaml
 
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'Frontend')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Frontend')))
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 
@@ -27,46 +26,19 @@ from tweets.models import Keyword as T_keyword
 from explorer.models import*
 from explorer.models import Keyword as E_keyword
 
+# To store the article as warc files
+import warc_creator
 
 __author__ = "ACME: CSCC01F14 Team 4"
 __authors__ = "Yuya Iwabuchi, Jai Sughand, Xiang Wang, Kyle Bridgemohansingh, Ryan Pan"
 
-## FOLLOWING GLOBAL VARIABLES ARE NOW HANDLED BY config.yaml
-##  and configuration()
-# -----------------------------------------------------------------------
-# Twitter Developer API
-#CONSUMER_KEY = "UITySH5N4iGOE3l6C0YgmwHVd"
-#CONSUMER_SECRET = "H7lXeLBDQv3o7i4wISGJtukdAqC6X9Vr4EXTdaIAVVrN56Lwbh"
-#ACCESS_TOKEN = "2825329492-TKU4s0Mky7vazr60WKHQV7R6sJT2wYE4ysR3Gm3"
-#ACCESS_TOKEN_SECRET = "I740fF6x6v0srzbY7LCAjNWXXOzZRMBFbkoiwZ5FgqC5s"
-
-# Globals to be used for Database
-#STORE_ALL_SOURCES = False
-#DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
-
-
-#INIT_TWEET_COUNT=1000
-#ITER_TWEET_COUNT=100
-
-#FROM_START = True
-#MIN_ITERATION_TIME = 600
-
-#Seconds to wait before retrying call
-#WAIT_RATE = (60 * 1) + 0
-
-# Used for commmunication stream
-#COMM_FILE = '_comm.stream'
-#RETRY_COUNT = 10
-#RETRY_DELTA = 1
-#SLEEP_TIME = 5
-
-# -----------------------------------------------------------------------
 
 def configuration():
     """ (None) -> dict
     Returns a dictionary containing the micro settings from the
-    config.yaml file located in the directory containing this file
+    config.yaml file located in the parent directory from this file
     """
+    #unit tests clause
     if "unit_tests" == os.getcwd().split("/")[-1]:
         config_yaml = open("../../config.yaml", 'r')
     else:
@@ -76,6 +48,7 @@ def configuration():
     #Config is returned as a dictionary, which you can navigate through later to get
     #a specific setting
     return config
+
 
 def authorize():
     """ (None) -> tweepy.API
@@ -88,15 +61,17 @@ def authorize():
     auth.set_access_token(config['access_token'], config['access_token_secret'])
     return tweepy.API(auth)
 
+
 def wait_and_resume():
     """ (None) -> None
     Helper function to be called when a rate limit has been reached.
     """
     wait_rate = configuration()["twitter"]['wait_rate_seconds']
-    print ('Twitter Rate Limit Reached, Attempting to Continue.')
-    print ('Resuming in ' + str(int(wait_rate/60)) + ' minute(s) and '
+    print('Twitter Rate Limit Reached, Attempting to Continue.')
+    print('Resuming in ' + str(int(wait_rate/60)) + ' minute(s) and '
                    + str(wait_rate % 60) + ' second(s).')
     time.sleep(wait_rate)
+
 
 def get_tweets(screen_name, amount):
     """ (str, [int]) -> list of list
@@ -108,7 +83,7 @@ def get_tweets(screen_name, amount):
     sites           -- List of string site urls to look for
     """
 
-    tweet_holder=[]
+    tweet_holder = []
     api = authorize()
 
     #Make sure 3190 is max tweets to get, while making sure
@@ -118,8 +93,8 @@ def get_tweets(screen_name, amount):
         amount = min(3190, user.statuses_count)
 
     #Basically acts as an iterator
-    items = tweepy.Cursor(api.user_timeline,id= screen_name,
-                          count = 200, include_rts=True).items()
+    items = tweepy.Cursor(api.user_timeline, id=screen_name,
+                          count=200, include_rts=True).items()
 
     count = 0
     while count != amount:
@@ -133,6 +108,7 @@ def get_tweets(screen_name, amount):
             wait_and_resume()
             continue
     return tweet_holder
+
 
 def get_follower_count(screen_name):
     """ (str) -> int
@@ -148,6 +124,7 @@ def get_follower_count(screen_name):
             return user.followers_count
         except:
             wait_and_resume()
+
 
 def get_keywords(tweet, keywords):
     """ (status, list of str) -> list of str
@@ -189,6 +166,7 @@ def get_keywords(tweet, keywords):
     all_matches = matched_keywords + matched_in_url
     all_matches = set(all_matches)
     return list(all_matches)
+
 
 def get_sources(tweet, sites):
     """ (status, list of str) -> list of str
@@ -232,18 +210,10 @@ def get_sources(tweet, sites):
 
             if re.search(formatted_site, url, re.IGNORECASE):
                 matched_urls.append([url, site]) # should store [whole source, 'site' url]
-    # elif store_all == True:
-    #     for url in tweet.entities['urls']:
-    #         try:
-    #             # tries to get full url on shortened urls
-    #             matched_urls.append([urllib2.urlopen(url['expanded_url']).geturl(),
-    #                                 site]) # should store [whole source, 'site' url]
-    #
-    #         except:
-    #             matched_urls.append([url['expanded_url'],
-    #                                 site])  # should store [whole source, 'site' url]
+
 
     return matched_urls
+
 
 def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
     """ (list of str, list of str, list of str, str) -> none
@@ -265,164 +235,114 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
         # Check for any new command on communication stream
         check_command()
         processed = 0
-        # print "Parsing @" + user
         tweets = get_tweets(user, tweet_number)
         tweet_followers = get_follower_count(user)
         tweet_count = len(tweets)
+
         for tweet in tweets:
             # Check for any new command on communication stream
             check_command()
 
-            # print '\tEvaluating ...\r'
             tweet_id = tweet.id
             tweet_date = tweet.created_at
-            tweet_date
             tweet_user = tweet.user.screen_name
             tweet_store_date = timezone.localtime(timezone.now())
             tweet_keywords = get_keywords(tweet, keywords)
             tweet_sources = get_sources(tweet, foreign_sites)
             tweet_text = tweet.text
 
-            # print "\tTweet:    ", tweet.text
-            # print "\tAuthor:   ", tweet_user
-            # print "\tDate:     ", tweet_date
-            # print "\tKeywords: ", tweet_keywords
-            # print "\tSources:  ", tweet_sources
-            # print "\n"
-
             if not(tweet_keywords == [] and tweet_sources ==[]):
 
                 tweet_list = Tweet.objects.filter(tweet_id = tweet_id)
-                if (not tweet_list): 
+                if (not tweet_list):
 
-                    tweet = Tweet(tweet_id = tweet_id, user=tweet_user, 
-                                  date_added = tweet_store_date, 
-                                  date_published = tweet_date, 
+                    tweet = Tweet(tweet_id = tweet_id, user=tweet_user,
+                                  date_added = tweet_store_date,
+                                  date_published = tweet_date,
                                   followers = tweet_followers, text=tweet_text)
                     tweet.save()
 
-                    tweet =  Tweet.objects.get(tweet_id=tweet_id)
-                    
+                    tweet = Tweet.objects.get(tweet_id=tweet_id)
+
                     for key in tweet_keywords:
                         tweet.keyword_set.create(keyword = key)
-       
+
                     for source in tweet_sources:
-                        tweet.source_set.create(url = source[0], 
+                        tweet.source_set.create(url = source[0],
                                                 url_origin=source[1])
 
                     added += 1
-                    # print "\tResult:    Match detected! Added to the database."
 
                 else:
 
                     tweet = tweet_list[0]
                     tweet.text = tweet_text
                     tweet.tweet_id = tweet_id
-                    tweet.user = tweet_user 
+                    tweet.user = tweet_user
                     # tweet.date_added = tweet_store_date
                     tweet.date_published = tweet_date
                     tweet.followers = tweet_followers
                     tweet.save()
 
                     for key in tweet_keywords:
-                        if not T_keyword.objects.filter(keyword=key): 
+                        if not T_keyword.objects.filter(keyword=key):
                             tweet.keyword_set.create(keyword=key)
 
                     for source in tweet_sources:
                         if not Source.objects.filter(url=source[0]):
                             tweet.source_set.create(url=source[0], url_origin=source[1])
-                    # print "\tResult:    Match detected! Tweet already in database. Updating."
                     updated += 1
 
+                warc_creator.create_twitter_warc('https://twitter.com/' + tweet.user + '/status/' + str(tweet_id))
             else:
                 no_match += 1
             processed += 1
             sys.stdout.write("%s (Twitter|%s) %i/%i          \r" % (str(timezone.localtime(timezone.now()))[:-13], user, processed, tweet_count))
             sys.stdout.flush()
         print format("%s (Twitter|%s) %i/%i          " % (str(timezone.localtime(timezone.now()))[:-13],  user, processed, tweet_count))
-        #         print "\tResult:    No Match Detected."
-        # print("\n\tStatistics\n\tAdded: %i | Updated: %i | No Match: %i | Time Elapsed: %is" %
-          # (added, updated, no_match, time.time() - start))
-    #     print "+--------------------------------------------------------------------+"
-
-    # print("Finished parsing all users!")
 
 
-def explore(accounts_db, keyword_db, site_db, tweet_number):
+def explore(tweet_number):
     """ (str, str, str, str) -> None
     Connects to accounts, keyword and site database, crawls within monitoring sites,
     then pushes articles which matches the keywords or foreign sites to the tweet database
 
     Keyword arguments:
-    accounts_db         -- Twitter Accounts database name
-    keyword_db          -- Keywords database name
-    site_db             -- Sites database name
     tweet_db            -- Tweet database name
     """
-    # print "+----------------------------------------------------------+"
-    # print "| Retrieving data from Database ...                        |"
-    # print "+----------------------------------------------------------+"
 
     # Connects to Site Database
-
 
     monitoring_sites = []
     msites = Msite.objects.all()
     # Retrieve, store, and print monitoring site information
-    # print "\nMonitoring Sites\n\t%-25s%-40s" % ("Name", "URL")
     for site in msites:
         # monitoring_sites is now in form [['Name', 'URL'], ...]
         monitoring_sites.append([site.name, site.url])
-        # print("\t%-25s%-40s" % (site.name, site.url))
 
     foreign_sites = []
     # Retrieve, store, and print foreign site information
     fsites = Fsite.objects.all()
-    # print "\nForeign Sites\n\t%-25s%-40s" % ("Name", "URL")
     for site in fsites:
         # foreign_sites is now in form ['URL', ...]
         foreign_sites.append(site.url)
-        # print("\t%-25s%-40s" % (site.name, site.url))
-
 
     # Retrieve all stored keywords
     keywords = E_keyword.objects.all()
     keyword_list = []
 
-    # Print all the keywords
-    # print "\nKeywords:"
-
     for key in keywords:
         keyword_list.append(str(key.keyword))
-    #     print "\t%s" % key.keyword
-
-    # print "\n"
-
-    # print "+----------------------------------------------------------+"
-    # print "| Populating Accounts ...                                  |"
-    # print "+----------------------------------------------------------+"
 
     # Retrieve all stored Accounts
     accounts = Taccount.objects.all()
     accounts_list = []
 
-
-
-
-    # Print all the Accounts
-    # print "\nTwitter Accounts:"
     for account in accounts:
         accounts_list.append(str(account.account))
-        # print "\t%s" % account.account
 
-
-    # print "\n"
-
-    # print "+----------------------------------------------------------+"
-    # print "| Evaluating Tweets ...                                    |"
-    # print "+----------------------------------------------------------+"
-    # Parse the articles in all sites
     parse_tweets(accounts_list, keyword_list, foreign_sites, tweet_number)
+
 
 def comm_write(text):
     config = configuration()['communication']
@@ -435,6 +355,7 @@ def comm_write(text):
         except:
             time.sleep(config['retry_delta'])
 
+
 def comm_read():
     config = configuration()['communication']
     for i in range(config['retry_count']):
@@ -446,44 +367,34 @@ def comm_read():
         except:
             time.sleep(config['retry_delta'])
 
+
 def comm_init():
     comm_write('RR %s' % os.getpid())
 
+
 def check_command():
+
     config = configuration()['communication']
     msg = comm_read()
 
     if msg[0] == 'W':
         command = msg[1]
         if command == 'S':
-            print ('Stopping Explorer...')
+            print('Stopping Explorer...')
             comm_write('SS %s' % os.getpid())
             sys.exit(0)
         elif command == 'P':
-            print ('Pausing ...')
+            print('Pausing ...')
             comm_write('PP %s' % os.getpid())
             while comm_read()[1] == 'P':
-                print ('Waiting %i seconds ...' % config['sleep_time'])
+                print('Waiting %i seconds ...' % config['sleep_time'])
                 time.sleep(config['sleep_time'])
             check_command()
         elif command == 'R':
-            print ('Resuming ...')
+            print('Resuming ...')
             comm_write('RR %s' % os.getpid())
 
 if __name__ == '__main__':
-    # print configuration()
-    # y = get_tweets('acmeteam4', 6000)
-    # x = get_tweets('kylebsingh',2)
-    # x = get_tweets('cnn', 6)
-    # for tweet in x:
-    #    print get_sources(tweet,['http://cnn.com'])
-    # print get_keywords(x[0],['google.com', 'http://', 'goo'])
-
-    # for g in x:
-    #     print g.text
-
-    # parse_tweets(['CNN', 'TIME'], ['obama','hollywood', 'not', 'fire', 'president', 'activities'], ['http://cnn.com/', 'http://ti.me'], 'tweets')
-    
     #Initialize Communication Stream
     comm_init()
     config = configuration()['twitter']
@@ -496,11 +407,11 @@ if __name__ == '__main__':
 
         start = timeit.default_timer()
 
-        if (fs == True ):
-            explore('taccounts', 'keywords', 'sites', config['initial_tweet_count'])
+        if fs:
+            explore(config['initial_tweet_count'])
             fs = False
         else:
-            explore('taccounts', 'keywords', 'sites', config['iteration_tweet_count'])
+            explore(config['iteration_tweet_count'])
 
         end = timeit.default_timer()
         delta_time = end - start
