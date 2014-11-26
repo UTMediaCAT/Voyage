@@ -1,3 +1,12 @@
+"""
+This script retrieves and organizes data collected by explorer into 
+arrays and dictionaries to make it an appropriate input for 
+graphs and trees in the JIT library
+"""
+
+__author__ = "ACME: CSCC01F14 Team 4"
+__authors__ = "Yuya Iwabuchi, Jai Sughand, Xiang Wang, Kyle Bridgemohansingh, Ryan Pan"
+
 import django
 import re
 
@@ -13,7 +22,9 @@ from tweets.models import Source as T_Source
 def article_hypertree():
     msites = []
 
+    # for all the monitoring sites
     for msite in Msite.objects.all():
+        # create a node with an empty array for the children
         data = {}
         data["id"] = msite.url
         data["name"] = msite.name
@@ -25,10 +36,11 @@ def article_hypertree():
             fsites = A_Source.objects.filter(article = article)
 
             for fsite in fsites:
-                if fsite.url_origin in fsites_dict.keys():
-                    fsites_dict[fsite.url_origin].append(fsite)
+                fsite_name = (Fsite.objects.filter(url = fsite.url_origin))[0].name
+                if fsite_name in fsites_dict.keys():
+                    fsites_dict[fsite_name].append(fsite)
                 else:
-                    fsites_dict[fsite.url_origin] = [fsite]   
+                    fsites_dict[fsite_name] = [fsite]   
 
         for fsite in fsites_dict.keys():
             fsites_data = {}
@@ -40,7 +52,8 @@ def article_hypertree():
 
         msites.append(data)
 
-    data = {"id": "Msites", "name": "Monitoring Sites", "children": msites, "relation": "Monitoring Sites"}
+    data = {"id": "Msites", "name": "Monitoring Sites", "children": msites, 
+            "relation": "Monitoring Sites"}
 
     return data
 
@@ -51,7 +64,9 @@ def article_spacetree(site):
     else:
         msites = Msite.objects.filter(name = site)
 
+    # for all the monitoring sites matching the site
     for msite in msites:
+        # create a node with an empty array for the children
         site_data = {}
         site_data["id"] = msite.url
         site_data["name"] = msite.name
@@ -69,6 +84,7 @@ def article_spacetree(site):
                     keywords_dict[keyword.keyword] = [keyword]
                 
         for keyword in keywords_dict.keys():
+            # create a node with an empty array for the children
             keywords_data = {}
             keywords_data["id"] = keyword
             keywords_data["name"] = keyword
@@ -98,6 +114,7 @@ def article_weightedtree(site):
         results = Msite.objects.filter(name = site)
 
     for msite in results:
+        # create a node with an empty array for the children
         data = {}
         data["id"] = msite.url
         data["name"] = msite.name
@@ -164,6 +181,7 @@ def article_forcegraph(site):
         results = Msite.objects.filter(name = site)
 
     for msite in results:
+        # create a node with an empty array for the children
         data = {}
         data["id"] = msite.url
         data["name"] = msite.name
@@ -189,6 +207,7 @@ def article_forcegraph(site):
                     fsites_dict[fsite.url_origin] = [fsite] 
                 
         for keyword in keywords_dict.keys():
+            # create a node with an empty array for the children
             keywords_data = {}
             keywords_data["id"] = keyword
             keywords_data["name"] = keyword
@@ -201,6 +220,7 @@ def article_forcegraph(site):
             msites.append(keywords_data_info)
 
         for fsite in fsites_dict.keys():
+            # create a node with an empty array for the children
             fsites_data = {}
             fsites_data["id"] = fsite
             fsites_data["name"] = fsite
@@ -224,6 +244,7 @@ def tweet_hypertree():
     taccounts = []
 
     for account in Taccount.objects.all():
+        # create a node with an empty array for the children
         data = {}
         data["id"] = account.account
         data["name"] = account.account
@@ -235,13 +256,14 @@ def tweet_hypertree():
             fsites = T_Source.objects.filter(tweet = tweet)
 
             for fsite in fsites:
-                print fsite.url
-                if fsite.url in fsites_dict.keys():
-                    fsites_dict[fsite.url].append(fsite)
+                fsite_name = (Fsite.objects.filter(url = fsite.url_origin))[0].name
+                if fsite_name in fsites_dict.keys():
+                    fsites_dict[fsite_name].append(fsite)
                 else:
-                    fsites_dict[fsite.url] = [fsite]   
+                    fsites_dict[fsite_name] = [fsite]   
 
         for fsite in fsites_dict.keys():
+            # create a node with an empty array for the children
             fsites_data = {}
             fsites_data["id"] = fsite
             fsites_data["name"] = fsite
@@ -282,6 +304,7 @@ def tweet_spacetree(account):
                     keywords_dict[keyword.keyword] = [keyword]
                 
         for keyword in keywords_dict.keys():
+            # create a node with an empty array for the children
             keywords_data = {}
             keywords_data["id"] = keyword
             keywords_data["name"] = keyword
@@ -312,6 +335,7 @@ def tweet_weightedtree(account):
         results = Taccount.objects.filter(account = account)
 
     for taccount in results:
+        # create a node with an empty array for the children
         data = {}
         data["id"] = taccount.account
         data["name"] = taccount.account
@@ -378,6 +402,7 @@ def tweet_forcegraph(account):
         results = Taccount.objects.filter(account = account)
 
     for taccount in results:
+        # create a node with an empty array for the adjacencies
         data = {}
         data["id"] = taccount.account
         data["name"] = taccount.account
