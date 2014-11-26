@@ -14,19 +14,17 @@ def articles_keywords_pie_chart():
     
     keywords = A_Keyword.objects.all()
 
-    count = 0
     for ele in keywords:
         if not ele.keyword in data_dict.keys():
             data_dict[ele.keyword] = 1
         else:
             data_dict[ele.keyword] += 1
     sorted_data = sorted(data_dict.items(), key=operator.itemgetter(1), reverse=True)
-    print sorted_data
     sorted_data_dict = dict(sorted_data)
 
     if len(sorted_data)>10:
-        sorted_data_dict = dict(sorted_data[10:])
-        sorted_data_dict_other = sorted_data[10:]
+        sorted_data_dict = dict(sorted_data[0:10])
+        sorted_data_dict_other = dict(sorted_data[10:])
         other_sum = sum (sorted_data_dict_other.values())
         sorted_data_dict["other"] = other_sum
 
@@ -45,17 +43,29 @@ def tweets_keywords_pie_chart():
     data_dict = {}
      
     keywords = T_Keyword.objects.all()
+
     for ele in keywords:
         if not ele.keyword in data_dict.keys():
             data_dict[ele.keyword] = 1
         else:
             data_dict[ele.keyword] += 1
+    sorted_data = sorted(data_dict.items(), key=operator.itemgetter(1), reverse=True)
+
+    sorted_data_dict = dict(sorted_data)
+
+    if len(sorted_data)>10:
+        sorted_data_dict = dict(sorted_data[0:10])
+        sorted_data_dict_other = dict(sorted_data[10:])
+        other_sum = sum (sorted_data_dict_other.values())
+        sorted_data_dict["Other Keywrods"] = other_sum
+
 
     data = []
-    for ele in data_dict.keys():
+
+    for ele in sorted_data_dict.keys():
         new=[]
         new.append(ele.encode("utf-8"))
-        new.append(data_dict[ele])
+        new.append(sorted_data_dict[ele])
         data.append(new)
 
     return data
