@@ -28,6 +28,7 @@ class ArticleAdmin(admin.ModelAdmin):
     search_fields = ['url', 'title', 'author__author', 'keyword__keyword', 'source__url']
     list_filter = ['keyword__keyword', 'url_origin']
     ordering = ['-date_added']
+    actions_on_top = True
 
     def get_keywords(self, obj):
         keywords = ''
@@ -74,5 +75,6 @@ class ArticleAdmin(admin.ModelAdmin):
 
     link_warc.allow_tags = True
     link_warc.short_description = "Archived WARC"
+
 
 admin.site.register(Article, ArticleAdmin)
