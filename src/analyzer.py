@@ -110,7 +110,9 @@ def msites_bar_chart():
     for site in fsites:
         source_number = A_Source.objects.filter(url_origin = site.url).count()
         data.append([site.name.encode("utf-8"), source_number])
-    return data
+    data.sort(key = lambda x: x[1], reverse=True)
+
+    return data[0:11]
 
 
 
