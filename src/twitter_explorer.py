@@ -1,4 +1,4 @@
-import datetime
+
 import tweepy
 import time
 import re
@@ -6,6 +6,9 @@ import urllib2
 from tld import get_tld
 from tld.utils import update_tld_names
 import timeit
+
+# For getting today's date
+from django.utils import timezone
 
 import sys
 import os
@@ -260,7 +263,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
             tweet_date = tweet.created_at
             tweet_date
             tweet_user = tweet.user.screen_name
-            tweet_store_date = datetime.datetime.now().strftime(config['date_format'][1:])
+            tweet_store_date = timezone.now().strftime(config['date_format'][1:])
             tweet_keywords = get_keywords(tweet, keywords)
             tweet_sources = get_sources(tweet, foreign_sites)
             tweet_text = tweet.text
