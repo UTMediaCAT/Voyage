@@ -130,13 +130,11 @@ def tweets_annotation_chart():
     for twt in Tweet.objects.all():
         new=[]
         date = twt.date_added.strftime("%B %d, %Y")
-        if date == pre_date:
-            break;
-        else:
+        if date != pre_date:
             pre_date = date
             new.append(date)
             for account in accounts:
-                new.append(Tweet.objects.filter(date_added = twt.date_added).count())
+                new.append(Tweet.objects.filter(user = account,date_added = twt.date_added).count())
             data.append(new)
     return accounts, data
 
