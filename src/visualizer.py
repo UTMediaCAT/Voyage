@@ -36,7 +36,7 @@ def article_hypertree():
             fsites = A_Source.objects.filter(article = article)
 
             for fsite in fsites:
-                fsite_name = (Fsite.objects.filter(url = fsite.url_origin))[0].name
+                fsite_name = (Fsite.objects.get(url = fsite.url_origin)).name
                 if fsite_name in fsites_dict.keys():
                     fsites_dict[fsite_name].append(fsite)
                 else:
