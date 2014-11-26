@@ -12,6 +12,8 @@ import sys
 import subprocess
 import time
 import os
+# To load configurations
+import yaml
 
 # Change current working directory to src/ folder
 path = os.path.abspath(os.path.dirname(__file__))
@@ -19,9 +21,16 @@ os.chdir(path)
 
 # Global variables for settings
 COMM_FILE = '_comm.stream'
-RETRY_COUNT = 10
-RETRY_DELTA = 1
 
+def configuration():
+    """ (None) -> dict
+    Returns a dictionary containing the micro settings from the
+    config.yaml file located in the directory containing this file
+    """
+    config_yaml = open("../config.yaml", 'r')
+    config = yaml.load(config_yaml)
+    config_yaml.close()
+    return config
 
 class InputError(Exception):
     """ (None) -> None
@@ -54,14 +63,14 @@ def comm_read(explorer):
     Open, read and return the content on the comunication stream file
     Raise TimeoutError if reading was not accomplished within the time limit
     """
-    for i in range(RETRY_COUNT):
+    for i in range(configuration()['communication']['retry_count']):
         try:
             comm = open(explorer + COMM_FILE, 'r')
             msg = comm.read()
             comm.close()
             return msg
         except:
-            time.sleep(RETRY_DELTA)
+            time.sleep(configuration()['communication']['retry_delta'])
     raise_timeout_error()
 
 
@@ -70,14 +79,14 @@ def comm_write(explorer, text):
     Open, read and write on the comunication stream file
     Raise TimeoutError if writing was not accomplished within the time limit
     """
-    for i in range(RETRY_COUNT):
+    for i in range(configuration()['communication']['retry_count']):
         try:
             comm = open(explorer + COMM_FILE, 'w')
             comm.write(text)
             comm.close()
             return None
         except:
-            time.sleep(RETRY_DELTA)
+            time.sleep(configuration()['communication']['retry_delta'])
     raise_timeout_error()
 
 
