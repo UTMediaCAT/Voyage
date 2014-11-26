@@ -26,6 +26,7 @@ class TweetAdmin(admin.ModelAdmin):
     search_fields = ['tweet_id', 'text', 'user', 'keyword__keyword', 'source__url']
     list_filter = ['keyword__keyword', 'user']
     ordering = ['-date_added']
+    actions_on_top = True
 
 
     def get_keywords(self, obj):

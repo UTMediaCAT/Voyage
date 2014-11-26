@@ -1,4 +1,4 @@
-import datetime
+
 import tweepy
 import time
 import re
@@ -7,13 +7,13 @@ from tld import get_tld
 from tld.utils import update_tld_names
 import timeit
 
+# For getting today's date
+from django.utils import timezone
+
 import sys
 import os
 import django
 import yaml
-
-# To create warc files
-import warc_creator
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'Frontend')))
@@ -196,7 +196,6 @@ def get_sources(tweet, sites):
     sites           -- List of site urls to look for
     """
     # store_all = configuration()['storage']['store_all_sources']
-
     matched_urls = []
     tweet_urls = []
     #if store_all == False:
@@ -211,7 +210,12 @@ def get_sources(tweet, sites):
     #substring, expanded includes scheme, display may not
     for site in sites:
         for url in tweet_urls:
-            if re.search(site, url, re.IGNORECASE) or re.search(site, url, re.IGNORECASE):
+            formatted_site = re.search("([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}",
+                                       site, re.IGNORECASE).group(0)
+            if formatted_site[:3] == 'www':
+                formatted_site = formatted_site[3:]
+
+            if re.search(formatted_site, url, re.IGNORECASE):
                 matched_urls.append([url, site]) # should store [whole source, 'site' url]
     # elif store_all == True:
     #     for url in tweet.entities['urls']:
@@ -259,7 +263,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
             tweet_date = tweet.created_at
             tweet_date
             tweet_user = tweet.user.screen_name
-            tweet_store_date = datetime.datetime.now().strftime(config['date_format'][1:])
+            tweet_store_date = timezone.now().strftime(config['date_format'][1:])
             tweet_keywords = get_keywords(tweet, keywords)
             tweet_sources = get_sources(tweet, foreign_sites)
             tweet_text = tweet.text
@@ -314,15 +318,13 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                             tweet.source_set.create(url=source[0], url_origin=source[1])
                     # print "\tResult:    Match detected! Tweet already in database. Updating."
                     updated += 1
-                print "https://twitter.com/" + tweet_user + "/status/" + str(tweet_id)
-                warc_creator.create_twitter_warc("https://twitter.com/" + tweet_user + "/status/" + str(tweet_id))
 
             else:
                 no_match += 1
             processed += 1
-            sys.stdout.write("%s (Twitter|%s) %i/%i          \r" % (str(datetime.datetime.now())[:-7], user, processed, tweet_count))
+            sys.stdout.write("(Twitter|%s) %i/%i          \r" % (user, processed, tweet_count))
             sys.stdout.flush()
-        print format("%s (Twitter|%s) %i/%i          " % (str(datetime.datetime.now())[:-7], user, processed, tweet_count))
+        print format("(Twitter|%s) %i/%i          " % (user, processed, tweet_count))
         #         print "\tResult:    No Match Detected."
         # print("\n\tStatistics\n\tAdded: %i | Updated: %i | No Match: %i | Time Elapsed: %is" %
           # (added, updated, no_match, time.time() - start))
@@ -457,6 +459,9 @@ if __name__ == '__main__':
     # print configuration()
     # y = get_tweets('acmeteam4', 6000)
     # x = get_tweets('kylebsingh',2)
+    # x = get_tweets('cnn', 6)
+    # for tweet in x:
+    #    print get_sources(tweet,['http://cnn.com'])
     # print get_keywords(x[0],['google.com', 'http://', 'goo'])
 
     # for g in x:

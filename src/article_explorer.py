@@ -34,7 +34,7 @@ import re
 import time
 import timeit
 # For getting today's date
-import datetime
+from django.utils import timezone
 # For extracting 'pub_date's
 from dateutil import parser
 
@@ -78,19 +78,20 @@ def populate_sites(sites):
     # Populate each Sites, then print the amount of articles and time it took
     # print "\n\t%-25s%10s%10s" % ("Site", "Articles", "Time")
     for s in range(len(sites)):
+        # Check for any new command on communication stream
+        check_command()
+        
         # print("\t%-24s" % (sites[s][0])),
         # To count the time
         start_t = time.time()
         # Duplicate the name of the sites
         new_sites.append([sites[s][0]])
-
         # Use the url and populate the site with articles
         new_sites[s].append((newspaper.build(sites[s][1],
                                              memoize_articles=False,
                                              keep_article_html=True,
                                              fetch_images=False,
-                                             language='en',
-                                             number_thread=1)))
+                                             language='en')))
         new_sites[s].append(sites[s][1]) # Append site url
 
         end_t = time.time()
@@ -112,9 +113,6 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
     config = configuration()['storage']
     added, updated, failed, no_match = 0, 0, 0, 0
     start_t = time.time()
-
-    # Load the relevant configs and collect today's date and time
-    today = datetime.datetime.now().strftime(config['date_format'][1:])
 
     # for each article in each sites, download and parse important data
     for site in populated_sites:
@@ -166,7 +164,8 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                     article_list = Article.objects.filter(url=url)
                     if not article_list:
 
-                        article = Article(title=title, url=url, url_origin=site[2], date_added=today,
+                        article = Article(title=title, url=url, url_origin=site[2], 
+                                          date_added=timezone.now(),
                                           date_published=pub_date)
                         article.save()
 
@@ -225,11 +224,11 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
             # Let the output print back to normal for minimal ui
             sys.stdout = sys.__stdout__
 
-            sys.stdout.write("(Article|%s) %i/%i          \r" % (site[0], processed, article_count))
+            sys.stdout.write("%s (Article|%s) %i/%i          \r" % (str(timezone.now())[:-7], site[0], processed, article_count))
             sys.stdout.flush()
             site[1].articles[i] = None
             # Some stats to look at while running the script
-        print("(Article|%s) %i/%i          " % (site[0], processed, article_count))
+        print("%s (Article|%s) %i/%i          " % (str(timezone.now())[:-7], site[0], processed, article_count))
 
     #         print("\n\tStatistics\n\tAdded: %i | Updated: %i | No Match: %i | Failed: %i | Time Elapsed: %is" %
     #               (added, updated, no_match, failed, time.time() - start_t))
