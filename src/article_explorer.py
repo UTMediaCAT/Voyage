@@ -165,7 +165,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                     if not article_list:
 
                         article = Article(title=title, url=url, url_origin=site[2], 
-                                          date_added=timezone.now(),
+                                          date_added=timezone.localtime(timezone.now()),
                                           date_published=pub_date)
                         article.save()
 
@@ -224,11 +224,11 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
             # Let the output print back to normal for minimal ui
             sys.stdout = sys.__stdout__
 
-            sys.stdout.write("%s (Article|%s) %i/%i          \r" % (str(timezone.now())[:-7], site[0], processed, article_count))
+            sys.stdout.write("%s (Article|%s) %i/%i          \r" % (str(timezone.localtime(timezone.now()))[:-13], site[0], processed, article_count))
             sys.stdout.flush()
             site[1].articles[i] = None
             # Some stats to look at while running the script
-        print("%s (Article|%s) %i/%i          " % (str(timezone.now())[:-7], site[0], processed, article_count))
+        print("%s (Article|%s) %i/%i          " % (str(timezone.localtime(timezone.now()))[:-13], site[0], processed, article_count))
 
     #         print("\n\tStatistics\n\tAdded: %i | Updated: %i | No Match: %i | Failed: %i | Time Elapsed: %is" %
     #               (added, updated, no_match, failed, time.time() - start_t))

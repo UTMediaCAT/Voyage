@@ -7,18 +7,20 @@ from tld import get_tld
 from tld.utils import update_tld_names
 import timeit
 
-# For getting today's date
-from django.utils import timezone
 
-import sys
-import os
+import sys, os
 import django
 import yaml
+
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'Frontend')))
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
+
+
+# For getting today's date
+from django.utils import timezone
 
 from tweets.models import*
 from tweets.models import Keyword as T_keyword
@@ -263,7 +265,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
             tweet_date = tweet.created_at
             tweet_date
             tweet_user = tweet.user.screen_name
-            tweet_store_date = timezone.now().strftime(config['date_format'][1:])
+            tweet_store_date = timezone.localtime(timezone.now())
             tweet_keywords = get_keywords(tweet, keywords)
             tweet_sources = get_sources(tweet, foreign_sites)
             tweet_text = tweet.text
@@ -322,9 +324,9 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
             else:
                 no_match += 1
             processed += 1
-            sys.stdout.write("(Twitter|%s) %i/%i          \r" % (user, processed, tweet_count))
+            sys.stdout.write("%s (Twitter|%s) %i/%i          \r" % (str(timezone.localtime(timezone.now()))[:-13], user, processed, tweet_count))
             sys.stdout.flush()
-        print format("(Twitter|%s) %i/%i          " % (user, processed, tweet_count))
+        print format("%s (Twitter|%s) %i/%i          " % (str(timezone.localtime(timezone.now()))[:-13],  user, processed, tweet_count))
         #         print "\tResult:    No Match Detected."
         # print("\n\tStatistics\n\tAdded: %i | Updated: %i | No Match: %i | Time Elapsed: %is" %
           # (added, updated, no_match, time.time() - start))
