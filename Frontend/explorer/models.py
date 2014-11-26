@@ -70,7 +70,7 @@ class Keyword(models.Model):
 
 class Taccount(models.Model):
     account = models.CharField(max_length=200, unique=True, validators=[validate_user],
-                            help_text='Do not include "@". Maximum 200 characters (Ex. CNN)')
+                            help_text='Do not include "@". Maximum 15 characters (Ex. CNN)')
 
     class Meta:
         verbose_name = 'Twitter Account'
