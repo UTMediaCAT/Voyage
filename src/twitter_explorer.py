@@ -287,7 +287,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
             # print "\tSources:  ", tweet_sources
             # print "\n"
 
-            if not(tweet_keywords == [] and (tweet_sources ==[] or config['store_all_sources'])):
+            if not(tweet_keywords == [] and tweet_sources ==[]):
 
                 tweet_list = Tweet.objects.filter(tweet_id = tweet_id)
                 if (not tweet_list): 
