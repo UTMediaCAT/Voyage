@@ -67,7 +67,10 @@ def configuration():
     Returns a dictionary containing the micro settings from the
     config.yaml file located in the directory containing this file
     """
-    config_yaml = open("../config.yaml", 'r')
+    if "unit_tests" == os.getcwd().split("/")[-1]:
+        config_yaml = open("../../config.yaml", 'r')
+    else:
+        config_yaml = open("../config.yaml", 'r')
     config = yaml.load(config_yaml)
     config_yaml.close()
     #Config is returned as a dictionary, which you can navigate through later to get

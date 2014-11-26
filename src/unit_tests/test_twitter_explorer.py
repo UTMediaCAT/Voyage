@@ -1,11 +1,8 @@
 __author__ = 'Kyle'
 
 import os
-os.getcwd()
-os.chdir('./..')
-
-import sys
-sys.path.insert(0, '../')
+parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.sys.path.insert(0,parentdir)
 
 import twitter_explorer as te
 import unittest
@@ -15,7 +12,6 @@ import tweepy
 class TestTwitterExplorer(unittest.TestCase):
 
     def setUp(self):
-        print te.configuration()
         self.test_account = 'acmeteam4'
         self.test_keywords = ['nevereverthere', '.ly', '.com', 'test', 'acme4', '6', '3', '2', 'google', 'time', 'no']
         self.test_sources = ['http://google.com', 'http://google.ca','http://cnn.com', 'http://TIME.com', 'genius.com/President']
