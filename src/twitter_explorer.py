@@ -27,6 +27,8 @@ from tweets.models import Keyword as T_keyword
 from explorer.models import*
 from explorer.models import Keyword as E_keyword
 
+# To store the article as warc files
+import warc_creator
 
 __author__ = "ACME: CSCC01F14 Team 4"
 __authors__ = "Yuya Iwabuchi, Jai Sughand, Xiang Wang, Kyle Bridgemohansingh, Ryan Pan"
@@ -334,6 +336,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                     # print "\tResult:    Match detected! Tweet already in database. Updating."
                     updated += 1
 
+                warc_creator.create_twitter_warc('https://twitter.com/' + tweet.user + '/status/' + str(tweet_id))
             else:
                 no_match += 1
             processed += 1
