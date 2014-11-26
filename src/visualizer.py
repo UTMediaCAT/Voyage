@@ -256,7 +256,8 @@ def tweet_hypertree():
             fsites = T_Source.objects.filter(tweet = tweet)
 
             for fsite in fsites:
-                fsite_name = (Fsite.objects.filter(url = fsite.url))[0].name
+                print fsite.url_origin
+                fsite_name = (Fsite.objects.get(url = fsite.url_origin)).name
                 if fsite_name in fsites_dict.keys():
                     fsites_dict[fsite_name].append(fsite)
                 else:
