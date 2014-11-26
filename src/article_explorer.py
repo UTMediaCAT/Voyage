@@ -91,7 +91,8 @@ def populate_sites(sites):
                                              memoize_articles=False,
                                              keep_article_html=True,
                                              fetch_images=False,
-                                             language='en')))
+                                             language='en',
+                                             number_threads=1)))
         new_sites[s].append(sites[s][1]) # Append site url
 
         end_t = time.time()
