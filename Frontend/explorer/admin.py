@@ -2,8 +2,10 @@ from django.contrib import admin
 from explorer.models import Msite, Fsite, Keyword, Taccount
 from articles.models import Article
 from articles.models import Source as ASource
+from articles.models import Keyword as AKeyword
 from tweets.models import Tweet
 from tweets.models import Source as TSource
+from tweets.models import Keyword as TKeyword
 
 from django.utils import timezone
 
@@ -14,6 +16,7 @@ class MsiteAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'article_count', 'latest_article')
     search_fields = ['name', 'url']
     ordering = ['name']
+    actions_on_top = True
 
 
     def article_count(self, obj):
@@ -43,12 +46,13 @@ class FsiteAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'cited_count')
     search_fields = ['name', 'url']
     ordering = ['name']
+    actions_on_top = True
 
     def cited_count(self, obj):
         return len(ASource.objects.filter(url_origin=obj.url)) + \
                len(TSource.objects.filter(url_origin=obj.url))
 
-    cited_count.short_description = "Cited Count"
+    cited_count.short_description = "Total Cites"
 
 
 class KeywordAdmin(admin.ModelAdmin):
@@ -57,8 +61,15 @@ class KeywordAdmin(admin.ModelAdmin):
         ]
 
 
-    list_display = ['keyword']
+    list_display = ['keyword', 'match_count']
     search_fields = ['keyword']
+    actions_on_top = True
+
+    def match_count(self, obj):
+        return len(AKeyword.objects.filter(keyword=obj.keyword)) + \
+               len(TKeyword.objects.filter(keyword=obj.keyword))
+
+    match_count.short_description = "Total Matches"
 
 class TaccountAdmin(admin.ModelAdmin):
     fieldsets = [
@@ -68,6 +79,7 @@ class TaccountAdmin(admin.ModelAdmin):
 
     list_display = ['account', 'tweet_count', 'latest_tweet']
     search_fields = ['account']
+    actions_on_top = True
 
     def tweet_count(self, obj):
         return len(Tweet.objects.filter(user=obj.account))
