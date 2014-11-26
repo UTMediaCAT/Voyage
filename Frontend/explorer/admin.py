@@ -6,8 +6,6 @@ from tweets.models import Tweet
 from tweets.models import Source as TSource
 
 from django.utils import timezone
-# Register your models here.
-
 
 class MsiteAdmin(admin.ModelAdmin):
     fieldsets = [
@@ -89,6 +87,7 @@ class TaccountAdmin(admin.ModelAdmin):
             return 'Have not found any tweets yet!'
 
     latest_tweet.short_description = 'Last Found'
+
 
 admin.site.register(Msite, MsiteAdmin)
 admin.site.register(Fsite, FsiteAdmin)
