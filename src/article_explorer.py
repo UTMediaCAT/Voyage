@@ -1,11 +1,11 @@
 
 """
 This script retrieves monitoring site, foreign sites,
-and keywords from Mongo database and looks into the monitoring
+and keywords from Django database and looks into the monitoring
 sites to find matching foreign sites or keywords.
-newspaper package is mainly used to extract useful data.
+newspaper package is the core to extract and retrieve relevant data.
 If any keyword (of text) or foreign sites (of links) matched,
-all the relevant data will be stored at another Mongo database for Articles
+the Article will be stored at Django database as articles.models.Article
 """
 
 __author__ = "ACME: CSCC01F14 Team 4"
@@ -14,11 +14,11 @@ __authors__ = "Yuya Iwabuchi, Jai Sughand, Xiang Wang, Kyle Bridgemohansingh, Ry
 import sys
 import os
 
-# Add Django directories in the Python paths
+# Add Django directories in the Python paths for django shell to work
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Frontend')))
 
-# Append local python lib to the front to assure local library to be used
+# Append local python lib to the front to assure local library(mainly Django 1.7.1) to be used
 sys.path.insert(0, os.path.join(os.environ['HOME'], '.local/lib/python2.7/site-packages'))
 
 # newspaper, for populating articles of each site
@@ -30,15 +30,17 @@ import lxml.html.clean
 # Regex, for parsing keywords and sources
 import re
 
-# For counting seconds
+# Mainly used to make the explorer sleep
 import time
 import timeit
-# For getting today's date
+
+# For getting today's date with respect to the TZ specified in Django Settings
 from django.utils import timezone
-# For extracting 'pub_date's
+
+# For extracting 'pub_date's string into Datetime object
 from dateutil import parser
 
-# To connect and modify the database of django
+# To connect and use the Django Database
 import django
 os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
         
@@ -51,7 +53,7 @@ from explorer.models import Keyword as E_keyword
 # To load configurations
 import yaml
 
-# To create warc files
+# To store the article as warc files
 import warc_creator
 
 
@@ -67,7 +69,7 @@ def configuration():
 
 def populate_sites(sites):
     """ (list of str) -> list of [str, newspaper.source.Source]
-    Searches through the sites using newspaper library and
+    Parses through the sites using newspaper library and
     returns list of sites with available articles populated
 
     Keyword arguments:
@@ -75,15 +77,9 @@ def populate_sites(sites):
     """
     new_sites = []
     
-    # Populate each Sites, then print the amount of articles and time it took
-    # print "\n\t%-25s%10s%10s" % ("Site", "Articles", "Time")
     for s in range(len(sites)):
         # Check for any new command on communication stream
         check_command()
-        
-        # print("\t%-24s" % (sites[s][0])),
-        # To count the time
-        start_t = time.time()
         # Duplicate the name of the sites
         new_sites.append([sites[s][0]])
         # Use the url and populate the site with articles
@@ -93,18 +89,16 @@ def populate_sites(sites):
                                              fetch_images=False,
                                              language='en',
                                              number_threads=1)))
-        new_sites[s].append(sites[s][1]) # Append site url
+        # Append site url
+        new_sites[s].append(sites[s][1]) 
 
-        end_t = time.time()
-        # report back the amount of articles found, and time it took
-        # print("%6i pgs%9is" % (new_sites[s][1].size(), end_t - start_t))
-    # return the list
     return new_sites
 
 
 def parse_articles(populated_sites, db_keywords, foreign_sites):
     """ (list of [str, newspaper.source.Source], list of str, list of str, str) -> None
-    Download all articles from built sites and stores information to the database
+    Downloads each article in the site, extracts, compares with Foreign Sites and Keywords,
+    then the article which had a match will be stored into the Django database
 
     Keyword arguments:
     populated_sites     -- List of [name, 'built_article'] of each site
@@ -113,7 +107,6 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
     """
     config = configuration()['storage']
     added, updated, failed, no_match = 0, 0, 0, 0
-    start_t = time.time()
 
     # for each article in each sites, download and parse important data
     for site in populated_sites:
