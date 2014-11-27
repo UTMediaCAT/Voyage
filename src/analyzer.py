@@ -71,46 +71,22 @@ def tweets_keywords_pie_chart():
     return data
 
 def articles_annotation_chart():
-    '''
-    article_by_date = []
-    sites = []
-    for s in Msite.objects.all():
-        sites.append(re.search("([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}",
-                     s.url, re.IGNORECASE).group(0).encode("ascii"))
-
-    for art in Article.objects.all():
-        added = False
-        date = art.date_added.strftime("%B %d, %Y")
-        for index in range(len(article_by_date)):
-            if date == article_by_date[index][0]:
-                added = True
-                for i in range(len(sites)):
-                    if sites[i] in art.url.encode("ascii"):
-                        article_by_date[index][i+1] += 1
-                        break
-            if added:
-                break
-
-        if not added:
-            article_by_date.append([date] + [0]*len(sites))
-            for i in range(len(sites)):
-                if sites[i] in art.url:
-                    article_by_date[-1][i+1] += 1
-                    break
-
-    return sites, article_by_date
-    '''
-
 
     Msites  = Msite.objects.all()
     urls = []
     for element in Msites:
-        urls.append([element.url.encode("utf-8"), Article.objects.filter(url = element.url).count()])
+        urls.append([element.url.encode("utf-8"), Article.objects.filter(url = element.url).count(), element.name.encode("utf-8")])
 
     urls.sort(key = lambda x: x[1], reverse=True)
     urls = urls[0:10]
+    msites_name = []
+    for a in range(len(urls)):
+        msites_name.append(urls[a][2])
+
     for a in range(len(urls)):
         urls[a] = urls[a][0]
+
+
 
 
     data = []
@@ -132,7 +108,7 @@ def articles_annotation_chart():
             data.append(new)
     print data
 
-    return urls, data
+    return msites_name, data
 
 def msites_bar_chart():
 
