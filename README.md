@@ -52,13 +52,14 @@ __Default Login Credentials:__
 Here you can view your action history and quick navigations to the database
 ####Scope
 Here, you can view and edit 4 requirement to explore:
-* __Monitoring Sites__: The site in which explorer will look into. It will automatically get validated.
+* __Monitoring Sites__: The site in which explorer will look into. It will automatically get validated when adding.
 * __Twitter Accounts__: The twitter accounts which explorer will look into. It will automatically be validated when adding.
 * __Foreign Sites__: The site in which explorer checks if it used as source.
 * __Keywords__: The words in which the explorer will see if it is used.
 
 ####Data
 Here, you can view the collected data by the explorer. Furthermore, you can download the archived entry as __Web Archive__.
+For demo, it is filled with pre-explored entries.
 ####Downloads
 Here, you can download all the data stored in the database as __Json__ format.
 ####Statistics
@@ -76,7 +77,8 @@ Furthermore, users can have different _permissions_.
 Once your scope is ready, you may start exploring by clicking __Run__ on the status bar.
 * __Article Explorer__ will explore through the _Monitoring Sites_ for articles
 * __Twitter Explorer__ will explore through _Twitter_ for _Twitter Accounts's_ posts
-* 
+
+___
 ##Task Board
 Our Task Board and Assignment progress is on [Trello](https://trello.com/b/Y08lMCXy/cscc01-acme)
 
