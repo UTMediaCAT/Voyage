@@ -139,13 +139,11 @@
                 Article - Weighted    
                 </h4> 
 
-                This graph has a node for all Monitoring Sites connected with the
-                Foreign Sites and Keywords that were used in them. The size of the node is determined
+                This graph has a node for all Monitoring Sites(Blue) connected with the
+                Foreign Sites(Red) and Keywords(Green) that were used in them. The size of the node is determined
                 by the number of times that Keyword/Foreign Site was used in the Monitoring Site. 
                 You can also choose a particular 
-                Monitoring Site using the drop down list below.<br /><br />
-                Clicking on a node should move the tree and center that node.<br /><br />
-                The centered node's children are displayed in a relations list in the right column.
+                Monitoring Site using the drop down list below.<br />
 
                 <h4>Monitoring Site</h4>
                 <form method="post" action="/visualizations/article_weightedtree_js">
@@ -157,6 +155,10 @@
                     {% endfor %}
                     </select>
                 </form>
+
+                <h4>Instructions</h4>
+                Clicking on a node should move the tree and center that node.<br /><br />
+                The centered node's children are displayed in a relations list in the right column.
             </div>
 
             <div id="id-list"></div>
