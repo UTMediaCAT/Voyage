@@ -124,7 +124,7 @@
                                 node.eachSubnode(function(n) { count++; });
                                 //assign a node color based on
                                 //how many children it has
-                                node.data.$color = ['#aaa', '#baa', '#caa', '#daa', '#eaa', '#faa'][count];                    
+                                node.data.$color = '#faa';                    
                             }
                         }
                     },
@@ -136,8 +136,8 @@
                     //override the Edge global style properties.
                     onBeforePlotLine: function(adj){
                         if (adj.nodeFrom.selected && adj.nodeTo.selected) {
-                            adj.data.$color = "#eed";
-                            adj.data.$lineWidth = 3;
+                            adj.data.$color = "#faa";
+                            adj.data.$lineWidth = 2;
                         }
                         else {
                             delete adj.data.$color;
@@ -191,12 +191,6 @@
                 Keywords that were used in their tweets. You can also choose a particular 
                 Twitter Account using the drop down list below<br /><br />
 
-                <b>Click</b> on a node to select it.<br /><br />
-                You can <b>select the tree orientation</b> by changing the select box in the right column.<br /><br />
-                You can <b>change the selection mode</b> from <em>Normal</em> selection (i.e. center the selected node) to 
-                <em>Set as Root</em>.<br /><br />
-                <b>Drag and Drop the canvas</b> to do some panning.<br /><br />
-
               <h4>Monitoring Twitter Account</h4>
               <form method="post" action="/visualizations/tweet_spacetree_js">
                 {% csrf_token %}
@@ -207,6 +201,13 @@
                 {% endfor %}
                 </select>
               </form> 
+
+              <h4>Instructions</h4>
+                <b>Click</b> on a node to select it.<br /><br />
+                You can <b>select the tree orientation</b> by changing the select box in the right column.<br /><br />
+                You can <b>change the selection mode</b> from <em>Normal</em> selection (i.e. center the selected node) to 
+                <em>Set as Root</em>.<br /><br />
+                <b>Drag and Drop the canvas</b> to do some panning.<br /><br />
                           
             </div>
               <div id="id-list"></div>
@@ -264,7 +265,7 @@
                         <label for="s-normal">Normal </label>
                     </td>
                     <td>
-                        <input type="radio" id="s-normal" name="selection" checked="checked" value="normal" />
+                        <input type="radio" id="s-normal" name="selection" value="normal" />
                     </td>
                 </tr>
                 <tr>
@@ -272,7 +273,7 @@
                         <label for="s-root">Set as Root </label>
                      </td>
                      <td>
-                        <input type="radio" id="s-root" name="selection" value="root" />
+                        <input type="radio" id="s-root" name="selection" checked="checked" value="root" />
                      </td>
                 </tr>
             </table>

@@ -103,11 +103,15 @@ TEMPLATE_CONTEXT_PROCESSORS = TCP + (
 SUIT_CONFIG = {
     'ADMIN_NAME': 'Voyage',
 
+    'SEARCH_URL': '/admin/articles/article/',
+
     'MENU': (
         {'label': 'Scope', 'icon':'icon-screenshot', 
          'models': ('explorer.msite', 'explorer.taccount', 'explorer.fsite', 'explorer.keyword')},
         
         {'label': 'Data', 'icon':'icon-book', 'models': ('articles.article', 'tweets.tweet')},
+
+        {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
 
         {'label': 'Statistics', 'icon':'icon-signal', 'models': (
             {'label': 'Articles', 'url': '/statistics/articles'},
@@ -124,8 +128,6 @@ SUIT_CONFIG = {
             {'label': 'Tweet - Weighted', 'url': '/visualizations/tweet_weightedtree'},
             {'label': 'Tweet - Movable', 'url': '/visualizations/tweet_forcegraph'},
         )},
-
-        {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
 
         {'label': 'Authorization', 'icon':'icon-lock', 'models': ('auth.user', 'auth.group')},
     )
