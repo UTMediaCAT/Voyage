@@ -47,15 +47,18 @@ __Default Login Credentials:__
 * User: acme
 * Password: cscc01
 
+##Configuration
+You can edit the config.yaml file for personal settings
+
 #Tabs
 ####Home
 Here you can view your action history and quick navigations to the database
 ####Scope
 Here, you can view and edit 4 requirement to explore:
-* __Monitoring Sites__: The site in which explorer will look into. It will automatically get validated when adding.
+* __Monitoring Sites__: The sites in which explorer will look into. It will automatically get validated when adding.
 * __Twitter Accounts__: The twitter accounts which explorer will look into. It will automatically be validated when adding.
-* __Foreign Sites__: The site in which explorer checks if it used as source.
-* __Keywords__: The words in which the explorer will see if it is used.
+* __Foreign Sites__: The sites which explorer looks for in the articles if they are used as source.
+* __Keywords__: The words which explorer look for if it is used.
 
 ####Data
 Here, you can view the collected data by the explorer. Furthermore, you can download the archived entry as __Web Archive__.
