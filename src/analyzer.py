@@ -148,9 +148,6 @@ def msites_bar_chart():
 
     return data[0:11]
 
-
-
-
 def tweets_annotation_chart():
 
     Taccounts  = Taccount.objects.all()
@@ -198,7 +195,4 @@ def follower_bar_chart():
     data.sort(key = lambda x: x[1], reverse=True)
 
     return data[0:11]
-
-
-
-
+    

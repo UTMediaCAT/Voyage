@@ -28,6 +28,7 @@ class ArticleAdmin(admin.ModelAdmin):
     search_fields = ['url', 'title', 'author__author', 'keyword__keyword', 'source__url']
     list_filter = ['keyword__keyword', 'url_origin']
     ordering = ['-date_added']
+    actions_on_top = True
 
     def get_keywords(self, obj):
         keywords = ''
@@ -41,11 +42,17 @@ class ArticleAdmin(admin.ModelAdmin):
     def get_sources(self, obj):
         sources = ''
         for src in obj.source_set.all():
-            sources += src.url + ', '
-        return sources[:-2]
+            if 'http://www.' in src.url:
+                link = 'http://' + src.url[11:]
+            else:
+                link = src.url
+            sources += format('<a href="%s" target="_blank">%s</a>' % (link, link))
+            sources += '<br>'
+        return sources[:-4]
 
     get_sources.short_description = 'Matched Sources'
     get_sources.admin_order_field = 'source__url'
+    get_sources.allow_tags = True
 
     def get_authors(self, obj):
         authors = ''
@@ -74,5 +81,6 @@ class ArticleAdmin(admin.ModelAdmin):
 
     link_warc.allow_tags = True
     link_warc.short_description = "Archived WARC"
+
 
 admin.site.register(Article, ArticleAdmin)

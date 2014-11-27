@@ -109,6 +109,8 @@ SUIT_CONFIG = {
         
         {'label': 'Data', 'icon':'icon-book', 'models': ('articles.article', 'tweets.tweet')},
 
+        {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
+
         {'label': 'Statistics', 'icon':'icon-signal', 'models': (
             {'label': 'Articles', 'url': '/statistics/articles'},
             {'label': 'Tweets', 'url': '/statistics/tweets'},
@@ -124,8 +126,6 @@ SUIT_CONFIG = {
             {'label': 'Tweet - Weighted', 'url': '/visualizations/tweet_weightedtree'},
             {'label': 'Tweet - Movable', 'url': '/visualizations/tweet_forcegraph'},
         )},
-
-        {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
 
         {'label': 'Authorization', 'icon':'icon-lock', 'models': ('auth.user', 'auth.group')},
     )
