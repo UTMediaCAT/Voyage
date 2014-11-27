@@ -103,6 +103,8 @@ TEMPLATE_CONTEXT_PROCESSORS = TCP + (
 SUIT_CONFIG = {
     'ADMIN_NAME': 'Voyage',
 
+    'SEARCH_URL': '/admin/articles/article/',
+
     'MENU': (
         {'label': 'Scope', 'icon':'icon-screenshot', 
          'models': ('explorer.msite', 'explorer.taccount', 'explorer.fsite', 'explorer.keyword')},

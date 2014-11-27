@@ -6,8 +6,10 @@ from articles.models import Keyword as A_Keyword
 from articles.models import Source as A_Source
 from explorer.models import*
 from explorer.models import Keyword as E_Keyword
+
 from tweets.models import*
 from tweets.models import Keyword as T_Keyword
+import time
 
 def articles_keywords_pie_chart():
     data_dict = {}
@@ -22,9 +24,9 @@ def articles_keywords_pie_chart():
     sorted_data = sorted(data_dict.items(), key=operator.itemgetter(1), reverse=True)
     sorted_data_dict = dict(sorted_data)
 
-    if len(sorted_data)>5:
-        sorted_data_dict = dict(sorted_data[0:5])
-        sorted_data_dict_other = dict(sorted_data[5:])
+    if len(sorted_data)>10:
+        sorted_data_dict = dict(sorted_data[0:10])
+        sorted_data_dict_other = dict(sorted_data[10:])
         other_sum = sum (sorted_data_dict_other.values())
         sorted_data_dict["Other Keywrods"] = other_sum
 
@@ -71,46 +73,22 @@ def tweets_keywords_pie_chart():
     return data
 
 def articles_annotation_chart():
-    '''
-    article_by_date = []
-    sites = []
-    for s in Msite.objects.all():
-        sites.append(re.search("([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}",
-                     s.url, re.IGNORECASE).group(0).encode("ascii"))
-
-    for art in Article.objects.all():
-        added = False
-        date = art.date_added.strftime("%B %d, %Y")
-        for index in range(len(article_by_date)):
-            if date == article_by_date[index][0]:
-                added = True
-                for i in range(len(sites)):
-                    if sites[i] in art.url.encode("ascii"):
-                        article_by_date[index][i+1] += 1
-                        break
-            if added:
-                break
-
-        if not added:
-            article_by_date.append([date] + [0]*len(sites))
-            for i in range(len(sites)):
-                if sites[i] in art.url:
-                    article_by_date[-1][i+1] += 1
-                    break
-
-    return sites, article_by_date
-    '''
-
 
     Msites  = Msite.objects.all()
     urls = []
     for element in Msites:
-        urls.append([element.url.encode("utf-8"), Article.objects.filter(url = element.url).count()])
+        urls.append([element.url.encode("utf-8"), Article.objects.filter(url = element.url).count(), element.name.encode("utf-8")])
 
     urls.sort(key = lambda x: x[1], reverse=True)
     urls = urls[0:10]
+    msites_name = []
+    for a in range(len(urls)):
+        msites_name.append(urls[a][2])
+
     for a in range(len(urls)):
         urls[a] = urls[a][0]
+
+
 
 
     data = []
@@ -130,9 +108,8 @@ def articles_annotation_chart():
             for url in urls:
                 new.append(Article.objects.filter(url_origin = url, date_added__day = day, date_added__month = month, date_added__year = year).count())
             data.append(new)
-    print data
 
-    return urls, data
+    return msites_name, data
 
 def msites_bar_chart():
 
@@ -147,9 +124,6 @@ def msites_bar_chart():
     data.sort(key = lambda x: x[1], reverse=True)
 
     return data[0:11]
-
-
-
 
 def tweets_annotation_chart():
 
@@ -198,7 +172,34 @@ def follower_bar_chart():
     data.sort(key = lambda x: x[1], reverse=True)
 
     return data[0:11]
+    
+
+def article_bubble_chart():
+    data = []
+    first = ['ID', 'Number of Keywords Matched', 'Number of Source Matched', 'Monitoring Sites']
+    data.append(first)
+
+    Msites  = Msite.objects.all()
+    keywords = E_Keyword.objects.all()
+    fsites = Fsite.objects.all()
 
 
+    for msite in Msites:
+        new = []
+        new.append(msite.name.encode("utf-8"))
+        articles =  Article.objects.filter (url_origin = msite.url)
+        count_keyword= 0
+        count_source = 0
+        for art in articles :
+                count_keyword += A_Keyword.objects.filter(article = art).count()
+                count_source += A_Source.objects.filter(article = art).count()
 
+        new.append(count_keyword)
+        new.append(count_source)
+        new.append(msite.name.encode("utf-8"))
+
+
+        data.append(new)
+
+    return data
 
