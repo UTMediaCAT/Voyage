@@ -88,7 +88,10 @@ def get_tweets(screen_name, amount):
 
     #Make sure 3190 is max tweets to get, while making sure
     #the amount of tweets to get is under the amount the user has.
-    user = api.get_user(screen_name)
+    try:
+        user = api.get_user(screen_name)
+    except:
+        wait_and_resume()
     if amount > 3190 or amount > user.statuses_count:
         amount = min(3190, user.statuses_count)
 
