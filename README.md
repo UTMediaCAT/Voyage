@@ -79,6 +79,7 @@ Once your scope is ready, you may start exploring by clicking __Run__ on the sta
 * __Twitter Explorer__ will explore through _Twitter_ for _Twitter Accounts's_ posts
 
 ___
+___
 ##Task Board
 Our Task Board and Assignment progress is on [Trello](https://trello.com/b/Y08lMCXy/cscc01-acme)
 
