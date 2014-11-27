@@ -46,12 +46,10 @@ def getJson(request):
              'keywords': [], 'twitter_accounts': []}
 
     for site in Msite.objects.all():
-        scope['monitoring_sites'][site.url] = {'name': site.name,
-                                              'influence': site.influence}
+        scope['monitoring_sites'][site.url] = {'name': site.name}
 
     for site in Fsite.objects.all():
-        scope['foreign_sites'][site.url] = {'name': site.name,
-                                           'influence': site.influence}
+        scope['foreign_sites'][site.url] = {'name': site.name}
 
     for key in Keyword.objects.all():
         scope['keywords'].append(key.keyword)
