@@ -123,10 +123,10 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
             check_command()
 
             url = art.url
-            if '://www' in url:
-                sep = url.split('://www')
-                url = sep[0] + '://' + sep[1]
-
+            if 'http://www.' in url:
+                url = url[:7] + url[11:]
+            elif 'https://www.' in url:
+                url = url[:8] + url[12:]
             
             # Try to download and extract the useful data
             try:
