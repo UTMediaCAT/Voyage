@@ -123,8 +123,10 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
             check_command()
 
             url = art.url
-            # print "\n\tURL:      ", url
-            # print "\tEvaluating ...\r",
+            if '://www' in url:
+                sep = url.split('://www')
+                url = sep[0] + '://' + sep[1]
+
             
             # Try to download and extract the useful data
             try:
@@ -267,7 +269,6 @@ def get_pub_date(article):
     article         -- 'Newspaper.Article' object of article
     """
     # Load the relevant configs
-    date_format = configuration()['storage']['date_format'][1:]
     dates = []
 
     # For each metadata stored by newspaper's parsing ability, check if any of the key contains 'date'
@@ -275,7 +276,7 @@ def get_pub_date(article):
         if re.search("date", key, re.IGNORECASE):
             # If the key contains 'date', try to parse the value as date
             try:
-                dt = parser.parse(str(value)).date().strftime(date_format)
+                dt = parser.parse(str(value))
                 # If parsing succeeded, then append it to the list
                 dates.append(dt)
             except:
@@ -283,7 +284,11 @@ def get_pub_date(article):
     # If one of more dates were found,
     # return the oldest date as new ones can be updated dates instead of published dates
     if dates:
-        return timezone.make_aware(min(dates), timezone=timezone.get_default_timezone())
+        date = min(dates)
+        if timezone.is_naive(date):
+            return timezone.make_aware(date, timezone=timezone.get_default_timezone())
+        else:
+            return timezone.localtime(date)
     return None
 
 

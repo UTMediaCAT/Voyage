@@ -244,7 +244,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
             check_command()
 
             tweet_id = tweet.id
-            tweet_date = timezone.make_aware(tweet.created_at, timezone=timezone.get_default_timezone())
+            tweet_date = timezone.localtime(timezone.make_aware(tweet.created_at, timezone=timezone.get_fixed_timezone(180)))
             tweet_user = tweet.user.screen_name
             tweet_store_date = timezone.localtime(timezone.now())
             tweet_keywords = get_keywords(tweet, keywords)
@@ -415,4 +415,9 @@ if __name__ == '__main__':
 
         end = timeit.default_timer()
         delta_time = end - start
-        time.sleep(max(config['min_iteration_time']-delta_time, 0))
+    sleep_time = max(config['min_iteration_time']-delta_time, 0)
+    for i in range(int(sleep_time//5)):
+        time.sleep(5)
+        check_command()
+
+    check_command()
