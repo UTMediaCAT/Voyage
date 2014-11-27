@@ -244,7 +244,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
             check_command()
 
             tweet_id = tweet.id
-            tweet_date = tweet.created_at
+            tweet_date = timezone.make_aware(tweet.created_at, timezone=timezone.get_default_timezone())
             tweet_user = tweet.user.screen_name
             tweet_store_date = timezone.localtime(timezone.now())
             tweet_keywords = get_keywords(tweet, keywords)

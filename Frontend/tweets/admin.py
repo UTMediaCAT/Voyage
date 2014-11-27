@@ -21,7 +21,7 @@ class TweetAdmin(admin.ModelAdmin):
 
     inlines = [SourceInline, KeywordInline]
 
-    list_display = ('link_user', 'link_id', 'text', 'get_keywords', 'get_sources', 'date_published', 'date_added', 'link_html')
+    list_display = ('link_user', 'link_id', 'text', 'get_keywords', 'get_sources', 'date_published', 'date_added', 'link_options')
 
     search_fields = ['tweet_id', 'text', 'user', 'keyword__keyword', 'source__url']
     list_filter = ['keyword__keyword', 'user']
@@ -64,17 +64,12 @@ class TweetAdmin(admin.ModelAdmin):
     link_user.short_description = "User"
 
 
-    def link_html(self, obj):
-        config_yaml = open(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../',"config.yaml")), 'r')
-        config = yaml.load(config_yaml)['warc']
-        config_yaml.close()
-
-        path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', config['dir']))
-        return format('<a href="/tweets/html/%s">Download</a>' % 
-                      ("https://twitter.com/" + obj.user + "/status/" + str(obj.tweet_id)).replace('/', '\\'))
+    def link_options(self, obj):
+        return format(('<a href="/admin/tweets/tweet/%s">Details</a><br>' +\
+                       '<a href="/tweets/warc/%s">Download</a>') % (str(obj.pk), 'https:__twitter.com_' + obj.user + '_status_' + str(obj.tweet_id)))
 
 
-    link_html.allow_tags = True
-    link_html.short_description = "Archived HTML"
+    link_options.allow_tags = True
+    link_options.short_description = "Options"
 
 admin.site.register(Tweet, TweetAdmin)

@@ -283,7 +283,7 @@ def get_pub_date(article):
     # If one of more dates were found,
     # return the oldest date as new ones can be updated dates instead of published dates
     if dates:
-        return min(dates)
+        return timezone.make_aware(min(dates), timezone=timezone.get_default_timezone())
     return None
 
 
@@ -432,6 +432,9 @@ def check_command():
 
 
 if __name__ == '__main__':
+    import resource
+    print resource.getrlimit(resource.RLIMIT_DATA) # => (soft_lim, hard_lim)
+    print resource.getrlimit(resource.RLIMIT_AS)
     # Load the relevant configs
     config = configuration()['article']
     # Connects to Site Database
