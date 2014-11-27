@@ -284,7 +284,7 @@ def get_pub_date(article):
     # If one of more dates were found,
     # return the oldest date as new ones can be updated dates instead of published dates
     if dates:
-        date = min(dates)
+        date = a.sort(key=lambda x: str(x))
         if timezone.is_naive(date):
             return timezone.make_aware(date, timezone=timezone.get_default_timezone())
         else:
