@@ -103,7 +103,7 @@
         var data = google.visualization.arrayToDataTable({{msites_bar_chart|safe}});
 
         var options = {
-          title: 'Matched Source',
+          title: 'Top 10 Foreign Sites Distribution',
           vAxis: {title: 'Foreign Sites',  titleTextStyle: {color: 'red'}}
         };
 
@@ -122,8 +122,8 @@
 
           function drawTable() {
             var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Source');
-            data.addColumn('number', 'Number of matches');
+            data.addColumn('string', 'Foreign Site');
+            data.addColumn('number', 'Number of Matches');
 
             data.addRows( {{ msites_bar_table|safe }});
 

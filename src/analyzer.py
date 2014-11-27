@@ -28,7 +28,7 @@ def articles_keywords_pie_chart():
         sorted_data_dict = dict(sorted_data[0:10])
         sorted_data_dict_other = dict(sorted_data[10:])
         other_sum = sum (sorted_data_dict_other.values())
-        sorted_data_dict["Other Keywrods"] = other_sum
+        sorted_data_dict["Other Keywords"] = other_sum
 
 
     data = []
@@ -59,7 +59,7 @@ def tweets_keywords_pie_chart():
         sorted_data_dict = dict(sorted_data[0:10])
         sorted_data_dict_other = dict(sorted_data[10:])
         other_sum = sum (sorted_data_dict_other.values())
-        sorted_data_dict["Other Keywrods"] = other_sum
+        sorted_data_dict["Other Keywords"] = other_sum
 
 
     data = []
@@ -114,7 +114,7 @@ def articles_annotation_chart():
 def msites_bar_chart():
 
     data = []
-    data.append (["Foreign Sites", "Number of source matched"])
+    data.append (["Foreign Sites", "Number of Foreign Sites Matched"])
 
 
     fsites = Fsite.objects.all()
