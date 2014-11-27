@@ -6,8 +6,10 @@ from articles.models import Keyword as A_Keyword
 from articles.models import Source as A_Source
 from explorer.models import*
 from explorer.models import Keyword as E_Keyword
+
 from tweets.models import*
 from tweets.models import Keyword as T_Keyword
+import time
 
 def articles_keywords_pie_chart():
     data_dict = {}
@@ -106,7 +108,6 @@ def articles_annotation_chart():
             for url in urls:
                 new.append(Article.objects.filter(url_origin = url, date_added__day = day, date_added__month = month, date_added__year = year).count())
             data.append(new)
-    print data
 
     return msites_name, data
 
@@ -172,3 +173,35 @@ def follower_bar_chart():
 
     return data[0:11]
     
+
+def article_bubble_chart():
+    start = time.clock()
+    data = []
+    first = ['ID', 'Number of Keywords Matched', 'Number of Source Matched', 'Monitoring Sites']
+    data.append(first)
+
+    Msites  = Msite.objects.all()
+    keywords = E_Keyword.objects.all()
+    fsites = Fsite.objects.all()
+
+
+    for msite in Msites:
+        new = []
+        new.append(msite.name.encode("utf-8"))
+        articles =  Article.objects.filter (url_origin = msite.url)
+        count_keyword= 0
+        count_source = 0
+        for art in articles :
+                count_keyword += A_Keyword.objects.filter(article = art).count()
+                count_source += A_Source.objects.filter(article = art).count()
+
+        new.append(count_keyword)
+        new.append(count_source)
+        new.append(msite.name.encode("utf-8"))
+
+
+        data.append(new)
+    print time.clock() - start
+
+    return data
+

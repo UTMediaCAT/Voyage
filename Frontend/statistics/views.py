@@ -14,13 +14,15 @@ def articles(request):
     keywords_pie_chart = analyzer.articles_keywords_pie_chart()
     articles_annotation_chart = analyzer.articles_annotation_chart()
     msites_bar_chart = analyzer.msites_bar_chart()
+    article_bubble_chart = analyzer.article_bubble_chart()
 
     context = {'keywords_pie_chart':  keywords_pie_chart, 
                 'monitoring_sites': articles_annotation_chart[0], 
                 'article_by_date': articles_annotation_chart[1], 
                 'msites_bar_chart': msites_bar_chart,
                 'msites_bar_table':msites_bar_chart[1:],
-                'bar_chart_height': max((len(msites_bar_chart) - 1) * 3, 30)}
+                'bar_chart_height': max((len(msites_bar_chart) - 1) * 3, 30),
+                'article_bubble_chart': article_bubble_chart}
 
     return render(request, 'statistics/articles.html', context)
 
