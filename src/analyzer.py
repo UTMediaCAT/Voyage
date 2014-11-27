@@ -175,7 +175,6 @@ def follower_bar_chart():
     
 
 def article_bubble_chart():
-    start = time.clock()
     data = []
     first = ['ID', 'Number of Keywords Matched', 'Number of Source Matched', 'Monitoring Sites']
     data.append(first)
@@ -201,7 +200,6 @@ def article_bubble_chart():
 
 
         data.append(new)
-    print time.clock() - start
 
     return data
 
