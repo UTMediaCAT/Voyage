@@ -26,7 +26,7 @@ class ArticleAdmin(admin.ModelAdmin):
 
     list_display = ('link_url', 'title', 'get_authors', 'get_keywords', 'get_sources', 'date_published', 'date_added', 'link_options')
     search_fields = ['url', 'title', 'author__author', 'keyword__keyword', 'source__url']
-    list_filter = ['keyword__keyword', 'url_origin']
+    list_filter = ['url_origin', 'keyword__keyword', 'source__url_origin']
     ordering = ['-date_added']
     actions_on_top = True
 
