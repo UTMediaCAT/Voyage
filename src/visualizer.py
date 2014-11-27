@@ -164,7 +164,8 @@ def article_weightedtree(site):
             msites.append(fsites_data_info)
 
         max_dim = max(data["data"]["$dim"], max_dim)
-        msites.append(data)
+        if len(data["adjacencies"]) > 0:
+            msites.append(data)
 
     for msite in msites:
         msite["data"]["$dim"] = int(msite["data"]["$dim"] * 30.0 / max_dim) + 10
@@ -233,7 +234,8 @@ def article_forcegraph(site):
             msites.append(fsites_data_info)
 
         max_dim = max(data["data"]["$dim"], max_dim)
-        msites.append(data)
+        if len(data["adjacencies"]) > 0:
+            msites.append(data)
 
     for msite in msites:
         msite["data"]["$dim"] = int(msite["data"]["$dim"] * 30.0 / max_dim) + 10
@@ -256,7 +258,6 @@ def tweet_hypertree():
             fsites = T_Source.objects.filter(tweet = tweet)
 
             for fsite in fsites:
-                print fsite.url_origin
                 fsite_name = (Fsite.objects.get(url = fsite.url_origin)).name
                 if fsite_name in fsites_dict.keys():
                     fsites_dict[fsite_name].append(fsite)
@@ -271,7 +272,6 @@ def tweet_hypertree():
             fsites_data["children"] = []
             fsites_data["data"] = {"relation": "Sourced"}
             data["children"].append(fsites_data)
-            print fsites_data
 
         taccounts.append(data)
 
@@ -386,7 +386,8 @@ def tweet_weightedtree(account):
             taccounts.append(fsites_data_info)
 
         max_dim = max(data["data"]["$dim"], max_dim)
-        taccounts.append(data)
+        if len(data["adjacencies"]) > 0:
+            taccounts.append(data)
 
     for taccount in taccounts:
         taccount["data"]["$dim"] = int(taccount["data"]["$dim"] * 30.0 / max_dim) + 10
@@ -453,7 +454,8 @@ def tweet_forcegraph(account):
             taccounts.append(fsites_data_info)
 
         max_dim = max(data["data"]["$dim"], max_dim)
-        taccounts.append(data)
+        if len(data["adjacencies"]) > 0:
+            taccounts.append(data)
 
     for taccount in taccounts:
         taccount["data"]["$dim"] = int(taccount["data"]["$dim"] * 30.0 / max_dim) + 10

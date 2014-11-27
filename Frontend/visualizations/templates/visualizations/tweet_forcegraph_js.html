@@ -215,16 +215,11 @@
             <h4>
             Tweet - Movable  
             </h4> 
-            This graph has a node for all Monitoring Twitter Accounts connected with the
-            Foreign Sites and Keywords that were used in them. The size of the node is determined
+            This graph has a node for all Monitoring Twitter Accounts(Blue) connected with the
+            Foreign Sites(Red) and Keywords(Green) that were used in them. The size of the node is determined
             by the number of times that Keyword/Foreign Site was used in the tweets. 
             You can also choose a particular 
-            Twitter Account using the drop down list below.<br /><br />
-
-            You can <b>zoom</b> and <b>pan</b> the visualization by <b>scrolling</b> and <b>dragging</b>.<br /><br />
-            You can <b>change node positions</b> by <b>dragging the nodes around</b>.
-            <b>Click on the 'x' link</b> to delete a node.<br /><br />
-            The clicked node's connections are displayed in the right column.<br /><br />
+            Twitter Account using the drop down list below.<br />
 
             <h4>Monitoring Twitter Account</h4>
             <form method="post" action="/visualizations/tweet_forcegraph_js">
@@ -236,6 +231,12 @@
               {% endfor %}
               </select>
             </form> 
+
+            <h4>Instructions</h4>
+            You can <b>zoom</b> and <b>pan</b> the visualization by <b>scrolling</b> and <b>dragging</b>.<br /><br />
+            You can <b>change node positions</b> by <b>dragging the nodes around</b>.
+            <b>Click on the 'x' link</b> to delete a node.<br /><br />
+            The clicked node's connections are displayed in the right column.<br /><br />
                     
         </div>
 
