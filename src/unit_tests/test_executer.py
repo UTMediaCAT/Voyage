@@ -2,9 +2,7 @@ __author__ = 'ryan'
 
 import os
 import sys
-path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(path)
-os.chdir(path)
+sys.path.append("..")
 import unittest
 import executer as ex
 EXP = "article"
@@ -67,7 +65,7 @@ class TestExecuter (unittest.TestCase):
         self.assertEqual(ex.name_format("asgg"), "Asgg Explorer", "format fail")
 
     def test_run(self):
-        ex.comm_write(EXP, "RR")
+        ex.comm_write(EXP, "RR 123")
         self.assertEqual(format('Run: %s - Already Running' % ex.name_format(EXP)), ex.run(EXP),
                          "use run function in run should show msg and no other change")
         ex.comm_write(EXP, "WR")
@@ -82,7 +80,7 @@ class TestExecuter (unittest.TestCase):
                          "use run function in stop should show msg and no other change")
 
     def test_pause(self):
-        ex.comm_write(EXP, "RP")
+        ex.comm_write(EXP, "RP 123")
         self.assertEqual(format('Pause: %s - Pausing' % ex.name_format(EXP)), ex.pause(EXP),
                          "use pause function in run should show msg and change status to wait")
         self.assertEqual(ex.get_status(EXP), "W", "status should change to wait when on run")
@@ -97,7 +95,7 @@ class TestExecuter (unittest.TestCase):
                          "use pause function in wait should show msg and no other change")
 
     def test_stop(self):
-        ex.comm_write(EXP, "RR")
+        ex.comm_write(EXP, "RR 123")
         self.assertEqual(format('Stop: %s - Stopping' % ex.name_format(EXP)), ex.stop(EXP),
                          "use stop function in wait should show msg and change status")
         self.assertEqual(ex.get_status(EXP), "W", "when stop in run should change status to wait")
@@ -111,3 +109,6 @@ class TestExecuter (unittest.TestCase):
         ex.comm_write(EXP, "SR")
         self.assertEqual(format('Stop: %s - Cannot Stop non-Started Explorer' % ex.name_format(EXP)), ex.stop(EXP),
                          "use stop function in stop should show msg and no other change")
+        
+if __name__ == "__main__":
+    unittest.main()
