@@ -24,9 +24,9 @@ def articles_keywords_pie_chart():
     sorted_data = sorted(data_dict.items(), key=operator.itemgetter(1), reverse=True)
     sorted_data_dict = dict(sorted_data)
 
-    if len(sorted_data)>5:
-        sorted_data_dict = dict(sorted_data[0:5])
-        sorted_data_dict_other = dict(sorted_data[5:])
+    if len(sorted_data)>10:
+        sorted_data_dict = dict(sorted_data[0:10])
+        sorted_data_dict_other = dict(sorted_data[10:])
         other_sum = sum (sorted_data_dict_other.values())
         sorted_data_dict["Other Keywrods"] = other_sum
 
