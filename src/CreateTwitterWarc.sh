@@ -1,14 +1,8 @@
 #!/bin/bash 
-url=$1
+url="$1"
 BASEDIR=$(dirname $0) 
 cd ..
-mkdir -p $4
-cd $4
+mkdir -p "$3"
+cd $3
 wget $url --warc-file="$2" 2> /dev/null
-# rm $2'.warc.gz' 2> /dev/null
-if [ -f $2'.html' ]; then
-    cp -fp $3 $2'.html' 2> /dev/null
-    rm -f $3 2> /dev/null
-else
-    mv $3 $2'.html' 2> /dev/null
-fi
+find .  -maxdepth 1 -type f ! -iname "*.warc.gz" -delete 2> /dev/null 

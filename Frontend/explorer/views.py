@@ -18,7 +18,7 @@ def command(request):
             path = os.path.dirname(os.path.realpath(__file__))
             Popen(["python", path + "/../../src/executer.py", "article", "stop"], cwd=path)
 
-        if request.POST.get('acommand') == 'Force Stop':
+        if request.POST.get('acommand') == '[F]Stop':
             path = os.path.dirname(os.path.realpath(__file__))
             Popen(["python", path + "/../../src/executer.py", "article", "fstop"], cwd=path)
 
@@ -34,7 +34,7 @@ def command(request):
             path = os.path.dirname(os.path.realpath(__file__))
             Popen(["python", path + "/../../src/executer.py", "twitter", "stop"], cwd=path)
 
-        if request.POST.get('tcommand') == 'Force Stop':
+        if request.POST.get('tcommand') == '[F]Stop':
             path = os.path.dirname(os.path.realpath(__file__))
             Popen(["python", path + "/../../src/executer.py", "twitter", "fstop"], cwd=path)
 
@@ -46,12 +46,10 @@ def getJson(request):
              'keywords': [], 'twitter_accounts': []}
 
     for site in Msite.objects.all():
-        scope['monitoring_sites'][site.url] = {'name': site.name,
-                                              'influence': site.influence}
+        scope['monitoring_sites'][site.url] = {'name': site.name}
 
     for site in Fsite.objects.all():
-        scope['foreign_sites'][site.url] = {'name': site.name,
-                                           'influence': site.influence}
+        scope['foreign_sites'][site.url] = {'name': site.name}
 
     for key in Keyword.objects.all():
         scope['keywords'].append(key.keyword)

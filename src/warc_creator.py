@@ -24,9 +24,10 @@ def create_article_warc(url):
     '''
     config = configuration()['warc']
 
-    rename_url=url.replace("/","\\")
+    rename_url=url.replace("/","_")
     os.chmod('./CreateArticleWarc.sh', 0700)
-    subprocess.call(['./CreateArticleWarc.sh',url,rename_url, config['dir'] + "/" + config['article_subdir']])
+    command = './CreateArticleWarc.sh %s %s %s' % (url, rename_url, config['dir'] + "/" + config['article_subdir'])
+    subprocess.call(command, shell=True)
     
 def create_twitter_warc(url):
     '''
@@ -35,12 +36,13 @@ def create_twitter_warc(url):
     
     create_warc("https://twitter.com/LeagueOfLegends")
     it should have a HTML file under 
-    TWITTER_WARC_DIR/LeagueOfLegends.html
+    TWITTER_WARC_DIR/https:\\twitter.com\LeagueOfLegends
     '''
     config = configuration()['warc']
     
-    rename_url=url.replace("/","\\")
-    url_split=url.split("/")
-    rename_html=url_split[len(url_split)-1]
+    rename_url=url.replace("/","_")
     os.chmod('./CreateTwitterWarc.sh', 0700)
-    subprocess.call(['./CreateTwitterWarc.sh',url,rename_url,rename_html, config['dir'] + "/" + config['twitter_subdir']])  
+    command = "./CreateTwitterWarc.sh %s %s %s" % (url, rename_url, config['dir'] + "/" + config['twitter_subdir'])
+    # command = ["./CreateTwitterWarc.sh", url, rename_url, config['dir'] + "/" + config['twitter_subdir']]
+    # os.execlp("./CreateTwitterWarc.sh", url, rename_url, config['dir'] + "/" + config['twitter_subdir')
+    subprocess.Popen(command, shell=True)    
