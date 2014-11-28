@@ -65,48 +65,48 @@ class TestExecuter (unittest.TestCase):
         self.assertEqual(ex.name_format("asgg"), "Asgg Explorer", "format fail")
 
     def test_run(self):
-        ex.comm_write(EXP, "RR 123")
+        ex.comm_write(EXP, "RR 22321")
         self.assertEqual(format('Run: %s - Already Running' % ex.name_format(EXP)), ex.run(EXP),
                          "use run function in run should show msg and no other change")
-        ex.comm_write(EXP, "WR")
+        ex.comm_write(EXP, "WR 23412")
         self.assertEqual(format('%s - Last Command Not Processed Yet' % ex.name_format(EXP)), ex.run(EXP),
                          "use run function in wait should show msg and no other change")
-        ex.comm_write(EXP, "PR")
+        ex.comm_write(EXP, "PR 32412")
         self.assertEqual(format('Run: %s - Resuming' % ex.name_format(EXP)), ex.run(EXP),
                          "use run function in pause should show msg and change status to wait")
         self.assertEqual(ex.get_status(EXP), "W", "status chould change to wait when is paused")
-        ex.comm_write(EXP, "SR")
+        ex.comm_write(EXP, "SR 12345")
         self.assertEqual(format('Run: %s - Started Running' % ex.name_format(EXP)), ex.run(EXP),
                          "use run function in stop should show msg and no other change")
 
     def test_pause(self):
-        ex.comm_write(EXP, "RP 123")
+        ex.comm_write(EXP, "RP 12323")
         self.assertEqual(format('Pause: %s - Pausing' % ex.name_format(EXP)), ex.pause(EXP),
                          "use pause function in run should show msg and change status to wait")
         self.assertEqual(ex.get_status(EXP), "W", "status should change to wait when on run")
-        ex.comm_write(EXP, "WR")
+        ex.comm_write(EXP, "WR 23332")
         self.assertEqual(format('%s - Last Command Not Processed Yet' % ex.name_format(EXP)), ex.pause(EXP),
                          "use pause function in wait should show msg and no other change")
-        ex.comm_write(EXP, "PP")
+        ex.comm_write(EXP, "PP 12342")
         self.assertEqual(format('Pause: %s - Already in Pause' % ex.name_format(EXP)), ex.pause(EXP),
                          "use pause function in pause should show msg and no other change")
-        ex.comm_write(EXP, "SR")
+        ex.comm_write(EXP, "SR 23122")
         self.assertEqual(format('Pause: %s - Cannot pause non-Started Instance' % ex.name_format(EXP)), ex.pause(EXP),
                          "use pause function in wait should show msg and no other change")
 
     def test_stop(self):
-        ex.comm_write(EXP, "RR 123")
+        ex.comm_write(EXP, "RR 12332")
         self.assertEqual(format('Stop: %s - Stopping' % ex.name_format(EXP)), ex.stop(EXP),
                          "use stop function in wait should show msg and change status")
         self.assertEqual(ex.get_status(EXP), "W", "when stop in run should change status to wait")
-        ex.comm_write(EXP, "WR")
+        ex.comm_write(EXP, "WR 23123")
         self.assertEqual(format('%s - Last Command Not Processed Yet' % ex.name_format(EXP)), ex.stop(EXP),
                          "use stop function in wait should show msg and no other change")
-        ex.comm_write(EXP, "PR")
+        ex.comm_write(EXP, "PR 33241")
         self.assertEqual(format('Stop: %s - Stopping Paused Explorer' % ex.name_format(EXP)), ex.stop(EXP),
                          "use stop function in pause should show msg and change status")
         self.assertEqual(ex.get_status(EXP), "W", "when stop in pause should change status to wait")
-        ex.comm_write(EXP, "SR")
+        ex.comm_write(EXP, "SR 23123")
         self.assertEqual(format('Stop: %s - Cannot Stop non-Started Explorer' % ex.name_format(EXP)), ex.stop(EXP),
                          "use stop function in stop should show msg and no other change")
         
