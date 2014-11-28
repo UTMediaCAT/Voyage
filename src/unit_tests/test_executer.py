@@ -10,21 +10,25 @@ COMM_FILE = "_comm.stream"
 
 
 class TestExecuter (unittest.TestCase):
+    def tearDown(self):
+        ex.stop(EXP)
 
     def test_comm_read_write(self):
-        ex.comm_write(EXP, "RR")
+        ex.comm_write(EXP, "RR 12342")
         comm = open(EXP + COMM_FILE, 'r')
         msg = comm.read()
         comm.close()
-        self.assertEqual(msg, "RR", "write explorer stream fail")
+        self.assertEqual(msg, "RR 12342", "write explorer stream fail")
         comm = open(EXP + COMM_FILE, 'w')
-        comm.write("WS")
+        comm.write("WS 23123")
         comm.close()
-        self.assertEqual(ex.comm_read(EXP), "WS", "read explorer stream fail")
+        self.assertEqual(ex.comm_read(EXP), "WS 23123", "read explorer stream fail")
+        self.tearDown()
 
     def test_get_status(self):
-        ex.comm_write(EXP, "WS")
+        ex.comm_write(EXP, "WS 12323")
         self.assertEqual(ex.get_status(EXP), "W", "get status should get the first of the stream file")
+        self.tearDown()
 
     def test_explorer_format(self):
         self.assertEqual(ex.explorer_format("ArTiClE"), "article", "'article' should be all lower case")
@@ -34,6 +38,7 @@ class TestExecuter (unittest.TestCase):
         self.assertEqual(ex.explorer_format("asdas"), None, "other than 'article' and 'twitter' should return none")
         self.assertEqual(ex.explorer_format("articles"), None, "other than 'article' and 'twitter' should return none")
         self.assertEqual(ex.explorer_format("twitters"), None, "other than 'article' and 'twitter' should return none")
+        self.tearDown()
 
     def test_command_format(self):
         self.assertEqual(ex.command_format("StAtuS"), "status", "'status' should be all lower case")
@@ -48,6 +53,7 @@ class TestExecuter (unittest.TestCase):
                          "other than 'status','run','pause','stop' should return none")
         self.assertEqual(ex.explorer_format("StoPs"), None,
                          "other than 'status','run','pause','stop' should return none")
+        self.tearDown()
 
     def test_status_format(self):
         self.assertEqual(ex.status_format("R"), "Running", "'R' should be return 'Running'")
@@ -56,13 +62,16 @@ class TestExecuter (unittest.TestCase):
         self.assertEqual(ex.status_format("W"), "Waiting", "'W' should be return 'Waiting'")
         self.assertEqual(ex.status_format("w"), None, "case of status is sensitive")
         self.assertEqual(ex.status_format("G"), None, "other than 'W', 'S', 'P', 'R' should return none")
+        self.tearDown()
 
     def test_input_format(self):
         self.assertEqual(ex.input_format("Twitter", "Run"), ("twitter", "run"), "it should return tupple")
         self.assertEqual(ex.input_format("Article", "Stop"), ("article", "stop"), "it should return tupple")
+        self.tearDown()
 
     def test_name_format(self):
         self.assertEqual(ex.name_format("asgg"), "Asgg Explorer", "format fail")
+        self.tearDown()
 
     def test_run(self):
         ex.comm_write(EXP, "RR 22321")
@@ -78,6 +87,7 @@ class TestExecuter (unittest.TestCase):
         ex.comm_write(EXP, "SR 12345")
         self.assertEqual(format('Run: %s - Started Running' % ex.name_format(EXP)), ex.run(EXP),
                          "use run function in stop should show msg and no other change")
+        self.tearDown()
 
     def test_pause(self):
         ex.comm_write(EXP, "RP 12323")
@@ -93,6 +103,7 @@ class TestExecuter (unittest.TestCase):
         ex.comm_write(EXP, "SR 23122")
         self.assertEqual(format('Pause: %s - Cannot pause non-Started Instance' % ex.name_format(EXP)), ex.pause(EXP),
                          "use pause function in wait should show msg and no other change")
+        self.tearDown()
 
     def test_stop(self):
         ex.comm_write(EXP, "RR 12332")
@@ -109,6 +120,7 @@ class TestExecuter (unittest.TestCase):
         ex.comm_write(EXP, "SR 23123")
         self.assertEqual(format('Stop: %s - Cannot Stop non-Started Explorer' % ex.name_format(EXP)), ex.stop(EXP),
                          "use stop function in stop should show msg and no other change")
+        self.tearDown()
         
 if __name__ == "__main__":
     unittest.main()
