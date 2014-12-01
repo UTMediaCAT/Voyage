@@ -356,10 +356,10 @@ def tweet_weightedtree(account):
                     keywords_dict[keyword.keyword] = [keyword]
 
             for fsite in fsites:
-                if fsite.url in fsites_dict.keys():
-                    fsites_dict[fsite.url].append(fsite)
+                if fsite.url_origin in fsites_dict.keys():
+                    fsites_dict[fsite.url_origin].append(fsite)
                 else:
-                    fsites_dict[fsite.url] = [fsite] 
+                    fsites_dict[fsite.url_origin] = [fsite] 
                 
         for keyword in keywords_dict.keys():
             keywords_data = {}
@@ -424,10 +424,10 @@ def tweet_forcegraph(account):
                     keywords_dict[keyword.keyword] = [keyword]
 
             for fsite in fsites:
-                if fsite.url in fsites_dict.keys():
-                    fsites_dict[fsite.url].append(fsite)
+                if fsite.url_origin in fsites_dict.keys():
+                    fsites_dict[fsite.url_origin].append(fsite)
                 else:
-                    fsites_dict[fsite.url] = [fsite] 
+                    fsites_dict[fsite.url_origin] = [fsite] 
                 
         for keyword in keywords_dict.keys():
             keywords_data = {}
