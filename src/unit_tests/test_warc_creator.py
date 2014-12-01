@@ -70,12 +70,35 @@ class TestWarcCreator(unittest.TestCase):
     
     def test_create_wrong_url_twitter_warc(self):
         """
-        crawling a wrong url twitter should be not going to warc because there is 
-        such twitter response to crawl
+        crawling a wrong twitter article should be going to success because there is 
+        404 page
+        """
+        try:
+            os.chdir("..")
+            os.remove(WARC_TWITTER_DIRECTORY+"/https:__twitter.com_wesbos_statu.warc.gz")
+        except OSError:
+            pass   
+        self.setUp()
+        wc.create_twitter_warc(WRONG_TWITTER_HTML)
+        os.chdir("..")
+        time.sleep(1)
+        self.assertTrue(os.path.isfile(WARC_TWITTER_DIRECTORY+"/https:__twitter.com_wesbos_statu.warc.gz") )    
+        
+    def test_create_exist_twitter_warc(self):
+        """
+        crawling a exist twitter warc will replace new
         """
         wc.create_twitter_warc(TWITTER_HTML)
         os.chdir("..")
-        self.assertTrue(not os.path.isfile(WARC_TWITTER_DIRECTORY+"/https:__twitter.com_wesbos_statu.warc.gz") )    
+        self.assertTrue(os.path.isfile(WARC_TWITTER_DIRECTORY+"/https:__twitter.com_wesbos_status_519123918422958081.warc.gz")) 
+        
+    def test_create_exist_article_warc(self):
+        """
+        crawling a exist article warc will replace new
+        """     
+        wc.create_article_warc(ARTICLE_HTML)
+        os.chdir("..")
+        self.assertTrue(os.path.isfile(WARC_ARTICLE_DIRECTORY+"/http:__www.cbc.ca_news_world_nor-easter-storm-blasts-eastern-u-s-with-heavy-rain-and-snow-1.2851711.warc.gz") )
         
 
 
