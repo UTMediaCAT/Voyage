@@ -1,12 +1,14 @@
 #!/usr/bin/python
 # Backend script to communicate with explorers.
-# This script allows running, pausing, stopping explorers which are already running.
+# This script allows running, pausing, stopping
+# explorers which are already running.
 #
 # Comm file format: (Status)(Command)
 # Status Type: (R)unning, (P)aused, (S)topped, (W)aiting
 # Command Type: (R)esume, (P)ause, (S)top
 #
-# This script also supports executing using arguments. Ex. 'python executer.py article status'
+# This script also supports executing using arguments.
+# Ex. 'python executer.py article status'
 
 import sys
 import subprocess
@@ -22,6 +24,7 @@ os.chdir(path)
 # Global variables for settings
 COMM_FILE = '_comm.stream'
 
+
 def configuration():
     """ (None) -> dict
     Returns a dictionary containing the micro settings from the
@@ -32,23 +35,28 @@ def configuration():
     config_yaml.close()
     return config
 
+
 class InputError(Exception):
     """ (None) -> None
     Custom Exception to raise when input is wrong
     """
     pass
 
+
 class TimeoutError(Exception):
     """ (None) -> None
-    Custom Exception to raise when timeout occurs when communicating with the stream
+    Custom Exception to raise when timeout occurs
+    when communicating with the stream.
     """
     pass
 
+
 def raise_input_error():
     """ (None) -> None
-    Raise InputError wtih the proper usage of this script
+    Raise InputError with the proper usage of this script
     """
-    raise InputError("Usage: python executer.py [article|twitter] [status|run|pause|stop|fstop]")
+    raise InputError("Usage: python executer.py [article|twitter] " +
+                     "[status|run|pause|stop|fstop]")
 
 
 def raise_timeout_error():
@@ -60,7 +68,7 @@ def raise_timeout_error():
 
 def comm_read(explorer):
     """ (Str) -> Str
-    Open, read and return the content on the comunication stream file
+    Open, read and return the content on the communication stream file
     Raise TimeoutError if reading was not accomplished within the time limit
     """
     for i in range(configuration()['communication']['retry_count']):
@@ -76,7 +84,7 @@ def comm_read(explorer):
 
 def comm_write(explorer, text):
     """ (Str, Str) -> None
-    Open, read and write on the comunication stream file
+    Open, read and write on the communication stream file
     Raise TimeoutError if writing was not accomplished within the time limit
     """
     for i in range(configuration()['communication']['retry_count']):
@@ -124,7 +132,7 @@ def command_format(arg2):
         return 'stop'
     elif arg2.lower() == 'fstop':
         return 'fstop'
-    return None 
+    return None
 
 
 def status_format(raw_status):
@@ -147,11 +155,11 @@ def input_format(arg1, arg2):
     """ (Str, Str) -> Str, Str
     Formats and checks the inputs
     """
-    exp = explorer_format(arg1)
-    com = command_format(arg2)
-    if not exp or not com:
+    expl = explorer_format(arg1)
+    comm = command_format(arg2)
+    if not expl or not comm:
         raise_input_error()
-    return exp, com
+    return expl, comm
 
 
 def name_format(explorer):
@@ -222,8 +230,13 @@ def stop(explorer):
         comm_write(explorer, format('WS %s' % pid))
         return format('Stop: %s - Stopping' % name)
 
-def force_stop(explorer):
 
+def force_stop(explorer):
+    """ (Str) -> Str
+    Force stop the explorer using it's pid and unix kill command.
+    Also, forces the comm file to be in stop state, allowing new explorer
+    to start.
+    """
     pid = comm_read(explorer).split(' ')[1]
     name = name_format(explorer)
 
@@ -244,7 +257,7 @@ def status_output(explorer):
 
 
 if __name__ == '__main__':
- 
+
     # To be able to run the script with arguments
     if len(sys.argv) == 3:
 
