@@ -15,16 +15,18 @@ window.title("Voyage Exceute")
 #change size
 window.geometry("200x200")
 
+
 #---Commands---#
 #Install API command
 def install_api():
     '''
     ()-->None
-    allow using python connect to CMD and run the sh script to install all api 
+    allow using python connect to CMD and run the sh script to install all api
     using pip
     '''
     setup.install()
     showinfo("congratulation", "All Api sucessfully install")
+
 
 def run():
     '''
@@ -36,15 +38,17 @@ def run():
     server.run_server(config['ip_address'], config['port'])
     showinfo("Notice", "Server on!")
 
+
 def close():
     '''
     ()-->None
-    allow using python connect to CMD and run the sh script to close the django 
+    allow using python connect to CMD and run the sh script to close the django
     server
     '''
     config = server.configuration()['server']
     server.stop_server(config['port'])
     showinfo("Notice", "Server off!")
+
 
 def open_web():
     '''
@@ -52,19 +56,20 @@ def open_web():
     open the django web UI
     '''
     config = server.configuration()['server']
-    webbrowser.open(format('http://%s:%i/admin' % (config['ip_address'], \
+    webbrowser.open(format('http://%s:%i/admin' % (config['ip_address'],
                                                    config['port'])))
+
 
 def quit_app():
     window.destroy()
 
 #---Widgets---#
 #buttons
-Button(window, text = "Install", command = install_api).pack()
-Button(window, text = "Run Server", command = run).pack()
-Button(window, text = "Close Server", command = close).pack()
-Button(window, text = "Open Web", command = open_web).pack()
-Button(text = 'Quit', command=quit_app).pack()
+Button(window, text="Install", command=install_api).pack()
+Button(window, text="Run Server", command=run).pack()
+Button(window, text="Close Server", command=close).pack()
+Button(window, text="Open Web", command=open_web).pack()
+Button(text='Quit', command=quit_app).pack()
 
 #+===================GUI END=====================+
 window.mainloop()
