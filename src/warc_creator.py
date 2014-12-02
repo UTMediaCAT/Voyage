@@ -20,7 +20,7 @@ def create_article_warc(url):
 
     create_warc("http://www.facebook.com")
     it should have a warc.gz file under
-    ARTICLE_WARC_DIR/http:\\www.facebook.com.warc.gz
+    ARTICLE_WARC_DIR/http:__www.facebook.com.warc.gz
     """
     config = configuration()['warc']
     rename_url = url.replace("/", "_")
@@ -37,7 +37,7 @@ def create_twitter_warc(url):
 
     create_warc("https://twitter.com/LeagueOfLegends")
     it should have a HTML file under
-    TWITTER_WARC_DIR/https:\\twitter.com\LeagueOfLegends
+    TWITTER_WARC_DIR/https:__twitter.com_LeagueOfLegends
     """
     config = configuration()['warc']
 
