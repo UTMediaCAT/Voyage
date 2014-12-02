@@ -190,7 +190,8 @@ def get_sources(tweet, sites):
 
     hdr = {
         'User-Agent':
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11' +
+        ' (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
         'Accept':
         'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
@@ -215,7 +216,7 @@ def get_sources(tweet, sites):
     for site in sites:
         for url in tweet_urls:
             formatted_site = re.search(
-                "([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}",
+            "([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}",
                 site, re.IGNORECASE).group(0)
             if formatted_site[:3] == 'www':
                 formatted_site = formatted_site[3:]
