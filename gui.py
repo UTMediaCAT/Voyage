@@ -20,7 +20,8 @@ window.geometry("200x200")
 def install_api():
     '''
     ()-->None
-    allow using python connect to CMD and run the sh script to install all api using pip
+    allow using python connect to CMD and run the sh script to install all api 
+    using pip
     '''
     setup.install()
     showinfo("congratulation", "All Api sucessfully install")
@@ -28,7 +29,8 @@ def install_api():
 def run():
     '''
     ()-->None
-    allow using python connect to CMD and run the sh script to open the django server
+    allow using python connect to CMD and run the sh script to open the django
+    server
     '''
     config = server.configuration()['server']
     server.run_server(config['ip_address'], config['port'])
@@ -37,7 +39,8 @@ def run():
 def close():
     '''
     ()-->None
-    allow using python connect to CMD and run the sh script to close the django server
+    allow using python connect to CMD and run the sh script to close the django 
+    server
     '''
     config = server.configuration()['server']
     server.stop_server(config['port'])
@@ -49,7 +52,8 @@ def open_web():
     open the django web UI
     '''
     config = server.configuration()['server']
-    webbrowser.open(format('http://%s:%i/admin' % (config['ip_address'], config['port'])))
+    webbrowser.open(format('http://%s:%i/admin' % (config['ip_address'], \
+                                                   config['port'])))
 
 def quit_app():
     window.destroy()
