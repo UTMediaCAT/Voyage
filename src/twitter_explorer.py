@@ -216,7 +216,8 @@ def get_sources(tweet, sites):
     for site in sites:
         for url in tweet_urls:
             formatted_site = re.search(
-            "([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}",
+                "([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+"
+                "[a-zA-Z]{2,6}",
                 site, re.IGNORECASE).group(0)
             if formatted_site[:3] == 'www':
                 formatted_site = formatted_site[3:]
