@@ -1,7 +1,9 @@
 import sys
-sys.path.append("..")
-import warc_creator as wc
 import os
+path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(path)
+os.chdir(path)
+import warc_creator as wc
 os.chdir(os.getcwd())
 os.chdir("../..")
 import unittest
