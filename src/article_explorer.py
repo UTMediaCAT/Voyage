@@ -108,7 +108,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
         article_count = site[1].size()
         processed = 0
         for k in range(len(site[1].articles)):
-            art = site[1].articles[i]
+            art = site[1].articles[k]
             # Stop any print statements, even newspaper's warning messages
             sys.stdout = open(os.devnull, "w")
             sys.stderr = open(os.devnull, "w")
@@ -209,7 +209,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                  site[0], processed, article_count))
             sys.stdout.flush()
             # Null the article data to free the memory
-            site[1].articles[i] = None
+            site[1].articles[k] = None
         print(
             "%s (Article|%s) %i/%i          " %
             (str(timezone.localtime(timezone.now()))[:-13], site[0],
