@@ -13,7 +13,8 @@ import yaml
 
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Frontend')))
+sys.path.append(
+    os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'Frontend')))
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 
@@ -30,7 +31,8 @@ from explorer.models import Keyword as E_keyword
 import warc_creator
 
 __author__ = "ACME: CSCC01F14 Team 4"
-__authors__ = "Yuya Iwabuchi, Jai Sughand, Xiang Wang, Kyle Bridgemohansingh, Ryan Pan"
+__authors__ = "Yuya Iwabuchi, Jai Sughand, Xiang Wang," \
+              " Kyle Bridgemohansingh, Ryan Pan"
 
 
 def configuration():
@@ -38,15 +40,15 @@ def configuration():
     Returns a dictionary containing the micro settings from the
     config.yaml file located in the parent directory from this file
     """
-    #unit tests clause
+    # unit tests clause
     if "unit_tests" == os.getcwd().split("/")[-1]:
         config_yaml = open("../../config.yaml", 'r')
     else:
         config_yaml = open("../config.yaml", 'r')
     config = yaml.load(config_yaml)
     config_yaml.close()
-    #Config is returned as a dictionary, which you can navigate through later to get
-    #a specific setting
+    # Config is returned as a dictionary, which you can navigate through
+    # later to get a specific setting
     return config
 
 
@@ -54,11 +56,13 @@ def authorize():
     """ (None) -> tweepy.API
     Will use global keys to allow use of API
     """
-    #Get's config settings for twitter
+    # Get's config settings for twitter
     config = configuration()['twitter']
-    #Authorizing use with twitter development api
-    auth = tweepy.OAuthHandler(config['consumer_key'], config['consumer_secret'])
-    auth.set_access_token(config['access_token'], config['access_token_secret'])
+    # Authorizing use with twitter development api
+    auth = tweepy.OAuthHandler(
+        config['consumer_key'], config['consumer_secret'])
+    auth.set_access_token(
+        config['access_token'], config['access_token_secret'])
     return tweepy.API(auth)
 
 
@@ -68,8 +72,8 @@ def wait_and_resume():
     """
     wait_rate = configuration()["twitter"]['wait_rate_seconds']
     print('Twitter Rate Limit Reached, Attempting to Continue.')
-    print('Resuming in ' + str(int(wait_rate/60)) + ' minute(s) and '
-                   + str(wait_rate % 60) + ' second(s).')
+    print('Resuming in ' + str(int(wait_rate / 60)) + ' minute(s) and '
+          + str(wait_rate % 60) + ' second(s).')
     time.sleep(wait_rate)
 
 
@@ -86,8 +90,8 @@ def get_tweets(screen_name, amount):
     tweet_holder = []
     api = authorize()
 
-    #Make sure 3190 is max tweets to get, while making sure
-    #the amount of tweets to get is under the amount the user has.
+    # Make sure 3190 is max tweets to get, while making sure
+    # the amount of tweets to get is under the amount the user has.
     try:
         user = api.get_user(screen_name)
     except:
@@ -95,19 +99,19 @@ def get_tweets(screen_name, amount):
     if amount > 3190 or amount > user.statuses_count:
         amount = min(3190, user.statuses_count)
 
-    #Basically acts as an iterator
+    # Basically acts as an iterator
     items = tweepy.Cursor(api.user_timeline, id=screen_name,
                           count=200, include_rts=True).items()
 
     count = 0
     while count != amount:
         try:
-            #Get's next tweet and appends to holder
+            # Get's next tweet and appends to holder
             item = next(items)
             count += 1
             tweet_holder.append(item)
         except:
-            #If error occurs (timeout)
+            # If error occurs (timeout)
             wait_and_resume()
             continue
     return tweet_holder
@@ -140,11 +144,10 @@ def get_keywords(tweet, keywords):
     """
     matched_keywords = []
 
-    #Searches if keyword is in tweet regardless of casing
+    # Searches if keyword is in tweet regardless of casing
     for key in keywords:
         if re.search(key, tweet.text.encode('utf8'), re.IGNORECASE):
             matched_keywords.append(key)
-
 
     matched_in_url = []
     expanded_urls = ''
@@ -152,20 +155,22 @@ def get_keywords(tweet, keywords):
     for url in tweet.entities['urls']:
         try:
             # tries to get full url on shortened urls
-            expanded_urls += urllib2.urlopen(url['expanded_url']).geturl() + ' '
+            expanded_urls += urllib2.urlopen(
+                url['expanded_url']).geturl() + ' '
             expanded_urls += urllib2.urlopen(url['display_url']).geturl() + ' '
         except:
-            #if not just take normal url
+            # if not just take normal url
             expanded_urls += url['expanded_url'] + ' '
             display_urls += url['display_url'] + ' '
 
-    #substring, expanded includes scheme, display may not
-    #uses two large url strings, rather than having n^2 complexity
+    # substring, expanded includes scheme, display may not
+    # uses two large url strings, rather than having n^2 complexity
     for keyword in keywords:
-        if re.search(keyword, expanded_urls, re.IGNORECASE) or re.search(keyword, display_urls, re.IGNORECASE):
+        if re.search(keyword, expanded_urls, re.IGNORECASE) or \
+                re.search(keyword, display_urls, re.IGNORECASE):
             matched_in_url.append(keyword)
-    #Uses get_sources, but instead of searching tweets, searches
-    #Adds both searches
+    # Uses get_sources, but instead of searching tweets, searches
+    # Adds both searches
     all_matches = matched_keywords + matched_in_url
     all_matches = set(all_matches)
     return list(all_matches)
@@ -183,37 +188,41 @@ def get_sources(tweet, sites):
     """
     # store_all = configuration()['storage']['store_all_sources']
 
-    hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
-       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-       'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-       'Accept-Encoding': 'none',
-       'Accept-Language': 'en-US,en;q=0.8',
-       'Connection': 'keep-alive'}
+    hdr = {
+        'User-Agent':
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
+        'Accept':
+        'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
+        'Accept-Encoding': 'none',
+        'Accept-Language': 'en-US,en;q=0.8',
+        'Connection': 'keep-alive'}
 
     matched_urls = []
     tweet_urls = []
-    #if store_all == False:
+    # if store_all == False:
     for url in tweet.entities['urls']:
         try:
             # tries to get full url on shortened urls
-            req = urllib2.Request(url['expanded_url'], headers = hdr)
+            req = urllib2.Request(url['expanded_url'], headers=hdr)
             tweet_urls.append(str(urllib2.urlopen(req).url))
 
         except:
-            #if not just take normal url
+            # if not just take normal url
             tweet_urls.append(str(url['expanded_url']))
 
-    #substring, expanded includes scheme, display may not
+    # substring, expanded includes scheme, display may not
     for site in sites:
         for url in tweet_urls:
-            formatted_site = re.search("([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}",
-                                       site, re.IGNORECASE).group(0)
+            formatted_site = re.search(
+                "([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}",
+                site, re.IGNORECASE).group(0)
             if formatted_site[:3] == 'www':
                 formatted_site = formatted_site[3:]
 
             if re.search(formatted_site, url, re.IGNORECASE):
-                matched_urls.append([url, site]) # should store [whole source, 'site' url]
-
+                matched_urls.append(
+                    [url, site])  # should store [whole source, 'site' url]
 
     return matched_urls
 
@@ -246,32 +255,36 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
             # Check for any new command on communication stream
             check_command()
 
+
+            #setting correct data for each field
             tweet_id = tweet.id
-            tweet_date = timezone.localtime(timezone.make_aware(tweet.created_at, timezone=timezone.get_fixed_timezone(180)))
+            tweet_date = timezone.localtime(
+                timezone.make_aware(tweet.created_at,
+                                    timezone=timezone.get_fixed_timezone(180)))
             tweet_user = tweet.user.screen_name
             tweet_store_date = timezone.localtime(timezone.now())
             tweet_keywords = get_keywords(tweet, keywords)
             tweet_sources = get_sources(tweet, foreign_sites)
             tweet_text = tweet.text
 
-            if not(tweet_keywords == [] and tweet_sources ==[]):
+            if not(tweet_keywords == [] and tweet_sources == []):
 
-                tweet_list = Tweet.objects.filter(tweet_id = tweet_id)
+                tweet_list = Tweet.objects.filter(tweet_id=tweet_id)
                 if (not tweet_list):
-
-                    tweet = Tweet(tweet_id = tweet_id, user=tweet_user,
-                                  date_added = tweet_store_date,
-                                  date_published = tweet_date,
-                                  followers = tweet_followers, text=tweet_text)
+                    #creating new intry in collection
+                    tweet = Tweet(tweet_id=tweet_id, user=tweet_user,
+                                  date_added=tweet_store_date,
+                                  date_published=tweet_date,
+                                  followers=tweet_followers, text=tweet_text)
                     tweet.save()
 
                     tweet = Tweet.objects.get(tweet_id=tweet_id)
 
                     for key in tweet_keywords:
-                        tweet.keyword_set.create(keyword = key)
+                        tweet.keyword_set.create(keyword=key)
 
                     for source in tweet_sources:
-                        tweet.source_set.create(url = source[0],
+                        tweet.source_set.create(url=source[0],
                                                 url_origin=source[1])
 
                     added += 1
@@ -293,22 +306,30 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
 
                     for source in tweet_sources:
                         if not Source.objects.filter(url=source[0]):
-                            tweet.source_set.create(url=source[0], url_origin=source[1])
+                            tweet.source_set.create(
+                                url=source[0], url_origin=source[1])
                     updated += 1
 
-                warc_creator.create_twitter_warc('https://twitter.com/' + tweet.user + '/status/' + str(tweet_id))
+                warc_creator.create_twitter_warc(
+                    'https://twitter.com/' + tweet.user + '/status/' +
+                    str(tweet_id))
             else:
                 no_match += 1
             processed += 1
-            sys.stdout.write("%s (Twitter|%s) %i/%i          \r" % (str(timezone.localtime(timezone.now()))[:-13], user, processed, tweet_count))
+            sys.stdout.write("%s (Twitter|%s) %i/%i          \r" %
+                             (str(timezone.localtime(timezone.now()))[:-13],
+                              user, processed, tweet_count))
             sys.stdout.flush()
-        print format("%s (Twitter|%s) %i/%i          " % (str(timezone.localtime(timezone.now()))[:-13],  user, processed, tweet_count))
+        print format("%s (Twitter|%s) %i/%i          " % (
+            str(timezone.localtime(timezone.now()))[:-13], user, processed,
+            tweet_count))
 
 
 def explore(tweet_number):
     """ (str, str, str, str) -> None
-    Connects to accounts, keyword and site database, crawls within monitoring sites,
-    then pushes articles which matches the keywords or foreign sites to the tweet database
+    Connects to accounts, keyword and site database, crawls within monitoring
+    sites,then pushes articles which matches the keywords or foreign sites to
+    the tweet database
 
     Keyword arguments:
     tweet_db            -- Tweet database name
@@ -398,13 +419,13 @@ def check_command():
             comm_write('RR %s' % os.getpid())
 
 if __name__ == '__main__':
-    #Initialize Communication Stream
+    # Initialize Communication Stream
     comm_init()
     config = configuration()['twitter']
 
     fs = config['from_start']
 
-    while 1:
+    while True:
         # Check for any new command on communication stream
         check_command()
 
@@ -418,8 +439,8 @@ if __name__ == '__main__':
 
         end = timeit.default_timer()
         delta_time = end - start
-    sleep_time = max(config['min_iteration_time']-delta_time, 0)
-    for i in range(int(sleep_time//5)):
+    sleep_time = max(config['min_iteration_time'] - delta_time, 0)
+    for i in range(int(sleep_time // 5)):
         time.sleep(5)
         check_command()
 
