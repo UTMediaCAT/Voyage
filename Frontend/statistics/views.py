@@ -31,13 +31,10 @@ def tweets(request):
 
     keywords_pie_chart = analyzer.tweets_keywords_pie_chart()
     tweets_annotation_chart =analyzer.tweets_annotation_chart()
-    follower_bar_chart = analyzer.follower_bar_chart()
+
 
 
     context = {'keywords_pie_chart': keywords_pie_chart, 
                 'monitoring_acounts':tweets_annotation_chart[0], 
-                'tweet_by_date': tweets_annotation_chart[1],
-                'follower_bar_chart':follower_bar_chart,
-                'follower_bar_table':follower_bar_chart[1:],
-                'bar_chart_height': max((len(follower_bar_chart) - 1) * 3,30)}
+                'tweet_by_date': tweets_annotation_chart[1]}
     return render(request, 'statistics/tweets.html', context)
