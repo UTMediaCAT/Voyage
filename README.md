@@ -15,8 +15,11 @@ ryanbelt | Ryan Pan | ryanbelt1993129@hotmail.com
 
 ##Requirement
 
-* [Python 2.7.x](https://www.python.org/downloads/release/python-278/) 
-* [Wget 1.14+](http://www.gnu.org/software/wget/)
+#####[Python 2.7.x](https://www.python.org/downloads/release/python-278/) 
+* You can check your current version by `python --version`
+
+#####[Wget 1.14+](http://www.gnu.org/software/wget/)
+* You can check your current version by `wget --version`
 
 ##Installation
 ####Method 1: Through tkinter
@@ -40,6 +43,7 @@ If any problem occurs, please contact one of us on the email address listed abov
 * To stop `python server.py stop`
 
 You can now access the server through http://IP:PORT/admin
+
 The default is [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
 
 
@@ -95,3 +99,6 @@ In My Boards click **CSCC01-ACME** to see the progress
 Our website is located at team04-Project\Website\index.html
 
 It is organized with all the work in the every Phase so far
+
+##UnitTest
+Unit test files are located under `src/unit_tests`
