@@ -368,7 +368,7 @@ def comm_read():
     conf = configuration()['communication']
 
     # Wait for retry_count * retry_delta seconds
-    for k in range(config['retry_count']):
+    for k in range(conf['retry_count']):
         try:
             comm = open('article' + conf['comm_file'], 'r')
             msg = comm.read()

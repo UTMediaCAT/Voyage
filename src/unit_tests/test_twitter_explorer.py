@@ -1,8 +1,9 @@
 __author__ = 'Kyle'
 
 import os
-parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-os.sys.path.insert(0,parentdir)
+path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+sys.path.append(path)
+os.chdir(path)
 
 import twitter_explorer as te
 import unittest
