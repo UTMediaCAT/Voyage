@@ -2,11 +2,18 @@ __author__ = 'Roger'
 
 import sys
 import os
+path = os.path.abspath(os.path.join(os.path.dirname(__file__),".."))
 sys.path.append("..")
+from article_explorer import*
+from datetime import datetime
+os.chdir(path)
+
+
 
 import newspaper
-from article_explorer import*
+
 import unittest
+
 
 
 
@@ -24,7 +31,7 @@ class TestArticleExplorer(unittest.TestCase):
 
         monitoring_sites = []
 
-        populated_sites = populate_sites(monitoring_sites, True)
+        populated_sites = populate_sites(monitoring_sites)
 
         self.assertEqual(len(populated_sites), 0,
                          "The number of populated_sites does not match")
@@ -35,7 +42,7 @@ class TestArticleExplorer(unittest.TestCase):
 
         monitoring_sites = [["cnn", "http://www.cnn.com/", 2]]
 
-        populated_sites = populate_sites(monitoring_sites, True)
+        populated_sites = populate_sites(monitoring_sites)
 
         self.assertEqual(len(populated_sites), 1,
                          "The number of populated_sites does not match")
@@ -46,15 +53,13 @@ class TestArticleExplorer(unittest.TestCase):
         self.assertEqual(populated_sites[0][1].url, 'http://www.cnn.com/',
                  "The url of the populated_site does not match")
 
-        self.assertEqual(populated_sites[0][2], 2,
-                 "The influence of the populated_site does not match")
 
 
     def test_populate_sites_with_multiple_sites(self):
 
         monitoring_sites = [["cnn", "http://www.cnn.com/", 2], ["time", "http://time.com/", 3], ["cbc", "http://www.cbc.ca/",5]]
 
-        populated_sites = populate_sites(monitoring_sites, True)
+        populated_sites = populate_sites(monitoring_sites)
 
         self.assertEqual(len(populated_sites), 3,
                          "The number of populated_sites does not match")
@@ -65,8 +70,6 @@ class TestArticleExplorer(unittest.TestCase):
         self.assertEqual(populated_sites[0][1].url, 'http://www.cnn.com/',
                  "The url of the populated_site does not match")
 
-        self.assertEqual(populated_sites[0][2], 2,
-                 "The influence of the populated_site does not match")
 
         self.assertEqual(populated_sites[1][0], "time",
                  "The name of the populated_site does not match")
@@ -74,8 +77,6 @@ class TestArticleExplorer(unittest.TestCase):
         self.assertEqual(populated_sites[1][1].url, 'http://time.com/',
                  "The url of the populated_site does not match")
 
-        self.assertEqual(populated_sites[1][2], 3,
-                 "The influence of the populated_site does not match")
 
 
         self.assertEqual(populated_sites[2][0], "cbc",
@@ -84,8 +85,6 @@ class TestArticleExplorer(unittest.TestCase):
         self.assertEqual(populated_sites[2][1].url, 'http://www.cbc.ca/',
                  "The url of the populated_site does not match")
 
-        self.assertEqual(populated_sites[2][2], 5,
-                 "The influence of the populated_site does not match")
 
 
 
@@ -124,7 +123,7 @@ class TestArticleExplorer(unittest.TestCase):
       foreign_sites= ["http://www.cnn.com"]
       html = "<a href='http://www.cnn.com'></a>"
       matched_urls = get_sources(html,foreign_sites)
-      self.assertEqual(matched_urls, ["http://www.cnn.com"],
+      self.assertEqual(matched_urls, [["http://www.cnn.com","http://www.cnn.com"]],
                        "The wrong match of ulrs")
 
 
@@ -140,31 +139,30 @@ class TestArticleExplorer(unittest.TestCase):
 
 
     def test_get_sources_with_multi_site(self):
-
       foreign_sites= ["http://www.cnn.com", "http://www.cbc.ca"]
-      html = "<a href='http://www.cnn.com'></a>"
+      html = "<a href='http://www.cnn.com/article'></a>"
       matched_urls = get_sources(html,foreign_sites)
-      self.assertEqual(matched_urls, ["http://www.cnn.com"],
+      self.assertEqual(matched_urls, [['http://www.cnn.com/article',"http://www.cnn.com"]],
                        "The URLs dosen't match")
 
 
       foreign_sites= ["http://www.cnn.com", "http://www.cbc.ca"]
-      html = "<a href='http://www.cbc.ca'></a>"
+      html = "<a href='http://www.cbc.ca/news'></a>"
       matched_urls = get_sources(html,foreign_sites)
-      self.assertEqual(matched_urls, ["http://www.cbc.ca"],
+      self.assertEqual(matched_urls, [['http://www.cbc.ca/news',"http://www.cbc.ca",]],
                        "The URLs dosen't match")
 
 
       foreign_sites= ["http://www.cnn.com", "http://www.cbc.ca"]
       html = "<a href='http://www.cnn.com'></a> <a href='http://www.cbc.ca'></a>"
       matched_urls = get_sources(html,foreign_sites)
-      self.assertEqual(matched_urls, ["http://www.cnn.com", "http://www.cbc.ca"],
+      self.assertEqual(matched_urls, [["http://www.cnn.com","http://www.cnn.com"], ["http://www.cbc.ca","http://www.cbc.ca"]],
                        "The URLs dosen't match")
 
       foreign_sites= ["http://www.cnn.com", "http://www.cbc.ca", "http://www.time.com"]
-      html = "<a href='http://www.cnn.com'></a> <a href='http://www.cbc.ca'></a>"
+      html = "<a href='http://www.cnn.com/news'></a> <a href='http://www.cbc.ca/news'></a>"
       matched_urls = get_sources(html,foreign_sites)
-      self.assertEqual(matched_urls, ["http://www.cnn.com", "http://www.cbc.ca"],
+      self.assertEqual(matched_urls, [['http://www.cnn.com/news',"http://www.cnn.com"],[ 'http://www.cbc.ca/news',"http://www.cbc.ca"]],
                        "The URLs dosen't match")
 
 
@@ -244,7 +242,7 @@ class TestArticleExplorer(unittest.TestCase):
 
       a = newspaper.article
       a.meta_data = {"date":"2014/07/22", "test":"test"}
-      self.assertEqual(get_pub_date(a), '2014-07-22T00:00',
+      self.assertEqual(get_pub_date(a).date(), datetime.strptime('2014-07-22', "%Y-%m-%d").date(),
                        "The dates don't match")
 
 
@@ -252,7 +250,7 @@ class TestArticleExplorer(unittest.TestCase):
 
       a = newspaper.article
       a.meta_data = {"date":"2014/07/22", "date":"2014/07/23"}
-      self.assertEqual(get_pub_date(a), '2014-07-23T00:00',
+      self.assertEqual(get_pub_date(a).date(), datetime.strptime('2014-07-23',"%Y-%m-%d").date(),
                        "The dates don't match")
 
 if __name__ == '__main__':
