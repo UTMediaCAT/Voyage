@@ -3,10 +3,10 @@ __author__ = 'Roger'
 import sys
 import os
 path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-sys.path.append("..")
+sys.path.append(path)
+os.chdir(path)
 from article_explorer import*
 from datetime import datetime
-os.chdir(path)
 
 
 import newspaper
