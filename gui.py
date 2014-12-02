@@ -60,7 +60,7 @@ Button(window, text = "Install", command = install_api).pack()
 Button(window, text = "Run Server", command = run).pack()
 Button(window, text = "Close Server", command = close).pack()
 Button(window, text = "Open Web", command = open_web).pack()
-Button(text='Quit', command=quit_app).pack()
+Button(text = 'Quit', command=quit_app).pack()
 
 #+===================GUI END=====================+
 window.mainloop()
