@@ -2,6 +2,7 @@ import os
 import subprocess
 import yaml
 
+
 def configuration():
     """ (None) -> dict
     Returns a dictionary containing the micro settings from the
@@ -11,7 +12,6 @@ def configuration():
     config = yaml.load(config_yaml)
     config_yaml.close()
     return config
-
 
 def create_article_warc(url):
     '''
@@ -23,11 +23,10 @@ def create_article_warc(url):
     ARTICLE_WARC_DIR/http:\\www.facebook.com.warc.gz
     '''
     config = configuration()['warc']
-
-    rename_url=url.replace("/","_")
+    rename_url = url.replace("/", "_")
     os.chmod('./CreateArticleWarc.sh', 0700)
     command = './CreateArticleWarc.sh %s %s %s' % (url, rename_url, config['dir'] + "/" + config['article_subdir'])
-    subprocess.call(command, shell=True)
+    subprocess.call(command, shell = True)
     
 def create_twitter_warc(url):
     '''
@@ -40,9 +39,9 @@ def create_twitter_warc(url):
     '''
     config = configuration()['warc']
     
-    rename_url=url.replace("/","_")
+    rename_url = url.replace("/", "_")
     os.chmod('./CreateTwitterWarc.sh', 0700)
     command = "./CreateTwitterWarc.sh %s %s %s" % (url, rename_url, config['dir'] + "/" + config['twitter_subdir'])
     # command = ["./CreateTwitterWarc.sh", url, rename_url, config['dir'] + "/" + config['twitter_subdir']]
     # os.execlp("./CreateTwitterWarc.sh", url, rename_url, config['dir'] + "/" + config['twitter_subdir')
-    subprocess.Popen(command, shell=True)    
+    subprocess.Popen(command, shell = True)    

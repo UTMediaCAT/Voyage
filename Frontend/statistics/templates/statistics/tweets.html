@@ -96,46 +96,8 @@
 
 
 
-  <head>
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript">
-      google.load("visualization", "1", {packages:["corechart"]});
-      google.setOnLoadCallback(drawChart);
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable({{follower_bar_chart|safe}});
-
-        var options = {
-          title: 'Number of followers',
-          vAxis: {title: 'Accounts',  titleTextStyle: {color: 'red'}}
-        };
-
-        var chart = new google.visualization.BarChart(document.getElementById('chart_bar'));
-
-        chart.draw(data, options);
-      }
-    </script>
-  </head>
-
-    <head>
-        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-        <script type="text/javascript">
-          google.load("visualization", "1", {packages:["table"]});
-          google.setOnLoadCallback(drawTable);
-
-          function drawTable() {
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Accounts');
-            data.addColumn('number', 'Number of followers');
-
-            data.addRows( {{ follower_bar_table|safe }});
 
 
-            var table = new google.visualization.Table(document.getElementById('table_bar'));
-
-            table.draw(data, {showRowNumber: true});
-          }
-        </script>
-    </head>
 
 
     <!--Div that will hold the pie chart-->
