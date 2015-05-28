@@ -22,23 +22,14 @@ ryanbelt | Ryan Pan | ryanbelt1993129@hotmail.com
 * You can check your current version by `wget --version`
 
 ##Installation
-####Method 1: Through tkinter
-* Download, extract the __master__ then execute on terminal `python gui.py`
-* click `Install` in the pop up GUI.
-* Done!
-
-####Method 2: Through terminal
+####Through terminal
 * Download, extract the __master__ then execute on terminal `python setup.py` 
 * Done!
 
 If any problem occurs, please contact one of us on the email address listed above.
 
 ##Usage: Web Server
-####Method 1: Through tkinter
-* To start `python gui.py` then click _Run Server_
-* To stop click _Stop Server_
-
-####Method 2: Through terminal
+####Through terminal
 * To start `python server.py run`
 * To stop `python server.py stop`
 
@@ -96,7 +87,7 @@ In My Boards click **CSCC01-ACME** to see the progress
 
 ##Website
 
-Our website is located at team04-Project\Website\index.html
+Our website is located at [jaisughand.com/voyage](http://jaisughand.com/voyage)
 
 It is organized with all the work in the every Phase so far
 
