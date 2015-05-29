@@ -13,6 +13,13 @@ def configuration():
     config_yaml.close()
     return config
 
+def create_warc(url, dir):
+    """
+    creates a warc file from url and places it in dest
+    """
+    rename_url = url.replace("/", "_")
+    subprocess.call(["mkdir", "-p", dir])
+    subprocess.Popen(["wget", "--warc-file=" + rename_url, "-O", "/dev/null", url])
 
 def create_article_warc(url):
     """(url)-->None
@@ -23,12 +30,7 @@ def create_article_warc(url):
     ARTICLE_WARC_DIR/http:__www.facebook.com.warc.gz
     """
     config = configuration()['warc']
-    rename_url = url.replace("/", "_")
-    os.chmod('./CreateArticleWarc.sh', 0700)
-    command = \
-        './CreateArticleWarc.sh %s %s %s' % \
-        (url, rename_url, config['dir'] + "/" + config['article_subdir'])
-    subprocess.call(command, shell=True)
+    create_warc(url, config['dir'] + "/" + config['article_subdir'])
 
 
 def create_twitter_warc(url):
@@ -40,10 +42,4 @@ def create_twitter_warc(url):
     TWITTER_WARC_DIR/https:__twitter.com_LeagueOfLegends
     """
     config = configuration()['warc']
-
-    rename_url = url.replace("/", "_")
-    os.chmod('./CreateTwitterWarc.sh', 0700)
-    command = \
-        "./CreateTwitterWarc.sh %s %s %s" % \
-        (url, rename_url, config['dir'] + "/" + config['twitter_subdir'])
-    subprocess.Popen(command, shell=True)
+    create_warc(url, config['dir'] + "/" + config['twitter_subdir'])
