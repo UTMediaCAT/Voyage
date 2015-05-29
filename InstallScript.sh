@@ -1,11 +1,8 @@
 #!/bin/bash
-
-prevdir=$pwd
-cd ~
+cd /tmp
 wget 'http://bootstrap.pypa.io/get-pip.py'
 python get-pip.py --user
 rm get-pip.py
-cd $prevdir
 
 pip install --user Django==1.7.1
 pip install --user newspaper==0.0.8
