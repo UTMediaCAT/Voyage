@@ -25,3 +25,6 @@ warc:
     dir: warc
     article_subdir: article
     twitter_subdir: twitter
+log:
+    dir: log
+    retention_days: 30
