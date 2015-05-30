@@ -58,7 +58,7 @@ class ArticleAdmin(admin.ModelAdmin):
     def get_authors(self, obj):
         authors = ''
         for ath in obj.author_set.all():
-            authors += ath.author + ', '
+            authors += ath.name + ', '
         return authors[:-2]
 
     get_authors.short_description = 'Authors'

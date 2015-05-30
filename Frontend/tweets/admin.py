@@ -32,7 +32,7 @@ class TweetAdmin(admin.ModelAdmin):
     def get_keywords(self, obj):
         keywords = ''
         for key in obj.keyword_set.all():
-            keywords += key.keyword + ', '
+            keywords += key.name + ', '
         return keywords[:-2]
 
     get_keywords.short_description = 'Matched Keywords'
