@@ -16,6 +16,7 @@ class SourceInline(admin.TabularInline):
 class KeywordInline(admin.TabularInline):
     model = Keyword
     extra = 0
+
 class ArticleAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['url', 'title']}),
@@ -25,19 +26,19 @@ class ArticleAdmin(admin.ModelAdmin):
     inlines = [AuthorInline, SourceInline, KeywordInline]
 
     list_display = ('link_url', 'title', 'get_authors', 'get_keywords', 'get_sources', 'date_published', 'date_added', 'link_options')
-    search_fields = ['url', 'title', 'author__author', 'keyword__keyword', 'source__url']
-    list_filter = ['url_origin', 'keyword__keyword', 'source__url_origin']
+    search_fields = ['url', 'title', 'author__name', 'keyword__name', 'source__url']
+    list_filter = ['domain', 'keyword__name', 'source__domain']
     ordering = ['-date_added']
     actions_on_top = True
 
     def get_keywords(self, obj):
         keywords = ''
         for key in obj.keyword_set.all():
-            keywords += key.keyword + ', '
+            keywords += key.name + ', '
         return keywords[:-2]
 
     get_keywords.short_description = 'Matched Keywords'
-    get_keywords.admin_order_field = 'keyword__keyword'
+    get_keywords.admin_order_field = 'keyword__name'
 
     def get_sources(self, obj):
         sources = ''
@@ -61,7 +62,7 @@ class ArticleAdmin(admin.ModelAdmin):
         return authors[:-2]
 
     get_authors.short_description = 'Authors'
-    get_authors.admin_order_field = 'author__author'
+    get_authors.admin_order_field = 'author__name'
 
     def link_url(self, obj):
         return format('<a href="%s" target="_blank">%s</a>' % (obj.url, obj.url))

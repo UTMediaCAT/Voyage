@@ -30,7 +30,7 @@ def validate_user(user):
     try:
         authorize().get_user(user)
     except:
-        raise ValidationError('%s is not a valid username!' % user)
+        raise ValidationError('%s is not a valid Twitter Account!' % user)
 
 def validate_site(site):
     try:
@@ -39,14 +39,14 @@ def validate_site(site):
                             fetch_images=False,
                             language='en')
         if s.size() == 0:
-            raise ValidationError('%s is not a valid monitoring site!' % site)
+            raise ValidationError('%s is not a valid Referring Site!' % site)
     except:  
-        raise ValidationError('%s is not a valid monitoring site!' % site)
+        raise ValidationError('%s is not a valid Referring Site!' % site)
 
 
 # Create your models here.
 
-class Msite(models.Model):
+class ReferringSite(models.Model):
     url = models.URLField(max_length=2000, unique=True, validators=[validate_site],
                           help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://cnn.com)')
     name = models.CharField(max_length=200, 
@@ -54,15 +54,15 @@ class Msite(models.Model):
                                       'Maximum 200 characters')
     
     class Meta:
-        verbose_name = 'Monitoring Site'
+        verbose_name = 'Referring Site'
 
 
     def __unicode__(self):
         return self.name
 
 
-class Taccount(models.Model):
-    account = models.CharField(max_length=200, unique=True, validators=[validate_user],
+class TwitterAccount(models.Model):
+    name = models.CharField(max_length=200, unique=True, validators=[validate_user],
                             help_text='Do not include "@". Maximum 15 characters (Ex. CNN)')
     class Meta:
         verbose_name = 'Twitter Account'
@@ -71,20 +71,20 @@ class Taccount(models.Model):
         return self.account
 
 
-class Fsite(models.Model):
+class SourceSite(models.Model):
     url = models.URLField(max_length=2000, unique=True, 
                           help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://aljazeera.com)')
     name = models.CharField(max_length=200, 
                             help_text='Your favorable alias of this site.')
     class Meta:
-        verbose_name = 'Foreign Site'
+        verbose_name = 'Source Site'
 
     def __unicode__(self):
         return self.name
 
 
 class Keyword(models.Model):
-    keyword = models.CharField(max_length=200, unique=True, 
+    name = models.CharField(max_length=200, unique=True, 
                             help_text='Case insensitive. Maximum 200 characters (Ex. Canada)')
     
     def __unicode__(self):

@@ -15,7 +15,7 @@ class KeywordInline(admin.TabularInline):
 
 class TweetAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None,               {'fields': ['tweet_id', 'user', 'text', 'followers']}),
+        (None,               {'fields': ['tweet_id', 'name', 'text']}),
         ('Date information', {'fields': ['date_added', 'date_published']})
         ]
 
@@ -23,8 +23,8 @@ class TweetAdmin(admin.ModelAdmin):
 
     list_display = ('link_user', 'link_id', 'text', 'get_keywords', 'get_sources', 'date_published', 'date_added', 'link_options')
 
-    search_fields = ['tweet_id', 'text', 'user', 'keyword__keyword', 'source__url']
-    list_filter = ['user', 'keyword__keyword', 'source__url_origin']
+    search_fields = ['tweet_id', 'text', 'user', 'keyword__name', 'source__url']
+    list_filter = ['name', 'keyword__name', 'source__domain']
     ordering = ['-date_added']
     actions_on_top = True
 
@@ -36,7 +36,7 @@ class TweetAdmin(admin.ModelAdmin):
         return keywords[:-2]
 
     get_keywords.short_description = 'Matched Keywords'
-    get_keywords.admin_order_field = 'keyword__keyword'
+    get_keywords.admin_order_field = 'keyword__name'
 
     def get_sources(self, obj):
         sources = ''
@@ -66,7 +66,7 @@ class TweetAdmin(admin.ModelAdmin):
                                                obj.user))
 
     link_user.allow_tags = True
-    link_user.admin_order_field = 'user'
+    link_user.admin_order_field = 'name'
     link_user.short_description = "User"
 
 

@@ -1,15 +1,15 @@
 from django.contrib import admin
-from explorer.models import Msite, Fsite, Keyword, Taccount
+from explorer.models import ReferringSite, SourceSite, Keyword, TwitterAccount
 from articles.models import Article
-from articles.models import Source as ASource
-from articles.models import Keyword as AKeyword
+from articles.models import Source as ArticleSource
+from articles.models import Keyword as ArticleKeyword
 from tweets.models import Tweet
-from tweets.models import Source as TSource
-from tweets.models import Keyword as TKeyword
+from tweets.models import Source as TwitterSource
+from tweets.models import Keyword as TwitterKeyword
 
 from django.utils import timezone
 
-class MsiteAdmin(admin.ModelAdmin):
+class ReferringSiteAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['url', 'name']})
         ]
@@ -20,13 +20,13 @@ class MsiteAdmin(admin.ModelAdmin):
 
 
     def article_count(self, obj):
-        return len(Article.objects.filter(url_origin=obj.url))
+        return len(Article.objects.filter(domain=obj.url))
 
     article_count.short_description = "Total Articles Archived"
 
 
     def latest_article(self, obj):
-        latest = Article.objects.filter(url_origin=obj.url)
+        latest = Article.objects.filter(domain=obj.url)
         if latest:
             delta = timezone.now() - latest.latest('date_added').date_added
             t1 = delta.days             # Days
@@ -39,7 +39,7 @@ class MsiteAdmin(admin.ModelAdmin):
     latest_article.short_description = 'Last Found'
 
 
-class FsiteAdmin(admin.ModelAdmin):
+class SourceSiteAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['url', 'name']})
         ]
@@ -49,46 +49,46 @@ class FsiteAdmin(admin.ModelAdmin):
     actions_on_top = True
 
     def cited_count(self, obj):
-        return len(ASource.objects.filter(url_origin=obj.url)) + \
-               len(TSource.objects.filter(url_origin=obj.url))
+        return len(ArticleSource.objects.filter(domain=obj.url)) + \
+               len(TwitterSource.objects.filter(domain=obj.url))
 
     cited_count.short_description = "Total Cites"
 
 
 class KeywordAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None,               {'fields': ['keyword']})
+        (None,               {'fields': ['name']})
         ]
 
 
-    list_display = ['keyword', 'match_count']
-    search_fields = ['keyword']
+    list_display = ['name', 'match_count']
+    search_fields = ['name']
     actions_on_top = True
 
     def match_count(self, obj):
-        return len(AKeyword.objects.filter(keyword=obj.keyword)) + \
-               len(TKeyword.objects.filter(keyword=obj.keyword))
+        return len(ArticleKeyword.objects.filter(name=obj.name)) + \
+               len(TwitterKeyword.objects.filter(name=obj.name))
 
     match_count.short_description = "Total Matches"
 
-class TaccountAdmin(admin.ModelAdmin):
+class TwitterAccountAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None,               {'fields': ['account']})
+        (None,               {'fields': ['name']})
         ]
 
 
-    list_display = ['account', 'tweet_count', 'latest_tweet']
-    search_fields = ['account']
+    list_display = ['name', 'tweet_count', 'latest_tweet']
+    search_fields = ['name']
     actions_on_top = True
 
     def tweet_count(self, obj):
-        return len(Tweet.objects.filter(user=obj.account))
+        return len(Tweet.objects.filter(name=obj.name))
 
     tweet_count.short_description = "Total Tweets Archived"
 
 
     def latest_tweet(self, obj):
-        latest = Tweet.objects.filter(user=obj.account)
+        latest = Tweet.objects.filter(name=obj.name)
         if latest:
             delta = timezone.now() - latest.latest('date_added').date_added
             t1 = delta.days             # Days
@@ -101,7 +101,7 @@ class TaccountAdmin(admin.ModelAdmin):
     latest_tweet.short_description = 'Last Found'
 
 
-admin.site.register(Msite, MsiteAdmin)
-admin.site.register(Fsite, FsiteAdmin)
+admin.site.register(ReferringSite, ReferringSiteAdmin)
+admin.site.register(SourceSite, SourceSiteAdmin)
 admin.site.register(Keyword, KeywordAdmin)
-admin.site.register(Taccount, TaccountAdmin)
+admin.site.register(TwitterAccount, TwitterAccountAdmin)
