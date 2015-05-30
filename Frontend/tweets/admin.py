@@ -62,8 +62,8 @@ class TweetAdmin(admin.ModelAdmin):
     link_id.short_description = "Tweet ID"
 
     def link_user(self, obj):
-        return format('<a href="%s" target="_blank">%s</a>' % ("https://twitter.com/" + obj.user,
-                                               obj.user))
+        return format('<a href="%s" target="_blank">%s</a>' % ("https://twitter.com/" + obj.name,
+                                               obj.name))
 
     link_user.allow_tags = True
     link_user.admin_order_field = 'name'
@@ -72,7 +72,7 @@ class TweetAdmin(admin.ModelAdmin):
 
     def link_options(self, obj):
         return format(('<a href="/admin/tweets/tweet/%s">Details</a><br>' +\
-                       '<a href="/tweets/warc/%s">Download</a>') % (str(obj.pk), 'https:__twitter.com_' + obj.user + '_status_' + str(obj.tweet_id)))
+                       '<a href="/tweets/warc/%s">Download</a>') % (str(obj.pk), 'https:__twitter.com_' + obj.name + '_status_' + str(obj.tweet_id)))
 
 
     link_options.allow_tags = True

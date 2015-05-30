@@ -107,7 +107,7 @@ SUIT_CONFIG = {
 
     'MENU': (
         {'label': 'Scope', 'icon':'icon-screenshot', 
-         'models': ('explorer.msite', 'explorer.taccount', 'explorer.fsite', 'explorer.keyword')},
+         'models': ('explorer.referringsite', 'explorer.twitteraccount', 'explorer.sourcesite', 'explorer.keyword')},
         
         {'label': 'Data', 'icon':'icon-book', 'models': ('articles.article', 'tweets.tweet')},
 
