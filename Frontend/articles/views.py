@@ -16,19 +16,19 @@ def index(request):
 def getJson(request):
     articles = {}
     for art in Article.objects.all():      
-        articles[art.url] = {'site': art.url_origin, 'title': art.title, 
+        articles[art.url] = {'site': art.domain, 'title': art.title, 
                              'date_added': str(art.date_added),
                              'date_published': str(art.date_published),
-                             'influence': art.influence, 'matched_keywords': [],
+                             'matched_keywords': [],
                              'matched_sources': [], 'authors': []}
 
     for key in Keyword.objects.all():
-        articles[key.article.url]['matched_keywords'].append(key.keyword)
+        articles[key.article.url]['matched_keywords'].append(key.name)
     for src in Source.objects.all():
         articles[src.article.url]['matched_sources'].append({'url':src.url, 
-                                                             'site': src.url_origin})
+                                                             'site': src.domain})
     for ath in Author.objects.all():
-        articles[ath.article.url]['authors'].append(ath.author)
+        articles[ath.article.url]['authors'].append(ath.name)
 
     res = HttpResponse(json.dumps(articles, indent=4, sort_keys=True))
     res['Content-Disposition'] = format('attachment; filename=articles-%s.json' 
