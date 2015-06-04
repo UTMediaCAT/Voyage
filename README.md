@@ -35,12 +35,12 @@ If any problem occurs, please contact one of us on the email address listed abov
 
 You can now access the server through http://IP:PORT/admin
 
-The default is [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
+The default is [http://127.0.0.1/admin](http://127.0.0.1/admin)
 
 
 __Default Login Credentials:__
-* User: acme
-* Password: cscc01
+* User: admin
+* Password: admin
 
 ##Configuration
 You can edit the config.yaml file for personal settings
@@ -50,9 +50,9 @@ You can edit the config.yaml file for personal settings
 Here you can view your action history and quick navigations to the database
 ####Scope
 Here, you can view and edit 4 requirement to explore:
-* __Monitoring Sites__: The sites in which explorer will look into. It will automatically get validated when adding.
+* __Referring Sites__: The sites in which explorer will look into. It will automatically get validated when adding.
 * __Twitter Accounts__: The twitter accounts which explorer will look into. It will automatically be validated when adding.
-* __Foreign Sites__: The sites which explorer looks for in the articles/tweets if they are used as source.
+* __Source Sites__: The sites which explorer looks for in the articles/tweets if they are used as source.
 * __Keywords__: The words which explorer look for in the articles/tweets if they are used.
 
 ####Data
@@ -73,7 +73,7 @@ Furthermore, users can have different _permissions_.
 
 ## Exploring
 Once your scope is ready, you may start exploring by clicking __Run__ on the status bar.
-* __Article Explorer__ will explore through the _Monitoring Sites_ for articles
+* __Article Explorer__ will explore through the _Referring Sites_ for articles
 * __Twitter Explorer__ will explore through _Twitter_ for _Twitter Accounts's_ posts
 
 ___
