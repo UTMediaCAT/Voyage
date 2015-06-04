@@ -318,7 +318,7 @@ def explore():
 
     # Retrieve and store foreign site information
     foreign_sites = []
-    fsites = Fsite.objects.all()
+    fsites = SourceSite.objects.all()
     for site in fsites:
         # foreign_sites is now in form ['URL', ...]
         foreign_sites.append(site.url)
