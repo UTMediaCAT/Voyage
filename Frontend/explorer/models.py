@@ -68,7 +68,7 @@ class TwitterAccount(models.Model):
         verbose_name = 'Twitter Account'
 
     def __unicode__(self):
-        return self.account
+        return self.name
 
 
 class SourceSite(models.Model):
@@ -88,5 +88,5 @@ class Keyword(models.Model):
                             help_text='Case insensitive. Maximum 200 characters (Ex. Canada)')
     
     def __unicode__(self):
-        return self.keyword
+        return self.name
 
