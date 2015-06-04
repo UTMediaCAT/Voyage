@@ -71,7 +71,7 @@
         var data = new google.visualization.DataTable();
 
             data.addColumn('date', 'Date');            
-            var sites = {{ monitoring_sites|safe }}.slice(0)
+            var sites = {{ referring_sites|safe }}.slice(0)
             for (var i=0; i < sites.length; i++) {
                 data.addColumn('number', String(sites[i]));
             }
@@ -163,7 +163,7 @@
         <h1 align="center">Number of Articles Added Vs. Time</h1>
         <div style="margin: 5%; font-size: 150%">
             <p>
-              This chart shows the number of articles added at particular time. Each node represents one monitoring site. Top right of the screen shows the count of the articles per monitoring site when you hover over chart.
+              This chart shows the number of articles added at particular time. Each node represents one referring site. Top right of the screen shows the count of the articles per referring site when you hover over chart.
               You can select the time period using the buttons on the top right. Also, you can drag the slider at the bottom of the screen.
             </p>
         </div>
@@ -191,8 +191,8 @@
         <h1 align="center">Top 10 Foreign Sites Distribution</h1>
         <div style="margin: 5%; font-size: 150%">
             <p>
-              This chart displays top 10 foreign sites based on the frequency of their occurrence in the articles.
-              The right side contains the legend of all the foreign sites. Hover over the chart for details.
+              This chart displays top 10 source sites based on the frequency of their occurrence in the articles.
+              The right side contains the legend of all the source sites. Hover over the chart for details.
             </p>
         </div>
         <div style="width: 100%; height: 70em; position: relative">

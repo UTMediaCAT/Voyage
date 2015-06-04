@@ -41,13 +41,13 @@ def article_spacetree_js(request):
         return redirect('/admin/login/?next=%s' % request.path)
 
     if request.method == 'POST':
-        data, msites = visualizer.article_spacetree(request.POST.get('msite'))
+        data, referringSites = visualizer.article_spacetree(request.POST.get('referringSite'))
     else:
-        data, msites = visualizer.article_spacetree(None)
+        data, referringSites = visualizer.article_spacetree(None)
 
     data = json.dumps(data)
 
-    context = {'data': data, 'msites': msites}
+    context = {'data': data, 'referringSites': referringSites}
     return render(request, 'visualizations/article_spacetree_js.html', context)
 
 def article_weightedtree(request):
@@ -63,12 +63,12 @@ def article_weightedtree_js(request):
         return redirect('/admin/login/?next=%s' % request.path)
 
     if request.method == 'POST':
-        data, msites = visualizer.article_weightedtree(request.POST.get('msite'))
+        data, referringSites = visualizer.article_weightedtree(request.POST.get('referringSite'))
     else:
-        data, msites = visualizer.article_weightedtree(None)
+        data, referringSites = visualizer.article_weightedtree(None)
     data = json.dumps(data)
 
-    context = {'data': data, 'msites': msites}
+    context = {'data': data, 'referringSites': referringSites}
     return render(request, 'visualizations/article_weightedtree_js.html', context)
 
 def article_forcegraph(request):
@@ -84,12 +84,12 @@ def article_forcegraph_js(request):
         return redirect('/admin/login/?next=%s' % request.path)
 
     if request.method == 'POST':
-        data, msites = visualizer.article_forcegraph(request.POST.get('msite'))
+        data, referringSites = visualizer.article_forcegraph(request.POST.get('referringSite'))
     else:
-        data, msites = visualizer.article_forcegraph(None)
+        data, referringSites = visualizer.article_forcegraph(None)
     data = json.dumps(data)
 
-    context = {'data': data, 'msites': msites}
+    context = {'data': data, 'referringSites': referringSites}
 
     return render(request, 'visualizations/article_forcegraph_js.html', context)
 

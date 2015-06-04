@@ -143,7 +143,7 @@ def msites_bar_chart():
 
     data = []
     #add the names of x-axis and y-axis for the bar chart.
-    data.append (["Foreign Sites", "Number of Foreign Sites Matched"])
+    data.append (["Source Sites", "Number of Source Sites Matched"])
 
     #get all monitoring sites
     fsites = SourceSite.objects.all()
@@ -205,7 +205,7 @@ def tweets_annotation_chart():
 def follower_bar_chart():
 
     data = []
-    data.append (["Foreign Sites","Number of source matched"])
+    data.append (["Source Sites","Number of source matched"])
 
     accounts = TwitterAccount.objects.all()
     for account in accounts:
@@ -220,7 +220,7 @@ def follower_bar_chart():
 
 def article_bubble_chart():
     data = []
-    first = ['ID', 'Number of Keywords Matched', 'Number of Source Matched', 'Monitoring Sites']
+    first = ['ID', 'Number of Keywords Matched', 'Number of Source Matched', 'Referring Sites']
     data.append(first)
 
     ReferringSites  = ReferringSite.objects.all()

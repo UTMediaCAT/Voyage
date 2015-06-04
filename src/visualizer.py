@@ -21,13 +21,13 @@ from tweets.models import Source as TwitterSource
 
 def article_hypertree():
     '''(None) -> dict of dict of dict of obj
-    Filters articles per monitoring site and generates a
-    3d dict of relation with the foreign site that is used by
+    Filters articles per referring site and generates a
+    3d dict of relation with the source site that is used by
     JIT graphing library to create graph
     '''
     msites = []
 
-    # for all the monitoring sites
+    # for all the referring sites
     for msite in ReferringSite.objects.all():
         # create a node with an empty array for the children
         data = {}
@@ -59,15 +59,15 @@ def article_hypertree():
 
         msites.append(data)
 
-    data = {"id": "ReferringSites", "name": "Monitoring Sites", "children": msites,
-            "relation": "Monitoring Sites"}
+    data = {"id": "ReferringSites", "name": "Referring Sites", "children": msites,
+            "relation": "Referring Sites"}
 
     return data
 
 
 def article_spacetree(site):
     '''(str) -> dict of dict of dict of obj
-    Filters articles per monitoring site and generates a
+    Filters articles per referring site and generates a
     3d dict of relation with the keywords that is used by
     JIT graphing library to create graph
     '''
@@ -77,7 +77,7 @@ def article_spacetree(site):
     else:
         msites = ReferringSite.objects.filter(name=site)
 
-    # for all the monitoring sites matching the site
+    # for all the referring sites matching the site
     for msite in msites:
         # create a node with an empty array for the children
         site_data = {}
@@ -112,9 +112,9 @@ def article_spacetree(site):
     if site is None:
         data = {
             "id": "ReferringSites",
-            "name": "Monitoring Sites",
+            "name": "Referring Sites",
             "children": data,
-            "relation": "Monitoring Sites"}
+            "relation": "Referring Sites"}
     else:
         if len(data) != 0:
             data = data[0]
@@ -126,8 +126,8 @@ def article_spacetree(site):
 
 def article_weightedtree(site):
     '''(str) -> dict of dict of dict of obj
-    Filters articles per monitoring site and generates a
-    3d dict of relation with the keywords and foreign sites that is used by
+    Filters articles per referring site and generates a
+    3d dict of relation with the keywords and source sites that is used by
     JIT graphing library to create graph
     '''
     msites = []
@@ -209,8 +209,8 @@ def article_weightedtree(site):
 
 def article_forcegraph(site):
     '''(str) -> dict of dict of dict of obj
-    Filters articles per monitoring site and generates a
-    3d dict of relation with the keywords and foreign sites that is used by
+    Filters articles per referring site and generates a
+    3d dict of relation with the keywords and source sites that is used by
     JIT graphing library to create graph
     '''
     msites = []
@@ -294,8 +294,8 @@ def article_forcegraph(site):
 
 def tweet_hypertree():
     '''(str) -> dict of dict of dict of obj
-    Filters tweets per monitoring twitter account and generates a
-    3d dict of relation with the foreign sites that is used by
+    Filters tweets per referring twitter account and generates a
+    3d dict of relation with the source sites that is used by
     JIT graphing library to create graph
     '''
     taccounts = []
@@ -334,14 +334,14 @@ def tweet_hypertree():
         "id": "TwitterAccounts",
         "name": "Twitter Accounts",
         "children": taccounts,
-        "relation": "Monitoring Twitter Accounts"}
+        "relation": "Referring Twitter Accounts"}
 
     return data
 
 
 def tweet_spacetree(account):
     '''(str) -> dict of dict of dict of obj
-    Filters tweets per monitoring twitter account and generates a
+    Filters tweets per referring twitter account and generates a
     3d dict of relation with the keywords that is used by
     JIT graphing library to create graph
     '''
@@ -381,7 +381,7 @@ def tweet_spacetree(account):
 
     if account is None:
         data = {"id": "TwitterAccounts", "name": "Twitter Accounts",
-                "children": data, "relation": "Monitoring Twitter Accounts"}
+                "children": data, "relation": "Referring Twitter Accounts"}
     else:
         if len(data) != 0:
             data = data[0]
@@ -393,8 +393,8 @@ def tweet_spacetree(account):
 
 def tweet_weightedtree(account):
     '''(str) -> dict of dict of dict of obj
-    Filters tweets per monitoring twitter account and generates a
-    3d dict of relation with the keywords and foreign sites that is used by
+    Filters tweets per referring twitter account and generates a
+    3d dict of relation with the keywords and source sites that is used by
     JIT graphing library to create graph
     '''
     taccounts = []
@@ -476,8 +476,8 @@ def tweet_weightedtree(account):
 
 def tweet_forcegraph(account):
     '''(str) -> dict of dict of dict of obj
-    Filters tweets per monitoring twitter account and generates a
-    3d dict of relation with the keywords and foreign sites that is used by
+    Filters tweets per referring twitter account and generates a
+    3d dict of relation with the keywords and source sites that is used by
     JIT graphing library to create graph
     '''
     taccounts = []

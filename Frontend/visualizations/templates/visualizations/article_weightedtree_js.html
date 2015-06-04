@@ -139,18 +139,18 @@
                 Article - Weighted    
                 </h4> 
 
-                This graph has a node for all Monitoring Sites(Blue) connected with the
-                Foreign Sites(Red) and Keywords(Green) that were used in them. The size of the node is determined
-                by the number of times that Keyword/Foreign Site was used in the Monitoring Site. 
+                This graph has a node for all Referring Sites(Blue) connected with the
+                Source Sites(Red) and Keywords(Green) that were used in them. The size of the node is determined
+                by the number of times that Keyword/Source Site was used in the Referring Site. 
                 You can also choose a particular 
-                Monitoring Site using the drop down list below.<br />
+                Referring Site using the drop down list below.<br />
 
-                <h4>Monitoring Site</h4>
+                <h4>Referring Site</h4>
                 <form method="post" action="/visualizations/article_weightedtree_js">
                     {% csrf_token %}
-                    <select name="msite" onchange="this.form.submit()">
+                    <select name="referringSite" onchange="this.form.submit()">
                         <option type="submit" value="NONE">Select</option>
-                    {% for site in msites %}
+                    {% for site in referringSites %}
                         <option type="submit" value="{{ site.name }}">{{ site.name }}</option>
                     {% endfor %}
                     </select>

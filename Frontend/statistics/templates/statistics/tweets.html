@@ -71,7 +71,7 @@
         var data = new google.visualization.DataTable();
 
             data.addColumn('date', 'Date');            
-            var sites = {{ monitoring_acounts|safe }}.slice(0)
+            var sites = {{ referring_acounts|safe }}.slice(0)
             for (var i=0; i < sites.length; i++) {
                 data.addColumn('number', String(sites[i]));
             }
@@ -106,7 +106,7 @@
         <h1 align="center">Number of Tweets Added Vs. Time</h1>
         <div style="margin: 5%; font-size: 150%">
             <p>
-              This chart shows the number of tweets added at particular time. Each node represents one monitoring twitter account. Top right of the screen shows the count of the tweets per twitter account when you hover over chart.
+              This chart shows the number of tweets added at particular time. Each node represents one referring twitter account. Top right of the screen shows the count of the tweets per twitter account when you hover over chart.
               You can select the time period using the buttons on the top right. Also, you can drag the slider at the bottom of the screen.
             </p>
         </div>

@@ -215,13 +215,13 @@
             <h4>
             Tweet - Movable  
             </h4> 
-            This graph has a node for all Monitoring Twitter Accounts(Blue) connected with the
-            Foreign Sites(Red) and Keywords(Green) that were used in them. The size of the node is determined
-            by the number of times that Keyword/Foreign Site was used in the tweets. 
+            This graph has a node for all Referring Twitter Accounts(Blue) connected with the
+            Source Sites(Red) and Keywords(Green) that were used in them. The size of the node is determined
+            by the number of times that Keyword/Source Site was used in the tweets. 
             You can also choose a particular 
             Twitter Account using the drop down list below.<br />
 
-            <h4>Monitoring Twitter Account</h4>
+            <h4>Referring Twitter Account</h4>
             <form method="post" action="/visualizations/tweet_forcegraph_js">
               {% csrf_token %}
               <select name="taccount" onchange="this.form.submit()">

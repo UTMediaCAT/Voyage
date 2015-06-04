@@ -11,3 +11,4 @@ pip install --user python-dateutil==1.5
 pip install --user tld==0.7.2
 pip install --user pyyaml==3.11
 pip install --user django-suit==0.2.11
+pip install --user pytz==2015.4
