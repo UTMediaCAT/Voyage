@@ -42,9 +42,9 @@ import django
 os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 # For Models connecting with the Django Database
 from articles.models import*
-from articles.models import Keyword as A_keyword
+from articles.models import Keyword as ArticleKeyword
 from explorer.models import*
-from explorer.models import Keyword as E_keyword
+from explorer.models import Keyword as ExplorerKeyword
 # To load configurations
 import yaml
 # To store the article as warc files
@@ -151,7 +151,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                         # If the article is new to the database,
                         # add it to the database
                         article = Article(title=title, url=url,
-                                          url_origin=site[2],
+                                          domain=site[2],
                                           date_added=timezone.localtime(
                                               timezone.now()),
                                           date_published=pub_date)
@@ -160,14 +160,14 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                         article = Article.objects.get(url=url)
 
                         for key in keywords:
-                            article.keyword_set.create(keyword=key)
+                            article.keyword_set.create(name=key)
 
                         for author in authors:
-                            article.author_set.create(author=author)
+                            article.author_set.create(name=author)
 
                         for source in sources:
                             article.source_set.create(url=source[0],
-                                                      url_origin=source[1])
+                                                      domain=source[1])
 
                         added += 1
 
@@ -177,24 +177,24 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                         article = article_list[0]
                         article.title = title
                         article.url = url
-                        article.url_origin = site[2]
+                        article.domain = site[2]
                         # Do not update the added date
                         # article.date_added = today
                         article.date_published = pub_date
                         article.save()
 
                         for key in keywords:
-                            if not A_keyword.objects.filter(keyword=key):
-                                article.keyword_set.create(keyword=key)
+                            if not ArticleKeyword.objects.filter(name=key):
+                                article.keyword_set.create(name=key)
 
                         for author in authors:
-                            if not Author.objects.filter(author=author):
-                                article.author_set.create(author=author)
+                            if not Author.objects.filter(name=author):
+                                article.author_set.create(name=author)
 
                         for source in sources:
                             if not Source.objects.filter(url=source[0]):
                                 src = article.source_set.create(url=source[0])
-                                src.url_origin = source[1]
+                                src.domain = source[1]
 
                     warc_creator.create_article_warc(url)
 
@@ -311,7 +311,7 @@ def explore():
 
     # Retrieve and store monitoring site information
     monitoring_sites = []
-    msites = Msite.objects.all()
+    msites = ReferringSite.objects.all()
     for site in msites:
         # monitoring_sites is now in form [['Name', 'URL'], ...]
         monitoring_sites.append([site.name, site.url])
@@ -325,9 +325,9 @@ def explore():
 
     # Retrieve all stored keywords
     keyword_list = []
-    keywords = E_keyword.objects.all()
+    keywords = ExplorerKeyword.objects.all()
     for key in keywords:
-        keyword_list.append(str(key.keyword))
+        keyword_list.append(str(key.name))
 
     # Populate the monitoring sites with articles
     populated_sites = populate_sites(monitoring_sites)

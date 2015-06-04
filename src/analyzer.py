@@ -2,13 +2,13 @@ import django
 import re
 import operator
 from articles.models import*
-from articles.models import Keyword as A_Keyword
-from articles.models import Source as A_Source
+from articles.models import Keyword as ArticleKeyword
+from articles.models import Source as ArticleSource
 from explorer.models import*
-from explorer.models import Keyword as E_Keyword
+from explorer.models import Keyword as ExplorerKeyword
 
 from tweets.models import*
-from tweets.models import Keyword as T_Keyword
+from tweets.models import Keyword as TwitterKeyword
 import time
 
 def articles_keywords_pie_chart():
@@ -18,16 +18,16 @@ def articles_keywords_pie_chart():
     '''
     data_dict = {}
     #get all keywords matched in the articles
-    keywords = A_Keyword.objects.all()
+    keywords = ArticleKeyword.objects.all()
     
     #loop trough the keywords
     for ele in keywords:
         #if the keyword hasn't been found yet,then add it to dict with count 1.
-        if not ele.keyword in data_dict.keys():
-            data_dict[ele.keyword] = 1
+        if not ele.name in data_dict.keys():
+            data_dict[ele.name] = 1
         else:
         #if it has been found, then add 1 to the count of the keywords.
-            data_dict[ele.keyword] += 1
+            data_dict[ele.name] += 1
     #sort keywords by the number of count for each keyword
     sorted_data = sorted(data_dict.items(), key=operator.itemgetter(1), reverse=True)
     sorted_data_dict = dict(sorted_data)
@@ -57,15 +57,15 @@ def tweets_keywords_pie_chart():
     '''
     data_dict = {}
     #get all keywords matched in the tweet
-    keywords = T_Keyword.objects.all()
+    keywords = TwitterKeyword.objects.all()
     #loop trough the keywords   
     for ele in keywords:
         #if the keyword hasn't been found yet,then add it to dict with count 1.
-        if not ele.keyword in data_dict.keys():
-            data_dict[ele.keyword] = 1
+        if not ele.name in data_dict.keys():
+            data_dict[ele.name] = 1
         else:
         #if it has been found, then add 1 to the count of the keywords.
-            data_dict[ele.keyword] += 1
+            data_dict[ele.name] += 1
     #sort keywords by the number of count for each keyword
     sorted_data = sorted(data_dict.items(), key=operator.itemgetter(1), reverse=True)
 
@@ -95,10 +95,10 @@ def articles_annotation_chart():
     a list of list, where the inner list contains the name of keyword, and the number of matches.    
     '''
     #get all monitoring sites
-    Msites  = Msite.objects.all()
+    ReferringSites  = ReferringSite.objects.all()
     urls = []
     #loop through monitoring sites
-    for element in Msites:
+    for element in ReferringSites:
         urls.append([element.url.encode("utf-8"), Article.objects.filter(url = element.url).count(), element.name.encode("utf-8")])
     
     #sort the monitoring sites by the number of articles they have.
@@ -130,7 +130,7 @@ def articles_annotation_chart():
             new.append(date)
             for url in urls:
                 #count the number of articles added on that day, and add to the list.
-                new.append(Article.objects.filter(url_origin = url, date_added__day = day, date_added__month = month, date_added__year = year).count())
+                new.append(Article.objects.filter(domain = url, date_added__day = day, date_added__month = month, date_added__year = year).count())
             data.append(new)
 
     return msites_name, data
@@ -146,10 +146,10 @@ def msites_bar_chart():
     data.append (["Foreign Sites", "Number of Foreign Sites Matched"])
 
     #get all monitoring sites
-    fsites = Fsite.objects.all()
+    fsites = SourceSite.objects.all()
     #loop through monitoring sites
     for site in fsites:
-        source_number = A_Source.objects.filter(url_origin = site.url).count()
+        source_number = ArticleSource.objects.filter(domain = site.url).count()
         data.append([site.name.encode("utf-8"), source_number])
     #sort monitoring sites by the number of articles
         data.sort(key = lambda x: x[1], reverse=True)
@@ -163,11 +163,11 @@ def tweets_annotation_chart():
     a list of list, where the inner list contains the name of keyword, and the number of matches.    
     '''
     #get all twitter accounts
-    Taccounts  = Taccount.objects.all()
+    TwitterAccounts  = TwitterAccount.objects.all()
     accounts = []
     #loop through twitter accounts
-    for element in Taccounts:
-        accounts.append([element.account.encode("utf-8"), Tweet.objects.filter(user = element.account).count()])
+    for element in TwitterAccounts:
+        accounts.append([element.name.encode("utf-8"), Tweet.objects.filter(name = element.name).count()])
     #sort the twitter accountsby the number of tweets they have.
     accounts.sort(key = lambda x: x[1], reverse=True)
     #get top 10 monitoring sites based on the number of tweets
@@ -193,7 +193,7 @@ def tweets_annotation_chart():
             new.append(date)
             for account in accounts:
                 #count the number of tweets added on that day, and add to the list.
-                new.append(Tweet.objects.filter(user = account, date_added__day = day, date_added__month = month, date_added__year = year).count())
+                new.append(Tweet.objects.filter(name = account, date_added__day = day, date_added__month = month, date_added__year = year).count())
             data.append(new)
 
     return accounts, data
@@ -207,12 +207,12 @@ def follower_bar_chart():
     data = []
     data.append (["Foreign Sites","Number of source matched"])
 
-    accounts = Taccount.objects.all()
+    accounts = TwitterAccount.objects.all()
     for account in accounts:
-        twts = Tweet.objects.filter(user = account.account)
+        twts = Tweet.objects.filter(name = account.name)
         if not len(twts) == 0:
             source_number = twts[0].followers
-        data.append([account.account.encode("utf-8"), source_number])
+        data.append([account.name.encode("utf-8"), source_number])
     data.sort(key = lambda x: x[1], reverse=True)
 
     return data[0:11]
@@ -223,20 +223,20 @@ def article_bubble_chart():
     first = ['ID', 'Number of Keywords Matched', 'Number of Source Matched', 'Monitoring Sites']
     data.append(first)
 
-    Msites  = Msite.objects.all()
-    keywords = E_Keyword.objects.all()
-    fsites = Fsite.objects.all()
+    ReferringSites  = ReferringSite.objects.all()
+    keywords = ExplorerKeyword.objects.all()
+    fsites = SourceSite.objects.all()
 
 
-    for msite in Msites:
+    for msite in ReferringSites:
         new = []
         new.append(msite.name.encode("utf-8"))
-        articles =  Article.objects.filter (url_origin = msite.url)
+        articles =  Article.objects.filter (domain = msite.url)
         count_keyword= 0
         count_source = 0
         for art in articles :
-                count_keyword += A_Keyword.objects.filter(article = art).count()
-                count_source += A_Source.objects.filter(article = art).count()
+                count_keyword += ArticleKeyword.objects.filter(article = art).count()
+                count_source += ArticleSource.objects.filter(article = art).count()
 
         new.append(count_keyword)
         new.append(count_source)

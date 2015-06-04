@@ -23,9 +23,9 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 from django.utils import timezone
 
 from tweets.models import*
-from tweets.models import Keyword as T_keyword
+from tweets.models import Keyword as TwitterKeyword
 from explorer.models import*
-from explorer.models import Keyword as E_keyword
+from explorer.models import Keyword as ExplorerKeyword
 
 # To store the article as warc files
 import warc_creator
@@ -133,14 +133,14 @@ def get_follower_count(screen_name):
             wait_and_resume()
 
 
-def get_keywords(tweet, keywords):
+def geTwitterKeywords(tweet, keywords):
     """ (status, list of str) -> list of str
     Searches and returns keywords contained in the tweet
     Returns empty list otherwise.
 
     Keyword arguments:
     tweet           -- Status structure to be searched through
-    sites           -- List of keywords to look for
+    keywords        -- List of keywords to look for
     """
     matched_keywords = []
 
@@ -265,7 +265,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                                     timezone=timezone.get_fixed_timezone(180)))
             tweet_user = tweet.user.screen_name
             tweet_store_date = timezone.localtime(timezone.now())
-            tweet_keywords = get_keywords(tweet, keywords)
+            tweet_keywords = geTwitterKeywords(tweet, keywords)
             tweet_sources = get_sources(tweet, foreign_sites)
             tweet_text = tweet.text
 
@@ -274,20 +274,20 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                 tweet_list = Tweet.objects.filter(tweet_id=tweet_id)
                 if (not tweet_list):
                     #creating new intry in collection
-                    tweet = Tweet(tweet_id=tweet_id, user=tweet_user,
+                    tweet = Tweet(tweet_id=tweet_id, name=tweet_user,
                                   date_added=tweet_store_date,
                                   date_published=tweet_date,
-                                  followers=tweet_followers, text=tweet_text)
+                                  text=tweet_text)
                     tweet.save()
 
                     tweet = Tweet.objects.get(tweet_id=tweet_id)
 
                     for key in tweet_keywords:
-                        tweet.keyword_set.create(keyword=key)
+                        tweet.keyword_set.create(name=key)
 
                     for source in tweet_sources:
                         tweet.source_set.create(url=source[0],
-                                                url_origin=source[1])
+                                                domain=source[1])
 
                     added += 1
 
@@ -296,24 +296,23 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                     tweet = tweet_list[0]
                     tweet.text = tweet_text
                     tweet.tweet_id = tweet_id
-                    tweet.user = tweet_user
+                    tweet.name = tweet_user
                     # tweet.date_added = tweet_store_date
                     tweet.date_published = tweet_date
-                    tweet.followers = tweet_followers
                     tweet.save()
 
                     for key in tweet_keywords:
-                        if not T_keyword.objects.filter(keyword=key):
-                            tweet.keyword_set.create(keyword=key)
+                        if not TwitterKeyword.objects.filter(name=key):
+                            tweet.keyword_set.create(name=key)
 
                     for source in tweet_sources:
                         if not Source.objects.filter(url=source[0]):
                             tweet.source_set.create(
-                                url=source[0], url_origin=source[1])
+                                url=source[0], domain=source[1])
                     updated += 1
 
                 warc_creator.create_twitter_warc(
-                    'https://twitter.com/' + tweet.user + '/status/' +
+                    'https://twitter.com/' + tweet.name + '/status/' +
                     str(tweet_id))
             else:
                 no_match += 1
@@ -340,7 +339,7 @@ def explore(tweet_number):
     # Connects to Site Database
 
     monitoring_sites = []
-    msites = Msite.objects.all()
+    msites = ReferringSite.objects.all()
     # Retrieve, store, and print monitoring site information
     for site in msites:
         # monitoring_sites is now in form [['Name', 'URL'], ...]
@@ -348,24 +347,24 @@ def explore(tweet_number):
 
     foreign_sites = []
     # Retrieve, store, and print foreign site information
-    fsites = Fsite.objects.all()
+    fsites = SourceSite.objects.all()
     for site in fsites:
         # foreign_sites is now in form ['URL', ...]
         foreign_sites.append(site.url)
 
     # Retrieve all stored keywords
-    keywords = E_keyword.objects.all()
+    keywords = ExplorerKeyword.objects.all()
     keyword_list = []
 
     for key in keywords:
-        keyword_list.append(str(key.keyword))
+        keyword_list.append(str(key.name))
 
     # Retrieve all stored Accounts
-    accounts = Taccount.objects.all()
+    accounts = TwitterAccount.objects.all()
     accounts_list = []
 
     for account in accounts:
-        accounts_list.append(str(account.account))
+        accounts_list.append(str(account.name))
 
     parse_tweets(accounts_list, keyword_list, foreign_sites, tweet_number)
 

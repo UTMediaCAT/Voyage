@@ -10,13 +10,13 @@ import django
 import re
 
 from articles.models import*
-from articles.models import Keyword as A_Keyword
-from articles.models import Source as A_Source
+from articles.models import Keyword as ArticleKeyword
+from articles.models import Source as ArticleSource
 from explorer.models import*
-from explorer.models import Keyword as E_Keyword
+from explorer.models import Keyword as ExplorerKeyword
 from tweets.models import*
-from tweets.models import Keyword as T_Keyword
-from tweets.models import Source as T_Source
+from tweets.models import Keyword as TwitterKeyword
+from tweets.models import Source as TwitterSource
 
 
 def article_hypertree():
@@ -28,7 +28,7 @@ def article_hypertree():
     msites = []
 
     # for all the monitoring sites
-    for msite in Msite.objects.all():
+    for msite in ReferringSite.objects.all():
         # create a node with an empty array for the children
         data = {}
         data["id"] = msite.url
@@ -38,11 +38,11 @@ def article_hypertree():
 
         fsites_dict = {}
         # gets all articles that match msite
-        for article in Article.objects.filter(url_origin=msite.url):
-            fsites = A_Source.objects.filter(article=article)
+        for article in Article.objects.filter(domain=msite.url):
+            fsites = ArticleSource.objects.filter(article=article)
 
             for fsite in fsites:
-                fsite_name = (Fsite.objects.get(url=fsite.url_origin)).name
+                fsite_name = (SourceSite.objects.get(url=fsite.domain)).name
                 if fsite_name in fsites_dict.keys():
                     fsites_dict[fsite_name].append(fsite)
                 else:
@@ -59,7 +59,7 @@ def article_hypertree():
 
         msites.append(data)
 
-    data = {"id": "Msites", "name": "Monitoring Sites", "children": msites,
+    data = {"id": "ReferringSites", "name": "Monitoring Sites", "children": msites,
             "relation": "Monitoring Sites"}
 
     return data
@@ -73,9 +73,9 @@ def article_spacetree(site):
     '''
     data = []
     if site is None:
-        msites = Msite.objects.all()
+        msites = ReferringSite.objects.all()
     else:
-        msites = Msite.objects.filter(name=site)
+        msites = ReferringSite.objects.filter(name=site)
 
     # for all the monitoring sites matching the site
     for msite in msites:
@@ -88,14 +88,14 @@ def article_spacetree(site):
 
         keywords_dict = {}
         # gets all articles that match msite
-        for article in Article.objects.filter(url_origin=msite.url):
-            keywords = A_Keyword.objects.filter(article=article)
+        for article in Article.objects.filter(domain=msite.url):
+            keywords = ArticleKeyword.objects.filter(article=article)
 
             for keyword in keywords:
-                if keyword.keyword in keywords_dict.keys():
-                    keywords_dict[keyword.keyword].append(keyword)
+                if keyword.name in keywords_dict.keys():
+                    keywords_dict[keyword.name].append(keyword)
                 else:
-                    keywords_dict[keyword.keyword] = [keyword]
+                    keywords_dict[keyword.name] = [keyword]
 
         # create the fsite dict that is readable by JIT graph library
         for keyword in keywords_dict.keys():
@@ -111,7 +111,7 @@ def article_spacetree(site):
 
     if site is None:
         data = {
-            "id": "Msites",
+            "id": "ReferringSites",
             "name": "Monitoring Sites",
             "children": data,
             "relation": "Monitoring Sites"}
@@ -121,7 +121,7 @@ def article_spacetree(site):
         else:
             data = []
 
-    return data, Msite.objects.all()
+    return data, ReferringSite.objects.all()
 
 
 def article_weightedtree(site):
@@ -134,9 +134,9 @@ def article_weightedtree(site):
     max_dim = 1
 
     if site is None:
-        results = Msite.objects.all()
+        results = ReferringSite.objects.all()
     else:
-        results = Msite.objects.filter(name=site)
+        results = ReferringSite.objects.filter(name=site)
 
     for msite in results:
         # create a node with an empty array for the children
@@ -148,21 +148,21 @@ def article_weightedtree(site):
 
         keywords_dict = {}
         fsites_dict = {}
-        for article in Article.objects.filter(url_origin=msite.url):
-            keywords = A_Keyword.objects.filter(article=article)
-            fsites = A_Source.objects.filter(article=article)
+        for article in Article.objects.filter(domain=msite.url):
+            keywords = ArticleKeyword.objects.filter(article=article)
+            fsites = ArticleSource.objects.filter(article=article)
 
             for keyword in keywords:
-                if keyword.keyword in keywords_dict.keys():
-                    keywords_dict[keyword.keyword].append(keyword)
+                if keyword.name in keywords_dict.keys():
+                    keywords_dict[keyword.name].append(keyword)
                 else:
-                    keywords_dict[keyword.keyword] = [keyword]
+                    keywords_dict[keyword.name] = [keyword]
 
             for fsite in fsites:
-                if fsite.url_origin in fsites_dict.keys():
-                    fsites_dict[fsite.url_origin].append(fsite)
+                if fsite.domain in fsites_dict.keys():
+                    fsites_dict[fsite.domain].append(fsite)
                 else:
-                    fsites_dict[fsite.url_origin] = [fsite]
+                    fsites_dict[fsite.domain] = [fsite]
 
         for keyword in keywords_dict.keys():
             keywords_data = {}
@@ -204,7 +204,7 @@ def article_weightedtree(site):
         msite["data"]["$dim"] = int(
             msite["data"]["$dim"] * 30.0 / max_dim) + 10
 
-    return msites, Msite.objects.all()
+    return msites, ReferringSite.objects.all()
 
 
 def article_forcegraph(site):
@@ -217,9 +217,9 @@ def article_forcegraph(site):
     max_dim = 1
 
     if site is None:
-        results = Msite.objects.all()
+        results = ReferringSite.objects.all()
     else:
-        results = Msite.objects.filter(name=site)
+        results = ReferringSite.objects.filter(name=site)
 
     for msite in results:
         # create a node with an empty array for the children
@@ -231,21 +231,21 @@ def article_forcegraph(site):
 
         keywords_dict = {}
         fsites_dict = {}
-        for article in Article.objects.filter(url_origin=msite.url):
-            keywords = A_Keyword.objects.filter(article=article)
-            fsites = A_Source.objects.filter(article=article)
+        for article in Article.objects.filter(domain=msite.url):
+            keywords = ArticleKeyword.objects.filter(article=article)
+            fsites = ArticleSource.objects.filter(article=article)
 
             for keyword in keywords:
-                if keyword.keyword in keywords_dict.keys():
-                    keywords_dict[keyword.keyword].append(keyword)
+                if keyword.name in keywords_dict.keys():
+                    keywords_dict[keyword.name].append(keyword)
                 else:
-                    keywords_dict[keyword.keyword] = [keyword]
+                    keywords_dict[keyword.name] = [keyword]
 
             for fsite in fsites:
-                if fsite.url_origin in fsites_dict.keys():
-                    fsites_dict[fsite.url_origin].append(fsite)
+                if fsite.domain in fsites_dict.keys():
+                    fsites_dict[fsite.domain].append(fsite)
                 else:
-                    fsites_dict[fsite.url_origin] = [fsite]
+                    fsites_dict[fsite.domain] = [fsite]
 
         for keyword in keywords_dict.keys():
             # create a node with an empty array for the children
@@ -289,7 +289,7 @@ def article_forcegraph(site):
         msite["data"]["$dim"] = int(
             msite["data"]["$dim"] * 30.0 / max_dim) + 10
 
-    return msites, Msite.objects.all()
+    return msites, ReferringSite.objects.all()
 
 
 def tweet_hypertree():
@@ -300,20 +300,20 @@ def tweet_hypertree():
     '''
     taccounts = []
 
-    for account in Taccount.objects.all():
+    for account in TwitterAccount.objects.all():
         # create a node with an empty array for the children
         data = {}
-        data["id"] = account.account
-        data["name"] = account.account
+        data["id"] = account.name
+        data["name"] = account.name
         data["children"] = []
         data["data"] = {"relation": "Sourced"}
 
         fsites_dict = {}
-        for tweet in Tweet.objects.filter(user=account.account):
-            fsites = T_Source.objects.filter(tweet=tweet)
+        for tweet in Tweet.objects.filter(name=account.name):
+            fsites = TwitterSource.objects.filter(tweet=tweet)
 
             for fsite in fsites:
-                fsite_name = (Fsite.objects.get(url=fsite.url_origin)).name
+                fsite_name = (SourceSite.objects.get(url=fsite.domain)).name
                 if fsite_name in fsites_dict.keys():
                     fsites_dict[fsite_name].append(fsite)
                 else:
@@ -331,7 +331,7 @@ def tweet_hypertree():
         taccounts.append(data)
 
     data = {
-        "id": "Taccounts",
+        "id": "TwitterAccounts",
         "name": "Twitter Accounts",
         "children": taccounts,
         "relation": "Monitoring Twitter Accounts"}
@@ -347,26 +347,26 @@ def tweet_spacetree(account):
     '''
     data = []
     if account is None:
-        taccounts = Taccount.objects.all()
+        taccounts = TwitterAccount.objects.all()
     else:
-        taccounts = Taccount.objects.filter(account=account)
+        taccounts = TwitterAccount.objects.filter(name=account)
 
     for taccount in taccounts:
         account_data = {}
-        account_data["id"] = taccount.account
-        account_data["name"] = taccount.account
+        account_data["id"] = taccount.name
+        account_data["name"] = taccount.name
         account_data["children"] = []
         account_data["data"] = {"relation": "Sourced"}
 
         keywords_dict = {}
-        for tweet in Tweet.objects.filter(user=taccount.account):
-            keywords = T_Keyword.objects.filter(tweet=tweet)
+        for tweet in Tweet.objects.filter(name=taccount.name):
+            keywords = TwitterKeyword.objects.filter(tweet=tweet)
 
             for keyword in keywords:
-                if keyword.keyword in keywords_dict.keys():
-                    keywords_dict[keyword.keyword].append(keyword)
+                if keyword.name in keywords_dict.keys():
+                    keywords_dict[keyword.name].append(keyword)
                 else:
-                    keywords_dict[keyword.keyword] = [keyword]
+                    keywords_dict[keyword.name] = [keyword]
 
         for keyword in keywords_dict.keys():
             # create a node with an empty array for the children
@@ -380,7 +380,7 @@ def tweet_spacetree(account):
         data.append(account_data)
 
     if account is None:
-        data = {"id": "Taccounts", "name": "Twitter Accounts",
+        data = {"id": "TwitterAccounts", "name": "Twitter Accounts",
                 "children": data, "relation": "Monitoring Twitter Accounts"}
     else:
         if len(data) != 0:
@@ -388,7 +388,7 @@ def tweet_spacetree(account):
         else:
             data = []
 
-    return data, Taccount.objects.all()
+    return data, TwitterAccount.objects.all()
 
 
 def tweet_weightedtree(account):
@@ -401,35 +401,35 @@ def tweet_weightedtree(account):
     max_dim = 1
 
     if account is None:
-        results = Taccount.objects.all()
+        results = TwitterAccount.objects.all()
     else:
-        results = Taccount.objects.filter(account=account)
+        results = TwitterAccount.objects.filter(name=account)
 
     for taccount in results:
         # create a node with an empty array for the children
         data = {}
-        data["id"] = taccount.account
-        data["name"] = taccount.account
+        data["id"] = taccount.name
+        data["name"] = taccount.name
         data["adjacencies"] = []
         data["data"] = {"$dim": 0, "$type": "triangle", "$color": "#0000FF"}
 
         keywords_dict = {}
         fsites_dict = {}
-        for tweet in Tweet.objects.filter(user=taccount.account):
-            keywords = T_Keyword.objects.filter(tweet=tweet)
-            fsites = T_Source.objects.filter(tweet=tweet)
+        for tweet in Tweet.objects.filter(name=taccount.name):
+            keywords = TwitterKeyword.objects.filter(tweet=tweet)
+            fsites = TwitterSource.objects.filter(tweet=tweet)
 
             for keyword in keywords:
-                if keyword.keyword in keywords_dict.keys():
-                    keywords_dict[keyword.keyword].append(keyword)
+                if keyword.name in keywords_dict.keys():
+                    keywords_dict[keyword.name].append(keyword)
                 else:
-                    keywords_dict[keyword.keyword] = [keyword]
+                    keywords_dict[keyword.name] = [keyword]
 
             for fsite in fsites:
-                if fsite.url_origin in fsites_dict.keys():
-                    fsites_dict[fsite.url_origin].append(fsite)
+                if fsite.domain in fsites_dict.keys():
+                    fsites_dict[fsite.domain].append(fsite)
                 else:
-                    fsites_dict[fsite.url_origin] = [fsite]
+                    fsites_dict[fsite.domain] = [fsite]
 
         for keyword in keywords_dict.keys():
             keywords_data = {}
@@ -471,7 +471,7 @@ def tweet_weightedtree(account):
         taccount["data"]["$dim"] = int(
             taccount["data"]["$dim"] * 30.0 / max_dim) + 10
 
-    return taccounts, Taccount.objects.all()
+    return taccounts, TwitterAccount.objects.all()
 
 
 def tweet_forcegraph(account):
@@ -484,35 +484,35 @@ def tweet_forcegraph(account):
     max_dim = 1
 
     if account is None:
-        results = Taccount.objects.all()
+        results = TwitterAccount.objects.all()
     else:
-        results = Taccount.objects.filter(account=account)
+        results = TwitterAccount.objects.filter(name=account)
 
     for taccount in results:
         # create a node with an empty array for the adjacencies
         data = {}
-        data["id"] = taccount.account
-        data["name"] = taccount.account
+        data["id"] = taccount.name
+        data["name"] = taccount.name
         data["adjacencies"] = []
         data["data"] = {"$dim": 0, "$type": "triangle", "$color": "#0000FF"}
 
         keywords_dict = {}
         fsites_dict = {}
-        for tweet in Tweet.objects.filter(user=taccount.account):
-            keywords = T_Keyword.objects.filter(tweet=tweet)
-            fsites = T_Source.objects.filter(tweet=tweet)
+        for tweet in Tweet.objects.filter(name=taccount.name):
+            keywords = TwitterKeyword.objects.filter(tweet=tweet)
+            fsites = TwitterSource.objects.filter(tweet=tweet)
 
             for keyword in keywords:
-                if keyword.keyword in keywords_dict.keys():
-                    keywords_dict[keyword.keyword].append(keyword)
+                if keyword.name in keywords_dict.keys():
+                    keywords_dict[keyword.name].append(keyword)
                 else:
-                    keywords_dict[keyword.keyword] = [keyword]
+                    keywords_dict[keyword.name] = [keyword]
 
             for fsite in fsites:
-                if fsite.url_origin in fsites_dict.keys():
-                    fsites_dict[fsite.url_origin].append(fsite)
+                if fsite.domain in fsites_dict.keys():
+                    fsites_dict[fsite.domain].append(fsite)
                 else:
-                    fsites_dict[fsite.url_origin] = [fsite]
+                    fsites_dict[fsite.domain] = [fsite]
 
         for keyword in keywords_dict.keys():
             keywords_data = {}
@@ -554,4 +554,4 @@ def tweet_forcegraph(account):
         taccount["data"]["$dim"] = int(
             taccount["data"]["$dim"] * 30.0 / max_dim) + 10
 
-    return taccounts, Taccount.objects.all()
+    return taccounts, TwitterAccount.objects.all()
