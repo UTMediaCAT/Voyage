@@ -119,11 +119,11 @@ SUIT_CONFIG = {
         )},
 
         {'label': 'Visualizations', 'icon':'icon-fullscreen', 'models': (
-            {'label': 'Article - Foreign Site', 'url': '/visualizations/article_hypertree'},
+            {'label': 'Article - Source Site', 'url': '/visualizations/article_hypertree'},
             {'label': 'Article - Keyword', 'url': '/visualizations/article_spacetree'},
             {'label': 'Article - Weighted', 'url': '/visualizations/article_weightedtree'},
             {'label': 'Article - Movable', 'url': '/visualizations/article_forcegraph'},
-            {'label': 'Tweet - Foreign Site', 'url': '/visualizations/tweet_hypertree'},
+            {'label': 'Tweet - Source Site', 'url': '/visualizations/tweet_hypertree'},
             {'label': 'Tweet - Keyword', 'url': '/visualizations/tweet_spacetree'},
             {'label': 'Tweet - Weighted', 'url': '/visualizations/tweet_weightedtree'},
             {'label': 'Tweet - Movable', 'url': '/visualizations/tweet_forcegraph'},

@@ -54,7 +54,7 @@ class TweetAdmin(admin.ModelAdmin):
     get_sources.allow_tags = True
 
     def link_id(self, obj):
-        return format('<a href="%s" target="_blank">%s</a>' % ("https://twitter.com/" + obj.user + "/status/" + str(obj.tweet_id),
+        return format('<a href="%s" target="_blank">%s</a>' % ("https://twitter.com/" + obj.name + "/status/" + str(obj.tweet_id),
                                                obj.tweet_id))
 
     link_id.allow_tags = True
