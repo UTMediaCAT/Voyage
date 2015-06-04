@@ -19,8 +19,8 @@ def articles(request):
     context = {'keywords_pie_chart':  keywords_pie_chart, 
                 'referring_sites': articles_annotation_chart[0], 
                 'article_by_date': articles_annotation_chart[1], 
-                'msites_bar_chart': msites_bar_chart,
-                'msites_bar_table':msites_bar_chart[1:],
+                'referringsite_bar_chart': msites_bar_chart,
+                'referringsite_bar_table':msites_bar_chart[1:],
                 'bar_chart_height': max((len(msites_bar_chart) - 1) * 3, 30),}
 
     return render(request, 'statistics/articles.html', context)
@@ -35,6 +35,6 @@ def tweets(request):
 
 
     context = {'keywords_pie_chart': keywords_pie_chart, 
-                'monitoring_acounts':tweets_annotation_chart[0], 
+                'referring_acounts':tweets_annotation_chart[0], 
                 'tweet_by_date': tweets_annotation_chart[1]}
     return render(request, 'statistics/tweets.html', context)

@@ -100,7 +100,7 @@
       google.load("visualization", "1", {packages:["corechart"]});
       google.setOnLoadCallback(drawChart);
       function drawChart() {
-        var data = google.visualization.arrayToDataTable({{msites_bar_chart|safe}});
+        var data = google.visualization.arrayToDataTable({{referringsite_bar_chart|safe}});
 
         var options = {
           title: 'Top 10 Foreign Sites Distribution',
@@ -125,7 +125,7 @@
             data.addColumn('string', 'Foreign Site');
             data.addColumn('number', 'Number of Matches');
 
-            data.addRows( {{ msites_bar_table|safe }});
+            data.addRows( {{ referringsite_bar_table|safe }});
 
 
             var table = new google.visualization.Table(document.getElementById('table_bar'));
