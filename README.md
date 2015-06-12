@@ -3,16 +3,6 @@ Voyage currently has 2 components:
 * __Web Server__ is capable of editing and displaying all the stored data as well as scopes you will provide to _Explorer_, through your favorite browser. 
 * __Explorer__ searches the web using scopes given through to the _Web Server_ and goes for exploring for you. It will automatically store all relevant informations found on the way, so that you can show all the loot through _Web Server_.
 
-##Team ACME
-
-Username  |Name | Email
---------------|-------------------|--------------------------
-sunakujira1 | Yuya Iwabuchi | yuya.iwabuchi@gmail.com
-sughandj | Jai Sughand | jaisughand@gmail.com
-wangx173 | Xiang Wang | rogerxiang.wang@gmail.com
-kylebsingh | Kyle Bridgemohansingh | bsingh.kyle@gmail.com
-ryanbelt | Ryan Pan | ryanbelt1993129@hotmail.com
-
 ##Requirement
 
 #####[Python 2.7.x](https://www.python.org/downloads/release/python-278/) 
@@ -23,7 +13,7 @@ ryanbelt | Ryan Pan | ryanbelt1993129@hotmail.com
 
 ##Installation
 ####Through terminal
-* Download, extract the __master__ then execute on terminal `python setup.py` 
+* Download, extract the __master__ then execute on terminal `./InstallScript.sh`
 * Done!
 
 If any problem occurs, please contact one of us on the email address listed above.
@@ -78,18 +68,6 @@ Once your scope is ready, you may start exploring by clicking __Run__ on the sta
 
 ___
 ___
-##Task Board
-Our Task Board and Assignment progress is on [Trello](https://trello.com/b/Y08lMCXy/cscc01-acme)
-
-USER: **acmeteam4@gmail.com** Password: **acmeteam4**
-
-In My Boards click **CSCC01-ACME** to see the progress
-
-##Website
-
-Our website is located at [jaisughand.com/voyage](http://jaisughand.com/voyage)
-
-It is organized with all the work in the every Phase so far
 
 ##UnitTest
 Unit test files are located under `src/unit_tests`
