@@ -1,14 +1,13 @@
 #!/bin/bash
-cd /tmp
-wget 'http://bootstrap.pypa.io/get-pip.py'
-python get-pip.py --user
-rm get-pip.py
 
-pip install --user Django==1.7.1
-pip install --user newspaper==0.0.8
-pip install --user tweepy==2.3.0
-pip install --user python-dateutil==1.5
-pip install --user tld==0.7.2
-pip install --user pyyaml==3.11
-pip install --user django-suit==0.2.11
-pip install --user pytz==2015.4
+apt-get install update
+apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev
+
+pip install Django==1.7.1
+pip install newspaper==0.0.8
+pip install tweepy==2.3.0
+pip install python-dateutil==1.5
+pip install tld==0.7.2
+pip install pyyaml==3.11
+pip install django-suit==0.2.11
+pip install pytz==2015.4
