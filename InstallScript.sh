@@ -3,7 +3,7 @@
 set -e
 
 apt-get install update
-apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev
+apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev wget
 
 pip install Django==1.7.1
 pip install newspaper==0.0.8
