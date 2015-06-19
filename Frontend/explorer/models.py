@@ -61,15 +61,23 @@ class ReferringSite(models.Model):
         return self.name
 
 
-class TwitterAccount(models.Model):
+class ReferringTwitter(models.Model):
     name = models.CharField(max_length=200, unique=True, validators=[validate_user],
                             help_text='Do not include "@". Maximum 15 characters (Ex. CNN)')
     class Meta:
-        verbose_name = 'Twitter Account'
+        verbose_name = 'Referring Twitter Account'
 
     def __unicode__(self):
         return self.name
 
+class SourceTwitter(models.Model):
+    name = models.CharField(max_length=200, unique=True, validators=[validate_user],
+                            help_text='Do not include "@". Maximum 15 characters (Ex. CNN)')
+    class Meta:
+        verbose_name = 'Source Twitter Account'
+
+    def __unicode__(self):
+        return self.name
 
 class SourceSite(models.Model):
     url = models.URLField(max_length=2000, unique=True, 

@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse
-from tweets.models import Tweet, Source, Keyword
+from tweets.models import Tweet, SourceSite, Keyword, SourceTwitter, CountLog
 import sys, os, time, json, yaml, urllib
 
 # Create your views here.
@@ -9,13 +9,20 @@ def getJson(request):
     for twe in Tweet.objects.all():      
         tweets[twe.tweet_id] = {'text': twe.text, 'date_added': str(twe.date_added),
                              'date_published': str(twe.date_published),
-                             'matched_keywords': [], 'matched_sources': []}
+                             'matched_keywords': [], 'source_sites': [], 'source_twitters': [], 'count_log': []}
 
     for key in Keyword.objects.all():
         tweets[key.tweet.tweet_id]['matched_keywords'].append(key.name)
-    for src in Source.objects.all():
-        tweets[src.tweet.tweet_id]['matched_sources'].append({'url':src.url, 
-                                                             'url_site': src.domain})
+    for src in SourceSite.objects.all():
+        tweets[src.tweet.tweet_id]['source_sites'].append({'url':src.url, 
+                                                           'url_site': src.domain,
+							   'matched': src.matched})
+
+    for acc in SourceTwitter.objects.all():
+	tweets[src.tweet.tweet_id]['source_twitter'].append({'account':acc.name, 'matched': acc.matched})
+    for log in CountLog.objects.all():
+	tweets[src.tweet.tweet_id]['count_log'].append({'retweet_count': log.retweet_count, 'favorite_count': log.favorite_count, 'date': log.date})
+
 
     res = HttpResponse(json.dumps(tweets, indent=2, sort_keys=True))
     res['Content-Disposition'] = format('attachment; filename=tweets-%s.json' 

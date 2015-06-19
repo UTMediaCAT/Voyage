@@ -1,11 +1,11 @@
 from django.contrib import admin
-from tweets.models import Tweet, Source, Keyword
+from tweets.models import Tweet, SourceSite, SourceTwitter, Keyword, CountLog
 # Register your models here.
 
 import os, yaml
 
-class SourceInline(admin.TabularInline):
-    model = Source
+class SourceSiteInline(admin.TabularInline):
+    model = SourceSite
     fields = ['url']
     extra = 0
 
@@ -19,12 +19,12 @@ class TweetAdmin(admin.ModelAdmin):
         ('Date information', {'fields': ['date_added', 'date_published']})
         ]
 
-    inlines = [SourceInline, KeywordInline]
+    inlines = [SourceSiteInline, KeywordInline]
 
-    list_display = ('link_user', 'link_id', 'text', 'get_keywords', 'get_sources', 'date_published', 'date_added', 'link_options')
+    list_display = ('link_user', 'link_id', 'text', 'get_keywords', 'get_source_sites', 'get_source_twitters', 'date_published', 'date_added', 'get_countlog', 'link_options')
 
-    search_fields = ['tweet_id', 'text', 'user', 'keyword__name', 'source__url']
-    list_filter = ['name', 'keyword__name', 'source__domain']
+    search_fields = ['tweet_id', 'text', 'user', 'keyword__name', 'sourcesite__url', 'sourcetwitter__name']
+    list_filter = ['name', 'keyword__name', 'sourcesite__domain', 'sourcetwitter__name']
     ordering = ['-date_added']
     actions_on_top = True
 
@@ -38,20 +38,35 @@ class TweetAdmin(admin.ModelAdmin):
     get_keywords.short_description = 'Matched Keywords'
     get_keywords.admin_order_field = 'keyword__name'
 
-    def get_sources(self, obj):
+    def get_source_sites(self, obj):
         sources = ''
-        for src in obj.source_set.all():
-            if 'http://www.' in src.url:
-                link = 'http://' + src.url[11:]
-            else:
-                link = src.url
-            sources += format('<a href="%s" target="_blank">%s</a>' % (link, link))
-            sources += '<br>'
+        for src in obj.sourcesite_set.all():
+	    if src.matched:
+                if 'http://www.' in src.url:
+                    link = 'http://' + src.url[11:]
+                else:
+                    link = src.url
+                sources += format('<a href="%s" target="_blank">%s</a>' % (link, link))
+                sources += '<br>'
         return sources[:-4]
 
-    get_sources.short_description = 'Matched Sources'
-    get_sources.admin_order_field = 'source__url'
-    get_sources.allow_tags = True
+    get_source_sites.short_description = 'Matched Sources'
+    get_source_sites.admin_order_field = 'sourcesite__url'
+    get_source_sites.allow_tags = True
+
+    def get_source_twitters(self, obj):
+        accounts = ''
+        for acc in obj.sourcetwitter_set.all():
+            if acc.matched:
+                accounts += acc + '<br>'
+        return sources[:-4]
+
+    get_source_twitters.short_description = 'Matched Twitter Accounts'
+    get_source_twitters.admin_order_field = 'sourcetwitter__name'
+    get_source_twitters.allow_tags = True
+
+    def get_countlog(self, obj):
+	return obj.count_log_set.size()
 
     def link_id(self, obj):
         return format('<a href="%s" target="_blank">%s</a>' % ("https://twitter.com/" + obj.name + "/status/" + str(obj.tweet_id),

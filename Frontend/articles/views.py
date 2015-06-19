@@ -1,6 +1,6 @@
 from django.shortcuts import render, HttpResponse
 from django.template import RequestContext, loader
-from articles.models import Article, Keyword, Source, Author
+from articles.models import Article, Keyword, SourceSite, Author, SourceTwitter
 import sys, os, time, json, yaml, urllib
 
 def index(request):
@@ -20,13 +20,16 @@ def getJson(request):
                              'date_added': str(art.date_added),
                              'date_published': str(art.date_published),
                              'matched_keywords': [],
-                             'matched_sources': [], 'authors': []}
+                             'matched_source_sites': [], 'matched_source_twitter_accounts': [], 'authors': []}
 
     for key in Keyword.objects.all():
         articles[key.article.url]['matched_keywords'].append(key.name)
-    for src in Source.objects.all():
-        articles[src.article.url]['matched_sources'].append({'url':src.url, 
-                                                             'site': src.domain})
+    for src in SourceSite.objects.all():
+        articles[src.article.url]['matched_source_sites'].append({'url':src.url, 
+                                                             'site': src.domain, 'matched': src.matched})
+    for src in SourceTwitter.objects.all():
+        articles[src.article.url]['matched_source_twitter_accounts'].append({'name':src.name,
+                                                             'matched': src.matched})
     for ath in Author.objects.all():
         articles[ath.article.url]['authors'].append(ath.name)
 

@@ -22,10 +22,20 @@ class Author(models.Model):
     def __unicode__(self):
         return self.name
 
-class Source(models.Model):
+class SourceSite(models.Model):
     article = models.ForeignKey(Article)
     url = models.CharField(max_length=2000)
     domain = models.URLField(max_length=2000, verbose_name="Source Site")
+    matched = models.BooleanField(default=False)
+    local = models.BooleanField(default=True)
+    
+    def __unicode__(self):
+        return self.url
+
+class SourceTwitter(models.Model):
+    article = models.ForeignKey(Article)
+    name = models.CharField(max_length=200)
+    matched = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.url

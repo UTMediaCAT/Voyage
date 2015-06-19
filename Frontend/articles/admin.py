@@ -1,5 +1,5 @@
 from django.contrib import admin
-from articles.models import Article, Author, Source, Keyword
+from articles.models import Article, Author, SourceSite, Keyword, SourceTwitter
 # Register your models here.
 
 import yaml, os
@@ -8,8 +8,8 @@ class AuthorInline(admin.TabularInline):
     model = Author
     extra = 0
 
-class SourceInline(admin.TabularInline):
-    model = Source
+class SourceSiteInline(admin.TabularInline):
+    model = SourceSite
     fields = ['url']
     extra = 0
 
@@ -23,11 +23,11 @@ class ArticleAdmin(admin.ModelAdmin):
         ('Date information', {'fields': ['date_added', 'date_published']})
         ]
 
-    inlines = [AuthorInline, SourceInline, KeywordInline]
+    inlines = [AuthorInline, SourceSiteInline, KeywordInline]
 
-    list_display = ('link_url', 'title', 'get_authors', 'get_keywords', 'get_sources', 'date_published', 'date_added', 'link_options')
-    search_fields = ['url', 'title', 'author__name', 'keyword__name', 'source__url']
-    list_filter = ['domain', 'keyword__name', 'source__domain']
+    list_display = ('link_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_source_twitters', 'date_published', 'date_added', 'link_options')
+    search_fields = ['url', 'title', 'author__name', 'keyword__name', 'sourcesite__url', 'sourcetwitter__name']
+    list_filter = ['domain', 'keyword__name', 'sourcesite__domain', 'sourcetwitter__name']
     ordering = ['-date_added']
     actions_on_top = True
 
@@ -40,20 +40,32 @@ class ArticleAdmin(admin.ModelAdmin):
     get_keywords.short_description = 'Matched Keywords'
     get_keywords.admin_order_field = 'keyword__name'
 
-    def get_sources(self, obj):
+    def get_source_sites(self, obj):
         sources = ''
-        for src in obj.source_set.all():
-            if 'http://www.' in src.url:
-                link = 'http://' + src.url[11:]
-            else:
-                link = src.url
-            sources += format('<a href="%s" target="_blank">%s</a>' % (link, link))
-            sources += '<br>'
+        for src in obj.sourcesite_set.all():
+            if src.matched and not src.local:
+		if 'http://www.' in src.url:
+                    link = 'http://' + src.url[11:]
+                else:
+                    link = src.url
+                sources += format('<a href="%s" target="_blank">%s</a>' % (link, link))
+                sources += '<br>'
         return sources[:-4]
 
-    get_sources.short_description = 'Matched Sources'
-    get_sources.admin_order_field = 'source__url'
-    get_sources.allow_tags = True
+    get_source_sites.short_description = 'Matched Source Sites'
+    get_source_sites.admin_order_field = 'sourcesite__url'
+    get_source_sites.allow_tags = True
+
+    def get_source_twitters(self, obj):
+        accounts = ''
+        for acc in obj.sourcetwitter_set.all():
+            if acc.matched:
+		accounts += acc + '<br>'
+        return accounts[:-4]
+
+    get_source_twitters.short_description = 'Matched Source Twitter Accounts'
+    get_source_twitters.admin_order_field = 'sourcetwitter__url'
+    get_source_twitters.allow_tags = True
 
     def get_authors(self, obj):
         authors = ''

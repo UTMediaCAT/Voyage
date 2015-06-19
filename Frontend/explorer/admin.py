@@ -1,10 +1,10 @@
 from django.contrib import admin
-from explorer.models import ReferringSite, SourceSite, Keyword, TwitterAccount
+from explorer.models import ReferringSite, SourceSite, Keyword, ReferringTwitter, SourceTwitter
 from articles.models import Article
-from articles.models import Source as ArticleSource
+from articles.models import SourceSite as ArticleSource
 from articles.models import Keyword as ArticleKeyword
 from tweets.models import Tweet
-from tweets.models import Source as TwitterSource
+from tweets.models import SourceSite as TwitterSource
 from tweets.models import Keyword as TwitterKeyword
 
 from django.utils import timezone
@@ -71,7 +71,7 @@ class KeywordAdmin(admin.ModelAdmin):
 
     match_count.short_description = "Total Matches"
 
-class TwitterAccountAdmin(admin.ModelAdmin):
+class ReferringTwitterAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['name']})
         ]
@@ -100,8 +100,18 @@ class TwitterAccountAdmin(admin.ModelAdmin):
 
     latest_tweet.short_description = 'Last Found'
 
+class SourceTwitterAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None,               {'fields': ['name']})
+        ]
+
+
+    list_display = ['name']
+    search_fields = ['name']
+    actions_on_top = True
 
 admin.site.register(ReferringSite, ReferringSiteAdmin)
 admin.site.register(SourceSite, SourceSiteAdmin)
 admin.site.register(Keyword, KeywordAdmin)
-admin.site.register(TwitterAccount, TwitterAccountAdmin)
+admin.site.register(ReferringTwitter, ReferringTwitterAdmin)
+admin.site.register(SourceTwitter, SourceTwitterAdmin)
