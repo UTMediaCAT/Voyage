@@ -20,7 +20,7 @@ class Author(models.Model):
     name = models.CharField(max_length=200)
 
     def __unicode__(self):
-        return self.author 
+        return self.name
 
 class Source(models.Model):
     article = models.ForeignKey(Article)
@@ -35,4 +35,4 @@ class Keyword(models.Model):
     name = models.CharField(max_length=200)
 
     def __unicode__(self):
-        return self.keyword
+        return self.name
