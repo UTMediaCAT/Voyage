@@ -13,6 +13,10 @@ class KeywordInline(admin.TabularInline):
     model = Keyword
     extra = 0
 
+class SourceTwitterInline(admin.TabularInline):
+    model = SourceTwitter
+    extra = 0
+
 class TweetAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['tweet_id', 'name', 'text']}),

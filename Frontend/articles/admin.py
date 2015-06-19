@@ -17,13 +17,17 @@ class KeywordInline(admin.TabularInline):
     model = Keyword
     extra = 0
 
+class SourceTwitterInline(admin.TabularInline):
+    model = SourceTwitter
+    extra = 0
+
 class ArticleAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['url', 'title']}),
         ('Date information', {'fields': ['date_added', 'date_published']})
         ]
 
-    inlines = [AuthorInline, SourceSiteInline, KeywordInline]
+    inlines = [AuthorInline, SourceSiteInline, KeywordInline, SourceTwitterInline]
 
     list_display = ('link_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_source_twitters', 'date_published', 'date_added', 'link_options')
     search_fields = ['url', 'title', 'author__name', 'keyword__name', 'sourcesite__url', 'sourcetwitter__name']
