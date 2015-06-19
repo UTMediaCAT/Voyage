@@ -287,7 +287,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                         tweet.keyword_set.create(name=key)
 
                     for source in tweet_sources:
-                        tweet.source_set.create(url=source[0],
+                        tweet.sourcesite_set.create(url=source[0],
                                                 domain=source[1])
 
                     added += 1
@@ -308,7 +308,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
 
                     for source in tweet_sources:
                         if not TwitterSourceSite.objects.filter(url=source[0]):
-                            tweet.source_set.create(
+                            tweet.sourcesite_set.create(
                                 url=source[0], domain=source[1])
                     updated += 1
 
