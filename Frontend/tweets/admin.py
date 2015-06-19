@@ -70,7 +70,7 @@ class TweetAdmin(admin.ModelAdmin):
     get_source_twitters.allow_tags = True
 
     def get_countlog(self, obj):
-	return obj.count_log_set.size()
+	return obj.countlog_set.size()
 
     def link_id(self, obj):
         return format('<a href="%s" target="_blank">%s</a>' % ("https://twitter.com/" + obj.name + "/status/" + str(obj.tweet_id),
