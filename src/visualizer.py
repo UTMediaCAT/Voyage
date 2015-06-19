@@ -43,7 +43,7 @@ def article_hypertree():
             ssites = ArticleSourceSite.objects.filter(article=article)
 
             for ssite in ssites:
-                ssite_name = (SourceSite.objects.get(url=ssite.domain)).name
+                ssite_name = (ArticleSourceSite.objects.get(url=ssite.domain)).name
                 if ssite_name in ssites_dict.keys():
                     ssites_dict[ssite_name].append(ssite)
                 else:
@@ -314,7 +314,7 @@ def tweet_hypertree():
             ssites = TwitterSourceSite.objects.filter(tweet=tweet)
 
             for ssite in ssites:
-                ssite_name = (SourceSite.objects.get(url=ssite.domain)).name
+                ssite_name = (TwitterSourceSite.objects.get(url=ssite.domain)).name
                 if ssite_name in ssites_dict.keys():
                     ssites_dict[ssite_name].append(ssite)
                 else:
