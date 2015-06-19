@@ -24,6 +24,7 @@ from django.utils import timezone
 
 from tweets.models import*
 from tweets.models import Keyword as TwitterKeyword
+from tweets.models import SourceSite as TwitterSourceSite
 from explorer.models import*
 from explorer.models import Keyword as ExplorerKeyword
 
@@ -306,7 +307,7 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                             tweet.keyword_set.create(name=key)
 
                     for source in tweet_sources:
-                        if not Source.objects.filter(url=source[0]):
+                        if not TwitterSourceSite.objects.filter(url=source[0]):
                             tweet.source_set.create(
                                 url=source[0], domain=source[1])
                     updated += 1
@@ -338,19 +339,19 @@ def explore(tweet_number):
 
     # Connects to Site Database
 
-    monitoring_sites = []
-    msites = ReferringSite.objects.all()
+    referring_sites = []
+    rsites = ReferringSite.objects.all()
     # Retrieve, store, and print monitoring site information
-    for site in msites:
-        # monitoring_sites is now in form [['Name', 'URL'], ...]
-        monitoring_sites.append([site.name, site.url])
+    for site in rsites:
+        # referring_sites is now in form [['Name', 'URL'], ...]
+        referring_sites.append([site.name, site.url])
 
-    foreign_sites = []
+    source_sites = []
     # Retrieve, store, and print foreign site information
-    fsites = SourceSite.objects.all()
-    for site in fsites:
-        # foreign_sites is now in form ['URL', ...]
-        foreign_sites.append(site.url)
+    ssites = SourceSite.objects.all()
+    for site in ssites:
+        # source_sites is now in form ['URL', ...]
+        source_sites.append(site.url)
 
     # Retrieve all stored keywords
     keywords = ExplorerKeyword.objects.all()
@@ -360,13 +361,13 @@ def explore(tweet_number):
         keyword_list.append(str(key.name))
 
     # Retrieve all stored Accounts
-    accounts = TwitterAccount.objects.all()
+    accounts = ReferringTwitter.objects.all()
     accounts_list = []
 
     for account in accounts:
         accounts_list.append(str(account.name))
 
-    parse_tweets(accounts_list, keyword_list, foreign_sites, tweet_number)
+    parse_tweets(accounts_list, keyword_list, source_sites, tweet_number)
 
 
 def comm_write(text):
