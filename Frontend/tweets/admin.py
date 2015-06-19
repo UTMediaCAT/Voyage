@@ -63,7 +63,7 @@ class TweetAdmin(admin.ModelAdmin):
         for acc in obj.sourcetwitter_set.all():
             if acc.matched:
                 accounts += acc + '<br>'
-        return sources[:-4]
+        return accounts[:-4]
 
     get_source_twitters.short_description = 'Matched Twitter Accounts'
     get_source_twitters.admin_order_field = 'sourcetwitter__name'
