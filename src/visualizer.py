@@ -11,12 +11,13 @@ import re
 
 from articles.models import*
 from articles.models import Keyword as ArticleKeyword
-from articles.models import Source as ArticleSource
+from articles.models import SourceSite as ArticleSourceSite
 from explorer.models import*
 from explorer.models import Keyword as ExplorerKeyword
+from explorer.models import SourceTwitter as ExplorerSourceTwitter
 from tweets.models import*
 from tweets.models import Keyword as TwitterKeyword
-from tweets.models import Source as TwitterSource
+from tweets.models import SourceSite as TwitterSourceSite
 
 
 def article_hypertree():
@@ -25,41 +26,41 @@ def article_hypertree():
     3d dict of relation with the source site that is used by
     JIT graphing library to create graph
     '''
-    msites = []
+    rsites = []
 
     # for all the referring sites
-    for msite in ReferringSite.objects.all():
+    for rsite in ReferringSite.objects.all():
         # create a node with an empty array for the children
         data = {}
-        data["id"] = msite.url
-        data["name"] = msite.name
+        data["id"] = rsite.url
+        data["name"] = rsite.name
         data["children"] = []
         data["data"] = {"relation": "Sourced"}
 
-        fsites_dict = {}
-        # gets all articles that match msite
-        for article in Article.objects.filter(domain=msite.url):
-            fsites = ArticleSource.objects.filter(article=article)
+        ssites_dict = {}
+        # gets all articles that match rsite
+        for article in Article.objects.filter(domain=rsite.url):
+            ssites = ArticleSourceSite.objects.filter(article=article)
 
-            for fsite in fsites:
-                fsite_name = (SourceSite.objects.get(url=fsite.domain)).name
-                if fsite_name in fsites_dict.keys():
-                    fsites_dict[fsite_name].append(fsite)
+            for ssite in ssites:
+                ssite_name = (SourceSite.objects.get(url=ssite.domain)).name
+                if ssite_name in ssites_dict.keys():
+                    ssites_dict[ssite_name].append(ssite)
                 else:
-                    fsites_dict[fsite_name] = [fsite]
+                    ssites_dict[ssite_name] = [ssite]
 
-        # create the fsite dict that is readable by JIT graph library
-        for fsite in fsites_dict.keys():
-            fsites_data = {}
-            fsites_data["id"] = fsite
-            fsites_data["name"] = fsite
-            fsites_data["children"] = []
-            fsites_data["data"] = {"relation": "Sourced"}
-            data["children"].append(fsites_data)
+        # create the ssite dict that is readable by JIT graph library
+        for ssite in ssites_dict.keys():
+            ssites_data = {}
+            ssites_data["id"] = ssite
+            ssites_data["name"] = ssite
+            ssites_data["children"] = []
+            ssites_data["data"] = {"relation": "Sourced"}
+            data["children"].append(ssites_data)
 
-        msites.append(data)
+        rsites.append(data)
 
-    data = {"id": "ReferringSites", "name": "Referring Sites", "children": msites,
+    data = {"id": "ReferringSites", "name": "Referring Sites", "children": rsites,
             "relation": "Referring Sites"}
 
     return data
@@ -73,22 +74,22 @@ def article_spacetree(site):
     '''
     data = []
     if site is None:
-        msites = ReferringSite.objects.all()
+        rsites = ReferringSite.objects.all()
     else:
-        msites = ReferringSite.objects.filter(name=site)
+        rsites = ReferringSite.objects.filter(name=site)
 
     # for all the referring sites matching the site
-    for msite in msites:
+    for rsite in rsites:
         # create a node with an empty array for the children
         site_data = {}
-        site_data["id"] = msite.url
-        site_data["name"] = msite.name
+        site_data["id"] = rsite.url
+        site_data["name"] = rsite.name
         site_data["children"] = []
         site_data["data"] = {"relation": "Sourced"}
 
         keywords_dict = {}
-        # gets all articles that match msite
-        for article in Article.objects.filter(domain=msite.url):
+        # gets all articles that match rsite
+        for article in Article.objects.filter(domain=rsite.url):
             keywords = ArticleKeyword.objects.filter(article=article)
 
             for keyword in keywords:
@@ -97,7 +98,7 @@ def article_spacetree(site):
                 else:
                     keywords_dict[keyword.name] = [keyword]
 
-        # create the fsite dict that is readable by JIT graph library
+        # create the ssite dict that is readable by JIT graph library
         for keyword in keywords_dict.keys():
             # create a node with an empty array for the children
             keywords_data = {}
@@ -130,7 +131,7 @@ def article_weightedtree(site):
     3d dict of relation with the keywords and source sites that is used by
     JIT graphing library to create graph
     '''
-    msites = []
+    rsites = []
     max_dim = 1
 
     if site is None:
@@ -138,19 +139,19 @@ def article_weightedtree(site):
     else:
         results = ReferringSite.objects.filter(name=site)
 
-    for msite in results:
+    for rsite in results:
         # create a node with an empty array for the children
         data = {}
-        data["id"] = msite.url
-        data["name"] = msite.name
+        data["id"] = rsite.url
+        data["name"] = rsite.name
         data["adjacencies"] = []
         data["data"] = {"$dim": 0, "$type": "triangle", "$color": "#0000FF"}
 
         keywords_dict = {}
-        fsites_dict = {}
-        for article in Article.objects.filter(domain=msite.url):
+        ssites_dict = {}
+        for article in Article.objects.filter(domain=rsite.url):
             keywords = ArticleKeyword.objects.filter(article=article)
-            fsites = ArticleSource.objects.filter(article=article)
+            ssites = ArticleSourceSite.objects.filter(article=article)
 
             for keyword in keywords:
                 if keyword.name in keywords_dict.keys():
@@ -158,11 +159,11 @@ def article_weightedtree(site):
                 else:
                     keywords_dict[keyword.name] = [keyword]
 
-            for fsite in fsites:
-                if fsite.domain in fsites_dict.keys():
-                    fsites_dict[fsite.domain].append(fsite)
+            for ssite in ssites:
+                if ssite.domain in ssites_dict.keys():
+                    ssites_dict[ssite.domain].append(ssite)
                 else:
-                    fsites_dict[fsite.domain] = [fsite]
+                    ssites_dict[ssite.domain] = [ssite]
 
         for keyword in keywords_dict.keys():
             keywords_data = {}
@@ -178,33 +179,33 @@ def article_weightedtree(site):
                     keywords_dict[keyword]),
                 "$type": "square",
                 "$color": "#00AA00"}
-            msites.append(keywords_data_info)
+            rsites.append(keywords_data_info)
 
-        for fsite in fsites_dict.keys():
-            fsites_data = {}
-            fsites_data["id"] = fsite
-            fsites_data["name"] = fsite
-            fsites_data["nodeTo"] = fsite
+        for ssite in ssites_dict.keys():
+            ssites_data = {}
+            ssites_data["id"] = ssite
+            ssites_data["name"] = ssite
+            ssites_data["nodeTo"] = ssite
 
-            data["adjacencies"].append(fsites_data)
-            data["data"]["$dim"] += len(fsites_dict[fsite])
-            fsites_data_info = fsites_data.copy()
-            fsites_data_info["data"] = {
+            data["adjacencies"].append(ssites_data)
+            data["data"]["$dim"] += len(ssites_dict[ssite])
+            ssites_data_info = ssites_data.copy()
+            ssites_data_info["data"] = {
                 "$dim": len(
-                    fsites_dict[fsite]),
+                    ssites_dict[ssite]),
                 "$type": "circle",
                 "$color": "#FF0000"}
-            msites.append(fsites_data_info)
+            rsites.append(ssites_data_info)
 
         max_dim = max(data["data"]["$dim"], max_dim)
         if len(data["adjacencies"]) > 0:
-            msites.append(data)
+            rsites.append(data)
 
-    for msite in msites:
-        msite["data"]["$dim"] = int(
-            msite["data"]["$dim"] * 30.0 / max_dim) + 10
+    for rsite in rsites:
+        rsite["data"]["$dim"] = int(
+            rsite["data"]["$dim"] * 30.0 / max_dim) + 10
 
-    return msites, ReferringSite.objects.all()
+    return rsites, ReferringSite.objects.all()
 
 
 def article_forcegraph(site):
@@ -213,7 +214,7 @@ def article_forcegraph(site):
     3d dict of relation with the keywords and source sites that is used by
     JIT graphing library to create graph
     '''
-    msites = []
+    rsites = []
     max_dim = 1
 
     if site is None:
@@ -221,19 +222,19 @@ def article_forcegraph(site):
     else:
         results = ReferringSite.objects.filter(name=site)
 
-    for msite in results:
+    for rsite in results:
         # create a node with an empty array for the children
         data = {}
-        data["id"] = msite.url
-        data["name"] = msite.name
+        data["id"] = rsite.url
+        data["name"] = rsite.name
         data["adjacencies"] = []
         data["data"] = {"$dim": 0, "$type": "triangle", "$color": "#0000FF"}
 
         keywords_dict = {}
-        fsites_dict = {}
-        for article in Article.objects.filter(domain=msite.url):
+        ssites_dict = {}
+        for article in Article.objects.filter(domain=rsite.url):
             keywords = ArticleKeyword.objects.filter(article=article)
-            fsites = ArticleSource.objects.filter(article=article)
+            ssites = ArticleSourceSite.objects.filter(article=article)
 
             for keyword in keywords:
                 if keyword.name in keywords_dict.keys():
@@ -241,11 +242,11 @@ def article_forcegraph(site):
                 else:
                     keywords_dict[keyword.name] = [keyword]
 
-            for fsite in fsites:
-                if fsite.domain in fsites_dict.keys():
-                    fsites_dict[fsite.domain].append(fsite)
+            for ssite in ssites:
+                if ssite.domain in ssites_dict.keys():
+                    ssites_dict[ssite.domain].append(ssite)
                 else:
-                    fsites_dict[fsite.domain] = [fsite]
+                    ssites_dict[ssite.domain] = [ssite]
 
         for keyword in keywords_dict.keys():
             # create a node with an empty array for the children
@@ -262,34 +263,34 @@ def article_forcegraph(site):
                     keywords_dict[keyword]),
                 "$type": "square",
                 "$color": "#00AA00"}
-            msites.append(keywords_data_info)
+            rsites.append(keywords_data_info)
 
-        for fsite in fsites_dict.keys():
+        for ssite in ssites_dict.keys():
             # create a node with an empty array for the children
-            fsites_data = {}
-            fsites_data["id"] = fsite
-            fsites_data["name"] = fsite
-            fsites_data["nodeTo"] = fsite
+            ssites_data = {}
+            ssites_data["id"] = ssite
+            ssites_data["name"] = ssite
+            ssites_data["nodeTo"] = ssite
 
-            data["adjacencies"].append(fsites_data)
-            data["data"]["$dim"] += len(fsites_dict[fsite])
-            fsites_data_info = fsites_data.copy()
-            fsites_data_info["data"] = {
+            data["adjacencies"].append(ssites_data)
+            data["data"]["$dim"] += len(ssites_dict[ssite])
+            ssites_data_info = ssites_data.copy()
+            ssites_data_info["data"] = {
                 "$dim": len(
-                    fsites_dict[fsite]),
+                    ssites_dict[ssite]),
                 "$type": "circle",
                 "$color": "#FF0000"}
-            msites.append(fsites_data_info)
+            rsites.append(ssites_data_info)
 
         max_dim = max(data["data"]["$dim"], max_dim)
         if len(data["adjacencies"]) > 0:
-            msites.append(data)
+            rsites.append(data)
 
-    for msite in msites:
-        msite["data"]["$dim"] = int(
-            msite["data"]["$dim"] * 30.0 / max_dim) + 10
+    for rsite in rsites:
+        rsite["data"]["$dim"] = int(
+            rsite["data"]["$dim"] * 30.0 / max_dim) + 10
 
-    return msites, ReferringSite.objects.all()
+    return rsites, ReferringSite.objects.all()
 
 
 def tweet_hypertree():
@@ -300,7 +301,7 @@ def tweet_hypertree():
     '''
     taccounts = []
 
-    for account in TwitterAccount.objects.all():
+    for account in ExplorerSourceTwitter.objects.all():
         # create a node with an empty array for the children
         data = {}
         data["id"] = account.name
@@ -308,25 +309,25 @@ def tweet_hypertree():
         data["children"] = []
         data["data"] = {"relation": "Sourced"}
 
-        fsites_dict = {}
+        ssites_dict = {}
         for tweet in Tweet.objects.filter(name=account.name):
-            fsites = TwitterSource.objects.filter(tweet=tweet)
+            ssites = TwitterSourceSite.objects.filter(tweet=tweet)
 
-            for fsite in fsites:
-                fsite_name = (SourceSite.objects.get(url=fsite.domain)).name
-                if fsite_name in fsites_dict.keys():
-                    fsites_dict[fsite_name].append(fsite)
+            for ssite in ssites:
+                ssite_name = (SourceSite.objects.get(url=ssite.domain)).name
+                if ssite_name in ssites_dict.keys():
+                    ssites_dict[ssite_name].append(ssite)
                 else:
-                    fsites_dict[fsite_name] = [fsite]
+                    ssites_dict[ssite_name] = [ssite]
 
-        for fsite in fsites_dict.keys():
+        for ssite in ssites_dict.keys():
             # create a node with an empty array for the children
-            fsites_data = {}
-            fsites_data["id"] = fsite
-            fsites_data["name"] = fsite
-            fsites_data["children"] = []
-            fsites_data["data"] = {"relation": "Sourced"}
-            data["children"].append(fsites_data)
+            ssites_data = {}
+            ssites_data["id"] = ssite
+            ssites_data["name"] = ssite
+            ssites_data["children"] = []
+            ssites_data["data"] = {"relation": "Sourced"}
+            data["children"].append(ssites_data)
 
         taccounts.append(data)
 
@@ -347,9 +348,9 @@ def tweet_spacetree(account):
     '''
     data = []
     if account is None:
-        taccounts = TwitterAccount.objects.all()
+        taccounts = ExplorerSourceTwitter.objects.all()
     else:
-        taccounts = TwitterAccount.objects.filter(name=account)
+        taccounts = ExplorerSourceTwitter.objects.filter(name=account)
 
     for taccount in taccounts:
         account_data = {}
@@ -388,7 +389,7 @@ def tweet_spacetree(account):
         else:
             data = []
 
-    return data, TwitterAccount.objects.all()
+    return data, ExplorerSourceTwitter.objects.all()
 
 
 def tweet_weightedtree(account):
@@ -401,9 +402,9 @@ def tweet_weightedtree(account):
     max_dim = 1
 
     if account is None:
-        results = TwitterAccount.objects.all()
+        results = ExplorerSourceTwitter.objects.all()
     else:
-        results = TwitterAccount.objects.filter(name=account)
+        results = ExplorerSourceTwitter.objects.filter(name=account)
 
     for taccount in results:
         # create a node with an empty array for the children
@@ -414,10 +415,10 @@ def tweet_weightedtree(account):
         data["data"] = {"$dim": 0, "$type": "triangle", "$color": "#0000FF"}
 
         keywords_dict = {}
-        fsites_dict = {}
+        ssites_dict = {}
         for tweet in Tweet.objects.filter(name=taccount.name):
             keywords = TwitterKeyword.objects.filter(tweet=tweet)
-            fsites = TwitterSource.objects.filter(tweet=tweet)
+            ssites = TwitterSourceSite.objects.filter(tweet=tweet)
 
             for keyword in keywords:
                 if keyword.name in keywords_dict.keys():
@@ -425,11 +426,11 @@ def tweet_weightedtree(account):
                 else:
                     keywords_dict[keyword.name] = [keyword]
 
-            for fsite in fsites:
-                if fsite.domain in fsites_dict.keys():
-                    fsites_dict[fsite.domain].append(fsite)
+            for ssite in ssites:
+                if ssite.domain in ssites_dict.keys():
+                    ssites_dict[ssite.domain].append(ssite)
                 else:
-                    fsites_dict[fsite.domain] = [fsite]
+                    ssites_dict[ssite.domain] = [ssite]
 
         for keyword in keywords_dict.keys():
             keywords_data = {}
@@ -447,21 +448,21 @@ def tweet_weightedtree(account):
                 "$color": "#00AA00"}
             taccounts.append(keywords_data_info)
 
-        for fsite in fsites_dict.keys():
-            fsites_data = {}
-            fsites_data["id"] = fsite
-            fsites_data["name"] = fsite
-            fsites_data["nodeTo"] = fsite
+        for ssite in ssites_dict.keys():
+            ssites_data = {}
+            ssites_data["id"] = ssite
+            ssites_data["name"] = ssite
+            ssites_data["nodeTo"] = ssite
 
-            data["adjacencies"].append(fsites_data)
-            data["data"]["$dim"] += len(fsites_dict[fsite])
-            fsites_data_info = fsites_data.copy()
-            fsites_data_info["data"] = {
+            data["adjacencies"].append(ssites_data)
+            data["data"]["$dim"] += len(ssites_dict[ssite])
+            ssites_data_info = ssites_data.copy()
+            ssites_data_info["data"] = {
                 "$dim": len(
-                    fsites_dict[fsite]),
+                    ssites_dict[ssite]),
                 "$type": "circle",
                 "$color": "#FF0000"}
-            taccounts.append(fsites_data_info)
+            taccounts.append(ssites_data_info)
 
         max_dim = max(data["data"]["$dim"], max_dim)
         if len(data["adjacencies"]) > 0:
@@ -471,7 +472,7 @@ def tweet_weightedtree(account):
         taccount["data"]["$dim"] = int(
             taccount["data"]["$dim"] * 30.0 / max_dim) + 10
 
-    return taccounts, TwitterAccount.objects.all()
+    return taccounts, ExplorerSourceTwitter.objects.all()
 
 
 def tweet_forcegraph(account):
@@ -484,9 +485,9 @@ def tweet_forcegraph(account):
     max_dim = 1
 
     if account is None:
-        results = TwitterAccount.objects.all()
+        results = ExplorerSourceTwitter.objects.all()
     else:
-        results = TwitterAccount.objects.filter(name=account)
+        results = ExplorerSourceTwitter.objects.filter(name=account)
 
     for taccount in results:
         # create a node with an empty array for the adjacencies
@@ -497,10 +498,10 @@ def tweet_forcegraph(account):
         data["data"] = {"$dim": 0, "$type": "triangle", "$color": "#0000FF"}
 
         keywords_dict = {}
-        fsites_dict = {}
+        ssites_dict = {}
         for tweet in Tweet.objects.filter(name=taccount.name):
             keywords = TwitterKeyword.objects.filter(tweet=tweet)
-            fsites = TwitterSource.objects.filter(tweet=tweet)
+            ssites = TwitterSourceSite.objects.filter(tweet=tweet)
 
             for keyword in keywords:
                 if keyword.name in keywords_dict.keys():
@@ -508,11 +509,11 @@ def tweet_forcegraph(account):
                 else:
                     keywords_dict[keyword.name] = [keyword]
 
-            for fsite in fsites:
-                if fsite.domain in fsites_dict.keys():
-                    fsites_dict[fsite.domain].append(fsite)
+            for ssite in ssites:
+                if ssite.domain in ssites_dict.keys():
+                    ssites_dict[ssite.domain].append(ssite)
                 else:
-                    fsites_dict[fsite.domain] = [fsite]
+                    ssites_dict[ssite.domain] = [ssite]
 
         for keyword in keywords_dict.keys():
             keywords_data = {}
@@ -530,21 +531,21 @@ def tweet_forcegraph(account):
                 "$color": "#00AA00"}
             taccounts.append(keywords_data_info)
 
-        for fsite in fsites_dict.keys():
-            fsites_data = {}
-            fsites_data["id"] = fsite
-            fsites_data["name"] = fsite
-            fsites_data["nodeTo"] = fsite
+        for ssite in ssites_dict.keys():
+            ssites_data = {}
+            ssites_data["id"] = ssite
+            ssites_data["name"] = ssite
+            ssites_data["nodeTo"] = ssite
 
-            data["adjacencies"].append(fsites_data)
-            data["data"]["$dim"] += len(fsites_dict[fsite])
-            fsites_data_info = fsites_data.copy()
-            fsites_data_info["data"] = {
+            data["adjacencies"].append(ssites_data)
+            data["data"]["$dim"] += len(ssites_dict[ssite])
+            ssites_data_info = ssites_data.copy()
+            ssites_data_info["data"] = {
                 "$dim": len(
-                    fsites_dict[fsite]),
+                    ssites_dict[ssite]),
                 "$type": "circle",
                 "$color": "#FF0000"}
-            taccounts.append(fsites_data_info)
+            taccounts.append(ssites_data_info)
 
         max_dim = max(data["data"]["$dim"], max_dim)
         if len(data["adjacencies"]) > 0:
@@ -554,4 +555,4 @@ def tweet_forcegraph(account):
         taccount["data"]["$dim"] = int(
             taccount["data"]["$dim"] * 30.0 / max_dim) + 10
 
-    return taccounts, TwitterAccount.objects.all()
+    return taccounts, ExplorerSourceTwitter.objects.all()
