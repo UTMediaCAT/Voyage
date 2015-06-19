@@ -3,9 +3,11 @@ import re
 import operator
 from articles.models import*
 from articles.models import Keyword as ArticleKeyword
-from articles.models import Source as ArticleSource
+from articles.models import SourceSite as ArticleSourceSite
 from explorer.models import*
 from explorer.models import Keyword as ExplorerKeyword
+from explorer.models import SourceSite as ExplorerSourceSite
+from explorer.models import SourceTwitter as ExplorerSourceTwitter
 
 from tweets.models import*
 from tweets.models import Keyword as TwitterKeyword
@@ -146,10 +148,10 @@ def msites_bar_chart():
     data.append (["Source Sites", "Number of Source Sites Matched"])
 
     #get all monitoring sites
-    fsites = SourceSite.objects.all()
+    ssites = ExplorerSourceSite.objects.all()
     #loop through monitoring sites
-    for site in fsites:
-        source_number = ArticleSource.objects.filter(domain = site.url).count()
+    for site in ssites:
+        source_number = ArticleSourceSite.objects.filter(domain = site.url).count()
         data.append([site.name.encode("utf-8"), source_number])
     #sort monitoring sites by the number of articles
         data.sort(key = lambda x: x[1], reverse=True)
@@ -163,10 +165,10 @@ def tweets_annotation_chart():
     a list of list, where the inner list contains the name of keyword, and the number of matches.    
     '''
     #get all twitter accounts
-    TwitterAccounts  = TwitterAccount.objects.all()
+    ExplorerSourceTwitter  = ExplorerSourceTwitter.objects.all()
     accounts = []
     #loop through twitter accounts
-    for element in TwitterAccounts:
+    for element in ExplorerSourceTwitter:
         accounts.append([element.name.encode("utf-8"), Tweet.objects.filter(name = element.name).count()])
     #sort the twitter accountsby the number of tweets they have.
     accounts.sort(key = lambda x: x[1], reverse=True)
