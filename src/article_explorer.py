@@ -43,8 +43,10 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 # For Models connecting with the Django Database
 from articles.models import*
 from articles.models import Keyword as ArticleKeyword
+from articles.models import SourceSite as ArticleSourceSite
 from explorer.models import*
 from explorer.models import Keyword as ExplorerKeyword
+from explorer.models import SourceSite as ExplorerSourceSite
 # To load configurations
 import yaml
 # To store the article as warc files
@@ -124,10 +126,8 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
 
             # Try to download and extract the useful data
             try:
-                if(not art.is_downloaded):
-                    art.download()
-                if(not art.is_parsed):
-                    art.parse()
+                art.download()
+                art.parse()
                 title = art.title
             except:
                 title = ""
@@ -168,7 +168,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                             article.author_set.create(name=author)
 
                         for source in sources:
-                            article.source_set.create(url=source[0],
+                            article.sourcesite_set.create(url=source[0],
                                                       domain=source[1])
 
                         added += 1
@@ -194,8 +194,8 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                                 article.author_set.create(name=author)
 
                         for source in sources:
-                            if not Source.objects.filter(url=source[0]):
-                                src = article.source_set.create(url=source[0])
+                            if not ArticleSourceSite.objects.filter(url=source[0]):
+                                src = article.sourcesite_set.create(url=source[0])
                                 src.domain = source[1]
 
                     warc_creator.create_article_warc(url)
@@ -312,18 +312,18 @@ def explore():
     """
 
     # Retrieve and store monitoring site information
-    monitoring_sites = []
-    msites = ReferringSite.objects.all()
-    for site in msites:
+    referring_sites = []
+    rsites = ReferringSite.objects.all()
+    for site in rsites:
         # monitoring_sites is now in form [['Name', 'URL'], ...]
-        monitoring_sites.append([site.name, site.url])
+        referring_sites.append([site.name, site.url])
 
     # Retrieve and store foreign site information
-    foreign_sites = []
-    fsites = SourceSite.objects.all()
-    for site in fsites:
+    source_sites = []
+    ssites = ExplorerSourceSite.objects.all()
+    for site in ssites:
         # foreign_sites is now in form ['URL', ...]
-        foreign_sites.append(site.url)
+        source_sites.append(site.url)
 
     # Retrieve all stored keywords
     keyword_list = []
@@ -332,10 +332,10 @@ def explore():
         keyword_list.append(str(key.name))
 
     # Populate the monitoring sites with articles
-    populated_sites = populate_sites(monitoring_sites)
+    populated_sites = populate_sites(referring_sites)
 
     # Parse the articles in all sites
-    parse_articles(populated_sites, keyword_list, foreign_sites)
+    parse_articles(populated_sites, keyword_list, source_sites)
 
 
 def comm_write(text):
