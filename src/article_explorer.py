@@ -124,8 +124,10 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
 
             # Try to download and extract the useful data
             try:
-                art.download()
-                art.parse()
+                if(not art.is_downloaded):
+                    art.download()
+                if(not art.is_parsed):
+                    art.parse()
                 title = art.title
             except:
                 title = ""
