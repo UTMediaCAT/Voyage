@@ -15,6 +15,7 @@ from articles.models import SourceSite as ArticleSourceSite
 from explorer.models import*
 from explorer.models import Keyword as ExplorerKeyword
 from explorer.models import SourceTwitter as ExplorerSourceTwitter
+from explorer.models import SourceSite as ExplorerSourceSite
 from tweets.models import*
 from tweets.models import Keyword as TwitterKeyword
 from tweets.models import SourceSite as TwitterSourceSite
@@ -43,7 +44,7 @@ def article_hypertree():
             ssites = ArticleSourceSite.objects.filter(article=article)
 
             for ssite in ssites:
-                ssite_name = (ArticleSourceSite.objects.get(url=ssite.domain)).name
+                ssite_name = (ExplorerSourceSite.objects.get(url=ssite.domain)).name
                 if ssite_name in ssites_dict.keys():
                     ssites_dict[ssite_name].append(ssite)
                 else:
@@ -314,7 +315,7 @@ def tweet_hypertree():
             ssites = TwitterSourceSite.objects.filter(tweet=tweet)
 
             for ssite in ssites:
-                ssite_name = (TwitterSourceSite.objects.get(url=ssite.domain)).name
+                ssite_name = (ExplorerSourceSite.objects.get(url=ssite.domain)).name
                 if ssite_name in ssites_dict.keys():
                     ssites_dict[ssite_name].append(ssite)
                 else:
