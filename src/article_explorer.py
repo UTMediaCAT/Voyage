@@ -169,7 +169,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
 
                         for source in sources:
                             article.sourcesite_set.create(url=source[0],
-                                                      domain=source[1])
+                                                      domain=source[1], matched=True, local=False)
 
                         added += 1
 
@@ -195,8 +195,8 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
 
                         for source in sources:
                             if not ArticleSourceSite.objects.filter(url=source[0]):
-                                src = article.sourcesite_set.create(url=source[0])
-                                src.domain = source[1]
+                                src = article.sourcesite_set.create(url=source[0],
+                                                      domain=source[1], matched=True, local=False)
 
                     warc_creator.create_article_warc(url)
 
