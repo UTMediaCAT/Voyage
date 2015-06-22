@@ -10,7 +10,7 @@ class AuthorInline(admin.TabularInline):
 
 class SourceSiteInline(admin.TabularInline):
     model = SourceSite
-    fields = ['url']
+    fields = ['url', 'matched', 'local']
     extra = 0
 
 class KeywordInline(admin.TabularInline):
@@ -23,7 +23,7 @@ class SourceTwitterInline(admin.TabularInline):
 
 class ArticleAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None,               {'fields': ['url', 'title']}),
+        (None,               {'fields': ['url', 'domain', 'title']}),
         ('Date information', {'fields': ['date_added', 'date_published']})
         ]
 

@@ -6,7 +6,6 @@ from articles.models import Keyword as ArticleKeyword
 from tweets.models import Tweet
 from tweets.models import SourceSite as TwitterSource
 from tweets.models import Keyword as TwitterKeyword
-
 from django.utils import timezone
 
 class ReferringSiteAdmin(admin.ModelAdmin):
@@ -17,13 +16,12 @@ class ReferringSiteAdmin(admin.ModelAdmin):
     search_fields = ['name', 'url']
     ordering = ['name']
     actions_on_top = True
-
+    list_per_page = 1000
 
     def article_count(self, obj):
         return len(Article.objects.filter(domain=obj.url))
 
     article_count.short_description = "Total Articles Archived"
-
 
     def latest_article(self, obj):
         latest = Article.objects.filter(domain=obj.url)
@@ -32,10 +30,9 @@ class ReferringSiteAdmin(admin.ModelAdmin):
             t1 = delta.days             # Days
             t2 = delta.seconds/3600     # Hours
             t3 = delta.seconds%3600/60  # Minutes
-            return '%-2d days %-2d hours %-2d min ago' % (t1, t2, t3)
+            return ('%2d days %2d hours %2d min ago' % (t1, t2, t3))
         else:
             return 'Have not found any articles yet!'
-
     latest_article.short_description = 'Last Found'
 
 
@@ -47,6 +44,7 @@ class SourceSiteAdmin(admin.ModelAdmin):
     search_fields = ['name', 'url']
     ordering = ['name']
     actions_on_top = True
+    list_per_page = 1000
 
     def cited_count(self, obj):
         return len(ArticleSource.objects.filter(domain=obj.url)) + \
@@ -64,6 +62,7 @@ class KeywordAdmin(admin.ModelAdmin):
     list_display = ['name', 'match_count']
     search_fields = ['name']
     actions_on_top = True
+    list_per_page = 1000
 
     def match_count(self, obj):
         return len(ArticleKeyword.objects.filter(name=obj.name)) + \
@@ -80,6 +79,7 @@ class ReferringTwitterAdmin(admin.ModelAdmin):
     list_display = ['name', 'tweet_count', 'latest_tweet']
     search_fields = ['name']
     actions_on_top = True
+    list_per_page = 1000
 
     def tweet_count(self, obj):
         return len(Tweet.objects.filter(name=obj.name))
@@ -109,6 +109,7 @@ class SourceTwitterAdmin(admin.ModelAdmin):
     list_display = ['name']
     search_fields = ['name']
     actions_on_top = True
+    list_per_page = 1000
 
 admin.site.register(ReferringSite, ReferringSiteAdmin)
 admin.site.register(SourceSite, SourceSiteAdmin)

@@ -2,7 +2,6 @@ from django.db import models
 from django.core.exceptions import ValidationError
 import tweepy, os, yaml, newspaper
 
-
 def configuration():
     """ (None) -> dict
     Returns a dictionary containing the micro settings from the
@@ -60,7 +59,6 @@ class ReferringSite(models.Model):
     def __unicode__(self):
         return self.name
 
-
 class ReferringTwitter(models.Model):
     name = models.CharField(max_length=200, unique=True, validators=[validate_user],
                             help_text='Do not include "@". Maximum 15 characters (Ex. CNN)')
@@ -89,7 +87,6 @@ class SourceSite(models.Model):
 
     def __unicode__(self):
         return self.name
-
 
 class Keyword(models.Model):
     name = models.CharField(max_length=200, unique=True, 
