@@ -26,3 +26,6 @@ lib64
 
 # Warc folder
 warc/*
+
+# Database
+Frontend/db.sqlite3
