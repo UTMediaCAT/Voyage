@@ -64,7 +64,7 @@ class ArticleAdmin(admin.ModelAdmin):
         accounts = ''
         for acc in obj.sourcetwitter_set.all():
             if acc.matched:
-		accounts += acc + '<br>'
+		accounts += acc.name + '<br>'
         return accounts[:-4]
 
     get_source_twitters.short_description = 'Matched Source Twitter Accounts'
