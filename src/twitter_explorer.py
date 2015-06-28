@@ -16,10 +16,10 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 # For getting today's date
 from django.utils import timezone
 
-from tweets.models import*
+from tweets.models import *
 from tweets.models import Keyword as TwitterKeyword
 from tweets.models import SourceSite as TwitterSourceSite
-from explorer.models import*
+from explorer.models import *
 from explorer.models import Keyword as ExplorerKeyword
 
 # To store the article as warc files

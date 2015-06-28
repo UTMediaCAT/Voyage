@@ -33,10 +33,10 @@ from dateutil import parser
 import django
 os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 # For Models connecting with the Django Database
-from articles.models import*
+from articles.models import *
 from articles.models import Keyword as ArticleKeyword
 from articles.models import SourceSite as ArticleSourceSite
-from explorer.models import*
+from explorer.models import *
 from explorer.models import Keyword as ExplorerKeyword
 from explorer.models import SourceSite as ExplorerSourceSite
 # To load configurations
