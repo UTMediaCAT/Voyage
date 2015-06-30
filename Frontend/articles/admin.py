@@ -68,7 +68,11 @@ class ArticleAdmin(admin.ModelAdmin):
         return accounts[:-4]
 
     get_source_twitters.short_description = 'Matched Source Twitter Accounts'
+<<<<<<< HEAD
+    get_source_twitters.admin_order_field = 'sourcetwitter__url'
+=======
     get_source_twitters.admin_order_field = 'sourcetwitter__name'
+>>>>>>> cd2169235604bb75c37e4f08ede0949ed8bd19b4
     get_source_twitters.allow_tags = True
 
     def get_authors(self, obj):
