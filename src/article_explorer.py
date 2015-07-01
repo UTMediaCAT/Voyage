@@ -177,14 +177,14 @@ def parse_articles(populated_sites, db_keywords, source_sites,twitter_accounts_e
 
                         for source in sources[0]:
                             is_local = False
-                            if site[2] == source[0][1]:
+                            if site[2] == source[1]:
                                 is_local = True
                             article.sourcesite_set.create(url=source[0],
                                                       domain=source[1], matched=True, local=is_local)
 
                         for source in sources[1]:
                             is_local = False
-                            if site[2] == source[0][1]:
+                            if site[2] == source[1]:
                                 is_local = True
                             article.sourcesite_set.create(url=source[0],
                                                       domain=source[1], matched=False, local=is_local)
