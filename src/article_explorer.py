@@ -211,20 +211,28 @@ def parse_articles(populated_sites, db_keywords, source_sites,twitter_accounts_e
                             if not Author.objects.filter(name=author):
                                 article.author_set.create(name=author)
 
-                        for account in twitter_accounts:
-                            matched = False
-                            if account in twitter_accounts_explorer:
-                                matched = True
-                            article.sourcetwitter_set.create(name = account, matched = matched)
+                        for account in twitter_accounts[0]:
 
-                        for source in sources:
-                            if not ArticleSourceSite.objects.filter(url=source[0]):
-                                is_local = False
-                                if site[2] == source[1]:
-                                    is_local = True
+                            article.sourcetwitter_set.create(name = account, matched = True)
 
-                                src = article.sourcesite_set.create(url=source[0],
-                                                      domain=source[1], matched=source[2], local=is_local)
+                        for account in twitter_accounts[1]:
+                            article.sourcetwitter_set.create(name = account, matched = False)
+
+                        for source in sources[0]:
+                            is_local = False
+                            if site[2] == source[1]:
+                                is_local = True
+                            article.sourcesite_set.create(url=source[0],
+                                                      domain=source[1], matched=True, local=is_local)
+
+                        for source in sources[1]:
+                            is_local = False
+                            if site[2] == source[1]:
+                                is_local = True
+                            article.sourcesite_set.create(url=source[0],
+                                                      domain=source[1], matched=False, local=is_local)
+
+
 
                     warc_creator.create_article_warc(url)
 
