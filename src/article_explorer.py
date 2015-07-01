@@ -139,7 +139,7 @@ def parse_articles(populated_sites, db_keywords, source_sites,twitter_accounts_e
                 keywords = get_keywords(art, db_keywords)
                 # Regex the links within article's html
                 sources = get_sources_sites(art.article_html, source_sites)
-                twitter_accounts= get_sources_twitter(art.article_html)
+                twitter_accounts= get_sources_twitter(art.article_html, twitter_accounts_explorer)
                 # Store parsed author
                 authors = art.authors
                 # Try to parse the published date
@@ -147,7 +147,7 @@ def parse_articles(populated_sites, db_keywords, source_sites,twitter_accounts_e
 
                 # If neither of keyword nor sources matched,
                 # then stop here and move on to next article
-                if not (keywords == [] and sources[0] == [] and twitter_accounts ==[]):
+                if not (keywords == [] and sources[0] == [] and twitter_accounts[0] ==[]):
 
                     # Check if the entry already exists
                     article_list = Article.objects.filter(url=url)
@@ -168,11 +168,12 @@ def parse_articles(populated_sites, db_keywords, source_sites,twitter_accounts_e
 
                         for author in authors:
                             article.author_set.create(name=author)
+                        for account in twitter_accounts[0]:
+
+                            article.sourcetwitter_set.create(name = account, matched = True)
+
                         for account in twitter_accounts:
-                            matched = False
-                            if account in twitter_accounts_explorer:
-                                matched = True
-                            article.sourcetwitter_set.create(name = account, matched = matched)
+                            article.sourcetwitter_set.create(name = account, matched = False)
 
                         for source in sources[0]:
                             is_local = False
@@ -281,14 +282,18 @@ def get_sources_sites(html, sites):
     return [result_urls_matched,result_urls_unmatched]
 
 
-def get_sources_twitter(html):
-    result = []
+def get_sources_twitter(html, source_twitter):
+    matched = []
+    unmatched = []
     m = re.findall('@[a-zA-Z0-9.]*', html,re.IGNORECASE)
 
     for element in m:
         if not ("." in element):
-            result.append(element)
-    return result
+            if element[1:] in source_twitter:
+                matched.append(element)
+            else:
+                unmatched.append(element)
+    return [matched,unmatched]
 
 
 
