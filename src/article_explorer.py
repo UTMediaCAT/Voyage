@@ -172,7 +172,7 @@ def parse_articles(populated_sites, db_keywords, source_sites,twitter_accounts_e
 
                             article.sourcetwitter_set.create(name = account, matched = True)
 
-                        for account in twitter_accounts:
+                        for account in twitter_accounts[1]:
                             article.sourcetwitter_set.create(name = account, matched = False)
 
                         for source in sources[0]:
