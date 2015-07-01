@@ -377,7 +377,7 @@ def explore():
         keyword_list.append(str(key.name))
 
 
-    # Retrieve all stored keywords
+    # Retrieve all stored twitter_accounts
     source_twitter_list = []
     twitter_accounts = ExplorerSourceTwitter.objects.all()
     for key in twitter_accounts:
@@ -388,7 +388,7 @@ def explore():
     populated_sites = populate_sites(referring_sites)
 
     # Parse the articles in all sites
-    parse_articles(populated_sites, keyword_list, source_sites, twitter_accounts)
+    parse_articles(populated_sites, keyword_list, source_sites, source_twitter_list)
 
 
 def comm_write(text):
