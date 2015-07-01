@@ -15,14 +15,6 @@ __authors__ = \
 import sys
 import os
 
-# Add Django directories in the Python paths for django shell to work
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..',
-                                             'Frontend')))
-# Append local python lib to the front to assure
-# local library(mainly Django 1.7.1) to be used
-sys.path.insert(0, os.path.join(os.environ['HOME'],
-                                '.local/lib/python2.7/site-packages'))
 # newspaper, for populating articles of each site
 # and parsing most of the data.
 import newspaper
@@ -41,10 +33,10 @@ from dateutil import parser
 import django
 os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 # For Models connecting with the Django Database
-from articles.models import*
+from articles.models import *
 from articles.models import Keyword as ArticleKeyword
 from articles.models import SourceSite as ArticleSourceSite
-from explorer.models import*
+from explorer.models import *
 from explorer.models import Keyword as ExplorerKeyword
 from explorer.models import SourceSite as ExplorerSourceSite
 # To load configurations
