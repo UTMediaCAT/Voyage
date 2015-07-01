@@ -45,6 +45,7 @@ from articles.models import*
 from articles.models import Keyword as ArticleKeyword
 from articles.models import SourceSite as ArticleSourceSite
 from explorer.models import*
+from explorer.models import SourceTwitter as ExplorerSourceTwitter
 from explorer.models import Keyword as ExplorerKeyword
 from explorer.models import SourceSite as ExplorerSourceSite
 # To load configurations
@@ -90,7 +91,7 @@ def populate_sites(sites):
     return new_sites
 
 
-def parse_articles(populated_sites, db_keywords, foreign_sites):
+def parse_articles(populated_sites, db_keywords, source_sites,twitter_accounts_explorer):
     """ (list of [str, newspaper.source.Source, str],
          list of str, list of str, str) -> None
     Downloads each article in the site, extracts, compares
@@ -100,7 +101,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
     Keyword arguments:
     populated_sites     -- List of [name, 'built_article'] of each site
     db_keywords         -- List of keywords
-    foreign_sites       -- List of foreign sites
+    source_sites       -- List of foreign sites
     """
     added, updated, failed, no_match = 0, 0, 0, 0
 
@@ -137,7 +138,8 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                 # Regex the keyword from the article's text
                 keywords = get_keywords(art, db_keywords)
                 # Regex the links within article's html
-                sources = get_sources(art.article_html, foreign_sites)
+                sources = get_sources_sites(art.article_html, source_sites)
+                twitter_accounts= get_sources_twitter(art.article_html)
                 # Store parsed author
                 authors = art.authors
                 # Try to parse the published date
@@ -145,7 +147,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
 
                 # If neither of keyword nor sources matched,
                 # then stop here and move on to next article
-                if not (keywords == [] and sources == []):
+                if not (keywords == [] and sources[0] == [] and twitter_accounts ==[]):
 
                     # Check if the entry already exists
                     article_list = Article.objects.filter(url=url)
@@ -166,10 +168,25 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
 
                         for author in authors:
                             article.author_set.create(name=author)
+                        for account in twitter_accounts:
+                            matched = False
+                            if account in twitter_accounts_explorer:
+                                matched = True
+                            article.sourcetwitter_set.create(name = account, matched = matched)
 
-                        for source in sources:
+                        for source in sources[0]:
+                            is_local = False
+                            if site[2] == source[0][1]:
+                                is_local = True
                             article.sourcesite_set.create(url=source[0],
-                                                      domain=source[1], matched=True, local=False)
+                                                      domain=source[1], matched=True, local=is_local)
+
+                        for source in sources[1]:
+                            is_local = False
+                            if site[2] == source[0][1]:
+                                is_local = True
+                            article.sourcesite_set.create(url=source[0],
+                                                      domain=source[1], matched=False, local=is_local)
 
                         added += 1
 
@@ -193,10 +210,20 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
                             if not Author.objects.filter(name=author):
                                 article.author_set.create(name=author)
 
+                        for account in twitter_accounts:
+                            matched = False
+                            if account in twitter_accounts_explorer:
+                                matched = True
+                            article.sourcetwitter_set.create(name = account, matched = matched)
+
                         for source in sources:
                             if not ArticleSourceSite.objects.filter(url=source[0]):
+                                is_local = False
+                                if site[2] == source[1]:
+                                    is_local = True
+
                                 src = article.sourcesite_set.create(url=source[0],
-                                                      domain=source[1], matched=True, local=False)
+                                                      domain=source[1], matched=source[2], local=is_local)
 
                     warc_creator.create_article_warc(url)
 
@@ -218,7 +245,7 @@ def parse_articles(populated_sites, db_keywords, foreign_sites):
              processed, article_count))
 
 
-def get_sources(html, sites):
+def get_sources_sites(html, sites):
     """ (str, list of str) -> list of [str, str]
     Searches and returns links redirected to sites within the html
     links will be storing the whole url and the domain name used for searching.
@@ -228,7 +255,8 @@ def get_sources(html, sites):
     html                -- string of html
     sites               -- list of site urls to look for
     """
-    matched_urls = []
+    result_urls_matched = []
+    result_urls_unmatched = []
 
     # Used to format the url
     regex = "([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}"
@@ -242,11 +270,27 @@ def get_sources(html, sites):
                 re.search(regex, site, re.IGNORECASE).group(0)
             if formatted_site[:3] == 'www':
                 formatted_site = formatted_site[3:]
+            matched =False
             if formatted_site in url:
                 # If it matches even once, append the site to the list
-                matched_urls.append([url[6:-1], site])
+                result_urls_matched.append([url[6:-1], site])
+            else:
+                result_urls_unmatched.append([url[6:-1], site])
+
     # Return the list
-    return matched_urls
+    return [result_urls_matched,result_urls_unmatched]
+
+
+def get_sources_twitter(html):
+    result = []
+    m = re.findall('@[a-zA-Z0-9.]*', html,re.IGNORECASE)
+
+    for element in m:
+        if not ("." in element):
+            result.append(element)
+    return result
+
+
 
 
 def get_pub_date(article):
@@ -282,6 +326,7 @@ def get_pub_date(article):
         else:
             return timezone.localtime(date)
     return None
+
 
 
 def get_keywords(article, keywords):
@@ -331,11 +376,19 @@ def explore():
     for key in keywords:
         keyword_list.append(str(key.name))
 
+
+    # Retrieve all stored keywords
+    source_twitter_list = []
+    twitter_accounts = ExplorerSourceTwitter.objects.all()
+    for key in twitter_accounts:
+        source_twitter_list.append(str(key.name))
+
+
     # Populate the monitoring sites with articles
     populated_sites = populate_sites(referring_sites)
 
     # Parse the articles in all sites
-    parse_articles(populated_sites, keyword_list, source_sites)
+    parse_articles(populated_sites, keyword_list, source_sites, twitter_accounts)
 
 
 def comm_write(text):
