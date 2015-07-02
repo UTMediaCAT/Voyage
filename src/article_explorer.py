@@ -264,7 +264,10 @@ def get_sources_sites(html, sites):
 
     for url in re.findall(
             "href=[\"\'][^\"\']*?.*?[^\"\']*?[\"\']", html, re.IGNORECASE):
-        domain = get_tld(url[6:-1])
+        try:
+            domain = get_tld(url[6:-1])
+        except tld.exceptions.TldBadUrl:
+            continue
         if domain in formatted_sites:
             # If it matches even once, append the site to the list
             result_urls_matched.append([url[6:-1], domain])
