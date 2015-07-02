@@ -52,6 +52,8 @@ from explorer.models import SourceSite as ExplorerSourceSite
 import yaml
 # To store the article as warc files
 import warc_creator
+# To get domain from url
+from tld import get_tld
 
 
 def configuration():
@@ -176,18 +178,12 @@ def parse_articles(populated_sites, db_keywords, source_sites,twitter_accounts_e
                             article.sourcetwitter_set.create(name = account, matched = False)
 
                         for source in sources[0]:
-                            is_local = False
-                            if site[2] == source[1]:
-                                is_local = True
                             article.sourcesite_set.create(url=source[0],
-                                                      domain=source[1], matched=True, local=is_local)
+                                                      domain=source[1], matched=True, local=(site[2] in source[0]))
 
                         for source in sources[1]:
-                            is_local = False
-                            if site[2] == source[1]:
-                                is_local = True
                             article.sourcesite_set.create(url=source[0],
-                                                      domain=source[1], matched=False, local=is_local)
+                                                      domain=source[1], matched=False, local=(site[2] in source[0]))
 
                         added += 1
 
@@ -219,18 +215,12 @@ def parse_articles(populated_sites, db_keywords, source_sites,twitter_accounts_e
                             article.sourcetwitter_set.create(name = account, matched = False)
 
                         for source in sources[0]:
-                            is_local = False
-                            if site[2] == source[1]:
-                                is_local = True
                             article.sourcesite_set.create(url=source[0],
-                                                      domain=source[1], matched=True, local=is_local)
+                                                      domain=source[1], matched=True, local=(site[2] in source[0]))
 
                         for source in sources[1]:
-                            is_local = False
-                            if site[2] == source[1]:
-                                is_local = True
                             article.sourcesite_set.create(url=source[0],
-                                                      domain=source[1], matched=False, local=is_local)
+                                                      domain=source[1], matched=False, local=(site[2] in source[0]))
 
 
 
@@ -266,19 +256,15 @@ def get_sources_sites(html, sites):
     """
     result_urls_matched = []
     result_urls_unmatched = []
+    # Format the site to assure only the domain name for searching
+    formatted_sites = []
 
-    # Used to format the url
-    regex = "([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}"
-
-    # for each site, check if it exists within the html given
     for site in sites:
-        for url in re.findall(
-                "href=[\"\'][^\"\']*?.*?[^\"\']*?[\"\']", html, re.IGNORECASE):
-            # Format the site to use only the domain name for searching
-            formatted_site = \
-                re.search(regex, site, re.IGNORECASE).group(0)
-            if formatted_site[:3] == 'www':
-                formatted_site = formatted_site[3:]
+        formatted_sites.append(get_tld(site))
+
+    for url in re.findall(
+            "href=[\"\'][^\"\']*?.*?[^\"\']*?[\"\']", html, re.IGNORECASE):
+        for site in formatted_sites:
             matched =False
             if formatted_site in url:
                 # If it matches even once, append the site to the list
