@@ -51,7 +51,7 @@ class CrawlerSource(object):
                         self.visit_queue.append(u)
 
                 self.pages_visited += 1
-                self.visited_urls.append(url)
+                self.visited_urls.insert(0, url)
                 return article
 
         def _should_skip(self):
