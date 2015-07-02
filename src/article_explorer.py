@@ -53,7 +53,7 @@ import yaml
 # To store the article as warc files
 import warc_creator
 # To get domain from url
-from tld import get_tld
+import tld
 
 
 def configuration():
@@ -260,12 +260,12 @@ def get_sources_sites(html, sites):
     formatted_sites = []
 
     for site in sites:
-        formatted_sites.append(get_tld(site))
+        formatted_sites.append(tld.get_tld(site))
 
     for url in re.findall(
             "href=[\"\'][^\"\']*?.*?[^\"\']*?[\"\']", html, re.IGNORECASE):
         try:
-            domain = get_tld(url[6:-1])
+            domain = tld.get_tld(url[6:-1])
         except tld.exceptions.TldBadUrl:
             continue
         if domain in formatted_sites:
