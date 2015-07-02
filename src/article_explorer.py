@@ -179,11 +179,11 @@ def parse_articles(populated_sites, db_keywords, source_sites,twitter_accounts_e
 
                         for source in sources[0]:
                             article.sourcesite_set.create(url=source[0],
-                                                      domain=source[1], matched=True, local=(site[2] in source[0]))
+                                                      domain=source[1], matched=True, local=(source[0] in site[2]))
 
                         for source in sources[1]:
                             article.sourcesite_set.create(url=source[0],
-                                                      domain=source[1], matched=False, local=(site[2] in source[0]))
+                                                      domain=source[1], matched=False, local=(source[0] in site[2]))
 
                         added += 1
 
@@ -216,11 +216,11 @@ def parse_articles(populated_sites, db_keywords, source_sites,twitter_accounts_e
 
                         for source in sources[0]:
                             article.sourcesite_set.create(url=source[0],
-                                                      domain=source[1], matched=True, local=(site[2] in source[0]))
+                                                      domain=source[1], matched=True, local=(source[0] in site[2]))
 
                         for source in sources[1]:
                             article.sourcesite_set.create(url=source[0],
-                                                      domain=source[1], matched=False, local=(site[2] in source[0]))
+                                                      domain=source[1], matched=False, local=(source[0] in site[2]))
 
 
 
