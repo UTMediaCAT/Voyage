@@ -38,7 +38,7 @@ class SourceTwitter(models.Model):
     matched = models.BooleanField(default=False)
 
     def __unicode__(self):
-        return self.url
+        return self.name
 
 class Keyword(models.Model):
     article = models.ForeignKey(Article)
