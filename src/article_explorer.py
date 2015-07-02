@@ -264,12 +264,12 @@ def get_sources_sites(html, sites):
 
     for url in re.findall(
             "href=[\"\'][^\"\']*?.*?[^\"\']*?[\"\']", html, re.IGNORECASE):
-        for site in formatted_sites:
-            if site in url:
-                # If it matches even once, append the site to the list
-                result_urls_matched.append([url[6:-1], site])
-            else:
-                result_urls_unmatched.append([url[6:-1], site])
+        domain = get_tld(url[6:-1])
+        if domain in formatted_sites:
+            # If it matches even once, append the site to the list
+            result_urls_matched.append([url[6:-1], domain])
+        else:
+            result_urls_unmatched.append([url[6:-1], domain])
 
     # Return the list
     return [result_urls_matched,result_urls_unmatched]
