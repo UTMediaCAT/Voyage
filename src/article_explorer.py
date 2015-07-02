@@ -265,7 +265,6 @@ def get_sources_sites(html, sites):
     for url in re.findall(
             "href=[\"\'][^\"\']*?.*?[^\"\']*?[\"\']", html, re.IGNORECASE):
         for site in formatted_sites:
-            matched =False
             if formatted_site in url:
                 # If it matches even once, append the site to the list
                 result_urls_matched.append([url[6:-1], site])
@@ -279,7 +278,8 @@ def get_sources_sites(html, sites):
 def get_sources_twitter(html, source_twitter):
     matched = []
     unmatched = []
-    m = re.findall('@[a-zA-Z0-9.]*', html,re.IGNORECASE)
+    # Twitter handle name specifications
+    m = re.findall('@[a-zA-Z0-9_]+', html,re.IGNORECASE)
 
     for element in m:
         if not ("." in element):
