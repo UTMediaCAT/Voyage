@@ -279,14 +279,13 @@ def get_sources_twitter(html, source_twitter):
     matched = []
     unmatched = []
     # Twitter handle name specifications
-    m = re.findall('@[a-zA-Z0-9_]+', html,re.IGNORECASE)
+    accounts = re.findall('@[a-zA-Z0-9_]+', html)
 
-    for element in m:
-        if not ("." in element):
-            if element[1:] in source_twitter:
-                matched.append(element)
-            else:
-                unmatched.append(element)
+    for account in accounts:
+        if account[1:] in source_twitter:
+            matched.append(account)
+        else:
+            unmatched.append(account)
     return [matched,unmatched]
 
 
