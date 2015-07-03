@@ -62,7 +62,7 @@ def configuration():
     config_yaml.close()
     return conf
 
-def parse_articles(source_sites, db_keywords, foreign_sites):
+def parse_articles(referring_sites, db_keywords, source_sites):
     """ (list of [str, newspaper.source.Source, str],
          list of str, list of str, str) -> None
     Downloads each db_article in the site, extracts, compares
@@ -70,14 +70,14 @@ def parse_articles(source_sites, db_keywords, foreign_sites):
     Then the db_article which had a match will be stored into the Django database
 
     Keyword arguments:
-    source_sites     -- List of [name, 'built_article'] of each site
+    referring_sites     -- List of [name, 'built_article'] of each site
     db_keywords         -- List of keywords
-    foreign_sites       -- List of foreign sites
+    source_sites       -- List of foreign sites
     """
     added, updated, failed, no_match = 0, 0, 0, 0
 
     # for each db_article in each sites, download and parse important data
-    for site in source_sites:
+    for site in referring_sites:
         # print "\n%s" % site[0]
 
         article_count = -1
@@ -120,7 +120,7 @@ def parse_articles(source_sites, db_keywords, foreign_sites):
                 # Regex the keyword from the db_article's text
                 keywords = get_keywords(article, db_keywords)
                 # Regex the links within db_article's html
-                sources = get_sources(article.article_html, foreign_sites)
+                sources = get_sources(article.article_html, source_sites)
                 # Store parsed author
                 authors = article.authors
                 # Try to parse the published date
