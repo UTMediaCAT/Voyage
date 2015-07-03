@@ -250,7 +250,7 @@ def get_sources_sites(html, sites):
             "href=[\"\'][^\"\']*?.*?[^\"\']*?[\"\']", html, re.IGNORECASE):
         try:
             domain = tld.get_tld(url[6:-1])
-        except tld.exceptions.TldBadUrl:
+        except:
             continue
         if domain in formatted_sites:
             # If it matches even once, append the site to the list
