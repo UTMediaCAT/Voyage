@@ -284,7 +284,7 @@ def get_sources_twitter(html, source_twitter):
     # Twitter handle name specifications
     accounts = re.findall('(?<=^|(?<=[^a-zA-Z0-9-_\.]))@([A-Za-z]+[A-Za-z0-9]+)', html)
 
-    for account in accounts:
+    for account in set(accounts):
         if account[1:] in source_twitter:
             matched.append(account)
         else:
