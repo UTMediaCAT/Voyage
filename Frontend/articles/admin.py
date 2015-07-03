@@ -10,7 +10,7 @@ class AuthorInline(admin.TabularInline):
 
 class SourceSiteInline(admin.TabularInline):
     model = SourceSite
-    fields = ['url', 'matched', 'local']
+    fields = ['url', 'domain', 'matched', 'local']
     extra = 0
 
 class KeywordInline(admin.TabularInline):
