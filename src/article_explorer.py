@@ -123,10 +123,10 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             # stop here and move on to next db_article
             if not ((title == "") or (title == "Page not found")):
                 # Regex the keyword from the article's text
-                keywords = get_keywords(art, db_keywords)
+                keywords = get_keywords(article, db_keywords)
                 # Regex the links within article's html
-                sources = get_sources_sites(art.article_html, source_sites)
-                twitter_accounts= get_sources_twitter(art.article_html, twitter_accounts_explorer)
+                sources = get_sources_sites(article.article_html, source_sites)
+                twitter_accounts= get_sources_twitter(article.article_html, twitter_accounts_explorer)
                 # Store parsed author
                 authors = article.authors
                 # Try to parse the published date
