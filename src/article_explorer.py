@@ -343,7 +343,7 @@ def explore():
     # Retrieve and store monitoring site information
     referring_sites = []
     for site in ReferringSite.objects.all():
-        referring_sites.append({"name":site.name, "url":site.url, "type":1})
+        referring_sites.append({"name":site.name, "url":site.url, "type":0})
 
     # Retrieve and store foreign site information
     source_sites = []
