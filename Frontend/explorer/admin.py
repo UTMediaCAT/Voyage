@@ -10,9 +10,9 @@ from django.utils import timezone
 
 class ReferringSiteAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None,               {'fields': ['url', 'name']})
+        (None,               {'fields': ['url', 'name', 'mode']})
         ]
-    list_display = ('name', 'url', 'article_count', 'latest_article')
+    list_display = ('name', 'url', 'article_count', 'latest_article', 'mode')
     search_fields = ['name', 'url']
     ordering = ['name']
     actions_on_top = True

@@ -51,7 +51,15 @@ class ReferringSite(models.Model):
     name = models.CharField(max_length=200, 
                             help_text='Your favorable alias of this site.\n' +
                                       'Maximum 200 characters')
-    
+    crawl_choices = (
+	(0, 'Newspaper'),
+	(1, 'Plan B'),
+	(2, 'Both')
+    )
+    mode = models.PositiveSmallIntegerField(default=0,
+		        choices=crawl_choices, 
+			help_text='',
+			verbose_name='Crawler')    
     class Meta:
         verbose_name = 'Referring Site'
 
