@@ -88,7 +88,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
         # print "\n%s" % site[0]
 
         article_count = -1
-	    newspaper_articles = []
+        newspaper_articles = []
         crawlersource_articles = []
         if(site["type"] == 0 or site["type"] == 2):
             newspaper_source = newspaper.build(site["url"],
