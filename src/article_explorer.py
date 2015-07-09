@@ -101,8 +101,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             article_count = newspaper_source.size()
         if(site["type"] == 1 or site["type"] == 2):
             crawlersource_articles = CrawlerSource.CrawlerSource(site["url"])
-
-        article_iterator = itertools.chain(iter(newspaper_articles), iter(crawlersource_articles))
+	article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
         processed = 0
         for article in article_iterator:
 
@@ -348,7 +347,7 @@ def explore():
     # Retrieve and store monitoring site information
     referring_sites = []
     for site in ReferringSite.objects.all():
-        referring_sites.append({"name":site.name, "url":site.url, "type":0})
+        referring_sites.append({"name":site.name, "url":site.url, "type":site.mode})
 
     # Retrieve and store foreign site information
     source_sites = []
