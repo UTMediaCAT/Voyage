@@ -86,17 +86,18 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
         # print "\n%s" % site[0]
 
         article_count = -1
-        if(site["type"] == 0):
+	article_iterator = []
+        if(site["type"] == 0 or site["type"] == 2):
             newspaper_source = newspaper.build(site["url"],
                                              memoize_articles=False,
                                              keep_article_html=True,
                                              fetch_images=False,
                                              language='en',
                                              number_threads=1)
-            article_iterator = newspaper_source.articles
+            article_iterator += newspaper_source.articles
             article_count = newspaper_source.size()
-        elif(site["type"] == 1):
-            article_iterator = CrawlerSource.CrawlerSource(site["url"])
+        elif(site["type"] == 1 or site["type"] == 2):
+            article_iterator += CrawlerSource.CrawlerSource(site["url"])
 
         processed = 0
         for article in article_iterator:
