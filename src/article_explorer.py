@@ -101,7 +101,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             article_count = newspaper_source.size()
         if(site["type"] == 1 or site["type"] == 2):
             crawlersource_articles = CrawlerSource.CrawlerSource(site["url"])
-	article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
+        article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
         processed = 0
         for article in article_iterator:
 
