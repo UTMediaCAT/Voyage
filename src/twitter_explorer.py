@@ -247,7 +247,7 @@ def get_sources_twitter(tweet_text, source_twitter):
     accounts = re.findall('(?<=^|(?<=[^a-zA-Z0-9-_\.]))@([A-Za-z]+[A-Za-z0-9]+)', tweet_text)
 
     for account in set(accounts):
-        if account[1:] in source_twitter:
+        if account in source_twitter:
             matched.append(account)
         else:
             unmatched.append(account)
