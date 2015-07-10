@@ -179,7 +179,7 @@ def geTwitterKeywords(tweet, keywords):
     return list(all_matches)
 
 
-def get_source_sites(tweet, sites):
+def get_source_sites(tweet_text, sites):
     """ (status, list of str) -> list of str
     Searches and returns links redirected to sites within the urls
     of the tweet
@@ -191,53 +191,38 @@ def get_source_sites(tweet, sites):
     """
     # store_all = configuration()['storage']['store_all_sources']
 
-    hdr = {
-        'User-Agent':
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11' +
-        ' (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
-        'Accept':
-        'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3',
-        'Accept-Encoding': 'none',
-        'Accept-Language': 'en-US,en;q=0.8',
-        'Connection': 'keep-alive'}
 
     result_urls_matched = []
     result_urls_unmatched = []
-    tweet_urls = []
+
 
     formatted_sites = []
 
     for site in sites:
         formatted_sites.append(tld.get_tld(site))
 
-    # if store_all == False:
-    for url in tweet.entities['urls']:
+    formatted_sites = []
+
+    for site in sites:
+        formatted_sites.append(tld.get_tld(site))
+
+    for url in re.findall(
+            'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', tweet_text, re.IGNORECASE):
         try:
-            # tries to get full url on shortened urls
-            req = urllib2.Request(url['expanded_url'], headers=hdr)
-            tweet_urls.append(str(urllib2.urlopen(req).url))
-
+            domain = tld.get_tld(url[6:-1])
         except:
-            # if not just take normal url
-            tweet_urls.append(str(url['expanded_url']))
-
-    # substring, expanded includes scheme, display may not
-    for url in tweet_urls:
-            try:
-                domain = tld.get_tld(url[6:-1])
-            except:
-                continue
-            if domain in formatted_sites:
-                # If it matches even once, append the site to the list
-                result_urls_matched.append([url[6:-1], domain])
-            else:
+            continue
+        if domain in formatted_sites:
+            # If it matches even once, append the site to the list
+            result_urls_matched.append([url[6:-1], domain])
+        else:
+            if "t.co" != domain:
                 result_urls_unmatched.append([url[6:-1], domain])
 
-
-
-
+    # Return the list
     return [result_urls_matched,result_urls_unmatched]
+
+
 
 
 def get_sources_twitter(tweet_text, source_twitter):
@@ -277,7 +262,6 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
         tweets = get_tweets(user, tweet_number)
         tweet_followers = get_follower_count(user)
         tweet_count = len(tweets)
-
         for tweet in tweets:
             # Check for any new command on communication stream
             check_command()
@@ -291,7 +275,7 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
             tweet_user = tweet.user.screen_name
             tweet_store_date = timezone.localtime(timezone.now())
             tweet_keywords = geTwitterKeywords(tweet, keywords)
-            tweet_sources = get_source_sites(tweet, source_sites)
+            tweet_sources = get_source_sites(tweet.text, source_sites)
             twitter_accounts= get_sources_twitter(tweet.text, source_twitter_list)
             tweet_text = tweet.text
 
