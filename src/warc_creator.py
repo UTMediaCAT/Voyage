@@ -18,8 +18,8 @@ def create_warc(url, dir):
     creates a warc file from url and places it in dest
     """
     rename_url = url.replace("/", "_")
-    subprocess.call(["mkdir", "-p", dir], cwd="..")
-    subprocess.Popen(["wget", "--warc-file=" + rename_url, "-O", "/dev/null", url], cwd="../"+dir)
+    subprocess.call(["mkdir", "-p", dir], cwd="..", close_fds=True)
+    subprocess.Popen(["wget", "--warc-file=" + rename_url, "-O", "/dev/null", url], cwd="../"+dir, close_fds=True)
 
 def create_article_warc(url):
     """(url)-->None
