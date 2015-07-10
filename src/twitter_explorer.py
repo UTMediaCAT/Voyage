@@ -27,7 +27,9 @@ from tweets.models import Keyword as TwitterKeyword
 from tweets.models import SourceSite as TwitterSourceSite
 from explorer.models import*
 from explorer.models import Keyword as ExplorerKeyword
-
+from explorer.models import SourceTwitter as ExplorerSourceTwitter
+from explorer.models import Keyword as ExplorerKeyword
+import tld
 # To store the article as warc files
 import warc_creator
 
@@ -177,7 +179,7 @@ def geTwitterKeywords(tweet, keywords):
     return list(all_matches)
 
 
-def get_sources(tweet, sites):
+def get_source_sites(tweet, sites):
     """ (status, list of str) -> list of str
     Searches and returns links redirected to sites within the urls
     of the tweet
@@ -200,8 +202,15 @@ def get_sources(tweet, sites):
         'Accept-Language': 'en-US,en;q=0.8',
         'Connection': 'keep-alive'}
 
-    matched_urls = []
+    result_urls_matched = []
+    result_urls_unmatched = []
     tweet_urls = []
+
+    formatted_sites = []
+
+    for site in sites:
+        formatted_sites.append(tld.get_tld(site))
+
     # if store_all == False:
     for url in tweet.entities['urls']:
         try:
@@ -214,23 +223,38 @@ def get_sources(tweet, sites):
             tweet_urls.append(str(url['expanded_url']))
 
     # substring, expanded includes scheme, display may not
-    for site in sites:
-        for url in tweet_urls:
-            formatted_site = re.search(
-                "([a-zA-Z0-9]([a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])?\\.)+"
-                "[a-zA-Z]{2,6}",
-                site, re.IGNORECASE).group(0)
-            if formatted_site[:3] == 'www':
-                formatted_site = formatted_site[3:]
-
-            if re.search(formatted_site, url, re.IGNORECASE):
-                matched_urls.append(
-                    [url, site])  # should store [whole source, 'site' url]
-
-    return matched_urls
+    for url in tweet_urls:
+            try:
+                domain = tld.get_tld(url[6:-1])
+            except:
+                continue
+            if domain in formatted_sites:
+                # If it matches even once, append the site to the list
+                result_urls_matched.append([url[6:-1], domain])
+            else:
+                result_urls_unmatched.append([url[6:-1], domain])
 
 
-def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
+
+
+    return [result_urls_matched,result_urls_unmatched]
+
+
+def get_sources_twitter(tweet_text, source_twitter):
+    matched = []
+    unmatched = []
+    # Twitter handle name specifications
+    accounts = re.findall('(?<=^|(?<=[^a-zA-Z0-9-_\.]))@([A-Za-z]+[A-Za-z0-9]+)', tweet_text)
+
+    for account in set(accounts):
+        if account in source_twitter:
+            matched.append(account)
+        else:
+            unmatched.append(account)
+    return [matched,unmatched]
+
+
+def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twitter_list):
     """ (list of str, list of str, list of str, str) -> none
     Parses through tweets of users, looking for keywords and foreign sites.
     Relevant tweets will be sent to a database.
@@ -267,10 +291,11 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
             tweet_user = tweet.user.screen_name
             tweet_store_date = timezone.localtime(timezone.now())
             tweet_keywords = geTwitterKeywords(tweet, keywords)
-            tweet_sources = get_sources(tweet, foreign_sites)
+            tweet_sources = get_source_sites(tweet, source_sites)
+            twitter_accounts= get_sources_twitter(tweet.text, source_twitter_list)
             tweet_text = tweet.text
 
-            if not(tweet_keywords == [] and tweet_sources == []):
+            if not(tweet_keywords == [] and tweet_sources[0] == [] and twitter_accounts[0] ==[]):
 
                 tweet_list = Tweet.objects.filter(tweet_id=tweet_id)
                 if (not tweet_list):
@@ -283,12 +308,21 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
 
                     tweet = Tweet.objects.get(tweet_id=tweet_id)
 
+                    for account in twitter_accounts[0]:
+                        tweet.sourcetwitter_set.create(name = account, matched = True)
+
+                    for account in twitter_accounts[1]:
+                        tweet.sourcetwitter_set.create(name = account, matched = False)
+
                     for key in tweet_keywords:
                         tweet.keyword_set.create(name=key)
 
-                    for source in tweet_sources:
+                    for source in tweet_sources[0]:
                         tweet.sourcesite_set.create(url=source[0],
-                                                domain=source[1])
+                                                domain=source[1], matched = True)
+                    for source in tweet_sources[1]:
+                        tweet.sourcesite_set.create(url=source[0],
+                                                domain=source[1], matched = False)
 
                     added += 1
 
@@ -306,10 +340,22 @@ def parse_tweets(twitter_users, keywords, foreign_sites, tweet_number):
                         if not TwitterKeyword.objects.filter(name=key):
                             tweet.keyword_set.create(name=key)
 
-                    for source in tweet_sources:
+                    for source in tweet_sources[0]:
                         if not TwitterSourceSite.objects.filter(url=source[0]):
                             tweet.sourcesite_set.create(
-                                url=source[0], domain=source[1])
+                                url=source[0], domain=source[1],matched = True)
+
+                    for source in tweet_sources[1]:
+                        if not TwitterSourceSite.objects.filter(url=source[0]):
+                            tweet.sourcesite_set.create(
+                                url=source[0], domain=source[1],matched = False)
+
+                    for account in twitter_accounts[0]:
+                        tweet.sourcetwitter_set.create(name = account, matched = True)
+
+                    for account in twitter_accounts[1]:
+                        tweet.sourcetwitter_set.create(name = account, matched = False)
+
                     updated += 1
 
                 warc_creator.create_twitter_warc(
@@ -367,7 +413,12 @@ def explore(tweet_number):
     for account in accounts:
         accounts_list.append(str(account.name))
 
-    parse_tweets(accounts_list, keyword_list, source_sites, tweet_number)
+    source_twitter_list = []
+    twitter_accounts = ExplorerSourceTwitter.objects.all()
+    for key in twitter_accounts:
+        source_twitter_list.append(str(key.name))
+
+    parse_tweets(accounts_list, keyword_list, source_sites, tweet_number,source_twitter_list)
 
 
 def comm_write(text):
