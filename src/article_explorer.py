@@ -197,17 +197,21 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                                 db_article.author_set.create(name=author)
 
                         for account in twitter_accounts[0]:
-                            db_article.sourcetwitter_set.create(name = account, matched = True)
+                            if not SourceTwitter.objects.filter(name=account):
+                                db_article.sourcetwitter_set.create(name = account, matched = True)
 
                         for account in twitter_accounts[1]:
-                            db_article.sourcetwitter_set.create(name = account, matched = False)
+                            if not SourceTwitter.objects.filter(name=account):
+                                db_article.sourcetwitter_set.create(name = account, matched = False)
 
                         for source in sources[0]:
-                            db_article.sourcesite_set.create(url=source[0],
+                            if not SourceSite.objects.filter(url=source[0]):
+                                db_article.sourcesite_set.create(url=source[0],
                                                       domain=source[1], matched=True, local=(source[1] in site["url"]))
 
                         for source in sources[1]:
-                            db_article.sourcesite_set.create(url=source[0],
+                            if not SourceSite.objects.filter(url=source[0]):
+                                db_article.sourcesite_set.create(url=source[0],
                                                       domain=source[1], matched=False, local=(source[1] in site["url"]))
 
 

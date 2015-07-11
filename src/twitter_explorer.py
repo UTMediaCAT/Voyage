@@ -209,15 +209,15 @@ def get_source_sites(tweet_text, sites):
     for url in re.findall(
             'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', tweet_text, re.IGNORECASE):
         try:
-            domain = tld.get_tld(url[6:-1])
+            domain = tld.get_tld(url)
         except:
             continue
         if domain in formatted_sites:
             # If it matches even once, append the site to the list
-            result_urls_matched.append([url[6:-1], domain])
+            result_urls_matched.append([url, domain])
         else:
             if "t.co" != domain:
-                result_urls_unmatched.append([url[6:-1], domain])
+                result_urls_unmatched.append([url, domain])
 
     # Return the list
     return [result_urls_matched,result_urls_unmatched]
@@ -335,10 +335,12 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
                                 url=source[0], domain=source[1],matched = False)
 
                     for account in twitter_accounts[0]:
-                        tweet.sourcetwitter_set.create(name = account, matched = True)
+                        if not SourceTwitter.objects.filter(name=account):
+                            tweet.sourcetwitter_set.create(name = account, matched = True)
 
                     for account in twitter_accounts[1]:
-                        tweet.sourcetwitter_set.create(name = account, matched = False)
+                        if not SourceTwitter.objects.filter(name=account):
+                            tweet.sourcetwitter_set.create(name = account, matched = False)
 
                     updated += 1
 
