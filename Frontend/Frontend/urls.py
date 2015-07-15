@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'Frontend.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
+    url(r'^$', include('home.urls')),
 
     url(r'^articles/', include('articles.urls')),
 
@@ -24,8 +25,6 @@ urlpatterns = patterns('',
     url(r'^options/', include('options.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
-
-    url(r'^$', include(admin.site.urls)),
 )
 
 urlpatterns += staticfiles_urlpatterns()
