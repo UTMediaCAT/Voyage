@@ -1,0 +1,199 @@
+<head>
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+
+        // Load the Visualization API and the piechart package.
+        google.load('visualization', '1.0', {'packages':['corechart']});
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.setOnLoadCallback(drawChart);
+
+        // Callback that creates and populates a data table,
+        // instantiates the pie chart, passes in the data and
+        // draws it.
+        function drawChart() {
+            // Create the data table.
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Topping');
+            data.addColumn('number', 'Slices');
+            data.addRows( {{ keywords_pie_chart|safe }} );
+
+
+            // Set chart options
+            var options = {'title':'Top 10 Keywords Distribution',
+                           'width':600,
+                           'height':450};
+
+            // Instantiate and draw our chart, passing in some options.
+            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+            var chart2 = new google.visualization.PieChart(document.getElementById('chart_div2'));
+            chart2.draw(data, options);
+
+        }
+    </script>
+</head>
+
+<head>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["table"]});
+      google.setOnLoadCallback(drawTable);
+
+      function drawTable() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Keywords');
+        data.addColumn('number', 'Number of matches');
+
+        data.addRows( {{ keywords_pie_chart|safe }} );
+
+        var table = new google.visualization.Table(document.getElementById('table_div'));
+        table.draw(data, {showRowNumber: true});
+        var table2 = new google.visualization.Table(document.getElementById('table_div2'));
+
+        table2.draw(data, {showRowNumber: true});
+      }
+    </script>
+</head>
+
+<head>
+<script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1','packages':['annotationchart']}]}"></script>
+<script type='text/javascript'>
+  google.load('visualization', '1', {'packages':['annotationchart']});
+  google.setOnLoadCallback(drawChart);
+  function drawChart() {
+    var data = new google.visualization.DataTable();
+
+        data.addColumn('date', 'Date');            
+        var sites = {{ referring_sites|safe }}.slice(0)
+        for (var i=0; i < sites.length; i++) {
+            data.addColumn('number', String(sites[i]));
+        }
+
+        var new_data = {{ article_by_date|safe }}.slice(0)
+        for (var i=0; i < new_data.length; i++) {
+            new_data[i][0] = new Date(new_data[i][0]);
+        }
+        data.addRows( new_data );
+
+
+    var chart = new google.visualization.AnnotationChart(document.getElementById('annot_div'));
+
+    var options = {
+      displayAnnotations: true
+    };
+
+    chart.draw(data, options);
+  }
+</script>
+</head>
+
+<head>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+  google.load("visualization", "1", {packages:["corechart"]});
+  google.setOnLoadCallback(drawChart);
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable({{referringsite_bar_chart|safe}});
+
+    var options = {
+      title: 'Top 10 Source Sites Distribution',
+      vAxis: {title: 'Source Sites',  titleTextStyle: {color: 'red'}}
+    };
+
+    var chart = new google.visualization.BarChart(document.getElementById('chart_bar'));
+
+    chart.draw(data, options);
+  }
+</script>
+</head>
+
+<head>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["table"]});
+      google.setOnLoadCallback(drawTable);
+
+      function drawTable() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Source Site');
+        data.addColumn('number', 'Number of Matches');
+
+        data.addRows( {{ referringsite_bar_table|safe }});
+
+
+        var table = new google.visualization.Table(document.getElementById('table_bar'));
+
+        table.draw(data, {showRowNumber: true});
+      }
+    </script>
+</head>
+
+<head>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+    google.load("visualization", "1", {packages:["corechart"]});
+    google.setOnLoadCallback(drawSeriesChart);
+
+    function drawSeriesChart() {
+
+      var data = google.visualization.arrayToDataTable({{article_bubble_chart | safe}});
+
+      var options = {
+        title: 'Correlation between life expectancy, fertility rate and population of some world countries (2010)',
+        hAxis: {title: 'Life Expectancy'},
+        vAxis: {title: 'Fertility Rate'},
+        bubble: {textStyle: {fontSize: 11}}
+      };
+
+      var chart = new google.visualization.BubbleChart(document.getElementById('series_chart_div'));
+      chart.draw(data, options);
+    }
+    </script>
+  </head>
+
+<!--Div that will hold the pie chart-->
+<div>       
+    <h1 align="center">Number of Articles Added Vs. Time</h1>
+    <div style="margin: 5%; font-size: 150%">
+        <p>
+          This chart shows the number of articles added at particular time. Each node represents one referring site. Top right of the screen shows the count of the articles per referring site when you hover over chart.
+          You can select the time period using the buttons on the top right. Also, you can drag the slider at the bottom of the screen.
+        </p>
+    </div>
+    <div style="width: 100%; height: 40em; position: relative">
+        <div style='width: inherit; height: inherit'>
+            <div id="annot_div" align="center" style="width: 90%; height: 80%; margin: 5%"></div>
+        </div>
+    </div>
+
+    <h1 align="center">Top 10 Keywords Distribution</h1>
+    <div style="margin: 5%; font-size: 150%">
+        <p>
+          This chart displays top 10 keywords based on the frequency of their occurrence in the articles.
+          The right side contains the legend of all the keywords. Hover over the pie chart for details.
+        </p>
+    </div>
+    <div style="width: 100%; height: 70em; position: relative">
+        <div style='width: inherit; height: inherit'>
+            <div id="chart_div" align="center" style="width: 90%; height: 60%; margin: 5%"></div>
+            <div id="table_div" align="center" style="width: 80%; height: 40%; margin-left: 10%"></div>
+        </div>
+    </div>
+
+
+    <h1 align="center">Top 10 Foreign Sites Distribution</h1>
+    <div style="margin: 5%; font-size: 150%">
+        <p>
+          This chart displays top 10 source sites based on the frequency of their occurrence in the articles.
+          The right side contains the legend of all the source sites. Hover over the chart for details.
+        </p>
+    </div>
+    <div style="width: 100%; height: 70em; position: relative">
+        <div style='width: inherit; height: inherit'>
+            <div id="chart_bar" align="center" style="width: 90%; height: 60%; margin: 5%"></div>
+            <div id="table_bar" align="center" style="width: 80%; height: 40%; margin-left: 10%"></div>
+        </div>
+    </div>         
+</div>

@@ -13,6 +13,28 @@
 
 {% elif statistics %}
 
+  <head>
+    <script language="javascript" type="text/javascript">
+      function resizeIframe(obj) {
+        obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+      }
+    </script>
+  </head>
+
+  {% if statistics_articles %}
+
+  <div id="statistics_articles_js">
+      <iframe width="100%" frameborder="0" onload="resizeIframe(this);" src="/statistics/articles_js.html"></iframe>
+  </div>
+
+  {% else %}
+
+  <div id="statistics_tweets_js">
+      <iframe width="100%" frameborder="0" onload="resizeIframe(this);" src="/statistics/tweets_js.html"></iframe>
+  </div>
+
+  {% endif %}
+
 {% elif visualizations %}
 
   <head>
@@ -29,24 +51,7 @@
 
 {% elif downloads %}
 
-  <h2> Article JSON: </h2>
-  <form method="post" action="/articles/getJson">
-      {% csrf_token %}
-      <input type="submit" value="Get Article JSON">
-  </form>
 
-  <h2> Tweet JSON: </h2>
-  <form method="post" action="/tweets/getJson">
-      {% csrf_token %}
-      <input type="submit" value="Get Tweet JSON">
-  </form>
-
-  <h2> Scope JSON: </h2>
-
-  <form method="post" action="/explorer/getJson">
-      {% csrf_token %}
-      <input type="submit" value="Get Scope JSON">
-  </form>
 
 {% elif contact %}
 

@@ -11,6 +11,11 @@ def articles(request):
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)
 
+    data = []
+    context = {'data': data}
+    return render(request, 'statistics/articles.html', context)
+
+def articles_js(request):
     keywords_pie_chart = analyzer.articles_keywords_pie_chart()
     articles_annotation_chart = analyzer.articles_annotation_chart()
     msites_bar_chart = analyzer.msites_bar_chart()
@@ -23,12 +28,17 @@ def articles(request):
                 'referringsite_bar_table':msites_bar_chart[1:],
                 'bar_chart_height': max((len(msites_bar_chart) - 1) * 3, 30),}
 
-    return render(request, 'statistics/articles.html', context)
+    return render(request, 'statistics/articles_js.html', context)
 
 def tweets(request):
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)
 
+    data = []
+    context = {'data': data}
+    return render(request, 'statistics/tweets.html', context)
+
+def tweets_js(request):
     keywords_pie_chart = analyzer.tweets_keywords_pie_chart()
     tweets_annotation_chart =analyzer.tweets_annotation_chart()
 
@@ -37,4 +47,4 @@ def tweets(request):
     context = {'keywords_pie_chart': keywords_pie_chart, 
                 'referring_acounts':tweets_annotation_chart[0], 
                 'tweet_by_date': tweets_annotation_chart[1]}
-    return render(request, 'statistics/tweets.html', context)
+    return render(request, 'statistics/tweets_js.html', context)
