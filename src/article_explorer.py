@@ -57,7 +57,7 @@ import CrawlerSource
 import tld
 # To concatenate newspaper's articles and CrawlerSource's articles
 import itertools
-
+import requests
 
 def configuration():
     """ (None) -> dict
@@ -139,7 +139,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                 # If neither of keyword nor sources matched,
                 # then stop here and move on to next article
                 if not (keywords == [] and sources[0] == [] and twitter_accounts[0] ==[]):
-
+                    url = requests.get(url).url
                     # Check if the entry already exists
                     db_article_list = Article.objects.filter(url=url)
                     if not db_article_list:
