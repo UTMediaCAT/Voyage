@@ -10,7 +10,8 @@
     </div><!-- /col-lg-9 END SECTION MIDDLE -->
 
     <div class="col-lg-3 ds">
-      <h3><button class="btn btn-info dropdown-toggle" data-toggle="collapse" data-target="#rsites">Referring Sites <span class="caret"></span></button></h3>
+      <h2>Scope</h2>
+      <h3><button class="btn btn-info dropdown-toggle" data-toggle="collapse" data-target="#rsites"> Referring Sites <span class="caret"></span></button></h3>
       <div class="collapse" id="rsites">
         <table class="table">
           <thead>
@@ -21,17 +22,84 @@
           </thead>
 
           <tbody>
-          {% for keyword in keywords %}
+          {% for rsite in rsites %}
           <tr>
               <td>{{ forloop.counter }}</td>
-              <td>{{ keyword }}</td>
+              <td>{{ rsite }}</td>
           </tr>
           {% endfor %}
           </tbody>
 
         </table>
       </div>
-      <h3><a data-toggle="collapse" data-target="#keywords">Keywords</a></h3>
+
+      <h3><button class="btn btn-info dropdown-toggle" data-toggle="collapse" data-target="#rtwitters"> Referring Twitter Accounts <span class="caret"></span></button></h3>
+      <div class="collapse" id="rtwitters">
+        <table class="table">
+          <thead>
+          <tr>
+              <th>#</th>
+              <th>Referring Twitter Account</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          {% for rtwitter in rtwitters %}
+          <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ rtwitter }}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+
+      <h3><button class="btn btn-info dropdown-toggle" data-toggle="collapse" data-target="#ssites"> Source Sites <span class="caret"></span></button></h3>
+      <div class="collapse" id="ssites">
+        <table class="table">
+          <thead>
+          <tr>
+              <th>#</th>
+              <th>Source Site</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          {% for ssite in ssites %}
+          <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ ssite }}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+
+      <h3><button class="btn btn-info dropdown-toggle" data-toggle="collapse" data-target="#stwitters"> Source Twitter Accounts <span class="caret"></span></button></h3>
+      <div class="collapse" id="stwitters">
+        <table class="table">
+          <thead>
+          <tr>
+              <th>#</th>
+              <th>Source Twitter Account</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          {% for stwitter in stwitters %}
+          <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ stwitter }}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+
+        </table>
+      </div>
+
+      <h3><button class="btn btn-info dropdown-toggle" data-toggle="collapse" data-target="#keywords"> Keywords <span class="caret"></span></button></h3>
       <div class="collapse" id="keywords">
         <table class="table">
           <thead>

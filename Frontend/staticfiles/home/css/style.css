@@ -788,6 +788,17 @@ ul.top-menu > li > a:hover, ul.top-menu > li > a:focus {
 	text-align: center;
 }
 
+.ds h2 {
+    color: #ffffff;
+    font-size: 20px;
+    padding: 0 10px;
+    line-height: 60px;
+    height: 60px;
+    margin: 0;
+    background: #424a5d;
+    text-align: center;
+}
+
 .ds i {
 	font-size: 12px;
 	line-height: 16px;
