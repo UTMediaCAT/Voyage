@@ -2,11 +2,31 @@
 
 {% block content %}
 
-<h3><i class="fa fa-angle-right"></i> Blank Page</h3>
-<div class="row mt">
-	<div class="col-lg-12">
-	<p>Place your content here.</p>
-	</div>
-</div>
+{% if overview %}
+
+  <h3><i class="fa fa-angle-right"></i> Blank Page</h3>
+  <div class="row mt">
+    <div class="col-lg-12">
+    <p>Place your content here.</p>
+    </div>
+  </div>
+
+{% elif statistics %}
+
+{% elif visualizations %}
+
+  <head>
+    <script language="javascript" type="text/javascript">
+      function resizeIframe(obj) {
+        obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+      }
+    </script>
+  </head>
+
+  <div id="{{ result }}">
+      <iframe width="100%" frameborder="0" onload="resizeIframe(this);" src="/visualizations/{{ result }}_js"></iframe>
+  </div>
+
+{% endif %}
 
 {% endblock %}

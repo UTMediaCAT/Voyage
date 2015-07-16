@@ -2,6 +2,14 @@ from django.shortcuts import render, redirect
 from django.template import RequestContext, loader
 
 def index(request):
+	visualizations_dict = {"/article_sourcesite": "article_hypertree",
+						   "/article_keyword": "article_spacetree",
+						   "/article_weighted": "article_weightedtree",
+						   "/article_movable": "article_forcegraph",
+						   "/tweet_sourcesite": "tweet_hypertree",
+						   "/tweet_keyword": "tweet_spacetree",
+						   "/tweet_weighted": "tweet_weightedtree",
+						   "/tweet_movable": "tweet_forcegraph"}
 	content = {}
 
 	if (request.path in ["/statistics_articles",
@@ -9,16 +17,10 @@ def index(request):
 		content["statistics"] = "active"
 		content[request.path[1:]] = "active"
 
-	elif (request.path in ["/article_sourcesite",
-						   "/article_keyword",
-						   "/article_weighted",
-						   "/article_movable",
-						   "/tweet_sourcesite",
-						   "/tweet_keyword",
-						   "/tweet_weighted",
-						   "/tweet_movable"]):
+	elif (request.path in visualizations_dict.keys()):
 		content["visualizations"] = "active"
 		content[request.path[1:]] = "active"
+		content["result"] = visualizations_dict[request.path]
 
 	elif (request.path in ["/downloads", "/contact"]):
 		content[request.path[1:]] = "active"
