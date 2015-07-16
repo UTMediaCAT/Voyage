@@ -325,7 +325,7 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
                     tweet.date_published = tweet_date
                     tweet.save()
 
-                    tweet.countlog_set.clear();
+
                     tweet.countlog_set.create(retweet_count = retweet_count, favorite_count = favorite_count, date =tweet_store_date)
 
                     for key in tweet_keywords:
