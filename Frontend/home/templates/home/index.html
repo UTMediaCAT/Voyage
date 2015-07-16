@@ -51,7 +51,29 @@
 
 {% elif downloads %}
 
+  <div class="showback">
+    <h4><i class="fa fa-angle-right"></i> Article JSON </h4>
+    <form method="post" action="/articles/getJson">
+      {% csrf_token %}
+      <input type="submit" class="btn btn-primary" value="Download"></input>
+    </form>
+  </div>
 
+  <div class="showback">
+    <h4><i class="fa fa-angle-right"></i> Tweet JSON </h4>
+    <form method="post" action="/tweets/getJson">
+      {% csrf_token %}
+      <input type="submit" class="btn btn-warning" value="Download"></input>
+    </form>
+  </div>
+
+  <div class="showback">
+    <h4><i class="fa fa-angle-right"></i> Scope JSON </h4>
+    <form method="post" action="/explorer/getJson">
+      {% csrf_token %}
+      <input type="submit" class="btn btn-danger" value="Download"></input>
+    </form>
+  </div>
 
 {% elif contact %}
 
