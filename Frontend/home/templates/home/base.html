@@ -61,45 +61,45 @@
               	  <h5 class="centered">Alejandro Paz</h5>
               	  	
                   <li class="mt">
-                      <a class="active" href="">
+                      <a class="{{ overview }}" href="/">
                           <i class="fa fa-home"></i>
                           <span>Overview</span>
                       </a>
                   </li>
                   <li class="sub-menu">
-                      <a href="javascript:;" >
+                      <a class="{{ statistics }}" href="javascript:;" >
                           <i class=" fa fa-bar-chart-o"></i>
                           <span>Statistics</span>
                       </a>
                       <ul class="sub">
-                          <li><a  href="statistics_articles.html">Articles</a></li>
-                          <li><a  href="statistics_tweets.html">Tweets</a></li>
+                          <li class="{{ statistics_articles }}"><a  href="statistics_articles">Articles</a></li>
+                          <li class="{{ statistics_tweets }}"><a  href="statistics_tweets">Tweets</a></li>
                       </ul>
                   </li>
                   <li class="sub-menu">
-                      <a href="javascript:;" >
+                      <a class="{{ visualizations }}" href="javascript:;" >
                           <i class="fa fa-desktop"></i>
                           <span>Visualizations</span>
                       </a>
                       <ul class="sub">
-                          <li><a  href="article_sourcesite.html">Article - Source Site</a></li>
-                          <li><a  href="article_keyword.html">Article - Keyword</a></li>
-                          <li><a  href="article_weighted.html">Article - Weighted</a></li>
-                          <li><a  href="article_movable.html">Article - Movable</a></li>
-                          <li><a  href="tweet_sourcesite.html">Tweet - Source Site</a></li>
-                          <li><a  href="tweet_keyword.html">Tweet - Keyword</a></li>
-                          <li><a  href="tweet_weighted.html">Tweet - Weighted</a></li>
-                          <li><a  href="tweet_movable.html">Tweet - Movable</a></li>
+                          <li class="{{ article_sourcesite }}"><a  href="article_sourcesite">Article - Source Site</a></li>
+                          <li class="{{ article_keyword }}"><a  href="article_keyword">Article - Keyword</a></li>
+                          <li class="{{ article_weighted }}"><a  href="article_weighted">Article - Weighted</a></li>
+                          <li class="{{ article_movable }}"><a  href="article_movable">Article - Movable</a></li>
+                          <li class="{{ tweet_sourcesite }}"><a  href="tweet_sourcesite">Tweet - Source Site</a></li>
+                          <li class="{{ tweet_keyword }}"><a  href="tweet_keyword">Tweet - Keyword</a></li>
+                          <li class="{{ tweet_weighted }}"><a  href="tweet_weighted">Tweet - Weighted</a></li>
+                          <li class="{{ tweet_movable }}"><a  href="tweet_movable">Tweet - Movable</a></li>
                       </ul>
                   </li>
                   <li class="sub-menu">
-                      <a href="downloads.html" >
+                      <a class="{{ downloads }}" href="downloads" >
                           <i class="fa fa-download"></i>
                           <span>Downloads</span>
                       </a>
                   </li>
                   <li class="sub-menu">
-                      <a href="contact.html">
+                      <a class="{{ contact }}" href="contact">
                           <i class="fa fa-envelope"></i>
                           <span>Contact Us</span>
                       </a>
@@ -116,14 +116,8 @@
       <!--main content start-->
       <section id="main-content">
           <section class="wrapper site-min-height">
-          	<h3><i class="fa fa-angle-right"></i> Blank Page</h3>
-          	<div class="row mt">
-          		<div class="col-lg-12">
-          		<p>Place your content here.</p>
-          		</div>
-          	</div>
-			
-		</section><! --/wrapper -->
+            {% block content %}{% endblock %}
+		      </section><! --/wrapper -->
       </section><!-- /MAIN CONTENT -->
 
       <!--main content end-->
