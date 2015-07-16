@@ -526,7 +526,7 @@ if __name__ == '__main__':
 
     # Logging config
     time = datetime.datetime.now().strftime('%Y%m%d')
-    log_dir = config['projectdir']+"/"+config['log']['dir']
+    log_dir = config['projectdir']+"/log"
     
     try:
         cycle_number = sorted(glob.glob(log_dir + "/article_explorer-" + time + "*.log"))[-1][-7:-4]
