@@ -141,6 +141,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                     logging.disable(logging.NOTSET)
                 title = article.title
             except:
+                logging.warning("Could not parse article")
                 title = ""
             # If downloading/parsing the page fails,
             # stop here and move on to next db_article
