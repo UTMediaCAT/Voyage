@@ -6,7 +6,7 @@ import os, yaml
 
 class SourceSiteInline(admin.TabularInline):
     model = SourceSite
-    fields = ['url']
+    fields = ['url', 'domain', 'matched']
     extra = 0
 
 class KeywordInline(admin.TabularInline):
@@ -15,6 +15,12 @@ class KeywordInline(admin.TabularInline):
 
 class SourceTwitterInline(admin.TabularInline):
     model = SourceTwitter
+    fields = ['name', 'matched']
+    extra = 0
+
+class CountLogInline(admin.TabularInline):
+    model = CountLog
+    fields = ['date', 'retweet_count', 'favorite_count']
     extra = 0
 
 class TweetAdmin(admin.ModelAdmin):
@@ -23,9 +29,9 @@ class TweetAdmin(admin.ModelAdmin):
         ('Date information', {'fields': ['date_added', 'date_published']})
         ]
 
-    inlines = [SourceSiteInline, KeywordInline]
+    inlines = [SourceSiteInline, SourceTwitterInline, KeywordInline, CountLogInline]
 
-    list_display = ('link_user', 'link_id', 'text', 'get_keywords', 'get_source_sites', 'get_source_twitters', 'date_published', 'date_added', 'get_countlog', 'link_options')
+    list_display = ('link_user', 'link_id', 'text', 'get_keywords', 'get_source_sites', 'get_source_twitters', 'date_published', 'date_added', 'link_options')
 
     search_fields = ['tweet_id', 'text', 'user', 'keyword__name', 'sourcesite__url', 'sourcetwitter__name']
     list_filter = ['name', 'keyword__name', 'sourcesite__domain', 'sourcetwitter__name']
@@ -69,8 +75,6 @@ class TweetAdmin(admin.ModelAdmin):
     get_source_twitters.admin_order_field = 'sourcetwitter__name'
     get_source_twitters.allow_tags = True
 
-    def get_countlog(self, obj):
-	return obj.countlog_set.count()
 
     def link_id(self, obj):
         return format('<a href="%s" target="_blank">%s</a>' % ("https://twitter.com/" + obj.name + "/status/" + str(obj.tweet_id),
