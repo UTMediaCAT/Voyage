@@ -44,11 +44,14 @@ def article_hypertree():
             ssites = ArticleSourceSite.objects.filter(article=article)
 
             for ssite in ssites:
-                ssite_name = (ExplorerSourceSite.objects.get(url=ssite.domain)).name
-                if ssite_name in ssites_dict.keys():
-                    ssites_dict[ssite_name].append(ssite)
-                else:
-                    ssites_dict[ssite_name] = [ssite]
+                try:
+                    ssite_name = (ExplorerSourceSite.objects.get(url=ssite.domain)).name
+                    if ssite_name in ssites_dict.keys():
+                        ssites_dict[ssite_name].append(ssite)
+                    else:
+                        ssites_dict[ssite_name] = [ssite]
+                except:
+                    pass
 
         # create the ssite dict that is readable by JIT graph library
         for ssite in ssites_dict.keys():
@@ -315,11 +318,14 @@ def tweet_hypertree():
             ssites = TwitterSourceSite.objects.filter(tweet=tweet)
 
             for ssite in ssites:
-                ssite_name = (ExplorerSourceSite.objects.get(url=ssite.domain)).name
-                if ssite_name in ssites_dict.keys():
-                    ssites_dict[ssite_name].append(ssite)
-                else:
-                    ssites_dict[ssite_name] = [ssite]
+                try:
+                    ssite_name = (ExplorerSourceSite.objects.get(url=ssite.domain)).name
+                    if ssite_name in ssites_dict.keys():
+                        ssites_dict[ssite_name].append(ssite)
+                    else:
+                        ssites_dict[ssite_name] = [ssite]
+                except:
+                    pass
 
         for ssite in ssites_dict.keys():
             # create a node with an empty array for the children
