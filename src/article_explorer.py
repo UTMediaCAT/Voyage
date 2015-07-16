@@ -525,13 +525,15 @@ if __name__ == '__main__':
     config = configuration()
 
     # Logging config
-    date = datetime.datetime.now().strftime('%Y%m%d')
+    time = datetime.datetime.now().strftime('%Y%m%d')
     log_dir = config['projectdir']+"/"+config['log']['dir']
+    
     try:
-        cycle_numer = glob.glob(log_dir + "/article_explorer" + date + "*.log").sort()[-1][-7:-4]
+        cycle_number = sorted(glob.glob(log_dir + "/article_explorer-" + time + "*.log"))[-1][-7:-4]
+        cycle_number = str(int(cycle_number) + 1)
     except:
-        cycle_numer = 0
-    logging.basicConfig(filename=log_dir+"/article_explorer" + date + "-" + cycle_numer + ".log",
+        cycle_number = "0"
+    logging.basicConfig(filename=log_dir+"/article_explorer-" + time + "-" + cycle_number.zfill(3) + ".log",
                         level=logging.DEBUG,
                         format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
     config = config['article']
