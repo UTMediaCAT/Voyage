@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.template import RequestContext, loader
+from explorer.models import Keyword as ExplorerKeyword
 
 def index(request):
 	visualizations_dict = {"/article_sourcesite": "article_hypertree",
@@ -26,6 +27,13 @@ def index(request):
 		content[request.path[1:]] = "active"
 
 	else:
+		keyword_objs = ExplorerKeyword.objects.all()
+		keywords = []
+
+		for keyword in keyword_objs:
+			keywords.append(keyword.name)
+
+		content["keywords"] = keywords
 		content["overview"] = "active"
 
 	return render(request, 'home/index.html', content)
