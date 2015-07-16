@@ -254,7 +254,38 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             sys.stdout.flush()
             # Null the db_article data to free the memory
             #newspaper_source.articles[db_article] = None
-        print(
+
+            # Null the article object's content to free the memory
+            article.article_html = None
+            article.text = None
+            article.title = None
+            article.source_url = None
+            article.url = None
+            article.top_img = None
+            article.meta_img = None
+            article.imgs = None
+            article.movies = None
+            article.keywords = None
+            article.meta_keywords = None
+            article.tags = None
+            article.authors = None
+            article.publish_date = None
+            article.summary = None
+            article.html = None
+            article.is_parsed = None
+            article.is_downloaded = None
+            article.meta_description = None
+            article.meta_lang = None
+            article.meta_favicon = None
+            article.meta_data = None
+            article.canonical_link = None
+            article.top_node = None
+            article.clean_top_node = None
+            article.doc = None
+            article.clean_doc = None
+            article.additional_data = None
+
+	print(
             "%s (Article|%s) %i/%i          " %
             (str(timezone.localtime(timezone.now()))[:-13], site["name"],
              processed, article_count))
