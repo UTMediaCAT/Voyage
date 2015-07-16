@@ -27,6 +27,31 @@
       <iframe width="100%" frameborder="0" onload="resizeIframe(this);" src="/visualizations/{{ result }}_js"></iframe>
   </div>
 
+{% elif downloads %}
+
+  <h2> Article JSON: </h2>
+  <form method="post" action="/articles/getJson">
+      {% csrf_token %}
+      <input type="submit" value="Get Article JSON">
+  </form>
+
+  <h2> Tweet JSON: </h2>
+  <form method="post" action="/tweets/getJson">
+      {% csrf_token %}
+      <input type="submit" value="Get Tweet JSON">
+  </form>
+
+  <h2> Scope JSON: </h2>
+
+  <form method="post" action="/explorer/getJson">
+      {% csrf_token %}
+      <input type="submit" value="Get Scope JSON">
+  </form>
+
+{% elif contact %}
+
+
+
 {% endif %}
 
 {% endblock %}
