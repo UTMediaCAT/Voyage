@@ -59,6 +59,8 @@ import tld
 import itertools
 # For Logging
 import logging
+import glob
+import datetime
 
 
 def configuration():
@@ -492,7 +494,13 @@ if __name__ == '__main__':
     config = configuration()
 
     # Logging config
-    logging.basicConfig(filename=config['projectdir']+"/"+config['log']['dir']+"/article_explorer.log",
+    date = datetime.datetime.now().strftime('%Y%m%d')
+    log_dir = config['projectdir']+"/"+config['log']['dir']
+    try:
+        cycle_numer = glob.glob(log_dir + "/article_explorer" + date + "*.log").sort()[-1][-7:-4]
+    except:
+        cycle_numer = 0
+    logging.basicConfig(filename=log_dir+"/article_explorer" + date + "-" + cycle_numer + ".log",
                         level=logging.DEBUG,
                         format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
     config = config['article']
