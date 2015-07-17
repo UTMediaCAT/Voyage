@@ -279,7 +279,10 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
             twitter_accounts= get_sources_twitter(tweet.text, source_twitter_list)
             tweet_text = tweet.text
 
+
             if not(tweet_keywords == [] and tweet_sources[0] == [] and twitter_accounts[0] ==[]):
+                retweet_count =tweet.retweet_count
+                favorite_count =tweet.favorite_count
 
                 tweet_list = Tweet.objects.filter(tweet_id=tweet_id)
                 if (not tweet_list):
@@ -291,6 +294,8 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
                     tweet.save()
 
                     tweet = Tweet.objects.get(tweet_id=tweet_id)
+
+                    tweet.countlog_set.create(retweet_count = retweet_count, favorite_count = favorite_count, date =tweet_store_date)
 
                     for account in twitter_accounts[0]:
                         tweet.sourcetwitter_set.create(name = account, matched = True)
@@ -319,6 +324,9 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
                     # tweet.date_added = tweet_store_date
                     tweet.date_published = tweet_date
                     tweet.save()
+
+
+                    tweet.countlog_set.create(retweet_count = retweet_count, favorite_count = favorite_count, date =tweet_store_date)
 
                     for key in tweet_keywords:
                         if not TwitterKeyword.objects.filter(name=key):
