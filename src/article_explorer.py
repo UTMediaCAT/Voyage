@@ -396,7 +396,7 @@ def get_keywords(article, keywords):
 
     # For each keyword, check if article's text contains it
     for key in keywords:
-        if re.search(key, article.title + article.text, re.IGNORECASE):
+        if re.search('[^a-z]' + key + '[^a-z]', article.title + article.text, re.IGNORECASE):
             # If the article's text contains the key, append it to the list
             matched_keywords.append(key)
     # Return the list
