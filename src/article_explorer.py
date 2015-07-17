@@ -132,6 +132,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                 if(not article.is_downloaded):
                     logging.debug("Downloading article")
                     logging.disable(logging.ERROR)
+                    article.config.fetch_images = False
                     article.download()
                     logging.disable(logging.NOTSET)
                 if(not article.is_parsed):
