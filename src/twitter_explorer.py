@@ -262,7 +262,8 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
         tweets = get_tweets(user, tweet_number)
         tweet_followers = get_follower_count(user)
         tweet_count = len(tweets)
-        for tweet in tweets:
+        for i in range(tweet_count):
+            tweet = tweets[i]
             # Check for any new command on communication stream
             check_command()
 
@@ -358,10 +359,10 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
             else:
                 no_match += 1
             processed += 1
-            sys.stdout.write("%s (Twitter|%s) %i/%i          \r" %
+            print("%s (Twitter|%s) %i/%i          \r" %
                              (str(timezone.localtime(timezone.now()))[:-13],
                               user, processed, tweet_count))
-            sys.stdout.flush()
+            tweets[i] = None
         print format("%s (Twitter|%s) %i/%i          " % (
             str(timezone.localtime(timezone.now()))[:-13], user, processed,
             tweet_count))
