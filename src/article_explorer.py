@@ -203,7 +203,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                         for source in sources[1]:
                             db_article.sourcesite_set.create(url=source[0],
                                                       domain=source[1], matched=False, local=(source[1] in site["url"]))
-
+                        logging.info("Finished adding new Article to the DB")
                         added += 1
 
                     else:
@@ -244,11 +244,11 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                             if not SourceSite.objects.filter(url=source[0]):
                                 db_article.sourcesite_set.create(url=source[0],
                                                       domain=source[1], matched=False, local=(source[1] in site["url"]))
-
+                        logging.info("Finished modifying existing Article in the DB")
 
                     logging.info("Creating warc")
                     warc_creator.create_article_warc(url)
-
+                    logging.info("Finished creating warc")
             processed += 1
             print(
                 "%s (Article|%s) %i/%i          \r" %
