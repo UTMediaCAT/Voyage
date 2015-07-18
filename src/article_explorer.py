@@ -290,7 +290,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
 
             logging.info("(%s|%i/%i) Finished looking: %s"%(site['name'], processed, article_count, article.url))
         logging.info("Finished Site: %s"%site['name'])
-	    print(
+        print(
             "%s (Article|%s) %i/%i          " %
             (str(timezone.localtime(timezone.now()))[:-13], site["name"],
              processed, article_count))
