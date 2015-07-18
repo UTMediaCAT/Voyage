@@ -147,6 +147,8 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             # If downloading/parsing the page fails,
             # stop here and move on to next db_article
             if not ((title == "") or (title == "Page not found")):
+                logging.debug("Title found")
+                
                 # Regex the keyword from the article's text
                 logging.debug("Checking Keyword matches")
                 keywords = get_keywords(article, db_keywords)
@@ -249,6 +251,9 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                     logging.info("Creating warc")
                     warc_creator.create_article_warc(url)
                     logging.info("Finished creating warc")
+            else:
+                logging.debug("No title found")
+
             processed += 1
             print(
                 "%s (Article|%s) %i/%i          \r" %
@@ -288,7 +293,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             article.clean_doc = None
             article.additional_data = None
 
-            logging.info("(%s|%i/%i) Finished looking: %s"%(site['name'], processed, article_count, article.url))
+            logging.info("(%s | %i/%i) Finished looking: %s"%(article.url, processed, article_count, article.url))
         logging.info("Finished Site: %s"%site['name'])
         print(
             "%s (Article|%s) %i/%i          " %
