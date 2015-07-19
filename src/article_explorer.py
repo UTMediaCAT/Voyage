@@ -57,11 +57,11 @@ import CrawlerSource
 import tld
 # To concatenate newspaper's articles and CrawlerSource's articles
 import itertools
+import requests
 # For Logging
 import logging
 import glob
 import datetime
-
 
 def configuration():
     """ (None) -> dict
@@ -91,7 +91,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
     for site in referring_sites:
         # print "\n%s" % site[0]
 
-        article_count = -1
+        article_count = 0
         newspaper_articles = []
         crawlersource_articles = []
         logging.info("Site: %s Type:%i"%(site['name'], site['type']))
@@ -106,17 +106,18 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                                              number_threads=1)
             logging.disable(logging.NOTSET)
             newspaper_articles = newspaper_source.articles
-            article_count = newspaper_source.size()
+            article_count += newspaper_source.size()
             logging.info("Finished popuating Article objects using newspaper: %i"%article_count)
         if(site["type"] == 1 or site["type"] == 2):
             logging.info("Creating Plan B Article generator")
             crawlersource_articles = CrawlerSource.CrawlerSource(site["url"])
+            article_count += 5000
             logging.info("Finished creating Plan B Article generator")
         article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
         processed = 0
         logging.info("Starting article parsing")
         for article in article_iterator:
-            logging.info("Looking at %s"%article.url)
+            logging.info("Looking: %s"%article.url)
             # Check for any new command on communication stream
             logging.debug("Checking for any new command on communication stream")
             check_command()
@@ -146,6 +147,8 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             # If downloading/parsing the page fails,
             # stop here and move on to next db_article
             if not ((title == "") or (title == "Page not found")):
+                logging.debug("Title found")
+                
                 # Regex the keyword from the article's text
                 logging.debug("Checking Keyword matches")
                 keywords = get_keywords(article, db_keywords)
@@ -162,6 +165,11 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                 # If neither of keyword nor sources matched,
                 # then stop here and move on to next article
                 if not (keywords == [] and sources[0] == [] and twitter_accounts[0] ==[]):
+                    try:
+                        url = requests.get(url).url
+                    except:
+                        logging.warning("Could not request")
+                        
                     logging.info("Found Match")
                     # Check if the entry already exists
                     db_article_list = Article.objects.filter(url=url)
@@ -197,7 +205,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                         for source in sources[1]:
                             db_article.sourcesite_set.create(url=source[0],
                                                       domain=source[1], matched=False, local=(source[1] in site["url"]))
-
+                        logging.info("Finished adding new Article to the DB")
                         added += 1
 
                     else:
@@ -238,21 +246,20 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                             if not SourceSite.objects.filter(url=source[0]):
                                 db_article.sourcesite_set.create(url=source[0],
                                                       domain=source[1], matched=False, local=(source[1] in site["url"]))
-
+                        logging.info("Finished modifying existing Article in the DB")
 
                     logging.info("Creating warc")
                     warc_creator.create_article_warc(url)
+                    logging.info("Finished creating warc")
+            else:
+                logging.debug("No title found")
 
             processed += 1
-
-            # Let the output print back to normal for minimal ui
-            sys.stdout = sys.__stdout__
-            # Print out minimal information
-            sys.stdout.write(
+            print(
                 "%s (Article|%s) %i/%i          \r" %
                 (str(timezone.localtime(timezone.now()))[:-13],
                  site["name"], processed, article_count))
-            sys.stdout.flush()
+
             # Null the db_article data to free the memory
             #newspaper_source.articles[db_article] = None
 
@@ -286,7 +293,9 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             article.clean_doc = None
             article.additional_data = None
 
-	print(
+            logging.info("(%s | %i/%i) Finished looking: %s"%(article.url, processed, article_count, article.url))
+        logging.info("Finished Site: %s"%site['name'])
+        print(
             "%s (Article|%s) %i/%i          " %
             (str(timezone.localtime(timezone.now()))[:-13], site["name"],
              processed, article_count))
@@ -390,7 +399,7 @@ def get_keywords(article, keywords):
 
     # For each keyword, check if article's text contains it
     for key in keywords:
-        if re.search(key, article.title + article.text, re.IGNORECASE):
+        if re.search('[^a-z]' + key + '[^a-z]', article.title + article.text, re.IGNORECASE):
             # If the article's text contains the key, append it to the list
             matched_keywords.append(key)
     # Return the list
@@ -437,7 +446,7 @@ def explore():
     # Parse the articles in all sites
     logging.info("Parsing Articles Started")
     parse_articles(referring_sites, keyword_list, source_sites, source_twitter_list)
-
+    logging.info("Finished parsing Articles")
 
 def comm_write(text):
     """ (Str) -> None
@@ -485,8 +494,10 @@ def comm_init():
     """ (None) -> None
     Initialize The communication file
     """
+    pid = os.getpid()
     # Set the current status as Running
-    comm_write('RR %s' % os.getpid())
+    logging.info("Comm Status: RR %s" % pid)
+    comm_write('RR %s' % pid)
 
 
 def check_command():
@@ -506,17 +517,21 @@ def check_command():
         command = msg[1]
         if command == 'S':
             print('Stopping Explorer...')
+            logging.warning("Stop command detected, Stopping.")
             comm_write('SS %s' % os.getpid())
             sys.exit(0)
         elif command == 'P':
             print('Pausing ...')
+            logging.warning("Pause command detected, Pausing.")
             comm_write('PP %s' % os.getpid())
             while comm_read()[1] == 'P':
+                logging.info('Waiting %i seconds ...' % conf['sleep_time'])
                 print('Waiting %i seconds ...' % conf['sleep_time'])
                 time.sleep(conf['sleep_time'])
                 check_command()
         elif command == 'R':
             print('Resuming ...')
+            logging.warning('Resuming.')
             comm_write('RR %s' % os.getpid())
 
 
@@ -537,37 +552,46 @@ if __name__ == '__main__':
     logging.basicConfig(filename=log_dir+"/article_explorer-" + time + "-" + cycle_number.zfill(3) + ".log",
                         level=logging.DEBUG,
                         format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+    logging.info("Finished logging config")
+    # Finish logging config
+
     config = config['article']
-    logging.info("Connecting to django/database")
+
     # Connects to Site Database
+    logging.info("Connecting to django/database")
     django.setup()
     logging.info("Connected to django/database")
 
-    logging.info("Initializing Communication Stream")
     # Initialize Communication Stream
+    logging.info("Initializing Communication Stream")
     comm_init()
     logging.info("Initialized Communication Stream")
 
-    logging.info("Checking for any new command on communication stream")
     # Check for any new command on communication stream
+    logging.info("Checking for any new command on communication stream")
     check_command()
     logging.info("Checked for any new command on communication stream")
 
     start = timeit.default_timer()
 
     # The main function, to explore the articles
+    logging.info("Exploring started")
     explore()
+    delta_time = timeit.default_timer() - start
+    logging.info("Exploring Ended. Took %is"%delta_time)
 
-    end = timeit.default_timer()
-    delta_time = end - start
     sleep_time = max(config['min_iteration_time']-delta_time, 0)
+    logging.warning("Sleeping for %is"%sleep_time)
     for i in range(int(sleep_time//5)):
         time.sleep(5)
+        logging.info("Checking for any new command on communication stream")
         check_command()
-
+    logging.info("Checking for any new command on communication stream")
     check_command()
 
+    logging.info("One cycle ended")
+
     # Re run the program to avoid thread to increase
+    logging.info("Starting new cycle")
     os.chmod('article_explorer_run.sh', 0700)
     os.execl('article_explorer_run.sh', '')
-

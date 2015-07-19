@@ -19,9 +19,6 @@ def article_hypertree(request):
     return render(request, 'visualizations/article_hypertree.html', context)
 
 def article_hypertree_js(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
-
     data = visualizer.article_hypertree()
 
     data = json.dumps(data)
@@ -37,9 +34,6 @@ def article_spacetree(request):
     return render(request, 'visualizations/article_spacetree.html', context)
 
 def article_spacetree_js(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
-
     if request.method == 'POST':
         data, referringSites = visualizer.article_spacetree(request.POST.get('referringSite'))
     else:
@@ -59,9 +53,6 @@ def article_weightedtree(request):
     return render(request, 'visualizations/article_weightedtree.html', context)
 
 def article_weightedtree_js(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
-
     if request.method == 'POST':
         data, referringSites = visualizer.article_weightedtree(request.POST.get('referringSite'))
     else:
@@ -80,9 +71,6 @@ def article_forcegraph(request):
     return render(request, 'visualizations/article_forcegraph.html', context)
 
 def article_forcegraph_js(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
-
     if request.method == 'POST':
         data, referringSites = visualizer.article_forcegraph(request.POST.get('referringSite'))
     else:
@@ -102,9 +90,6 @@ def tweet_hypertree(request):
     return render(request, 'visualizations/tweet_hypertree.html', context)
 
 def tweet_hypertree_js(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
-
     data = visualizer.tweet_hypertree()
     data = json.dumps(data)
     context = {'data': data}
@@ -119,9 +104,6 @@ def tweet_spacetree(request):
     return render(request, 'visualizations/tweet_spacetree.html', context)
 
 def tweet_spacetree_js(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
-
     if request.method == 'POST':
         data, taccounts = visualizer.tweet_spacetree(request.POST.get('taccount'))
     else:
@@ -141,9 +123,6 @@ def tweet_weightedtree(request):
     return render(request, 'visualizations/tweet_weightedtree.html', context)
 
 def tweet_weightedtree_js(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
-
     if request.method == 'POST':
         data, taccounts = visualizer.tweet_weightedtree(request.POST.get('taccount'))
     else:
@@ -163,9 +142,6 @@ def tweet_forcegraph(request):
     return render(request, 'visualizations/tweet_forcegraph.html', context)
 
 def tweet_forcegraph_js(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
-
     if request.method == 'POST':
         data, taccounts = visualizer.tweet_forcegraph(request.POST.get('taccount'))
     else:

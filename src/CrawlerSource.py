@@ -38,6 +38,7 @@ class CrawlerSource(object):
                     continue
                 #use newspaper to download and parse the article
                 article = newspaper.Article(url)
+                article.config.fetch_images = False
                 article.download()
                 article.parse()
                 #get get urls from the article

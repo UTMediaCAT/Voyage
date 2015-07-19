@@ -1,7 +1,7 @@
-projectdir:
+projectdir: /courses/webspace/project/public/Voyage
 server:
     ip_address: 0.0.0.0
-    port: 80
+    port: 8000
 twitter:
     initial_tweet_count: 3000
     iteration_tweet_count: 200
