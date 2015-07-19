@@ -248,7 +248,7 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
             tweet_user = tweet.user.screen_name
             tweet_store_date = timezone.localtime(timezone.now())
             tweet_keywords = get_keywords(tweet.text, keywords)
-            tweet_sources = get_source_sites(tweet.extities['urls'], source_sites)
+            tweet_sources = get_source_sites(tweet.entities['urls'], source_sites)
             twitter_accounts= get_sources_twitter(tweet.text, source_twitter_list)
             tweet_text = tweet.text
 
