@@ -156,12 +156,6 @@ def geTwitterKeywords(tweet, keywords):
     expanded_urls = ''
     display_urls = ''
     for url in tweet.entities['urls']:
-        try:
-            # tries to get full url on shortened urls
-            expanded_urls += urllib2.urlopen(
-                url['expanded_url']).geturl() + ' '
-            expanded_urls += urllib2.urlopen(url['display_url']).geturl() + ' '
-        except:
             # if not just take normal url
             expanded_urls += url['expanded_url'] + ' '
             display_urls += url['display_url'] + ' '
