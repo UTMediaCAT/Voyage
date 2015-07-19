@@ -32,6 +32,8 @@ from explorer.models import Keyword as ExplorerKeyword
 import tld
 # To store the article as warc files
 import warc_creator
+# For getting real url for get_source_sites
+import requests
 
 __author__ = "ACME: CSCC01F14 Team 4"
 __authors__ = "Yuya Iwabuchi, Jai Sughand, Xiang Wang," \
@@ -136,7 +138,7 @@ def get_follower_count(screen_name):
             wait_and_resume()
 
 
-def geTwitterKeywords(tweet, keywords):
+def get_keywords(text, keywords):
     """ (status, list of str) -> list of str
     Searches and returns keywords contained in the tweet
     Returns empty list otherwise.
@@ -149,31 +151,13 @@ def geTwitterKeywords(tweet, keywords):
 
     # Searches if keyword is in tweet regardless of casing
     for key in keywords:
-        if re.search(key, tweet.text.encode('utf8'), re.IGNORECASE):
+        if re.search('[^a-z]' + key + '[^a-z]', text.encode('utf8'), re.IGNORECASE):
             matched_keywords.append(key)
 
-    matched_in_url = []
-    expanded_urls = ''
-    display_urls = ''
-    for url in tweet.entities['urls']:
-            # if not just take normal url
-            expanded_urls += url['expanded_url'] + ' '
-            display_urls += url['display_url'] + ' '
-
-    # substring, expanded includes scheme, display may not
-    # uses two large url strings, rather than having n^2 complexity
-    for keyword in keywords:
-        if re.search(keyword, expanded_urls, re.IGNORECASE) or \
-                re.search(keyword, display_urls, re.IGNORECASE):
-            matched_in_url.append(keyword)
-    # Uses get_sources, but instead of searching tweets, searches
-    # Adds both searches
-    all_matches = matched_keywords + matched_in_url
-    all_matches = set(all_matches)
-    return list(all_matches)
+    return matched_keywords
 
 
-def get_source_sites(tweet_text, sites):
+def get_source_sites(urls, sites):
     """ (status, list of str) -> list of str
     Searches and returns links redirected to sites within the urls
     of the tweet
@@ -188,30 +172,22 @@ def get_source_sites(tweet_text, sites):
 
     result_urls_matched = []
     result_urls_unmatched = []
-
-
     formatted_sites = []
 
     for site in sites:
         formatted_sites.append(tld.get_tld(site))
 
-    formatted_sites = []
-
-    for site in sites:
-        formatted_sites.append(tld.get_tld(site))
-
-    for url in re.findall(
-            'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', tweet_text, re.IGNORECASE):
+    for url in urls:
         try:
-            domain = tld.get_tld(url)
+            real_url = requests.get(url['expanded_url']).url
+            domain = tld.get_tld(real_url)
         except:
             continue
         if domain in formatted_sites:
             # If it matches even once, append the site to the list
-            result_urls_matched.append([url, domain])
+            result_urls_matched.append([real_url, domain])
         else:
-            if "t.co" != domain:
-                result_urls_unmatched.append([url, domain])
+            result_urls_unmatched.append([real_url, domain])
 
     # Return the list
     return [result_urls_matched,result_urls_unmatched]
@@ -269,8 +245,8 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
                                     timezone=timezone.get_fixed_timezone(180)))
             tweet_user = tweet.user.screen_name
             tweet_store_date = timezone.localtime(timezone.now())
-            tweet_keywords = geTwitterKeywords(tweet, keywords)
-            tweet_sources = get_source_sites(tweet.text, source_sites)
+            tweet_keywords = get_keywords(tweet.text, keywords)
+            tweet_sources = get_source_sites(tweet.extities['urls'], source_sites)
             twitter_accounts= get_sources_twitter(tweet.text, source_twitter_list)
             tweet_text = tweet.text
 
