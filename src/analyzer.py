@@ -93,19 +93,19 @@ def tweets_keywords_pie_chart():
 def articles_annotation_chart():
     '''(None) -> , lisr of str, list of list of [str, int] 
     Search trough article table in database to count the number of articles added on a particular day.
-    Return a tuple where the first element is a list of names of monitoring sites, and the second element is 
+    Return a tuple where the first element is a list of names of referring sites, and the second element is 
     a list of list, where the inner list contains the name of keyword, and the number of matches.    
     '''
-    #get all monitoring sites
+    #get all referring sites
     ReferringSites  = ReferringSite.objects.all()
     urls = []
-    #loop through monitoring sites
+    #loop through referring sites
     for element in ReferringSites:
         urls.append([element.url.encode("utf-8"), Article.objects.filter(url = element.url).count(), element.name.encode("utf-8")])
     
-    #sort the monitoring sites by the number of articles they have.
+    #sort the referring sites by the number of articles they have.
     urls.sort(key = lambda x: x[1], reverse=True)
-    #get top 10 monitoring sites based on the number of articles
+    #get top 10 referring sites based on the number of articles
     urls = urls[0:10]
     msites_name = []
     for a in range(len(urls)):
@@ -147,21 +147,21 @@ def msites_bar_chart():
     #add the names of x-axis and y-axis for the bar chart.
     data.append (["Source Sites", "Number of Source Sites Matched"])
 
-    #get all monitoring sites
+    #get all referring sites
     ssites = ExplorerSourceSite.objects.all()
-    #loop through monitoring sites
+    #loop through referring sites
     for site in ssites:
         source_number = ArticleSourceSite.objects.filter(domain = site.url).count()
         data.append([site.name.encode("utf-8"), source_number])
-    #sort monitoring sites by the number of articles
+    #sort referring sites by the number of articles
         data.sort(key = lambda x: x[1], reverse=True)
-    #only return the top 10 monitoring sites
+    #only return the top 10 referring sites
     return data[0:11]
 
 def tweets_annotation_chart():
     '''(None) -> , lisr of str, list of list of [str, int] 
     Search trough tweets table in database to count the number of tweets added on a particular day.
-    Return a tuple where the first element is a list of names of monitoring sites, and the second element is 
+    Return a tuple where the first element is a list of names of referring sites, and the second element is 
     a list of list, where the inner list contains the name of keyword, and the number of matches.    
     '''
     #get all twitter accounts
@@ -172,7 +172,7 @@ def tweets_annotation_chart():
         accounts.append([element.name.encode("utf-8"), Tweet.objects.filter(name = element.name).count()])
     #sort the twitter accountsby the number of tweets they have.
     accounts.sort(key = lambda x: x[1], reverse=True)
-    #get top 10 monitoring sites based on the number of tweets
+    #get top 10 referring sites based on the number of tweets
     accounts = accounts[0:10]
     for a in range(len(accounts)):
         accounts[a] = accounts[a][0]
