@@ -25,6 +25,7 @@ from django.utils import timezone
 from tweets.models import*
 from tweets.models import Keyword as TwitterKeyword
 from tweets.models import SourceSite as TwitterSourceSite
+from tweets.models import SourceTwitter as TwitterSourceTwitter
 from explorer.models import*
 from explorer.models import Keyword as ExplorerKeyword
 from explorer.models import SourceTwitter as ExplorerSourceTwitter
@@ -317,11 +318,11 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
                                 url=source[0], domain=source[1],matched = False)
 
                     for account in twitter_accounts[0]:
-                        if not SourceTwitter.objects.filter(name=account):
+                        if not TwitterSourceTwitter.objects.filter(name=account):
                             tweet.sourcetwitter_set.create(name = account, matched = True)
 
                     for account in twitter_accounts[1]:
-                        if not SourceTwitter.objects.filter(name=account):
+                        if not TwitterSourceTwitter.objects.filter(name=account):
                             tweet.sourcetwitter_set.create(name = account, matched = False)
 
                     updated += 1
