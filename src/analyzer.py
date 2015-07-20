@@ -165,10 +165,10 @@ def tweets_annotation_chart():
     a list of list, where the inner list contains the name of keyword, and the number of matches.    
     '''
     #get all twitter accounts
-    explorerSourceTwitter  = ExplorerSourceTwitter.objects.all()
+    referringTwitter  = ReferringTwitter.objects.all()
     accounts = []
     #loop through twitter accounts
-    for element in explorerSourceTwitter:
+    for element in referringTwitter:
         accounts.append([element.name.encode("utf-8"), Tweet.objects.filter(name = element.name).count()])
     #sort the twitter accountsby the number of tweets they have.
     accounts.sort(key = lambda x: x[1], reverse=True)
