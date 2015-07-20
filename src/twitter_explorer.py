@@ -299,7 +299,8 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
                     tweet.save()
 
 
-                    tweet.countlog_set.create(retweet_count = retweet_count, favorite_count = favorite_count, date =tweet_store_date)
+                    if not CountLog.objects.filter(retweet_count = retweet_count, favorite_count = favorite_count):
+                        tweet.countlog_set.create(retweet_count = retweet_count, favorite_count = favorite_count, date =tweet_store_date)
 
                     for key in tweet_keywords:
                         if not TwitterKeyword.objects.filter(name=key):
