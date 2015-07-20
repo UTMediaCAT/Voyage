@@ -82,13 +82,13 @@ class ReferringTwitterAdmin(admin.ModelAdmin):
     list_per_page = 1000
 
     def tweet_count(self, obj):
-        return len(Tweet.objects.filter(name=obj.name))
+        return len(Tweet.objects.filter(name__iexact=obj.name))
 
     tweet_count.short_description = "Total Tweets Archived"
 
 
     def latest_tweet(self, obj):
-        latest = Tweet.objects.filter(name=obj.name)
+        latest = Tweet.objects.filter(name__iexact=obj.name)
         if latest:
             delta = timezone.now() - latest.latest('date_added').date_added
             t1 = delta.days             # Days
