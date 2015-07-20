@@ -34,7 +34,7 @@ class TweetAdmin(admin.ModelAdmin):
     list_display = ('link_user', 'link_id', 'text', 'get_keywords', 'get_source_sites', 'get_source_twitters', 'date_published', 'date_added', 'link_options')
 
     search_fields = ['tweet_id', 'text', 'user', 'keyword__name', 'sourcesite__url', 'sourcetwitter__name']
-    list_filter = ['name', 'keyword__name', 'sourcesite__name', 'sourcetwitter__name']
+    list_filter = ['name', 'keyword__name', 'sourcesite__domain', 'sourcetwitter__name']
     ordering = ['-date_added']
     actions_on_top = True
     list_per_page = 100
