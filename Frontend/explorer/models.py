@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 import tweepy, os, yaml, newspaper
+from django.utils.safestring import mark_safe
 
 def configuration():
     """ (None) -> dict
@@ -46,11 +47,14 @@ def validate_site(site):
 # Create your models here.
 
 class ReferringSite(models.Model):
-    url = models.URLField(max_length=2000, unique=True, validators=[validate_site],
+    url = models.URLField(max_length=2000, unique=True, #validators=[validate_site],
                           help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://cnn.com)')
     name = models.CharField(max_length=200, 
                             help_text='Your favorable alias of this site.\n' +
                                       'Maximum 200 characters')
+    check = models.BooleanField(default=True, verbose_name="Check Newspaper",
+                                help_text=mark_safe('Check to display the amount of articles found by Newspaper (Displays as error).<br>Uncheck to save without testing Newspaper.'))
+
     crawl_choices = (
 	(0, 'Newspaper'),
 	(1, 'Plan B'),
@@ -58,8 +62,10 @@ class ReferringSite(models.Model):
     )
     mode = models.PositiveSmallIntegerField(default=0,
 		        choices=crawl_choices, 
-			help_text='',
-			verbose_name='Crawler')    
+			verbose_name='Crawler',
+                        help_text=mark_safe('Newspaper - Fast but may not work on some sites. Use Check Newspaper to determine the compatibility<br>' +
+                                            'Plan B - Slow but compatible with any sites.<br>' +
+                                            'Both - Uses both Newspaper and Plan B for maximum results.'))    
     class Meta:
         verbose_name = 'Referring Site'
 
