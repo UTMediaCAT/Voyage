@@ -31,9 +31,10 @@ class ArticleAdmin(admin.ModelAdmin):
 
     list_display = ('link_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_source_twitters', 'date_published', 'date_added', 'link_options')
     search_fields = ['url', 'title', 'author__name', 'keyword__name', 'sourcesite__url', 'sourcetwitter__name']
-    list_filter = ['domain', 'keyword__name', 'sourcesite__domain', 'sourcetwitter__name']
+    list_filter = ['domain', 'keyword__name', 'sourcesite__name', 'sourcetwitter__name']
     ordering = ['-date_added']
     actions_on_top = True
+    list_per_page = 100
 
     def get_keywords(self, obj):
         keywords = ''
