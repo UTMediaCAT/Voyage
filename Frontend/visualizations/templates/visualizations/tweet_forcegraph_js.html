@@ -227,7 +227,7 @@
               <select name="taccount" onchange="this.form.submit()">
                   <option type="submit" value="NONE">Select</option>
               {% for taccount in taccounts %}
-                  <option type="submit" value="{{ taccount.account }}">{{ taccount.account }}</option>
+                  <option type="submit" value="{{ taccount.name }}">{{ taccount.name }}</option>
               {% endfor %}
               </select>
             </form> 

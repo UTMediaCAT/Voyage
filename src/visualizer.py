@@ -14,7 +14,6 @@ from articles.models import Keyword as ArticleKeyword
 from articles.models import SourceSite as ArticleSourceSite
 from explorer.models import*
 from explorer.models import Keyword as ExplorerKeyword
-from explorer.models import SourceTwitter as ExplorerSourceTwitter
 from explorer.models import SourceSite as ExplorerSourceSite
 from tweets.models import*
 from tweets.models import Keyword as TwitterKeyword
@@ -305,7 +304,7 @@ def tweet_hypertree():
     '''
     taccounts = []
 
-    for account in ExplorerSourceTwitter.objects.all():
+    for account in ReferringTwitter.objects.all():
         # create a node with an empty array for the children
         data = {}
         data["id"] = account.name
@@ -314,12 +313,13 @@ def tweet_hypertree():
         data["data"] = {"relation": "Sourced"}
 
         ssites_dict = {}
-        for tweet in Tweet.objects.filter(name=account.name):
+        for tweet in Tweet.objects.filter(name__iexact=account.name):
             ssites = TwitterSourceSite.objects.filter(tweet=tweet)
 
             for ssite in ssites:
                 try:
                     ssite_name = (ExplorerSourceSite.objects.get(url=ssite.domain)).name
+                    #ssite_name = ssite.domain
                     if ssite_name in ssites_dict.keys():
                         ssites_dict[ssite_name].append(ssite)
                     else:
@@ -355,9 +355,9 @@ def tweet_spacetree(account):
     '''
     data = []
     if account is None:
-        taccounts = ExplorerSourceTwitter.objects.all()
+        taccounts = ReferringTwitter.objects.all()
     else:
-        taccounts = ExplorerSourceTwitter.objects.filter(name=account)
+        taccounts = ReferringTwitter.objects.filter(name=account)
 
     for taccount in taccounts:
         account_data = {}
@@ -367,7 +367,7 @@ def tweet_spacetree(account):
         account_data["data"] = {"relation": "Sourced"}
 
         keywords_dict = {}
-        for tweet in Tweet.objects.filter(name=taccount.name):
+        for tweet in Tweet.objects.filter(name__iexact=taccount.name):
             keywords = TwitterKeyword.objects.filter(tweet=tweet)
 
             for keyword in keywords:
@@ -396,7 +396,7 @@ def tweet_spacetree(account):
         else:
             data = []
 
-    return data, ExplorerSourceTwitter.objects.all()
+    return data, ReferringTwitter.objects.all()
 
 
 def tweet_weightedtree(account):
@@ -409,9 +409,9 @@ def tweet_weightedtree(account):
     max_dim = 1
 
     if account is None:
-        results = ExplorerSourceTwitter.objects.all()
+        results = ReferringTwitter.objects.all()
     else:
-        results = ExplorerSourceTwitter.objects.filter(name=account)
+        results = ReferringTwitter.objects.filter(name=account)
 
     for taccount in results:
         # create a node with an empty array for the children
@@ -423,7 +423,7 @@ def tweet_weightedtree(account):
 
         keywords_dict = {}
         ssites_dict = {}
-        for tweet in Tweet.objects.filter(name=taccount.name):
+        for tweet in Tweet.objects.filter(name__iexact=taccount.name):
             keywords = TwitterKeyword.objects.filter(tweet=tweet)
             ssites = TwitterSourceSite.objects.filter(tweet=tweet)
 
@@ -479,7 +479,7 @@ def tweet_weightedtree(account):
         taccount["data"]["$dim"] = int(
             taccount["data"]["$dim"] * 30.0 / max_dim) + 10
 
-    return taccounts, ExplorerSourceTwitter.objects.all()
+    return taccounts, ReferringTwitter.objects.all()
 
 
 def tweet_forcegraph(account):
@@ -492,9 +492,9 @@ def tweet_forcegraph(account):
     max_dim = 1
 
     if account is None:
-        results = ExplorerSourceTwitter.objects.all()
+        results = ReferringTwitter.objects.all()
     else:
-        results = ExplorerSourceTwitter.objects.filter(name=account)
+        results = ReferringTwitter.objects.filter(name=account)
 
     for taccount in results:
         # create a node with an empty array for the adjacencies
@@ -506,7 +506,7 @@ def tweet_forcegraph(account):
 
         keywords_dict = {}
         ssites_dict = {}
-        for tweet in Tweet.objects.filter(name=taccount.name):
+        for tweet in Tweet.objects.filter(name__iexact=taccount.name):
             keywords = TwitterKeyword.objects.filter(tweet=tweet)
             ssites = TwitterSourceSite.objects.filter(tweet=tweet)
 
@@ -562,4 +562,4 @@ def tweet_forcegraph(account):
         taccount["data"]["$dim"] = int(
             taccount["data"]["$dim"] * 30.0 / max_dim) + 10
 
-    return taccounts, ExplorerSourceTwitter.objects.all()
+    return taccounts, ReferringTwitter.objects.all()
