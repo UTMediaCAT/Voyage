@@ -22,7 +22,7 @@ case "${args[0]}" in
 			do
 				old_day=`echo $old  | cut -c 12-28`
 
-				if [date -d "$old_day" + %s -lt date -d "${args[1]} days ago"  + %s  ]; then 
+				if [`date -d "$old_day" + %s` -lt `date -d "${args[1]} days ago"  + %s`  ]; then 
 					rm -r "./DBbackup/$old"
 				fi
 
