@@ -7,10 +7,34 @@ from tweets.models import Tweet
 from tweets.models import SourceSite as TwitterSource
 from tweets.models import Keyword as TwitterKeyword
 from django.utils import timezone
+from django import forms
+import newspaper
+from django.utils.safestring import mark_safe
+
+class ReferringSiteAdminForm(forms.ModelForm):
+    class Meta:
+        Model = ReferringSite
+
+    def clean(self):
+        url = self.cleaned_data['url']
+        check = self.cleaned_data['check']
+
+        if check:
+            count = newspaper.build(url, memoize_articles=False,
+                            keep_article_html=False,
+                            fetch_images=False,
+                            language='en').size()
+            raise forms.ValidationError(mark_safe(('Newspaper found %i articles.<br>' +
+                                                   'If this amount is not reasonable to the amount the site does offers, consider changing crawler to <i>Plan B</i> or <i>Both</i>.')%count))
+            #self.add_error('check', 'Newspaper found %i articles.'%count)
+        return self.cleaned_data
+
 
 class ReferringSiteAdmin(admin.ModelAdmin):
+    model = ReferringSite
+    form = ReferringSiteAdminForm
     fieldsets = [
-        (None,               {'fields': ['url', 'name', 'mode']})
+        (None,               {'fields': ['url', 'name', 'mode', 'check']})
         ]
     list_display = ('name', 'url', 'article_count', 'latest_article', 'mode')
     search_fields = ['name', 'url']
@@ -82,13 +106,13 @@ class ReferringTwitterAdmin(admin.ModelAdmin):
     list_per_page = 1000
 
     def tweet_count(self, obj):
-        return len(Tweet.objects.filter(name=obj.name))
+        return len(Tweet.objects.filter(name__iexact=obj.name))
 
     tweet_count.short_description = "Total Tweets Archived"
 
 
     def latest_tweet(self, obj):
-        latest = Tweet.objects.filter(name=obj.name)
+        latest = Tweet.objects.filter(name__iexact=obj.name)
         if latest:
             delta = timezone.now() - latest.latest('date_added').date_added
             t1 = delta.days             # Days

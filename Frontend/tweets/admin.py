@@ -37,6 +37,7 @@ class TweetAdmin(admin.ModelAdmin):
     list_filter = ['name', 'keyword__name', 'sourcesite__domain', 'sourcetwitter__name']
     ordering = ['-date_added']
     actions_on_top = True
+    list_per_page = 100
 
 
     def get_keywords(self, obj):
