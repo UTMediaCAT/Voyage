@@ -49,7 +49,7 @@ from explorer.models import SourceTwitter as ExplorerSourceTwitter
 from explorer.models import Keyword as ExplorerKeyword
 from explorer.models import SourceSite as ExplorerSourceSite
 # To load configurations
-import yaml
+import common
 # To store the article as warc files
 import warc_creator
 import CrawlerSource
@@ -62,16 +62,6 @@ import requests
 import logging
 import glob
 import datetime
-
-def configuration():
-    """ (None) -> dict
-    Returns a dictionary containing the micro settings from the
-    config.yaml file located in the directory containing this file
-    """
-    config_yaml = open("../config.yaml", 'r')
-    conf = yaml.load(config_yaml)
-    config_yaml.close()
-    return conf
 
 def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_explorer):
     """ (list of [str, newspaper.source.Source, str],
@@ -458,7 +448,7 @@ def comm_write(text):
     text         -- String of command
     """
     # Load the relevant configs
-    conf = configuration()['communication']
+    conf = common.get_config()['communication']
 
     # Wait for retry_count * retry_delta seconds
     for k in range(conf['retry_count']):
@@ -477,7 +467,7 @@ def comm_read():
     article, then returns the output.
     """
     # Load the relevant configs
-    conf = configuration()['communication']
+    conf = common.get_config()['communication']
 
     # Wait for retry_count * retry_delta seconds
     for k in range(conf['retry_count']):
@@ -506,7 +496,7 @@ def check_command():
     Execute according to the commands.
     """
     # Load the relevant configs
-    conf = configuration()['communication']
+    conf = common.get_config()['communication']
     msg = comm_read()
 
     # Let the output print back to normal for printing status
@@ -536,9 +526,8 @@ def check_command():
 
 
 if __name__ == '__main__':
-
     # Load the relevant configs
-    config = configuration()
+    config = common.get_config()
 
     # Logging config
     time = datetime.datetime.now().strftime('%Y%m%d')

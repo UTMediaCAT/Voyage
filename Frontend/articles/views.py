@@ -2,6 +2,7 @@ from django.shortcuts import render, HttpResponse
 from django.template import RequestContext, loader
 from articles.models import Article, Keyword, SourceSite, Author, SourceTwitter
 import sys, os, time, json, yaml, urllib
+import common
 
 def index(request):
     if not request.user.is_authenticated():
@@ -39,7 +40,7 @@ def getJson(request):
     return res
 
 def getWarc(request, filename):
-    config = configuration()['warc']
+    config = common.get_config()['warc']
 
     path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', config['dir'] + "/" + config['article_subdir']))
     filename_ext = path + "/" + filename + ".warc.gz"
@@ -61,13 +62,3 @@ def getWarc(request, filename):
     res['Content-Disposition'] = 'attachment; ' + filename_header
     
     return res
-
-def configuration():
-    """ (None) -> dict
-    Returns a dictionary containing the micro settings from the
-    config.yaml file located in the directory containing this file
-    """
-    config_yaml = open(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../',"config.yaml")), 'r')
-    config = yaml.load(config_yaml)
-    config_yaml.close()
-    return config

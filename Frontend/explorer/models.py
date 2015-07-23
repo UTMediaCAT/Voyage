@@ -2,25 +2,14 @@ from django.db import models
 from django.core.exceptions import ValidationError
 import tweepy, os, yaml, newspaper
 from django.utils.safestring import mark_safe
-
-def configuration():
-    """ (None) -> dict
-    Returns a dictionary containing the micro settings from the
-    config.yaml file located in the directory containing this file
-    """
-    config_yaml = open(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../',"config.yaml")), 'r')
-    config = yaml.load(config_yaml)
-    config_yaml.close()
-    #Config is returned as a dictionary, which you can navigate through later to get
-    #a specific setting
-    return config
+import common
 
 def authorize():
     """ (None) -> tweepy.API
     Will use global keys to allow use of API
     """
     #Get's config settings for twitter
-    config = configuration()['twitter']
+    config = common.get_config()['twitter']
     #Authorizing use with twitter development api
     auth = tweepy.OAuthHandler(config['consumer_key'], config['consumer_secret'])
     auth.set_access_token(config['access_token'], config['access_token_secret'])
