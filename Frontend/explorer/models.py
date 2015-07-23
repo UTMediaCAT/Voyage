@@ -2,6 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 import tweepy, os, yaml, newspaper
 from django.utils.safestring import mark_safe
+from taggit.managers import TaggableManager
 
 def configuration():
     """ (None) -> dict
@@ -54,6 +55,8 @@ class ReferringSite(models.Model):
                                       'Maximum 200 characters')
     check = models.BooleanField(default=True, verbose_name="Check Newspaper",
                                 help_text=mark_safe('Check to display the amount of articles found by Newspaper (Displays as error).<br>Uncheck to save without testing Newspaper.'))
+
+    tags = TaggableManager()
 
     crawl_choices = (
 	(0, 'Newspaper'),

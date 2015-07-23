@@ -34,9 +34,9 @@ class ReferringSiteAdmin(admin.ModelAdmin):
     model = ReferringSite
     form = ReferringSiteAdminForm
     fieldsets = [
-        (None,               {'fields': ['url', 'name', 'mode', 'check']})
+        (None,               {'fields': ['url', 'name', 'mode', 'check', 'tags']})
         ]
-    list_display = ('name', 'url', 'article_count', 'latest_article', 'mode')
+    list_display = ('name', 'url', 'article_count', 'latest_article', 'mode', 'get_tags')
     search_fields = ['name', 'url']
     ordering = ['name']
     actions_on_top = True
@@ -58,6 +58,14 @@ class ReferringSiteAdmin(admin.ModelAdmin):
         else:
             return 'Have not found any articles yet!'
     latest_article.short_description = 'Last Found'
+
+    def get_tags(self, obj):
+        tags = []
+        for tag in obj.tags.all():
+            tags.append(str(tag))
+        return ', '.join(tags)
+
+    get_tags.short_description = "Tags"
 
 
 class SourceSiteAdmin(admin.ModelAdmin):
