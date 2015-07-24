@@ -55,23 +55,21 @@ class ReferringSite(models.Model):
                                       'Maximum 200 characters')
     check = models.BooleanField(default=True, verbose_name="Check Newspaper",
                                 help_text=mark_safe('Check to display the amount of articles found by Newspaper (Displays as error).<br>Uncheck to save without testing Newspaper.'))
-
-    tags = TaggableManager()
-
     crawl_choices = (
 	(0, 'Newspaper'),
 	(1, 'Plan B'),
 	(2, 'Both')
     )
     mode = models.PositiveSmallIntegerField(default=0,
-		        choices=crawl_choices, 
+		        choices=crawl_choices,
 			verbose_name='Crawler',
                         help_text=mark_safe('Newspaper - Fast but may not work on some sites. Use Check Newspaper to determine the compatibility<br>' +
                                             'Plan B - Slow but compatible with any sites.<br>' +
-                                            'Both - Uses both Newspaper and Plan B for maximum results.'))    
+                                            'Both - Uses both Newspaper and Plan B for maximum results.'))
+    tags = TaggableManager()
+
     class Meta:
         verbose_name = 'Referring Site'
-
 
     def __unicode__(self):
         return self.name
@@ -79,6 +77,8 @@ class ReferringSite(models.Model):
 class ReferringTwitter(models.Model):
     name = models.CharField(max_length=200, unique=True, validators=[validate_user],
                             help_text='Do not include "@". Maximum 15 characters (Ex. CNN)')
+    tags = TaggableManager()
+
     class Meta:
         verbose_name = 'Referring Twitter Account'
 
@@ -88,6 +88,8 @@ class ReferringTwitter(models.Model):
 class SourceTwitter(models.Model):
     name = models.CharField(max_length=200, unique=True, validators=[validate_user],
                             help_text='Do not include "@". Maximum 15 characters (Ex. CNN)')
+    tags = TaggableManager()
+
     class Meta:
         verbose_name = 'Source Twitter Account'
 
@@ -99,6 +101,8 @@ class SourceSite(models.Model):
                           help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://aljazeera.com)')
     name = models.CharField(max_length=200, 
                             help_text='Your favorable alias of this site.')
+    tags = TaggableManager()
+
     class Meta:
         verbose_name = 'Source Site'
 
@@ -108,7 +112,8 @@ class SourceSite(models.Model):
 class Keyword(models.Model):
     name = models.CharField(max_length=200, unique=True, 
                             help_text='Case insensitive. Maximum 200 characters (Ex. Canada)')
-    
+    tags = TaggableManager()
+
     def __unicode__(self):
         return self.name
 

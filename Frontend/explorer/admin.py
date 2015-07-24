@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.contrib.contenttypes.admin import (GenericStackedInline, GenericTabularInline)
+from taggit.models import TaggedItem
 from explorer.models import ReferringSite, SourceSite, Keyword, ReferringTwitter, SourceTwitter
 from articles.models import Article
 from articles.models import SourceSite as ArticleSource
@@ -10,6 +12,47 @@ from django.utils import timezone
 from django import forms
 import newspaper
 from django.utils.safestring import mark_safe
+
+
+class TaggitListFilter(admin.SimpleListFilter):
+    """
+    Filter records by Taggit tags for the current model only.
+    Tags are sorted alphabetically by name.
+    """
+
+    title = 'Tags'
+    parameter_name = 'tag'
+
+    def lookups(self, request, model_admin):
+        model_tags = [tag.name for tag in
+            TaggedItem.tags_for(model_admin.model)]
+        model_tags.sort()
+        return tuple([(tag, tag) for tag in model_tags])
+
+    def queryset(self, request, queryset):
+        if self.value() is not None:
+            return queryset.filter(tags__name=self.value())
+
+
+class TaggitInlineBase():
+    """
+    Base model for Taggit admin inlines.
+    Use TaggitStackedInline or TaggitTabularInline.
+    """
+    model = TaggedItem
+    verbose_name = 'Tag'
+    verbose_name_plural = 'Tags'
+    ordering = ('tag__name',)
+    extra = 1
+
+
+class TaggitTabularInline(TaggitInlineBase, GenericTabularInline):
+    """
+    Add tabular inline for Taggit tags to admin.
+    Tags are sorted alphabetically by name.
+    """
+    pass
+
 
 class ReferringSiteAdminForm(forms.ModelForm):
     class Meta:
@@ -33,8 +76,10 @@ class ReferringSiteAdminForm(forms.ModelForm):
 class ReferringSiteAdmin(admin.ModelAdmin):
     model = ReferringSite
     form = ReferringSiteAdminForm
+    inlines = [TaggitTabularInline]
+    list_filter = [TaggitListFilter]
     fieldsets = [
-        (None,               {'fields': ['url', 'name', 'mode', 'check', 'tags']})
+        (None,               {'fields': ['url', 'name', 'mode', 'check']})
         ]
     list_display = ('name', 'url', 'article_count', 'latest_article', 'mode', 'get_tags')
     search_fields = ['name', 'url']
@@ -64,15 +109,16 @@ class ReferringSiteAdmin(admin.ModelAdmin):
         for tag in obj.tags.all():
             tags.append(str(tag))
         return ', '.join(tags)
-
     get_tags.short_description = "Tags"
 
 
 class SourceSiteAdmin(admin.ModelAdmin):
+    inlines = [TaggitTabularInline]
+    list_filter = [TaggitListFilter]
     fieldsets = [
         (None,               {'fields': ['url', 'name']})
         ]
-    list_display = ('name', 'url', 'cited_count')
+    list_display = ('name', 'url', 'cited_count', 'get_tags')
     search_fields = ['name', 'url']
     ordering = ['name']
     actions_on_top = True
@@ -84,14 +130,24 @@ class SourceSiteAdmin(admin.ModelAdmin):
 
     cited_count.short_description = "Total Cites"
 
+    def get_tags(self, obj):
+        tags = []
+        for tag in obj.tags.all():
+            tags.append(str(tag))
+        return ', '.join(tags)
+
+    get_tags.short_description = "Tags"
+
 
 class KeywordAdmin(admin.ModelAdmin):
+    inlines = [TaggitTabularInline]
+    list_filter = [TaggitListFilter]
     fieldsets = [
         (None,               {'fields': ['name']})
         ]
 
 
-    list_display = ['name', 'match_count']
+    list_display = ['name', 'match_count', 'get_tags']
     search_fields = ['name']
     actions_on_top = True
     list_per_page = 1000
@@ -102,13 +158,21 @@ class KeywordAdmin(admin.ModelAdmin):
 
     match_count.short_description = "Total Matches"
 
+    def get_tags(self, obj):
+        tags = []
+        for tag in obj.tags.all():
+            tags.append(str(tag))
+        return ', '.join(tags)
+    get_tags.short_description = "Tags"
+
 class ReferringTwitterAdmin(admin.ModelAdmin):
+    inlines = [TaggitTabularInline]
+    list_filter = [TaggitListFilter]
     fieldsets = [
         (None,               {'fields': ['name']})
         ]
 
-
-    list_display = ['name', 'tweet_count', 'latest_tweet']
+    list_display = ['name', 'tweet_count', 'latest_tweet', 'get_tags']
     search_fields = ['name']
     actions_on_top = True
     list_per_page = 1000
@@ -117,7 +181,6 @@ class ReferringTwitterAdmin(admin.ModelAdmin):
         return len(Tweet.objects.filter(name__iexact=obj.name))
 
     tweet_count.short_description = "Total Tweets Archived"
-
 
     def latest_tweet(self, obj):
         latest = Tweet.objects.filter(name__iexact=obj.name)
@@ -132,16 +195,33 @@ class ReferringTwitterAdmin(admin.ModelAdmin):
 
     latest_tweet.short_description = 'Last Found'
 
+    def get_tags(self, obj):
+        tags = []
+        for tag in obj.tags.all():
+            tags.append(str(tag))
+        return ', '.join(tags)
+    get_tags.short_description = "Tags"
+
+
 class SourceTwitterAdmin(admin.ModelAdmin):
+    inlines = [TaggitTabularInline]
+    list_filter = [TaggitListFilter]
     fieldsets = [
         (None,               {'fields': ['name']})
         ]
 
-
-    list_display = ['name']
+    list_display = ['name', 'get_tags']
     search_fields = ['name']
     actions_on_top = True
     list_per_page = 1000
+
+    def get_tags(self, obj):
+        tags = []
+        for tag in obj.tags.all():
+            tags.append(str(tag))
+        return ', '.join(tags)
+    get_tags.short_description = "Tags"
+
 
 admin.site.register(ReferringSite, ReferringSiteAdmin)
 admin.site.register(SourceSite, SourceSiteAdmin)
