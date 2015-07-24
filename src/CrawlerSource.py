@@ -2,6 +2,9 @@ import newspaper
 from urlparse import urlparse, urljoin
 import random
 import common
+import requests
+import re
+import logging
 
 '''
 An iterator class for iterating over articles in a given site
@@ -33,10 +36,16 @@ class CrawlerSource(object):
                     raise StopIteration
                 url = self.visit_queue.pop()
                 if(url in self.visited_urls):#don't visit links that we've seen before
+                    logging.info("skipping {0} because it was already visited".format(url))
                     continue
 
                 if(self._should_skip()):
-                    continue
+                    logging.info("skipping {0} randomly".format(url))
+
+                if(not CrawlerSource._is_html(url)):
+                    logging.info("skipping {0} because the content-type isn't html".format(url))
+
+                logging.info("visiting {0}".format(url))
                 #use newspaper to download and parse the article
                 article = newspaper.Article(url)
                 article.config.fetch_images = False
@@ -44,22 +53,37 @@ class CrawlerSource(object):
                 article.parse()
                 #get get urls from the article
                 article_urls = article.extractor.get_urls(article.doc)
-
+                logging.info("got {0} urls from document", len(article_urls))
                 #add them to the visit queue
                 for u in article_urls:
                     u = urljoin(url, u, False)#fix for relative urls
                     parsed_url = urlparse(url)
                     if(self.domain.endswith(parsed_url.netloc)):
-                        self.visit_queue.append(u)
+                        self.visit_queue.insert(0, u)
+                        logging.info("added {0} to the visit queue", u)
 
                 self.pages_visited += 1
-                self.visited_urls.insert(0, url)
+                self.visited_urls.append(url)
                 return article
 
         def _should_skip(self):
             n = common.get_config()["crawler"]["n"]
             k = common.get_config()["crawler"]["k"]
             return random.random() < CrawlerSource._s_curve(self.pages_visited/n, k)
+
+        @staticmethod
+        def _is_html(url):
+            try:
+                response = requests.head(url, allow_redirects=True)
+                r = re.compile("(text/html|application/xhtml\+xml|application/xml) *(; .*)?")
+                if(r.match(response.headers["content-type"])):
+                    return True
+                logging.debug("not a html: {0}".format(response.headers["content-type"]))
+            except requests.RequestException:
+                pass
+            except KeyError:
+                return True
+            return False
 
         @staticmethod
         def _s_curve(x, k):
