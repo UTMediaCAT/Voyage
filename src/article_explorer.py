@@ -87,7 +87,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
         crawlersource_articles = []
         logging.info("Site: %s Type:%i"%(site['name'], site['type']))
         if(site["type"] == 0 or site["type"] == 2):
-            logging.info("Populating Article objects using newspaper")
+            logging.debug("Populating Article objects using newspaper")
             logging.disable(logging.ERROR)
             newspaper_source = newspaper.build(site["url"],
                                              memoize_articles=False,
@@ -98,12 +98,11 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             logging.disable(logging.NOTSET)
             newspaper_articles = newspaper_source.articles
             article_count += newspaper_source.size()
-            logging.info("Finished popuating Article objects using newspaper: %i"%article_count)
+            logging.info("populated {0} articles using newspaper".format(article_count))
         if(site["type"] == 1 or site["type"] == 2):
-            logging.info("Creating Plan B Article generator")
             crawlersource_articles = CrawlerSource.CrawlerSource(site["url"])
-            article_count += 5000
-            logging.info("Finished creating Plan B Article generator")
+            article_count += crawlersource_articles.probabilistic_n
+            logging.debug("expecting {0} from plan b crawler".format(crawlersource_articles.probabilistic_n))
         article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
         processed = 0
         logging.info("Starting article parsing")
@@ -123,14 +122,10 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             try:
                 if(not article.is_downloaded):
                     logging.debug("Downloading article")
-                    logging.disable(logging.ERROR)
                     article.download()
-                    logging.disable(logging.NOTSET)
                 if(not article.is_parsed):
                     logging.debug("Parsing article")
-                    logging.disable(logging.ERROR)
                     article.parse()
-                    logging.disable(logging.NOTSET)
                 title = article.title
             except:
                 logging.warning("Could not parse article")
@@ -138,7 +133,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             # If downloading/parsing the page fails,
             # stop here and move on to next db_article
             if not ((title == "") or (title == "Page not found")):
-                logging.debug("Title found")
+                logging.info("found title {0}".format(title))
                 
                 # Regex the keyword from the article's text
                 logging.debug("Checking Keyword matches")
@@ -485,6 +480,7 @@ def comm_init():
     """ (None) -> None
     Initialize The communication file
     """
+    logging.info("Initializing Communication Stream")
     pid = os.getpid()
     # Set the current status as Running
     logging.info("Comm Status: RR %s" % pid)
@@ -497,6 +493,7 @@ def check_command():
     Execute according to the commands.
     """
     # Load the relevant configs
+    logging.debug("Checking for any new command on communication stream")
     conf = common.get_config()['communication']
     msg = comm_read()
 
@@ -550,17 +547,14 @@ if __name__ == '__main__':
     # Connects to Site Database
     logging.info("Connecting to django/database")
     django.setup()
-    logging.info("Connected to django/database")
+    logging.debug("Connected to django/database")
 
     # Initialize Communication Stream
-    logging.info("Initializing Communication Stream")
+
     comm_init()
-    logging.info("Initialized Communication Stream")
 
     # Check for any new command on communication stream
-    logging.info("Checking for any new command on communication stream")
     check_command()
-    logging.info("Checked for any new command on communication stream")
 
     start = timeit.default_timer()
 
@@ -574,9 +568,7 @@ if __name__ == '__main__':
     logging.warning("Sleeping for %is"%sleep_time)
     for i in range(int(sleep_time//5)):
         time.sleep(5)
-        logging.info("Checking for any new command on communication stream")
         check_command()
-    logging.info("Checking for any new command on communication stream")
     check_command()
 
     logging.info("One cycle ended")
