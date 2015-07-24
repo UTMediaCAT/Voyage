@@ -44,6 +44,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 from articles.models import*
 from articles.models import Keyword as ArticleKeyword
 from articles.models import SourceSite as ArticleSourceSite
+from articles.models import SourceTwitter as ArticleSourceTwitter
 from explorer.models import*
 from explorer.models import SourceTwitter as ExplorerSourceTwitter
 from explorer.models import Keyword as ExplorerKeyword
@@ -220,11 +221,11 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                                 db_article.author_set.create(name=author)
 
                         for account in twitter_accounts[0]:
-                            if not SourceTwitter.objects.filter(name=account):
+                            if not ArticleSourceTwitter.objects.filter(name=account):
                                 db_article.sourcetwitter_set.create(name = account, matched = True)
 
                         for account in twitter_accounts[1]:
-                            if not SourceTwitter.objects.filter(name=account):
+                            if not ArticleSourceTwitter.objects.filter(name=account):
                                 db_article.sourcetwitter_set.create(name = account, matched = False)
 
                         for source in sources[0]:
