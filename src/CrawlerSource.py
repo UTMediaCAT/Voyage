@@ -1,6 +1,7 @@
 import newspaper
 from urlparse import urlparse, urljoin
 import random
+import common
 
 '''
 An iterator class for iterating over articles in a given site
@@ -56,8 +57,8 @@ class CrawlerSource(object):
                 return article
 
         def _should_skip(self):
-            n = 5000
-            k = 0.6
+            n = common.get_config()["crawler"]["n"]
+            k = common.get_config()["crawler"]["k"]
             return random.random() < CrawlerSource._s_curve(self.pages_visited/n, k)
 
         @staticmethod
