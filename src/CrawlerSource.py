@@ -22,6 +22,9 @@ class CrawlerSource(object):
             self.domain = urlparse(origin_url).netloc
             self.pages_visited = 0
 
+            self.probabilistic_n = common.get_config()["crawler"]["n"]
+            self.probabilistic_k = common.get_config()["crawler"]["k"]
+
         def __iter__(self):
             return self
 
@@ -53,22 +56,22 @@ class CrawlerSource(object):
                 article.parse()
                 #get get urls from the article
                 article_urls = article.extractor.get_urls(article.doc)
-                logging.info("got {0} urls from document", len(article_urls))
+                logging.info("got {0} urls from document".format(len(article_urls)))
                 #add them to the visit queue
                 for u in article_urls:
                     u = urljoin(url, u, False)#fix for relative urls
                     parsed_url = urlparse(url)
                     if(self.domain.endswith(parsed_url.netloc)):
                         self.visit_queue.insert(0, u)
-                        logging.info("added {0} to the visit queue", u)
+                        logging.info("added {0} to the visit queue".format(u))
 
                 self.pages_visited += 1
                 self.visited_urls.append(url)
                 return article
 
         def _should_skip(self):
-            n = common.get_config()["crawler"]["n"]
-            k = common.get_config()["crawler"]["k"]
+            n = self.probabilistic_n
+            k = self.probabilistic_k
             return random.random() < CrawlerSource._s_curve(self.pages_visited/n, k)
 
         @staticmethod
