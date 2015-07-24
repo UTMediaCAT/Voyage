@@ -6,6 +6,7 @@ import sys, os, datetime, time, re
 path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '../../', 'src'))
 sys.path.append(path)
 import analyzer
+import Caching
 
 def articles(request):
     if not request.user.is_authenticated():
@@ -16,19 +17,11 @@ def articles(request):
     return render(request, 'statistics/articles.html', context)
 
 def articles_js(request):
-    keywords_pie_chart = analyzer.articles_keywords_pie_chart()
-    articles_annotation_chart = analyzer.articles_annotation_chart()
-    msites_bar_chart = analyzer.msites_bar_chart()
+    data = Caching.getCacheData("Article_Statistics.Json")
 
+    print data
 
-    context = {'keywords_pie_chart':  keywords_pie_chart, 
-                'referring_sites': articles_annotation_chart[0], 
-                'article_by_date': articles_annotation_chart[1], 
-                'referringsite_bar_chart': msites_bar_chart,
-                'referringsite_bar_table':msites_bar_chart[1:],
-                'bar_chart_height': max((len(msites_bar_chart) - 1) * 3, 30),}
-
-    return render(request, 'statistics/articles_js.html', context)
+    return render(request, 'statistics/articles_js.html', data)
 
 def tweets(request):
     if not request.user.is_authenticated():
@@ -39,12 +32,8 @@ def tweets(request):
     return render(request, 'statistics/tweets.html', context)
 
 def tweets_js(request):
-    keywords_pie_chart = analyzer.tweets_keywords_pie_chart()
-    tweets_annotation_chart =analyzer.tweets_annotation_chart()
 
+    data = Caching.getCacheData("Tweet_Statistics.Json")
 
-
-    context = {'keywords_pie_chart': keywords_pie_chart, 
-                'referring_acounts':tweets_annotation_chart[0], 
-                'tweet_by_date': tweets_annotation_chart[1]}
-    return render(request, 'statistics/tweets_js.html', context)
+    print data
+    return render(request, 'statistics/tweets_js.html', data)

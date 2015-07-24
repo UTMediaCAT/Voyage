@@ -1,6 +1,8 @@
 import django
 import re
 import operator
+import os
+os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 from articles.models import*
 from articles.models import Keyword as ArticleKeyword
 from articles.models import SourceSite as ArticleSourceSite
