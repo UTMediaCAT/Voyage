@@ -228,12 +228,12 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                                 db_article.sourcetwitter_set.create(name = account, matched = False)
 
                         for source in sources[0]:
-                            if not SourceSite.objects.filter(url=source[0]):
+                            if not ArticleSourceSite.objects.filter(url=source[0]):
                                 db_article.sourcesite_set.create(url=source[0],
                                                       domain=source[1], matched=True, local=(source[1] in site["url"]))
 
                         for source in sources[1]:
-                            if not SourceSite.objects.filter(url=source[0]):
+                            if not ArticleSourceSite.objects.filter(url=source[0]):
                                 db_article.sourcesite_set.create(url=source[0],
                                                       domain=source[1], matched=False, local=(source[1] in site["url"]))
                         logging.info("Finished modifying existing Article in the DB")
@@ -413,7 +413,7 @@ def explore():
     # Retrieve and store foreign site information
     logging.info("Collecting all Source Sites from Database")
     source_sites = []
-    for site in SourceSite.objects.all():
+    for site in ArticleSourceSite.objects.all():
         # source_sites is now in form ['URL', ...]
         source_sites.append(site.url)
     logging.info("Collected all Source Sites from Database")
