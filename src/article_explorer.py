@@ -123,6 +123,8 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                 if(not article.is_parsed):
                     article.parse()
                 title = article.title
+            except (KeyboardInterrupt, SystemExit):
+                raise
             except:
                 logging.warning("Could not parse article")
                 title = ""
@@ -150,7 +152,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                 if not (keywords == [] and sources[0] == [] and twitter_accounts[0] ==[]):
                     try:
                         url = requests.get(url).url
-                    except:
+                    except requests.RequestException:
                         logging.warning("Could not resolve cannonical url")
 
                     logging.debug("Found Match")
@@ -302,6 +304,8 @@ def get_sources_sites(html, sites):
             "href=[\"\'][^\"\']*?.*?[^\"\']*?[\"\']", html, re.IGNORECASE):
         try:
             domain = tld.get_tld(url[6:-1])
+        except (KeyboardInterrupt, SystemExit):
+            raise
         except:
             continue
         if domain in formatted_sites:
@@ -349,6 +353,8 @@ def get_pub_date(article):
                 dt = parser.parse(str(value))
                 # If parsing succeeded, then append it to the list
                 dates.append(dt)
+            except (KeyboardInterrupt, SystemExit):
+                raise
             except:
                 pass
     # If one of more dates were found,
@@ -441,6 +447,8 @@ def comm_write(text):
             comm.write(text)
             comm.close()
             return None
+        except (KeyboardInterrupt, SystemExit):
+            raise
         except:
             time.sleep(conf['retry_delta'])
 
@@ -460,6 +468,8 @@ def comm_read():
             msg = comm.read()
             comm.close()
             return msg
+        except (KeyboardInterrupt, SystemExit):
+            raise
         except:
             time.sleep(conf['retry_delta'])
 
@@ -522,6 +532,8 @@ if __name__ == '__main__':
     try:
         cycle_number = sorted(glob.glob(log_dir + "/article_explorer-" + time + "*.log"))[-1][-7:-4]
         cycle_number = str(int(cycle_number) + 1)
+    except (KeyboardInterrupt, SystemExit):
+        raise
     except:
         cycle_number = "0"
     logging.basicConfig(filename=log_dir+"/article_explorer-" + time + "-" + cycle_number.zfill(3) + ".log",
