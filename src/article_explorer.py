@@ -133,7 +133,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             # If downloading/parsing the page fails,
             # stop here and move on to next db_article
             if not ((title == "") or (title == "Page not found")):
-                logging.info("found title {0}".format(title))
+                logging.info(u"found title {0}".format(title))
                 
                 # Regex the keyword from the article's text
                 logging.debug("Checking Keyword matches")
