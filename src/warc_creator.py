@@ -1,7 +1,6 @@
-import os
 import subprocess
 import yaml
-
+import logging
 
 def configuration():
     """ (None) -> dict
@@ -18,6 +17,7 @@ def create_warc(url, dir):
     creates a warc file from url and places it in dest
     """
     rename_url = url.replace("/", "_")
+    logging.info("creating warc \"{0}\" in \"{1}\"".format(rename_url, dir))
     subprocess.call(["mkdir", "-p", dir], cwd="..", close_fds=True)
     subprocess.Popen(["wget", "--warc-file=" + rename_url, "-O", "/dev/null", url], cwd="../"+dir, close_fds=True)
 

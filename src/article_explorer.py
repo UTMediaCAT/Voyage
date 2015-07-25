@@ -86,8 +86,8 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
         newspaper_articles = []
         crawlersource_articles = []
         logging.info("Site: %s Type:%i"%(site['name'], site['type']))
+        #0 = newspaper, 1 = crawler, 2 = both
         if(site["type"] == 0 or site["type"] == 2):
-            logging.debug("Populating Article objects using newspaper")
             logging.disable(logging.ERROR)
             newspaper_source = newspaper.build(site["url"],
                                              memoize_articles=False,
@@ -105,11 +105,9 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             logging.debug("expecting {0} from plan b crawler".format(crawlersource_articles.probabilistic_n))
         article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
         processed = 0
-        logging.info("Starting article parsing")
         for article in article_iterator:
             logging.info("Looking: %s"%article.url)
             # Check for any new command on communication stream
-            logging.debug("Checking for any new command on communication stream")
             check_command()
 
             url = article.url
@@ -121,10 +119,8 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             # Try to download and extract the useful data
             try:
                 if(not article.is_downloaded):
-                    logging.debug("Downloading article")
                     article.download()
                 if(not article.is_parsed):
-                    logging.debug("Parsing article")
                     article.parse()
                 title = article.title
             except:
@@ -136,13 +132,13 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                 logging.info(u"found title {0}".format(title))
                 
                 # Regex the keyword from the article's text
-                logging.debug("Checking Keyword matches")
                 keywords = get_keywords(article, db_keywords)
+                logging.info("keywords: {0}".format(str(keywords)))
                 # Regex the links within article's html
-                logging.debug("Checking Source Site matches")
                 sources = get_sources_sites(article.article_html, source_sites)
-                logging.debug("Checking Twitter Account matches")
-                twitter_accounts= get_sources_twitter(article.article_html, twitter_accounts_explorer)
+                logging.info("sources: {0}".format(str(sources)))
+                twitter_accounts = get_sources_twitter(article.article_html, twitter_accounts_explorer)
+                logging.info("twitter_accounts: {0}".format(str(twitter_accounts[0])))
                 # Store parsed author
                 authors = article.authors
                 # Try to parse the published date
@@ -150,17 +146,18 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
 
                 # If neither of keyword nor sources matched,
                 # then stop here and move on to next article
+
                 if not (keywords == [] and sources[0] == [] and twitter_accounts[0] ==[]):
                     try:
                         url = requests.get(url).url
                     except:
-                        logging.warning("Could not request")
-                        
-                    logging.info("Found Match")
+                        logging.warning("Could not resolve cannonical url")
+
+                    logging.debug("Found Match")
                     # Check if the entry already exists
                     db_article_list = Article.objects.filter(url=url)
                     if not db_article_list:
-                        logging.info("Adding new Article to the DB")
+                        logging.debug("Adding new Article to the DB")
                         # If the db_article is new to the database,
                         # add it to the database
                         db_article = Article(title=title, url=url,
@@ -191,7 +188,6 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                         for source in sources[1]:
                             db_article.sourcesite_set.create(url=source[0],
                                                       domain=source[1], matched=False, local=(source[1] in site["url"]))
-                        logging.info("Finished adding new Article to the DB")
                         added += 1
 
                     else:
@@ -232,11 +228,8 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                             if not ArticleSourceSite.objects.filter(url=source[0]):
                                 db_article.sourcesite_set.create(url=source[0],
                                                       domain=source[1], matched=False, local=(source[1] in site["url"]))
-                        logging.info("Finished modifying existing Article in the DB")
 
-                    logging.info("Creating warc")
                     warc_creator.create_article_warc(url)
-                    logging.info("Finished creating warc")
             else:
                 logging.debug("No title found")
 
@@ -400,37 +393,32 @@ def explore():
     """
 
     # Retrieve and store monitoring site information
-    logging.info("Collecting all Referring Sites from Database")
     referring_sites = []
     for site in ReferringSite.objects.all():
         referring_sites.append({"name":site.name, "url":site.url, "type":site.mode})
-    logging.info("Collected all Referring Sites from Database")
+    logging.info("Collected {0} Referring Sites from Database".format(len(referring_sites)))
 
     # Retrieve and store foreign site information
-    logging.info("Collecting all Source Sites from Database")
     source_sites = []
     for site in ArticleSourceSite.objects.all():
         # source_sites is now in form ['URL', ...]
         source_sites.append(site.url)
-    logging.info("Collected all Source Sites from Database")
+    logging.info("Collected {0} Source Sites from Database".format(len(source_sites)))
 
     # Retrieve all stored keywords
-    logging.info("Collecting all Keywords from Database")
     keyword_list = []
     for key in ExplorerKeyword.objects.all():
         keyword_list.append(str(key.name))
-    logging.info("Collected all Keywords from Database")
+    logging.info("Collected {0} Keywords from Database".format(len(keyword_list)))
 
     # Retrieve all stored twitter_accounts
-    logging.info("Collecting all Source Twitter Accounts from Database")
     source_twitter_list = []
     twitter_accounts = ExplorerSourceTwitter.objects.all()
     for key in twitter_accounts:
         source_twitter_list.append(str(key.name))
-    logging.info("Collected all Source Twitter Accounts from Database")
+    logging.info("Collected {0} Source Twitter Accounts from Database".format(len(source_twitter_list)))
 
     # Parse the articles in all sites
-    logging.info("Parsing Articles Started")
     parse_articles(referring_sites, keyword_list, source_sites, source_twitter_list)
     logging.info("Finished parsing Articles")
 
