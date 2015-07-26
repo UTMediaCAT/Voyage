@@ -53,7 +53,12 @@ class CrawlerSource(object):
                 article = newspaper.Article(url)
                 article.config.fetch_images = False
                 article.download()
-                article.parse()
+                try:
+                    article.parse()
+                except (KeyboardInterrupt, SystemExit):
+                    raise
+                except:
+                    continue
                 #get get urls from the article
                 article_urls = article.extractor.get_urls(article.doc)
                 logging.info("got {0} urls from document".format(len(article_urls)))
