@@ -44,9 +44,11 @@ class CrawlerSource(object):
 
                 if(self._should_skip()):
                     logging.info("skipping {0} randomly".format(url))
+                    continue
 
                 if(not CrawlerSource._is_html(url)):
                     logging.info("skipping {0} because the content-type isn't html".format(url))
+                    continue
 
                 logging.info("visiting {0}".format(url))
                 #use newspaper to download and parse the article
@@ -77,7 +79,8 @@ class CrawlerSource(object):
         def _should_skip(self):
             n = self.probabilistic_n
             k = self.probabilistic_k
-            return random.random() < CrawlerSource._s_curve(self.pages_visited/n, k)
+
+            return random.random() <= CrawlerSource._s_curve(self.pages_visited/n, k)
 
         @staticmethod
         def _is_html(url):
