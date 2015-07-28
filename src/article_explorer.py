@@ -131,16 +131,16 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             # If downloading/parsing the page fails,
             # stop here and move on to next db_article
             if not ((title == "") or (title == "Page not found")):
-                logging.info(u"found title {0}".format(title))
+                logging.debug(u"found title: {0}".format(title))
                 
                 # Regex the keyword from the article's text
                 keywords = get_keywords(article, db_keywords)
-                logging.info("keywords: {0}".format(str(keywords)))
+                logging.debug("keywords: {0}".format(str(keywords)))
                 # Regex the links within article's html
                 sources = get_sources_sites(article.article_html, source_sites)
-                logging.info("sources: {0}".format(str(sources)))
+                logging.debug("sources: {0}".format(str(sources)))
                 twitter_accounts = get_sources_twitter(article.article_html, twitter_accounts_explorer)
-                logging.info("twitter_accounts: {0}".format(str(twitter_accounts[0])))
+                logging.debug("twitter_accounts: {0}".format(str(twitter_accounts[0])))
                 # Store parsed author
                 authors = article.authors
                 # Try to parse the published date
@@ -150,16 +150,19 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                 # then stop here and move on to next article
 
                 if not (keywords == [] and sources[0] == [] and twitter_accounts[0] ==[]):
+                    logging.info("Found Match")
                     try:
+                        logging.info("Requesting canonical url")
                         url = requests.get(url).url
                     except requests.RequestException:
-                        logging.warning("Could not resolve cannonical url")
-
-                    logging.debug("Found Match")
+                        logging.warning("Raised requests.RequestException")
+                    except:
+                        logging.warning("Could not resolve canonical url")
+                    logging.debug("canonical url found")
                     # Check if the entry already exists
                     db_article_list = Article.objects.filter(url=url)
                     if not db_article_list:
-                        logging.debug("Adding new Article to the DB")
+                        logging.info("Adding new Article to the DB")
                         # If the db_article is new to the database,
                         # add it to the database
                         db_article = Article(title=title, url=url,
@@ -232,8 +235,10 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                                                       domain=source[1], matched=False, local=(source[1] in site["url"]))
 
                     warc_creator.create_article_warc(url)
+                else:
+                    logging.info("No matches")
             else:
-                logging.debug("No title found")
+                logging.info("No title found")
 
             processed += 1
             print(
