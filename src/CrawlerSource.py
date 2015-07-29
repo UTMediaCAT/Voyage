@@ -39,18 +39,18 @@ class CrawlerSource(object):
                     raise StopIteration
                 url = self.visit_queue.pop()
                 if(url in self.visited_urls):#don't visit links that we've seen before
-                    logging.info("skipping {0} because it was already visited".format(url))
+                    logging.info(u"skipping {0} because it was already visited".format(url))
                     continue
 
                 if(self._should_skip()):
-                    logging.info("skipping {0} randomly".format(url))
+                    logging.info(u"skipping {0} randomly".format(url))
                     continue
 
                 if(not CrawlerSource._is_html(url)):
-                    logging.info("skipping {0} because the content-type isn't html".format(url))
+                    logging.info(u"skipping {0} because the content-type isn't html".format(url))
                     continue
 
-                logging.info("visiting {0}".format(url))
+                logging.info(u"visiting {0}".format(url))
                 #use newspaper to download and parse the article
                 article = newspaper.Article(url)
                 article.config.fetch_images = False
@@ -70,7 +70,7 @@ class CrawlerSource(object):
                     parsed_url = urlparse(url)
                     if(self.domain.endswith(parsed_url.netloc)):
                         self.visit_queue.insert(0, u)
-                        logging.info("added {0} to the visit queue".format(u))
+                        logging.info(u"added {0} to the visit queue".format(u))
 
                 self.pages_visited += 1
                 self.visited_urls.append(url)
