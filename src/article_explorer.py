@@ -209,28 +209,28 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                         db_article.save()
 
                         for key in keywords:
-                            if not ArticleKeyword.objects.filter(name=key):
+                            if not db_article.keyword_set.filter(name=key):
                                 db_article.keyword_set.create(name=key)
 
                         for author in authors:
-                            if not Author.objects.filter(name=author):
+                            if not db_article.author_set.filter(name=author):
                                 db_article.author_set.create(name=author)
 
                         for account in twitter_accounts[0]:
-                            if not ArticleSourceTwitter.objects.filter(name=account):
+                            if not db_article.sourcetwitter_set.filter(name=account):
                                 db_article.sourcetwitter_set.create(name = account, matched = True)
 
                         for account in twitter_accounts[1]:
-                            if not ArticleSourceTwitter.objects.filter(name=account):
+                            if not db_article.sourcetwitter_set.filter(name=account):
                                 db_article.sourcetwitter_set.create(name = account, matched = False)
 
                         for source in sources[0]:
-                            if not ArticleSourceSite.objects.filter(url=source[0]):
+                            if not db_article.sourcesite_set.filter(url=source[0]):
                                 db_article.sourcesite_set.create(url=source[0],
                                                       domain=source[1], matched=True, local=(source[1] in site["url"]))
 
                         for source in sources[1]:
-                            if not ArticleSourceSite.objects.filter(url=source[0]):
+                            if not db_article.sourcesite_set.filter(url=source[0]):
                                 db_article.sourcesite_set.create(url=source[0],
                                                       domain=source[1], matched=False, local=(source[1] in site["url"]))
 
