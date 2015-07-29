@@ -89,7 +89,7 @@ class CrawlerSource(object):
                 r = re.compile("(text/html|application/xhtml\+xml|application/xml) *(; .*)?")
                 if(r.match(response.headers["content-type"])):
                     return True
-                logging.debug("not a html: {0}".format(response.headers["content-type"]))
+                logging.debug(u"not a html: {0}".format(response.headers["content-type"]))
             except requests.RequestException:
                 pass
             except KeyError:
