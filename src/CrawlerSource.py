@@ -68,7 +68,7 @@ class CrawlerSource(object):
                 for u in article_urls:
                     u = urljoin(url, u, False)#fix for relative urls
                     parsed_url = urlparse(url)
-                    if(self.domain.endswith(parsed_url.netloc)):
+                    if(parsed_url.netloc.endswith(self.domain)):
                         self.visit_queue.insert(0, u)
                         logging.info(u"added {0} to the visit queue".format(u))
 
