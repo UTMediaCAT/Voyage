@@ -411,7 +411,7 @@ def explore():
 
     # Retrieve and store foreign site information
     source_sites = []
-    for site in ArticleSourceSite.objects.all():
+    for site in ExplorerSourceSite.objects.all():
         # source_sites is now in form ['URL', ...]
         source_sites.append(site.url)
     logging.info("Collected {0} Source Sites from Database".format(len(source_sites)))
