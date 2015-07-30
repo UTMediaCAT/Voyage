@@ -236,8 +236,11 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
         tweet_count = len(tweets)
         for i in range(tweet_count):
             tweet = tweets[i]
-            # Check for any new command on communication stream
-            check_command()
+            try:
+                # Check for any new command on communication stream
+                check_command()
+            except (KeyboardInterrupt, SystemExit):
+                raise
 
 
             #setting correct data for each field
