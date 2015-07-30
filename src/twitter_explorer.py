@@ -2,7 +2,6 @@
 import tweepy
 import time
 import re
-import urllib2
 from tld import get_tld
 from tld.utils import update_tld_names
 import timeit
@@ -182,7 +181,7 @@ def get_source_sites(urls, sites):
 
     for url in urls:
         try:
-            real_url = requests.get(url['expanded_url']).url
+            real_url = requests.get(url['expanded_url'], timeout=10).url
             domain = tld.get_tld(real_url)
         except:
             continue
