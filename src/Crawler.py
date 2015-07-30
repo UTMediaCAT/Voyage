@@ -5,6 +5,7 @@ import common
 import requests
 import re
 import logging
+from readability import Document
 
 '''
 An iterator class for iterating over articles in a given site

@@ -53,7 +53,7 @@ from explorer.models import SourceSite as ExplorerSourceSite
 import common
 # To store the article as warc files
 import warc_creator
-import CrawlerSource
+import Crawler
 # To get domain from url
 import tld
 # To concatenate newspaper's articles and CrawlerSource's articles
@@ -100,7 +100,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             article_count += newspaper_source.size()
             logging.info("populated {0} articles using newspaper".format(article_count))
         if(site["type"] == 1 or site["type"] == 2):
-            crawlersource_articles = CrawlerSource.CrawlerSource(site["url"])
+            crawlersource_articles = Crawler.CrawlerSource(site["url"])
             article_count += crawlersource_articles.probabilistic_n
             logging.debug("expecting {0} from plan b crawler".format(crawlersource_articles.probabilistic_n))
         article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
