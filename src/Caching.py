@@ -4,6 +4,7 @@ import csv
 import analyzer
 import django
 import json
+import visualizer
 
 def byteify(input):
     if isinstance(input, dict):
@@ -16,12 +17,12 @@ def byteify(input):
         return input
 
 
-def setArticleCachedData(name):
+def setArticleCachedData():
+        keywords_pie_chart =  analyzer.articles_keywords_pie_chart()
+        articles_annotation_chart =  analyzer.articles_annotation_chart()
+        msites_bar_chart =   analyzer.msites_bar_chart()
 
-        with open(name, 'w') as outfile:
-            keywords_pie_chart =  analyzer.articles_keywords_pie_chart()
-            articles_annotation_chart =  analyzer.articles_annotation_chart()
-            msites_bar_chart =   analyzer.msites_bar_chart()
+        with open("Article_Statistics.Json", 'w') as outfile:
 
             context = {'keywords_pie_chart':  keywords_pie_chart,
             'referring_sites': articles_annotation_chart[0],
@@ -35,13 +36,12 @@ def setArticleCachedData(name):
 
 
 
-def setTweetCachedData(name):
+def setTweetCachedData():
 
-        with open(name, 'w') as outfile:
-            keywords_pie_chart =  analyzer.tweets_keywords_pie_chart()
-            tweets_annotation_chart =  analyzer.tweets_annotation_chart()
+        keywords_pie_chart =  analyzer.tweets_keywords_pie_chart()
+        tweets_annotation_chart =  analyzer.tweets_annotation_chart()
 
-
+        with open("Tweet_Statistics.Json", 'w') as outfile:
 
             context = {'keywords_pie_chart': keywords_pie_chart,
                         'referring_acounts':tweets_annotation_chart[0],
@@ -51,15 +51,40 @@ def setTweetCachedData(name):
 
 
 
+#Cacheing for visualization
+
+
+
+
+def set_visualization(name,data):
+
+    with open(name, 'w') as outfile:
+        json.dump(data, outfile)
+
+    outfile.close()
+
+
+
+
+
+
+
+#getting cached data
 
 def getCacheData(name):
 
     with open(name) as json_file:
         json_data = json.load(json_file)
-
+    json_file.close()
     return byteify(json_data)
 
+
+
+
 django.setup()
+
+
+
 
 
 
