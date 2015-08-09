@@ -5,21 +5,21 @@ import common
 import requests
 import re
 import logging
-from readability import Document
-
+import collections
+from ExplorerArticle import ExplorerArticle
 '''
 An iterator class for iterating over articles in a given site
 '''
 
-class CrawlerSource(object):
+class Crawler(object):
         def __init__(self, origin_url):
             '''
-            (CrawlerSource, str) -> CrawlerSource
-            creates a CrawlerSource with a given origin_url
+            (Crawler, str) -> Crawler
+            creates a Crawler with a given origin_url
             '''
             self.origin_url = origin_url
-            self.visit_queue = [origin_url]
-            self.visited_urls = []
+            self.visit_queue = collections.deque([origin_url])
+            self.visited_urls = set()
             self.domain = urlparse(origin_url).netloc
             self.pages_visited = 0
 
@@ -31,71 +31,48 @@ class CrawlerSource(object):
 
         def next(self):
             '''
-            (CrawlerSource) -> newspaper.Article
+            (Crawler) -> newspaper.Article
             returns the next article in the sequence
             '''
             #standard non-recursive tree iteration
             while(True):
                 if(len(self.visit_queue) <= 0):
                     raise StopIteration
-                url = self.visit_queue.pop()
-                if(url in self.visited_urls):#don't visit links that we've seen before
-                    logging.info(u"skipping {0} because it was already visited".format(url))
-                    continue
+                current_url = self.visit_queue.pop()
 
                 if(self._should_skip()):
-                    logging.info(u"skipping {0} randomly".format(url))
+                    logging.info(u"skipping {0} randomly".format(current_url))
                     continue
 
-                if(not CrawlerSource._is_html(url)):
-                    logging.info(u"skipping {0} because the content-type isn't html".format(url))
-                    continue
-
-                logging.info(u"visiting {0}".format(url))
+                logging.info(u"visiting {0}".format(current_url))
                 #use newspaper to download and parse the article
-                article = newspaper.Article(url)
-                article.config.fetch_images = False
+                article = ExplorerArticle(current_url)
                 article.download()
-                try:
-                    article.parse()
-                except (KeyboardInterrupt, SystemExit):
-                    raise
-                except:
-                    continue
+
                 #get get urls from the article
-                article_urls = article.extractor.get_urls(article.doc)
-                logging.info("got {0} urls from document".format(len(article_urls)))
-                #add them to the visit queue
-                for u in article_urls:
-                    u = urljoin(url, u, False)#fix for relative urls
-                    parsed_url = urlparse(url)
-                    if(parsed_url.netloc.endswith(self.domain)):
-                        self.visit_queue.insert(0, u)
-                        logging.info(u"added {0} to the visit queue".format(u))
+                for url in article.get_urls():
+                    url = urljoin(current_url, url, False)
+                    try:
+                        parsed_url = urlparse(url)
+                    except ValueError:
+                        logging.warn(u"skipping malformed url {0}".format(url))
+                        continue
+                    if(not parsed_url.netloc.endswith(self.domain)):
+                        continue
+                    if(url in self.visited_urls):
+                        continue
+                    self.visit_queue.appendleft(url)
+                    logging.info(u"added {0} to the visit queue".format(url))
 
                 self.pages_visited += 1
-                self.visited_urls.append(url)
+                self.visited_urls.add(current_url)
                 return article
 
         def _should_skip(self):
             n = self.probabilistic_n
             k = self.probabilistic_k
 
-            return random.random() <= CrawlerSource._s_curve(self.pages_visited/n, k)
-
-        @staticmethod
-        def _is_html(url):
-            try:
-                response = requests.head(url, allow_redirects=True)
-                r = re.compile("(text/html|application/xhtml\+xml|application/xml) *(; .*)?")
-                if(r.match(response.headers["content-type"])):
-                    return True
-                logging.debug(u"not a html: {0}".format(response.headers["content-type"]))
-            except requests.RequestException:
-                pass
-            except KeyError:
-                return True
-            return False
+            return random.random() <= Crawler._s_curve(self.pages_visited/n, k)
 
         @staticmethod
         def _s_curve(x, k):
@@ -103,4 +80,5 @@ class CrawlerSource(object):
                 return ((k*(2*x)-(2*x))/(2*k*(2*x)-k-1))*0.5
             else:
                 return 0.5*((-k*(2*(x-0.5))-(2*(x-0.5)))/(2*-k*(2*(x-0.5))-(-k)-1))+0.5
+
 

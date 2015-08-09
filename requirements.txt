@@ -7,3 +7,6 @@ pyyaml==3.11
 django-suit==0.2.11
 pytz==2015.4
 schedule==0.3.2
+cssselect
+urlnorm
+readability-lxml
