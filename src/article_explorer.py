@@ -109,6 +109,8 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
         article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
         processed = 0
         for article in article_iterator:
+            #have to put all the iteration stuff at the top because I used continue extensively in this loop
+            processed += 1
             print(
                 "%s (Article|%s) %i/%i          \r" %
                 (str(timezone.localtime(timezone.now()))[:-13],
@@ -234,10 +236,6 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
                                               domain=source[1], matched=False, local=(source[1] in site["url"]))
 
             warc_creator.create_article_warc(url)
-
-            processed += 1
-
-            logging.info("(%s | %i/%i) Finished looking: %s"%(article.url, processed, article_count, article.url))
         logging.info("Finished Site: %s"%site['name'])
         print(
             "%s (Article|%s) %i/%i          " %
