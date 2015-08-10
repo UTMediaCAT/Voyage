@@ -147,7 +147,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
 
             if((not keywords) or (not sources[0]) or (not twitter_accounts[0])):#[] gets coverted to false
                 logging.debug("skipping article because it's not a match")
-            #    continue
+                continue
             logging.info("match found")
 
             article.newspaper_parse()
