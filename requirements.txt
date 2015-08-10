@@ -1,5 +1,5 @@
 Django==1.7.1
-newspaper==0.0.8
+newspaper
 tweepy==2.3.0
 python-dateutil==1.5
 tld==0.7.2
