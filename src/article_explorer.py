@@ -500,10 +500,11 @@ if __name__ == '__main__':
     logging.basicConfig(filename=log_dir+"/article_explorer-" + time + "-" + cycle_number.zfill(3) + ".log",
                         level=logging.DEBUG,
                         format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+    default_logger = logging.getLogger('')
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.WARNING)
-    console_handler.setFormatter(fmt='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
-    logging.getLogger('').addHandler(console_handler)
+    console_handler.setFormatter(default_logger.handlers[0].formatter)
+    default_logger.addHandler(console_handler)
     # Finish logging config
 
     config = config['article']
