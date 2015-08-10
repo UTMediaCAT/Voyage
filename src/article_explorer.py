@@ -109,7 +109,11 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
         article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
         processed = 0
         for article in article_iterator:
-            logging.info("Looking: %s"%article.url)
+            print(
+                "%s (Article|%s) %i/%i          \r" %
+                (str(timezone.localtime(timezone.now()))[:-13],
+                 site["name"], processed, article_count))
+            logging.info("Processing %s"%article.url)
             # Check for any new command on communication stream
             check_command()
 
@@ -232,10 +236,6 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             warc_creator.create_article_warc(url)
 
             processed += 1
-            print(
-                "%s (Article|%s) %i/%i          \r" %
-                (str(timezone.localtime(timezone.now()))[:-13],
-                 site["name"], processed, article_count))
 
             logging.info("(%s | %i/%i) Finished looking: %s"%(article.url, processed, article_count, article.url))
         logging.info("Finished Site: %s"%site['name'])
@@ -500,6 +500,10 @@ if __name__ == '__main__':
     logging.basicConfig(filename=log_dir+"/article_explorer-" + time + "-" + cycle_number.zfill(3) + ".log",
                         level=logging.DEBUG,
                         format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.WARNING)
+    console_handler.setFormatter(fmt='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+    logging.getLogger('').addHandler(console_handler)
     # Finish logging config
 
     config = config['article']
