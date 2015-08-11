@@ -496,7 +496,7 @@ if __name__ == '__main__':
     except:
         cycle_number = "0"
     logging.basicConfig(filename=log_dir+"/article_explorer-" + time + "-" + cycle_number.zfill(3) + ".log",
-                        level=logging.DEBUG,
+                        level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
     default_logger = logging.getLogger('')
     console_handler = logging.StreamHandler()
