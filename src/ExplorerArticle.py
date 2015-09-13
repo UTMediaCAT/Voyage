@@ -33,7 +33,7 @@ class ExplorerArticle(object):#derive from object for getters/setters
                 logging.warn(u"encountered status code {0} while getting {1}".format(response.status_code, self.url))
                 return False
 
-            if(not re.search("(text/html|application/xhtml\+xml|application/xml) *(; .*)?", response.headers["content-type"])):
+            if(not re.search("(text/html|application/xhtml\+xml) *(; .*)?", response.headers["content-type"])):
                 logging.debug(u"not a html: {0}".format(response.headers["content-type"]))
                 return False
 
