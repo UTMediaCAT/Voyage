@@ -62,10 +62,10 @@ class Crawler(object):
                     if(url in self.visited_urls):
                         continue
                     self.visit_queue.appendleft(url)
+                    self.visited_urls.add(current_url)
                     logging.info(u"added {0} to the visit queue".format(url))
 
                 self.pages_visited += 1
-                self.visited_urls.add(current_url)
                 return article
 
         def _should_skip(self):
