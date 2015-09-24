@@ -62,6 +62,16 @@ class ReferringSite(models.Model):
     def __unicode__(self):
         return self.name
 
+
+class ReferringSiteFilter(models.Model):
+    site = models.ForeignKey(ReferringSite)
+    pattern = models.CharField(max_length=1000, help_text='Any URL that matches the pattern will be ignored from the crawler.')
+    regex = models.BooleanField(default=False, help_text='Use Regular Expression')
+
+    class Meta:
+        verbose_name = "Filter"
+
+
 class ReferringTwitter(models.Model):
     name = models.CharField(max_length=200, unique=True, validators=[validate_user],
                             help_text='Do not include "@". Maximum 15 characters (Ex. CNN)')
@@ -97,4 +107,5 @@ class Keyword(models.Model):
     
     def __unicode__(self):
         return self.name
+
 
