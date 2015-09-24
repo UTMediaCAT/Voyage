@@ -111,17 +111,18 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
         for article in article_iterator:
             #have to put all the iteration stuff at the top because I used continue extensively in this loop
             processed += 1
+            # Check for any new command on communication stream
+            check_command()        
+
+            if url_in_filter(article.url, site["filter"]):
+                logging.info("Matches with filter, skipping the page.")
+                continue
+
             print(
                 "%s (Article|%s) %i/%i          \r" %
                 (str(timezone.localtime(timezone.now()))[:-13],
                  site["name"], processed, article_count))
             logging.info("Processing %s"%article.url)
-            # Check for any new command on communication stream
-            check_command()
-            
-            if url_in_filter(article.url, site["filter"]):
-                logging.info("Matches with filter, skipping the page.")
-                continue
 
             url = article.url
             if 'http://www.' in url:
