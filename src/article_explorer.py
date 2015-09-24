@@ -115,7 +115,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             check_command()        
 
             if url_in_filter(article.url, site["filter"]):
-                logging.info("Matches with filter, skipping the page.")
+                logging.info("Matches with filter, skipping the {0}".format(article.url))
                 continue
 
             print(
