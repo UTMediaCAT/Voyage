@@ -103,7 +103,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             article_count += newspaper_source.size()
             logging.info("populated {0} articles using newspaper".format(article_count))
         if(site["type"] == 1 or site["type"] == 2):
-            crawlersource_articles = Crawler.Crawler(site["url"])
+            crawlersource_articles = Crawler.Crawler(site["url"], site["filter"])
             article_count += crawlersource_articles.probabilistic_n
             logging.debug("expecting {0} from plan b crawler".format(crawlersource_articles.probabilistic_n))
         article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
@@ -118,6 +118,10 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             logging.info("Processing %s"%article.url)
             # Check for any new command on communication stream
             check_command()
+            
+            if url_in_filter(article.url, site["filter"]):
+                logging.info("Matches with filter, skipping the page.")
+                continue
 
             url = article.url
             if 'http://www.' in url:
@@ -242,6 +246,18 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             (str(timezone.localtime(timezone.now()))[:-13], site["name"],
              processed, article_count))
 
+def url_in_filter(url, filters):
+    """
+    Checks if any of the filters matches the url.
+    Filters can be in regex search or normal string comparison.    
+    """
+    for filt in filters:
+        if ((filt[1] and re.search(filt[0], url, re.IGNORECASE)) or
+            (not filt[1] and filt[0] in url)):
+            return True
+    return False
+
+
 
 def get_sources_sites(article, sites):
     """ (str, list of str) -> list of [str, str]
@@ -360,8 +376,12 @@ def explore():
 
     # Retrieve and store monitoring site information
     referring_sites = []
+    index = 0
     for site in ReferringSite.objects.all():
-        referring_sites.append({"name":site.name, "url":site.url, "type":site.mode})
+        referring_sites.append({"name":site.name, "url":site.url, "type":site.mode, "filter":[]})
+        for filt in site.referringsitefilter_set.all():
+            referring_sites[index]["filter"].append([filt.pattern, filt.regex])
+        index += 1
     logging.info("Collected {0} Referring Sites from Database".format(len(referring_sites)))
 
     # Retrieve and store foreign site information
