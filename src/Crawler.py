@@ -1,5 +1,5 @@
 import newspaper
-from urlparse import urlparse, urljoin
+from urlparse import urlparse, urljoin, urlunparse
 import random
 import common
 import requests
@@ -7,6 +7,7 @@ import re
 import logging
 import collections
 from ExplorerArticle import ExplorerArticle
+import urlnorm
 '''
 An iterator class for iterating over articles in a given site
 '''
@@ -57,6 +58,9 @@ class Crawler(object):
                         logging.info("Matches with filter, skipping the {0}".format(url))
                     try:
                         parsed_url = urlparse(url)
+                        parsed_as_list = list(parsed_url)
+                        parsed_as_list[5] = ''
+                        url = urlparse(urlnorm.norm_tuple(*parsed_as_list))
                     except ValueError:
                         logging.warn(u"skipping malformed url {0}".format(url))
                         continue
