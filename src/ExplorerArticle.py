@@ -47,7 +47,11 @@ class ExplorerArticle(object):#derive from object for getters/setters
             if not html:
                 return False
 
-            self.html = UnicodeDammit(html, is_html=True)
+            converted = UnicodeDammit(html, is_html=True)
+            if not converted.unicode_markup:
+                logging.warn("Failed to detect encoding of downloaded article, tried: " + ", ".join(converted.tried_encodings))
+                return False
+            html = converted.unicode_markup
             self.is_downloaded = True
         except Exception as e:
             logging.warn('%s on %s' % (e, self.url))
