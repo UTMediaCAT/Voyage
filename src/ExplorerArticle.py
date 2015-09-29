@@ -4,6 +4,7 @@ import logging
 from readability import Document
 import re
 import lxml.html
+from bs4 import UnicodeDammit
 
 class ExplorerArticle(object):#derive from object for getters/setters
     def __init__(self, url):
@@ -46,7 +47,7 @@ class ExplorerArticle(object):#derive from object for getters/setters
             if not html:
                 return False
 
-            self.html = html
+            self.html = UnicodeDammit(html, is_html=True)
             self.is_downloaded = True
         except Exception as e:
             logging.warn('%s on %s' % (e, self.url))
