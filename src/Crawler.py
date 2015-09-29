@@ -59,9 +59,11 @@ class Crawler(object):
                     try:
                         parsed_url = urlparse(url)
                         parsed_as_list = list(parsed_url)
+                        if(parsed_url.scheme != u"http" and parsed_url.scheme != u"https"):
+                            continue
                         parsed_as_list[5] = ''
                         url = urlunparse(urlnorm.norm_tuple(*parsed_as_list))
-                    except ValueError:
+                    except ValueError as e:
                         logging.warn(u"skipping malformed url {0}".format(url))
                         continue
                     if(not parsed_url.netloc.endswith(self.domain)):
