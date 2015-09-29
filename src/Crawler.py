@@ -60,7 +60,7 @@ class Crawler(object):
                         parsed_url = urlparse(url)
                         parsed_as_list = list(parsed_url)
                         parsed_as_list[5] = ''
-                        url = urlparse(urlnorm.norm_tuple(*parsed_as_list))
+                        url = urlunparse(urlnorm.norm_tuple(*parsed_as_list))
                     except ValueError:
                         logging.warn(u"skipping malformed url {0}".format(url))
                         continue
