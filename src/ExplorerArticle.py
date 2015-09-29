@@ -51,7 +51,7 @@ class ExplorerArticle(object):#derive from object for getters/setters
             if not converted.unicode_markup:
                 logging.warn("Failed to detect encoding of downloaded article, tried: " + ", ".join(converted.tried_encodings))
                 return False
-            html = converted.unicode_markup
+            self.html = converted.unicode_markup
             self.is_downloaded = True
         except Exception as e:
             logging.warn('%s on %s' % (e, self.url))

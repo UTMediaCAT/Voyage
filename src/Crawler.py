@@ -78,6 +78,7 @@ class Crawler(object):
         def _should_skip(self):
             n = self.probabilistic_n
             k = self.probabilistic_k
+            return False
             return random.random() <= Crawler._s_curve(self.pages_visited/n, k)
 
         @staticmethod

@@ -65,7 +65,6 @@ import glob
 import datetime
 from ExplorerArticle import ExplorerArticle
 
-
 def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_explorer):
     """ (list of [str, newspaper.source.Source, str],
          list of str, list of str, str) -> None
@@ -506,17 +505,17 @@ if __name__ == '__main__':
     config = common.get_config()
 
     # Logging config
-    time = datetime.datetime.now().strftime('%Y%m%d')
+    current_time = datetime.datetime.now().strftime('%Y%m%d')
     log_dir = config['projectdir']+"/log"
     
     try:
-        cycle_number = sorted(glob.glob(log_dir + "/article_explorer-" + time + "*.log"))[-1][-7:-4]
+        cycle_number = sorted(glob.glob(log_dir + "/article_explorer-" + current_time + "*.log"))[-1][-7:-4]
         cycle_number = str(int(cycle_number) + 1)
     except (KeyboardInterrupt, SystemExit):
         raise
     except:
         cycle_number = "0"
-    logging.basicConfig(filename=log_dir+"/article_explorer-" + time + "-" + cycle_number.zfill(3) + ".log",
+    logging.basicConfig(filename=log_dir+"/BBCarticle_explorer-" + current_time + "-" + cycle_number.zfill(3) + ".log",
                         level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
     default_logger = logging.getLogger('')
