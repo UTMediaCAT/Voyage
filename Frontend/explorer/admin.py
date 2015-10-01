@@ -1,5 +1,5 @@
 from django.contrib import admin
-from explorer.models import ReferringSite, SourceSite, Keyword, ReferringTwitter, SourceTwitter
+from explorer.models import ReferringSite, ReferringSiteFilter, SourceSite, Keyword, ReferringTwitter, SourceTwitter
 from articles.models import Article
 from articles.models import SourceSite as ArticleSource
 from articles.models import Keyword as ArticleKeyword
@@ -10,6 +10,12 @@ from django.utils import timezone
 from django import forms
 import newspaper
 from django.utils.safestring import mark_safe
+
+
+class ReferringSiteFilterInline(admin.TabularInline):
+    model = ReferringSiteFilter
+    extra = 1
+
 
 class ReferringSiteAdminForm(forms.ModelForm):
     class Meta:
@@ -36,6 +42,7 @@ class ReferringSiteAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['url', 'name', 'mode', 'check']})
         ]
+    inlines = [ReferringSiteFilterInline]
     list_display = ('name', 'url', 'article_count', 'latest_article', 'mode')
     search_fields = ['name', 'url']
     ordering = ['name']

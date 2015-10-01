@@ -2,25 +2,14 @@ from django.db import models
 from django.core.exceptions import ValidationError
 import tweepy, os, yaml, newspaper
 from django.utils.safestring import mark_safe
-
-def configuration():
-    """ (None) -> dict
-    Returns a dictionary containing the micro settings from the
-    config.yaml file located in the directory containing this file
-    """
-    config_yaml = open(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../',"config.yaml")), 'r')
-    config = yaml.load(config_yaml)
-    config_yaml.close()
-    #Config is returned as a dictionary, which you can navigate through later to get
-    #a specific setting
-    return config
+import common
 
 def authorize():
     """ (None) -> tweepy.API
     Will use global keys to allow use of API
     """
     #Get's config settings for twitter
-    config = configuration()['twitter']
+    config = common.get_config()['twitter']
     #Authorizing use with twitter development api
     auth = tweepy.OAuthHandler(config['consumer_key'], config['consumer_secret'])
     auth.set_access_token(config['access_token'], config['access_token_secret'])
@@ -73,6 +62,16 @@ class ReferringSite(models.Model):
     def __unicode__(self):
         return self.name
 
+
+class ReferringSiteFilter(models.Model):
+    site = models.ForeignKey(ReferringSite)
+    pattern = models.CharField(max_length=1000, help_text='Any URL that matches the pattern will be ignored from the crawler.')
+    regex = models.BooleanField(default=False, help_text='Use Regular Expression')
+
+    class Meta:
+        verbose_name = "Filter"
+
+
 class ReferringTwitter(models.Model):
     name = models.CharField(max_length=200, unique=True, validators=[validate_user],
                             help_text='Do not include "@". Maximum 15 characters (Ex. CNN)')
@@ -108,4 +107,5 @@ class Keyword(models.Model):
     
     def __unicode__(self):
         return self.name
+
 
