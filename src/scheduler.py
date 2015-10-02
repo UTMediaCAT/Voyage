@@ -19,7 +19,8 @@ def  setup():
     schedule.every(1).days.do(backup_db_remove)
 
 
-setup()
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+if __name__ == "__main__":
+    setup()
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
