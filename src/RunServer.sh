@@ -5,5 +5,3 @@ cd $BASEDIR
 
 cd ../Frontend
 nohup python manage.py runserver $1 >/dev/null 2>&1 &
-cd ../src
-nohup python scheduler.py $2 2> /dev/null &
