@@ -108,138 +108,145 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
         article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
         processed = 0
         for article in article_iterator:
-            #have to put all the iteration stuff at the top because I used continue extensively in this loop
-            processed += 1
-            # Check for any new command on communication stream
-            check_command()        
+            try:
 
-            if url_in_filter(article.url, site["filter"]):
-                logging.info("Matches with filter, skipping the {0}".format(article.url))
-                continue
+                #have to put all the iteration stuff at the top because I used continue extensively in this loop
+                processed += 1
+                # Check for any new command on communication stream
+                check_command()
 
-            print(
-                "%s (Article|%s) %i/%i          \r" %
-                (str(timezone.localtime(timezone.now()))[:-13],
-                 site["name"], processed, article_count))
-            logging.info("Processing %s"%article.url)
-
-            url = article.url
-            if 'http://www.' in url:
-                url = url[:7] + url[11:]
-            elif 'https://www.' in url:
-                url = url[:8] + url[12:]
-
-            article = ExplorerArticle(article.url)
-            # Try to download and extract the useful data
-            if(not article.is_downloaded):
-                if(not article.download()):
-                    logging.warning("article skipped because download failed")
+                if url_in_filter(article.url, site["filter"]):
+                    logging.info("Matches with filter, skipping the {0}".format(article.url))
                     continue
 
-            article.preliminary_parse()
+                print(
+                    "%s (Article|%s) %i/%i          \r" %
+                    (str(timezone.localtime(timezone.now()))[:-13],
+                     site["name"], processed, article_count))
+                logging.info("Processing %s"%article.url)
 
-            if not article.title:
-                logging.info("article missing title, skipping")
-                continue
+                url = article.url
+                if 'http://www.' in url:
+                    url = url[:7] + url[11:]
+                elif 'https://www.' in url:
+                    url = url[:8] + url[12:]
 
-            if not article.text:
-                logging.info("article missing text, skipping")
-                continue
-                
-            # Regex the keyword from the article's text
-            keywords = get_keywords(article, db_keywords)
-            logging.debug(u"matched keywords: {0}".format(repr(keywords)))
-            # Regex the links within article's html
-            sources = get_sources_sites(article, source_sites)
-            logging.debug(u"matched sources: {0}".format(repr(sources)))
-            twitter_accounts = get_sources_twitter(article, twitter_accounts_explorer)
-            logging.debug(u"matched twitter_accounts: {0}".format(repr(twitter_accounts[0])))
+                article = ExplorerArticle(article.url)
+                # Try to download and extract the useful data
+                if(not article.is_downloaded):
+                    if(not article.download()):
+                        logging.warning("article skipped because download failed")
+                        continue
 
-            if((not keywords) or (not sources[0]) or (not twitter_accounts[0])):#[] gets coverted to false
-                logging.debug("skipping article because it's not a match")
-                continue
-            logging.info("match found")
+                article.preliminary_parse()
 
-            article.newspaper_parse()
+                if not article.title:
+                    logging.info("article missing title, skipping")
+                    continue
 
-            authors = article.authors
-            pub_date = get_pub_date(article)
-            # Check if the entry already exists
-            db_article_list = Article.objects.filter(url=url)
-            if not db_article_list:
-                logging.info("Adding new Article to the DB")
-                # If the db_article is new to the database,
-                # add it to the database
-                db_article = Article(title=article.title, url=url,
-                                  domain=site["url"],
-                                  date_added=timezone.localtime(
-                                      timezone.now()),
-                                  date_published=pub_date)
-                db_article.save()
+                if not article.text:
+                    logging.info("article missing text, skipping")
+                    continue
 
-                db_article = Article.objects.get(url=url)
+                # Regex the keyword from the article's text
+                keywords = get_keywords(article, db_keywords)
+                logging.debug(u"matched keywords: {0}".format(repr(keywords)))
+                # Regex the links within article's html
+                sources = get_sources_sites(article, source_sites)
+                logging.debug(u"matched sources: {0}".format(repr(sources)))
+                twitter_accounts = get_sources_twitter(article, twitter_accounts_explorer)
+                logging.debug(u"matched twitter_accounts: {0}".format(repr(twitter_accounts[0])))
 
-                for key in keywords:
-                    db_article.keyword_set.create(name=key)
+                if((not keywords) or (not sources[0]) or (not twitter_accounts[0])):#[] gets coverted to false
+                    logging.debug("skipping article because it's not a match")
+                    continue
+                logging.info("match found")
 
-                for author in authors:
-                    db_article.author_set.create(name=author)
-                for account in twitter_accounts[0]:
+                article.newspaper_parse()
 
-                    db_article.sourcetwitter_set.create(name = account, matched = True)
+                authors = article.authors
+                pub_date = get_pub_date(article)
+                # Check if the entry already exists
+                db_article_list = Article.objects.filter(url=url)
+                if not db_article_list:
+                    logging.info("Adding new Article to the DB")
+                    # If the db_article is new to the database,
+                    # add it to the database
+                    db_article = Article(title=article.title, url=url,
+                                      domain=site["url"],
+                                      date_added=timezone.localtime(
+                                          timezone.now()),
+                                      date_published=pub_date)
+                    db_article.save()
 
-                for account in twitter_accounts[1]:
-                    db_article.sourcetwitter_set.create(name = account, matched = False)
+                    db_article = Article.objects.get(url=url)
 
-                for source in sources[0]:
-                    db_article.sourcesite_set.create(url=source[0],
-                                              domain=source[1], matched=True, local=(source[1] in site["url"]))
-
-                for source in sources[1]:
-                    db_article.sourcesite_set.create(url=source[0],
-                                              domain=source[1], matched=False, local=(source[1] in site["url"]))
-                added += 1
-
-            else:
-                logging.info("Modifying existing Article in the DB")
-                # If the db_article already exists,
-                # update all fields except date_added
-                db_article = db_article_list[0]
-                db_article.title = article.title
-                db_article.url = url
-                db_article.domain = site["url"]
-                # Do not update the added date
-                # db_article.date_added = today
-                db_article.date_published = pub_date
-                db_article.save()
-
-                for key in keywords:
-                    if not db_article.keyword_set.filter(name=key):
+                    for key in keywords:
                         db_article.keyword_set.create(name=key)
 
-                for author in authors:
-                    if not db_article.author_set.filter(name=author):
+                    for author in authors:
                         db_article.author_set.create(name=author)
+                    for account in twitter_accounts[0]:
 
-                for account in twitter_accounts[0]:
-                    if not db_article.sourcetwitter_set.filter(name=account):
                         db_article.sourcetwitter_set.create(name = account, matched = True)
 
-                for account in twitter_accounts[1]:
-                    if not db_article.sourcetwitter_set.filter(name=account):
+                    for account in twitter_accounts[1]:
                         db_article.sourcetwitter_set.create(name = account, matched = False)
 
-                for source in sources[0]:
-                    if not db_article.sourcesite_set.filter(url=source[0]):
+                    for source in sources[0]:
                         db_article.sourcesite_set.create(url=source[0],
-                                              domain=source[1], matched=True, local=(source[1] in site["url"]))
+                                                  domain=source[1], matched=True, local=(source[1] in site["url"]))
 
-                for source in sources[1]:
-                    if not db_article.sourcesite_set.filter(url=source[0]):
+                    for source in sources[1]:
                         db_article.sourcesite_set.create(url=source[0],
-                                              domain=source[1], matched=False, local=(source[1] in site["url"]))
+                                                  domain=source[1], matched=False, local=(source[1] in site["url"]))
+                    added += 1
 
-            warc_creator.create_article_warc(url)
+                else:
+                    logging.info("Modifying existing Article in the DB")
+                    # If the db_article already exists,
+                    # update all fields except date_added
+                    db_article = db_article_list[0]
+                    db_article.title = article.title
+                    db_article.url = url
+                    db_article.domain = site["url"]
+                    # Do not update the added date
+                    # db_article.date_added = today
+                    db_article.date_published = pub_date
+                    db_article.save()
+
+                    for key in keywords:
+                        if not db_article.keyword_set.filter(name=key):
+                            db_article.keyword_set.create(name=key)
+
+                    for author in authors:
+                        if not db_article.author_set.filter(name=author):
+                            db_article.author_set.create(name=author)
+
+                    for account in twitter_accounts[0]:
+                        if not db_article.sourcetwitter_set.filter(name=account):
+                            db_article.sourcetwitter_set.create(name = account, matched = True)
+
+                    for account in twitter_accounts[1]:
+                        if not db_article.sourcetwitter_set.filter(name=account):
+                            db_article.sourcetwitter_set.create(name = account, matched = False)
+
+                    for source in sources[0]:
+                        if not db_article.sourcesite_set.filter(url=source[0]):
+                            db_article.sourcesite_set.create(url=source[0],
+                                                  domain=source[1], matched=True, local=(source[1] in site["url"]))
+
+                    for source in sources[1]:
+                        if not db_article.sourcesite_set.filter(url=source[0]):
+                            db_article.sourcesite_set.create(url=source[0],
+                                                  domain=source[1], matched=False, local=(source[1] in site["url"]))
+
+                warc_creator.create_article_warc(url)
+            except (KeyboardInterrupt, SystemExit):
+                raise
+            except Exception as e:
+                logging.exception("Unhandled exception while crawling: " + str(e))
+
         logging.info("Finished Site: %s"%site['name'])
         print(
             "%s (Article|%s) %i/%i          " %
