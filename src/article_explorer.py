@@ -522,7 +522,7 @@ if __name__ == '__main__':
         raise
     except:
         cycle_number = "0"
-    logging.basicConfig(filename=log_dir+"/BBCarticle_explorer-" + current_time + "-" + cycle_number.zfill(3) + ".log",
+    logging.basicConfig(filename=log_dir+"/article_explorer-" + current_time + "-" + cycle_number.zfill(3) + ".log",
                         level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
     default_logger = logging.getLogger('')
