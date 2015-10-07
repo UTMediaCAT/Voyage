@@ -47,42 +47,36 @@ class Crawler(object):
                     continue
 
                 logging.info(u"visiting {0}".format(current_url))
+                #use newspaper to download and parse the article
+                article = ExplorerArticle(current_url)
+                article.download()
 
-                try:
-                    #use newspaper to download and parse the article
-                    article = ExplorerArticle(current_url)
-                    article.download()
+                #get get urls from the article
+                for url in article.get_urls():
+                    url = urljoin(current_url, url, False)
+                    if self.url_in_filter(url, self.filters):
+                        logging.info("Matches with filter, skipping the {0}".format(url))
+                    try:
+                        parsed_url = urlparse(url)
+                        parsed_as_list = list(parsed_url)
+                        if(parsed_url.scheme != u"http" and parsed_url.scheme != u"https"):
+                            logging.info(u"skipping url with invalid scheme: {0}".format(url))
+                            continue
+                        parsed_as_list[5] = ''
+                        url = urlunparse(urlnorm.norm_tuple(*parsed_as_list))
+                    except Exception as e:
+                        logging.info(u"skipping malformed url {0}. Error: {1}".format(url, str(e)))
+                        continue
+                    if(not parsed_url.netloc.endswith(self.domain)):
+                        continue
+                    if(url in self.visited_urls):
+                        continue
+                    self.visit_queue.appendleft(url)
+                    self.visited_urls.add(url)
+                    logging.info(u"added {0} to the visit queue".format(url))
 
-                    #get get urls from the article
-                    for url in article.get_urls():
-                        url = urljoin(current_url, url, False)
-                        if self.url_in_filter(url, self.filters):
-                            logging.info("Matches with filter, skipping the {0}".format(url))
-                        try:
-                            parsed_url = urlparse(url)
-                            parsed_as_list = list(parsed_url)
-                            if(parsed_url.scheme != u"http" and parsed_url.scheme != u"https"):
-                                logging.info(u"skipping url with invalid scheme: {0}".format(url))
-                                continue
-                            parsed_as_list[5] = ''
-                            url = urlunparse(urlnorm.norm_tuple(*parsed_as_list))
-                        except Exception as e:
-                            logging.info(u"skipping malformed url {0}. Error: {1}".format(url, str(e)))
-                            continue
-                        if(not parsed_url.netloc.endswith(self.domain)):
-                            continue
-                        if(url in self.visited_urls):
-                            continue
-                        self.visit_queue.appendleft(url)
-                        self.visited_urls.add(url)
-                        logging.info(u"added {0} to the visit queue".format(url))
-
-                    self.pages_visited += 1
-                    return article
-                except (KeyboardInterrupt, SystemExit):
-                    raise
-                except Exception as e:
-                    logging.exception("Unhandled exception while crawling: " + str(e))
+                self.pages_visited += 1
+                return article
 
         def _should_skip(self):
             n = self.probabilistic_n

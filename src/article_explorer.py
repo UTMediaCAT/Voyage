@@ -105,11 +105,14 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             crawlersource_articles = Crawler.Crawler(site["url"], site["filter"])
             article_count += crawlersource_articles.probabilistic_n
             logging.debug("expecting {0} from plan b crawler".format(crawlersource_articles.probabilistic_n))
-        article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
+        article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles).__iter__()
         processed = 0
-        for article in article_iterator:
+        while True:
             try:
-
+                try:
+                    article = article_iterator.next()
+                except StopIteration:
+                    break
                 #have to put all the iteration stuff at the top because I used continue extensively in this loop
                 processed += 1
                 # Check for any new command on communication stream
