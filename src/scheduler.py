@@ -1,4 +1,13 @@
 __author__ = 'wangx173'
+import sys
+import os
+import django
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..',
+                                             'Frontend')))
+os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
+
+django.setup()
 import schedule
 import time
 import Caching
@@ -19,7 +28,10 @@ def  setup():
     schedule.every(1).days.do(backup_db_remove)
 
 
-setup()
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+
+if __name__ == "__main__":
+
+    setup()
+    while True:
+        schedule.run_pending()
+        time.sleep(1)

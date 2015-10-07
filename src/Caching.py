@@ -1,8 +1,6 @@
 __author__ = 'wangx173'
 
-import csv
 import analyzer
-import django
 import json
 import visualizer
 
@@ -81,7 +79,6 @@ def getCacheData(name):
 
 
 
-django.setup()
 
 
 
