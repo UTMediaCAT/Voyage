@@ -83,6 +83,9 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
     for site in referring_sites:
         # print "\n%s" % site[0]
 
+        #Setup logging for this site
+        setup_logging(site['name'])
+
         article_count = 0
         newspaper_articles = []
         crawlersource_articles = []
@@ -392,27 +395,23 @@ def explore():
         for filt in site.referringsitefilter_set.all():
             referring_sites[index]["filter"].append([filt.pattern, filt.regex])
         index += 1
-    logging.info("Collected {0} Referring Sites from Database".format(len(referring_sites)))
 
     # Retrieve and store foreign site information
     source_sites = []
     for site in ExplorerSourceSite.objects.all():
         # source_sites is now in form ['URL', ...]
         source_sites.append(site.url)
-    logging.info("Collected {0} Source Sites from Database".format(len(source_sites)))
 
     # Retrieve all stored keywords
     keyword_list = []
     for key in ExplorerKeyword.objects.all():
         keyword_list.append(str(key.name))
-    logging.info("Collected {0} Keywords from Database".format(len(keyword_list)))
 
     # Retrieve all stored twitter_accounts
     source_twitter_list = []
     twitter_accounts = ExplorerSourceTwitter.objects.all()
     for key in twitter_accounts:
         source_twitter_list.append(str(key.name))
-    logging.info("Collected {0} Source Twitter Accounts from Database".format(len(source_twitter_list)))
 
     # Parse the articles in all sites
     parse_articles(referring_sites, keyword_list, source_sites, source_twitter_list)
@@ -510,22 +509,29 @@ def check_command():
             comm_write('RR %s' % os.getpid())
 
 
-if __name__ == '__main__':
+def setup_logging(site_name):
     # Load the relevant configs
     config = common.get_config()
 
     # Logging config
     current_time = datetime.datetime.now().strftime('%Y%m%d')
     log_dir = config['projectdir']+"/log"
+    prefix = log_dir + "/" + site_name + "article_explorer-"
     
     try:
-        cycle_number = sorted(glob.glob(log_dir + "/article_explorer-" + current_time + "*.log"))[-1][-7:-4]
+        cycle_number = sorted(glob.glob(prefix + current_time + "*.log"))[-1][-7:-4]
         cycle_number = str(int(cycle_number) + 1)
     except (KeyboardInterrupt, SystemExit):
         raise
     except:
         cycle_number = "0"
-    logging.basicConfig(filename=log_dir+"/article_explorer-" + current_time + "-" + cycle_number.zfill(3) + ".log",
+
+    # Remove all handlers associated with the root logger object.
+    # This will allow logging per site
+    for handler in logging.root.handlers[:]:
+        logging.root.removeHandler(handler)
+
+    logging.basicConfig(filename=prefix + current_time + "-" + cycle_number.zfill(3) + ".log",
                         level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
     default_logger = logging.getLogger('')
@@ -535,12 +541,13 @@ if __name__ == '__main__':
     default_logger.addHandler(console_handler)
     # Finish logging config
 
-    config = config['article']
+
+if __name__ == '__main__':
+    # Load the relevant configs
+    config = common.get_config()['article']
 
     # Connects to Site Database
-    logging.debug("Connecting to django/database")
     django.setup()
-    logging.debug("Connected to django/database")
 
     # Initialize Communication Stream
 
