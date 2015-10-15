@@ -5,8 +5,15 @@ Voyage currently has 2 components:
 
 ##Requirement
 
-#####[Python 2.7.x](https://www.python.org/downloads/release/python-278/) 
-* You can check your current version by `python --version`
+#####[Python 2.7.10+](https://www.python.org/downloads/release/python-2710/) 
+You can check your current version by `python --version`
+
+If the version available through your package mananger is not 2.7.10 or above, you will need to manually build and install 2.7.10. Luckily, there is a tool for doing that.
+
+	curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
+	pyenv install 2.7.10
+	pyenv global 2.7.10
+	pip install -U pip
 
 #####[Wget 1.14+](http://www.gnu.org/software/wget/)
 * You can check your current version by `wget --version`
