@@ -104,7 +104,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
 
 def parse_articles_per_site(site):
 
-    logging.info("Started multiprocessing of %s", site['name'])
+    logging.info("Started multiprocessing of Site: %s", site['name'])
     #Setup logging for this site
     setup_logging(site['name'])
 
@@ -274,7 +274,7 @@ def parse_articles_per_site(site):
             logging.exception("Unhandled exception while crawling: " + str(e))
 
     logging.info("Finished Site: %s"%site['name'])
-    setup_logging()
+    setup_logging(increment=False)
     logging.info("Finished Site: %s"%site['name'])
 
 def url_in_filter(url, filters):
@@ -531,7 +531,7 @@ def check_command():
             comm_write('RR %s' % os.getpid())
 
 
-def setup_logging(site_name=""):
+def setup_logging(site_name="", increment=True):
     # Load the relevant configs
     config = common.get_config()
 
@@ -542,7 +542,8 @@ def setup_logging(site_name=""):
     
     try:
         cycle_number = sorted(glob.glob(prefix + current_time + "*.log"))[-1][-7:-4]
-        cycle_number = str(int(cycle_number) + 1)
+        if increment:
+            cycle_number = str(int(cycle_number) + 1)
     except (KeyboardInterrupt, SystemExit):
         raise
     except:
