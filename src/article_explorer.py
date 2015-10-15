@@ -89,9 +89,12 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
 
     # Continue until all sites are done crawling
     while (not result.ready()):
-        # Check for any new command on communication stream
-        check_command()
-        time.sleep(5)
+        try:
+            # Check for any new command on communication stream
+            check_command()
+            time.sleep(5)
+        except (KeyboardInterrupt, SystemExit):
+            raise
     
     # Fail-safe to ensure the processes are done
     pool.close()
