@@ -66,7 +66,7 @@ import datetime
 # Custom ExlporerArticle object based on newspaper's Article
 from ExplorerArticle import ExplorerArticle
 # For multiprocessing
-from multiprocessing import Pool, cpu_count()
+from multiprocessing import Pool, cpu_count
 
 def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_explorer):
     """ (list of [str, newspaper.source.Source, str],
