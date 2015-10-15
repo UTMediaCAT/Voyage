@@ -56,6 +56,7 @@ class Crawler(object):
                     url = urljoin(current_url, url, False)
                     if self.url_in_filter(url, self.filters):
                         logging.info("Matches with filter, skipping the {0}".format(url))
+                        continue
                     try:
                         parsed_url = urlparse(url)
                         parsed_as_list = list(parsed_url)
