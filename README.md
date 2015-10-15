@@ -11,6 +11,7 @@ You can check your current version by `python --version`
 If the version available through your package mananger is not 2.7.10 or above, you will need to manually build and install 2.7.10. Luckily, there is a tool for doing that.
 
 	curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
+	sudo apt-get build-dep python2.7
 	pyenv install 2.7.10
 	pyenv global 2.7.10
 	pip install -U pip
