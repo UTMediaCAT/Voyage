@@ -67,6 +67,7 @@ import datetime
 from ExplorerArticle import ExplorerArticle
 # For multiprocessing
 from multiprocessing import Pool, cpu_count
+from functools import partial
 
 def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_explorer):
     """ (list of [str, newspaper.source.Source, str],
@@ -82,10 +83,14 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
     """
     added, updated, failed, no_match = 0, 0, 0, 0
 
-    # for each db_article in each sites, download and parse important data
-
+    # Initialize multiprocessing by having cpu*4 workers
     pool = Pool(processes=cpu_count()*4, maxtasksperchild=1)
-    result = pool.map_async(parse_articles_per_site, referring_sites)
+
+    # pass database informations using partial
+    pass_database = partial(parse_articles_per_site, db_keywords, source_sites, twitter_accounts_explorer)
+
+    # Start the multiprocessing
+    result = pool.map_async(pass_database, referring_sites)
 
     # Continue until all sites are done crawling
     while (not result.ready()):
@@ -93,8 +98,9 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
             # Check for any new command on communication stream
             check_command()
             time.sleep(5)
-        except (KeyboardInterrupt, SystemExit):
-            raise
+        except (KeyboardInterrupt, SystemExit) as e:
+            logging.warning("%s detected, exiting"%str(e))
+            sys.exit(0)
     
     # Fail-safe to ensure the processes are done
     pool.close()
@@ -102,7 +108,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
 
 
 
-def parse_articles_per_site(site):
+def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer, site):
 
     logging.info("Started multiprocessing of Site: %s", site['name'])
     #Setup logging for this site
