@@ -69,6 +69,9 @@ from ExplorerArticle import ExplorerArticle
 from multiprocessing import Pool, cpu_count
 from functools import partial
 
+def init_worker():
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+
 def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_explorer):
     """ (list of [str, newspaper.source.Source, str],
          list of str, list of str, str) -> None
@@ -84,7 +87,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
     added, updated, failed, no_match = 0, 0, 0, 0
 
     # Initialize multiprocessing by having cpu*4 workers
-    pool = Pool(processes=cpu_count()*4, maxtasksperchild=1)
+    pool = Pool(processes=cpu_count()*4, maxtasksperchild=1, initializer=init_worker)
 
     # pass database informations using partial
     pass_database = partial(parse_articles_per_site, db_keywords, source_sites, twitter_accounts_explorer)
