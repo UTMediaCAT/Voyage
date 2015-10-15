@@ -85,7 +85,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
     # for each db_article in each sites, download and parse important data
 
     pool = Pool(processes=cpu_count()*4, maxtasksperchild=1)
-    result = pool.map_async(parse_articles_per_site, source_sites)
+    result = pool.map_async(parse_articles_per_site, referring_sites)
 
     # Continue until all sites are done crawling
     while (not result.ready()):
