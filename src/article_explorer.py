@@ -68,6 +68,7 @@ from ExplorerArticle import ExplorerArticle
 # For multiprocessing
 from multiprocessing import Pool, cpu_count
 from functools import partial
+import signal
 
 def init_worker():
     signal.signal(signal.SIGINT, signal.SIG_IGN)
