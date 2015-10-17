@@ -2,9 +2,10 @@
 set -e
 
 apt-get update
-apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev libjpeg-dev
+apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev libjpeg-dev python3-pip phantomjs
 
 pip install -r requirements.txt
+pip3 install wpull
 
 dir=`pwd`
 sed 's#projectdir:.*$#projectdir: '"${dir}"'#' config.yaml > tmp.yaml
