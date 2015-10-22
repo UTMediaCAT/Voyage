@@ -166,8 +166,9 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 url = url[:7] + url[11:]
             elif 'https://www.' in url:
                 url = url[:8] + url[12:]
-
+            logging.warning("Creating ExplorerArticle Object")
             article = ExplorerArticle(article.url)
+            logging.warning("ExplorerArticle Created")
             # Try to download and extract the useful data
             if(not article.is_downloaded):
                 if(not article.download()):
@@ -175,6 +176,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                     continue
 
             article.preliminary_parse()
+            logging.warning("Article Parsed")
 
             if not article.title:
                 logging.info("article missing title, skipping")
@@ -236,7 +238,6 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 for source in sources[1]:
                     db_article.sourcesite_set.create(url=source[0],
                                               domain=source[1], matched=False, local=(source[1] in site["url"]))
-                #added += 1
 
             else:
                 logging.info("Modifying existing Article in the DB")
