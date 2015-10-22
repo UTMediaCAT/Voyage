@@ -1,5 +1,5 @@
 Django==1.7.1
-newspaper==0.0.8
+newspaper
 tweepy==2.3.0
 python-dateutil==1.5
 tld==0.7.2
@@ -7,3 +7,7 @@ pyyaml==3.11
 django-suit==0.2.11
 pytz==2015.4
 django-taggit==0.16.2
+schedule==0.3.2
+cssselect
+urlnorm
+readability-lxml

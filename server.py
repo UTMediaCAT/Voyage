@@ -50,6 +50,8 @@ def run_server(ip_address, port):
     os.chmod('./src/RunServer.sh', 0700)
     subprocess.call(['./src/RunServer.sh', 
                      format('%s:%i' % (ip_address, port))])
+    os.chmod('./src/RunSchedule.sh', 0700)
+    subprocess.call(['./src/RunSchedule.sh'])
 
 
 def stop_server(port):
@@ -59,6 +61,8 @@ def stop_server(port):
     config = configuration()['server']
     os.chmod('./src/StopServer.sh', 0700)
     subprocess.call(['./src/StopServer.sh', format('%i' % port)])
+    os.chmod('./src/StopSchedule.sh', 0700)
+    subprocess.call(['./src/StopSchedule.sh'])
 
 
 if __name__ == "__main__":

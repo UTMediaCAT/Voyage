@@ -1,4 +1,4 @@
-projectdir: 
+projectdir: /root/Voyage
 server:
     ip_address: 0.0.0.0
     port: 80
@@ -28,3 +28,6 @@ warc:
     twitter_subdir: twitter
 log:
     retention_days: 30
+crawler:
+    n: 5000
+    k: 0.6
