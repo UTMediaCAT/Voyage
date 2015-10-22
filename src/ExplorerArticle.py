@@ -69,6 +69,7 @@ class ExplorerArticle(object):#derive from object for getters/setters
             logging.debug(u"readability title: {0}".format(repr(self._readability_title)))
             logging.debug(u"readability text: {0}".format(repr(self._readability_text)))
             if(self._readability_title and self._readability_text):
+                self.is_parsed = True
                 return
         except Exception as e:
             logging.warning("error while doing readability parse: {0}".format(str(e)))
