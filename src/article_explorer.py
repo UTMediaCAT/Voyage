@@ -200,8 +200,9 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
 
             article.newspaper_parse()
 
-            authors = article.authors
-            pub_date = get_pub_date(article)
+            #load selectors from db!
+            authors = article.evaluate_css_selectors([]) or article.authors
+            pub_date = article.evaluate_css_selectors([]) or get_pub_date(article)
             # Check if the entry already exists
             db_article_list = Article.objects.filter(url=url)
             if not db_article_list:
