@@ -6,6 +6,7 @@ tld==0.7.2
 pyyaml==3.11
 django-suit==0.2.11
 pytz==2015.4
+django-taggit==0.16.2
 schedule==0.3.2
 cssselect
 urlnorm
