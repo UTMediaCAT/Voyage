@@ -13,6 +13,7 @@ class ExplorerArticle(object):#derive from object for getters/setters
         self.newspaper_article = newspaper.Article(url)
         self.newspaper_article.config.fetch_images = False
         self.is_downloaded = False
+        self.is_parsed = False
         self._readability_title = None
         self._readability_text = None
 
@@ -76,6 +77,7 @@ class ExplorerArticle(object):#derive from object for getters/setters
         self.newspaper_article.parse()
         logging.debug(u"newspaper title: {0}".format(repr(self._newspaper_title)))
         logging.debug(u"newspaper text: {0}".format(repr(self._newspaper_text)))
+        self.is_parsed = True
 
     def newspaper_parse(self):
         return self.newspaper_article.parse()
