@@ -236,7 +236,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 for source in sources[1]:
                     db_article.sourcesite_set.create(url=source[0],
                                               domain=source[1], matched=False, local=(source[1] in site["url"]))
-                added += 1
+                #added += 1
 
             else:
                 logging.info("Modifying existing Article in the DB")
