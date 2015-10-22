@@ -174,9 +174,10 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                     logging.warning("article skipped because download failed")
                     continue
 
-            article.preliminary_parse()
-            while(not article.is_parsed):
-                pass
+            if (not article.is_parsed):
+                if (not article.preliminary_parse()):
+                    logging.warning("article skipped because parse failed")
+                    continue
 
             logging.debug("Article Parsed")
             
