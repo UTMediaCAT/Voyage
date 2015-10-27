@@ -44,6 +44,8 @@ class ReferringSite(models.Model):
                                       'Maximum 200 characters')
     check = models.BooleanField(default=True, verbose_name="Check Newspaper",
                                 help_text=mark_safe('Check to display the amount of articles found by Newspaper (Displays as error).<br>Uncheck to save without testing Newspaper.'))
+    tags = TaggableManager()
+
     crawl_choices = (
 	(0, 'Newspaper'),
 	(1, 'Plan B'),
@@ -55,8 +57,6 @@ class ReferringSite(models.Model):
                         help_text=mark_safe('Newspaper - Fast but may not work on some sites. Use Check Newspaper to determine the compatibility<br>' +
                                             'Plan B - Slow but compatible with any sites.<br>' +
                                             'Both - Uses both Newspaper and Plan B for maximum results.'))
-    tags = TaggableManager()
-
     class Meta:
         verbose_name = 'Referring Site'
 

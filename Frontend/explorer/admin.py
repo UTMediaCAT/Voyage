@@ -86,7 +86,7 @@ class ReferringSiteAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['url', 'name', 'mode', 'check']})
         ]
-    inlines = [ReferringSiteFilterInline]
+    inlines += [ReferringSiteFilterInline]
     list_display = ('name', 'url', 'article_count', 'latest_article', 'mode', 'get_tags')
     search_fields = ['name', 'url']
     ordering = ['name']
