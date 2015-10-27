@@ -41,7 +41,7 @@ class Crawler(object):
                 if(len(self.visit_queue) <= 0):
                     raise StopIteration
                 current_url = self.visit_queue.pop()
-
+                self.visited_urls.add(current_url)
                 if(self._should_skip()):
                     logging.info(u"skipping {0} randomly".format(current_url))
                     continue
@@ -50,6 +50,8 @@ class Crawler(object):
                 #use newspaper to download and parse the article
                 article = ExplorerArticle(current_url)
                 article.download()
+
+
 
                 #get get urls from the article
                 for url in article.get_urls():
@@ -73,7 +75,6 @@ class Crawler(object):
                     if(url in self.visited_urls):
                         continue
                     self.visit_queue.appendleft(url)
-                    self.visited_urls.add(url)
                     logging.info(u"added {0} to the visit queue".format(url))
 
                 self.pages_visited += 1
