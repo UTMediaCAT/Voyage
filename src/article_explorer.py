@@ -331,9 +331,9 @@ def get_sources_sites(article, sites):
             continue
         if domain in formatted_sites:
             # If it matches even once, append the site to the list
-            result_urls_matched.append([url[6:-1], domain])
+            result_urls_matched.append([url, domain])
         else:
-            result_urls_unmatched.append([url[6:-1], domain])
+            result_urls_unmatched.append([url, domain])
 
     # Return the list
     return [result_urls_matched,result_urls_unmatched]
