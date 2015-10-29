@@ -166,16 +166,22 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 url = url[:7] + url[11:]
             elif 'https://www.' in url:
                 url = url[:8] + url[12:]
-
             article = ExplorerArticle(article.url)
+            logging.debug("ExplorerArticle Created")
             # Try to download and extract the useful data
             if(not article.is_downloaded):
                 if(not article.download()):
                     logging.warning("article skipped because download failed")
                     continue
 
-            article.preliminary_parse()
+            if (not article.is_parsed):
+                if (not article.preliminary_parse()):
+                    logging.warning("article skipped because parse failed")
+                    continue
 
+            logging.debug("Article Parsed")
+            
+            logging.debug(u"Title: {0}".format(repr(article.title)))
             if not article.title:
                 logging.info("article missing title, skipping")
                 continue
@@ -193,7 +199,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
             twitter_accounts = get_sources_twitter(article, twitter_accounts_explorer)
             logging.debug(u"matched twitter_accounts: {0}".format(repr(twitter_accounts[0])))
 
-            if((not keywords) or (not sources[0]) or (not twitter_accounts[0])):#[] gets coverted to false
+            if((not keywords) and (not sources[0]) and (not twitter_accounts[0])):#[] gets coverted to false
                 logging.debug("skipping article because it's not a match")
                 continue
             logging.info("match found")
@@ -236,7 +242,6 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 for source in sources[1]:
                     db_article.sourcesite_set.create(url=source[0],
                                               domain=source[1], matched=False, local=(source[1] in site["url"]))
-                added += 1
 
             else:
                 logging.info("Modifying existing Article in the DB")
@@ -326,9 +331,9 @@ def get_sources_sites(article, sites):
             continue
         if domain in formatted_sites:
             # If it matches even once, append the site to the list
-            result_urls_matched.append([url[6:-1], domain])
+            result_urls_matched.append([url, domain])
         else:
-            result_urls_unmatched.append([url[6:-1], domain])
+            result_urls_unmatched.append([url, domain])
 
     # Return the list
     return [result_urls_matched,result_urls_unmatched]

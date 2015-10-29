@@ -13,6 +13,7 @@ class ExplorerArticle(object):#derive from object for getters/setters
         self.newspaper_article = newspaper.Article(url)
         self.newspaper_article.config.fetch_images = False
         self.is_downloaded = False
+        self.is_parsed = False
         self._readability_title = None
         self._readability_text = None
 
@@ -68,14 +69,18 @@ class ExplorerArticle(object):#derive from object for getters/setters
             logging.debug(u"readability title: {0}".format(repr(self._readability_title)))
             logging.debug(u"readability text: {0}".format(repr(self._readability_text)))
             if(self._readability_title and self._readability_text):
-                return
+                self.is_parsed = True
+                return True
         except Exception as e:
             logging.warning("error while doing readability parse: {0}".format(str(e)))
+            return False
 
         logging.debug("falling back to newspaper parse")
         self.newspaper_article.parse()
         logging.debug(u"newspaper title: {0}".format(repr(self._newspaper_title)))
         logging.debug(u"newspaper text: {0}".format(repr(self._newspaper_text)))
+        self.is_parsed = True
+        return True
 
     def newspaper_parse(self):
         return self.newspaper_article.parse()
