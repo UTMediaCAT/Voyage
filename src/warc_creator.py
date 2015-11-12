@@ -24,9 +24,9 @@ def create_warc(url, dir):
     rename_url = rename_url.encode('utf8')
     url = url.encode('utf8')
     # create png file
-    subprocess.check_call(["phantomjs", "rasterize.js", url,  rename_url +".png"], cwd="../"+dir )
+    subprocess.check_call(["phantomjs", "../../src/rasterize.js", url,  rename_url +".png"], cwd="../"+dir )
     # create pdf file
-    subprocess.check_call(["phantomjs", "rasterize.js", url,  rename_url + ".pdf"], cwd="../"+dir )
+    subprocess.check_call(["phantomjs", "../../src/rasterize.js", url,  rename_url + ".pdf"], cwd="../"+dir )
 
     subprocess.Popen(["tar", "cvzf", rename_url + ".tar", rename_url +".png", rename_url + ".pdf"], cwd="../"+dir)
 
