@@ -324,15 +324,15 @@ def get_sources_sites(article, sites):
 
     for url in article.get_links(article_text_links_only=True):
         try:
-            domain = tld.get_tld(url)
+            domain = tld.get_tld(url.href)
         #apparently they don't inherit a common class so I have to hard code it
         except (tld.exceptions.TldBadUrl, tld.exceptions.TldDomainNotFound, tld.exceptions.TldIOError):
             continue
         if domain in formatted_sites:
             # If it matches even once, append the site to the list
-            result_urls_matched.append([url, domain])
+            result_urls_matched.append([url.href, domain])
         else:
-            result_urls_unmatched.append([url, domain])
+            result_urls_unmatched.append([url.href, domain])
 
     # Return the list
     return [result_urls_matched,result_urls_unmatched]
