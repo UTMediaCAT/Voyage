@@ -363,33 +363,7 @@ def get_pub_date(article):
     Keyword arguments:
     article         -- 'Newspaper.Article' object of article
     """
-    dates = []
-
-    # For each metadata stored by newspaper's parsing ability,
-    # check if any of the key contains 'date'
-    for key, value in article.newspaper_article.meta_data.iteritems():
-        if re.search("date", key, re.IGNORECASE):
-            # If the key contains 'date', try to parse the value as date
-            try:
-                dt = parser.parse(str(value))
-                # If parsing succeeded, then append it to the list
-                dates.append(dt)
-            except (KeyboardInterrupt, SystemExit):
-                raise
-            except:
-                pass
-    # If one of more dates were found,
-    # return the oldest date as new ones can be updated dates
-    # instead of published date
-    if dates:
-        date = sorted(dates, key=lambda x: str(x)[0])[0]
-        if timezone.is_naive(date):
-            return \
-                timezone.make_aware(date,
-                                    timezone=timezone.get_default_timezone())
-        else:
-            return timezone.localtime(date)
-    return None
+    return article.newspaper_article.publish_date
 
 
 def get_keywords(article, keywords):
