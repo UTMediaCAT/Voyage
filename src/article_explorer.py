@@ -323,7 +323,7 @@ def get_sources_sites(article, sites):
     for site in sites:
         formatted_sites.add(tld.get_tld(site))
 
-    for url in article.get_urls(article_text_links_only=True):
+    for url in article.get_links(article_text_links_only=True):
         try:
             domain = tld.get_tld(url)
         #apparently they don't inherit a common class so I have to hard code it

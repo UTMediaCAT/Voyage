@@ -5,6 +5,9 @@ from readability import Document
 import re
 import lxml.html
 from bs4 import UnicodeDammit
+import collections
+
+Link = collections.namedtuple("Link", ["href", "text"])
 
 class ExplorerArticle(object):#derive from object for getters/setters
     def __init__(self, url):
@@ -114,7 +117,7 @@ class ExplorerArticle(object):#derive from object for getters/setters
         return self._readability_text or self._newspaper_text
 
 
-    def get_urls(self, article_text_links_only=False):
+    def get_links(self, article_text_links_only=False):
         result = []
         try:
             if(article_text_links_only):
@@ -135,6 +138,7 @@ class ExplorerArticle(object):#derive from object for getters/setters
             return []
         for e in lxml_tree.cssselect("a"):
             href = e.get("href")
+            text = e.text_content()
             if(href):
-                result.append(href)
+                result.append(href=href, text=text)
         return result
