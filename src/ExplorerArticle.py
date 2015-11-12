@@ -113,8 +113,17 @@ class ExplorerArticle(object):#derive from object for getters/setters
         return self._readability_title or self._newspaper_title
 
     @property
-    def text(self):
-        return self._readability_text or self._newspaper_text
+    def text(self, strip_html=False):
+        if(strip_html):
+            if(self._readability_text):
+                try:
+                    return lxml.html.fromstring(self._readability_text).text_content()
+                except lxml.etree.Error as e:
+                    return ""
+            else:
+                return self._newspaper_text
+        else:
+            return self._readability_text or self._newspaper_text
 
 
     def get_links(self, article_text_links_only=False):
