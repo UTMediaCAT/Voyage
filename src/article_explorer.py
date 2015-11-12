@@ -130,7 +130,6 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                                          memoize_articles=False,
                                          keep_article_html=True,
                                          fetch_images=False,
-                                         language='en',
                                          number_threads=1)
         logging.disable(logging.NOTSET)
         newspaper_articles = newspaper_source.articles
