@@ -41,10 +41,11 @@ def getJson(request):
     return res
 
 def getWarc(request, filename):
-    subprocess.Popen(["tar", "cvzf", filename + ".tar", filename +".png", filename + ".pdf"], cwd="../"+dir)
+
     config = common.get_config()['warc']
     path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', config['dir'] + "/" + config['article_subdir']))
     filename_ext = path + "/" + filename + ".tar"
+    subprocess.Popen(["tar", "cvzf", filename + ".tar", filename +".png", filename + ".pdf"], cwd="../"+dir)
     warc = open(filename_ext, "rb")
     res = HttpResponse(warc, content_type="application/force-download")
     warc.close()
