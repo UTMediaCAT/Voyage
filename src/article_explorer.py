@@ -201,6 +201,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
             article.newspaper_parse()
 
             #load selectors from db!
+            #parameter is a namedtuple of "css" and "regex"
             authors = article.evaluate_css_selectors([]) or article.authors
             pub_date = article.evaluate_css_selectors([]) or get_pub_date(article)
             # Check if the entry already exists
