@@ -21,8 +21,6 @@ def create_warc(url, dir):
     subprocess.call(["mkdir", "-p", dir], cwd="..", close_fds=True)
     #subprocess.Popen(["wpull", "--user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36", "--no-robots", "--no-check-certificate", "--no-cookies", "--timeout", "20", "--session-timeout", "20", "--phantomjs", "--phantomjs-max-time","150", "--warc-file",  rename_url,  url], cwd="../"+dir, close_fds=True, stderr=subprocess.PIPE)
 
-    rename_url = rename_url.encode('utf8')
-    url = url.encode('utf8')
     # create png file
     subprocess.Popen(["phantomjs", "../../src/rasterize.js", url,  rename_url +".png"], cwd="../"+dir )
     # create pdf file
