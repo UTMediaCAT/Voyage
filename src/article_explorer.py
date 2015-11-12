@@ -130,7 +130,6 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                                          memoize_articles=False,
                                          keep_article_html=True,
                                          fetch_images=False,
-                                         language='en',
                                          number_threads=1)
         logging.disable(logging.NOTSET)
         newspaper_articles = newspaper_source.articles
@@ -331,9 +330,9 @@ def get_sources_sites(article, sites):
             continue
         if domain in formatted_sites:
             # If it matches even once, append the site to the list
-            result_urls_matched.append([url[6:-1], domain])
+            result_urls_matched.append([url, domain])
         else:
-            result_urls_unmatched.append([url[6:-1], domain])
+            result_urls_unmatched.append([url, domain])
 
     # Return the list
     return [result_urls_matched,result_urls_unmatched]
@@ -363,33 +362,7 @@ def get_pub_date(article):
     Keyword arguments:
     article         -- 'Newspaper.Article' object of article
     """
-    dates = []
-
-    # For each metadata stored by newspaper's parsing ability,
-    # check if any of the key contains 'date'
-    for key, value in article.newspaper_article.meta_data.iteritems():
-        if re.search("date", key, re.IGNORECASE):
-            # If the key contains 'date', try to parse the value as date
-            try:
-                dt = parser.parse(str(value))
-                # If parsing succeeded, then append it to the list
-                dates.append(dt)
-            except (KeyboardInterrupt, SystemExit):
-                raise
-            except:
-                pass
-    # If one of more dates were found,
-    # return the oldest date as new ones can be updated dates
-    # instead of published date
-    if dates:
-        date = sorted(dates, key=lambda x: str(x)[0])[0]
-        if timezone.is_naive(date):
-            return \
-                timezone.make_aware(date,
-                                    timezone=timezone.get_default_timezone())
-        else:
-            return timezone.localtime(date)
-    return None
+    return article.newspaper_article.publish_date
 
 
 def get_keywords(article, keywords):

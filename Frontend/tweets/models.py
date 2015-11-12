@@ -37,7 +37,7 @@ class CountLog(models.Model):
     date = models.DateTimeField('Date Added', blank=True, null=True)
 
     def __unicode__(self):
-        return self.date
+        return self.date.strftime('%Y-%m-%d')
 
 class Keyword(models.Model):
     tweet = models.ForeignKey(Tweet)

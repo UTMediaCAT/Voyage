@@ -8,6 +8,6 @@ django-suit==0.2.11
 pytz==2015.4
 django-taggit==0.16.2
 schedule==0.3.2
-cssselect
-urlnorm
-readability-lxml
+cssselect==0.9.1
+urlnorm==1.1.3
+readability-lxml==0.6.1
