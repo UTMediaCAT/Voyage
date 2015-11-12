@@ -3,6 +3,7 @@ from django.template import RequestContext, loader
 from articles.models import Article, Keyword, SourceSite, Author, SourceTwitter
 import sys, os, time, json, yaml, urllib
 import common
+import subprocess
 
 def index(request):
     if not request.user.is_authenticated():
@@ -40,8 +41,8 @@ def getJson(request):
     return res
 
 def getWarc(request, filename):
+    subprocess.Popen(["tar", "cvzf", filename + ".tar", filename +".png", filename + ".pdf"], cwd="../"+dir)
     config = common.get_config()['warc']
-
     path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', config['dir'] + "/" + config['article_subdir']))
     filename_ext = path + "/" + filename + ".tar"
     warc = open(filename_ext, "rb")
