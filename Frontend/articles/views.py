@@ -43,7 +43,7 @@ def getWarc(request, filename):
     config = common.get_config()['warc']
 
     path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', config['dir'] + "/" + config['article_subdir']))
-    filename_ext = path + "/" + filename + ".warc.gz"
+    filename_ext = path + "/" + filename + ".tar"
     warc = open(filename_ext, "rb")
     res = HttpResponse(warc, content_type="application/force-download")
     warc.close()

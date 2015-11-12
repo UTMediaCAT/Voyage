@@ -22,9 +22,10 @@ def create_warc(url, dir):
     #subprocess.Popen(["wpull", "--user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36", "--no-robots", "--no-check-certificate", "--no-cookies", "--timeout", "20", "--session-timeout", "20", "--phantomjs", "--phantomjs-max-time","150", "--warc-file",  rename_url,  url], cwd="../"+dir, close_fds=True, stderr=subprocess.PIPE)
 
     # create png file
-    subprocess.Popen(["phantomjs", "rasterize.js", rename_url,  url.png], cwd="../"+dir, close_fds=True, stderr=subprocess.PIPE)
+    subprocess.Popen(["phantomjs", "rasterize.js", rename_url,  url +".png"], cwd="../"+dir, close_fds=True, stderr=subprocess.PIPE)
     # create pdf file
-    subprocess.Popen(["phantomjs", "rasterize.js", rename_url,  url.pdf], cwd="../"+dir, close_fds=True, stderr=subprocess.PIPE)
+    subprocess.Popen(["phantomjs", "rasterize.js", rename_url,  url + ".pdf"], cwd="../"+dir, close_fds=True, stderr=subprocess.PIPE)
+    subprocess.Popen(["tar", "cvzf", url + ".tar", url +".png", url + ".pdf"], cwd="../"+dir, close_fds=True, stderr=subprocess.PIPE)
 def create_article_warc(url):
     """(url)-->None
     giving url it will export warc file
