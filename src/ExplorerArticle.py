@@ -149,5 +149,5 @@ class ExplorerArticle(object):#derive from object for getters/setters
             href = e.get("href")
             text = e.text_content()
             if(href):
-                result.append(href=href, text=text)
+                result.append(Link(href=href, text=text))
         return result
