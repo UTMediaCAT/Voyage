@@ -130,7 +130,6 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                                          memoize_articles=False,
                                          keep_article_html=True,
                                          fetch_images=False,
-                                         language='en',
                                          number_threads=1)
         logging.disable(logging.NOTSET)
         newspaper_articles = newspaper_source.articles
@@ -166,16 +165,22 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 url = url[:7] + url[11:]
             elif 'https://www.' in url:
                 url = url[:8] + url[12:]
-
             article = ExplorerArticle(article.url)
+            logging.debug("ExplorerArticle Created")
             # Try to download and extract the useful data
             if(not article.is_downloaded):
                 if(not article.download()):
                     logging.warning("article skipped because download failed")
                     continue
 
-            article.preliminary_parse()
+            if (not article.is_parsed):
+                if (not article.preliminary_parse()):
+                    logging.warning("article skipped because parse failed")
+                    continue
 
+            logging.debug("Article Parsed")
+            
+            logging.debug(u"Title: {0}".format(repr(article.title)))
             if not article.title:
                 logging.info("article missing title, skipping")
                 continue
@@ -193,7 +198,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
             twitter_accounts = get_sources_twitter(article, twitter_accounts_explorer)
             logging.debug(u"matched twitter_accounts: {0}".format(repr(twitter_accounts[0])))
 
-            if((not keywords) or (not sources[0]) or (not twitter_accounts[0])):#[] gets coverted to false
+            if((not keywords) and (not sources[0]) and (not twitter_accounts[0])):#[] gets coverted to false
                 logging.debug("skipping article because it's not a match")
                 continue
             logging.info("match found")
@@ -238,7 +243,6 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 for source in sources[1]:
                     db_article.sourcesite_set.create(url=source[0],
                                               domain=source[1], matched=False, local=(source[1] in site["url"]))
-                added += 1
 
             else:
                 logging.info("Modifying existing Article in the DB")
@@ -320,17 +324,17 @@ def get_sources_sites(article, sites):
     for site in sites:
         formatted_sites.add(tld.get_tld(site))
 
-    for url in article.get_urls(article_text_links_only=True):
+    for url in article.get_links(article_text_links_only=True):
         try:
-            domain = tld.get_tld(url)
+            domain = tld.get_tld(url.href)
         #apparently they don't inherit a common class so I have to hard code it
         except (tld.exceptions.TldBadUrl, tld.exceptions.TldDomainNotFound, tld.exceptions.TldIOError):
             continue
         if domain in formatted_sites:
             # If it matches even once, append the site to the list
-            result_urls_matched.append([url[6:-1], domain])
+            result_urls_matched.append([url.href, domain])
         else:
-            result_urls_unmatched.append([url[6:-1], domain])
+            result_urls_unmatched.append([url.href, domain])
 
     # Return the list
     return [result_urls_matched,result_urls_unmatched]
@@ -360,33 +364,7 @@ def get_pub_date(article):
     Keyword arguments:
     article         -- 'Newspaper.Article' object of article
     """
-    dates = []
-
-    # For each metadata stored by newspaper's parsing ability,
-    # check if any of the key contains 'date'
-    for key, value in article.newspaper_article.meta_data.iteritems():
-        if re.search("date", key, re.IGNORECASE):
-            # If the key contains 'date', try to parse the value as date
-            try:
-                dt = parser.parse(str(value))
-                # If parsing succeeded, then append it to the list
-                dates.append(dt)
-            except (KeyboardInterrupt, SystemExit):
-                raise
-            except:
-                pass
-    # If one of more dates were found,
-    # return the oldest date as new ones can be updated dates
-    # instead of published date
-    if dates:
-        date = sorted(dates, key=lambda x: str(x)[0])[0]
-        if timezone.is_naive(date):
-            return \
-                timezone.make_aware(date,
-                                    timezone=timezone.get_default_timezone())
-        else:
-            return timezone.localtime(date)
-    return None
+    return article.newspaper_article.publish_date
 
 
 def get_keywords(article, keywords):

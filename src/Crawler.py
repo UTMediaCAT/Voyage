@@ -52,8 +52,8 @@ class Crawler(object):
                 article.download()
 
                 #get get urls from the article
-                for url in article.get_urls():
-                    url = urljoin(current_url, url, False)
+                for link in article.get_links():
+                    url = urljoin(current_url, link.href, False)
                     if self.url_in_filter(url, self.filters):
                         logging.info("Matches with filter, skipping the {0}".format(url))
                         continue
