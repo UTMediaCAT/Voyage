@@ -70,7 +70,7 @@ class ReferringSiteFilter(models.Model):
     regex = models.BooleanField(default=False, help_text='Use Regular Expression instead of string comparison.')
 
     class Meta:
-        verbose_name = "Filters"
+        verbose_name = "Filter"
 
 
 class ReferringSiteCssSelector(models.Model):
@@ -88,7 +88,7 @@ class ReferringSiteCssSelector(models.Model):
     regex = models.CharField(max_length=1000, help_text='Regular expression to further narrow down')
 
     class Meta:
-        verbose_name = "CSS Selectors"
+        verbose_name = "CSS Selector"
 
 
 class ReferringTwitter(models.Model):
