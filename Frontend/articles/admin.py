@@ -24,7 +24,8 @@ class SourceTwitterInline(admin.TabularInline):
 class ArticleAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['url', 'domain', 'title']}),
-        ('Date information', {'fields': ['date_added', 'date_published', 'date_modified']})
+        ('Date information', {'fields': ['date_added', 'date_published', 'date_modified']}),
+        (None,               {'fields': ['text']})
         ]
 
     inlines = [AuthorInline, SourceSiteInline, KeywordInline, SourceTwitterInline]
@@ -95,7 +96,6 @@ class ArticleAdmin(admin.ModelAdmin):
     def link_options(self, obj):
         return format(('<a href="/admin/articles/article/%s">Details</a><br>' +\
                        '<a href="/articles/warc/%s">Download</a>') % (str(obj.pk), obj.url.replace('/', '_')))
-
 
     link_options.allow_tags = True
     link_options.short_description = "Options"
