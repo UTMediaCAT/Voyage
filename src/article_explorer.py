@@ -207,9 +207,14 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
 
             text = article._newspaper_text
 
-            if((not any(x.lower() in text.lower() for db_keywords in jk)) and (not sources[0]) and (not twitter_accounts[0])):#[] gets coverted to false
+            if((not any(x.lower() in text.lower() for x in db_keywords)) and (not sources[0]) and (not twitter_accounts[0])):#[] gets coverted to false
                 logging.debug("skipping article because it's not a match")
                 continue 
+
+            keywords = []
+            for keyword in db_keywords:
+                if keyword.lower() in text.lower():
+                    keywords.append(keyword)
 
             #load selectors from db!
             #parameter is a namedtuple of "css" and "regex"
