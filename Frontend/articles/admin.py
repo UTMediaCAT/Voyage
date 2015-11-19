@@ -24,12 +24,12 @@ class SourceTwitterInline(admin.TabularInline):
 class ArticleAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['url', 'domain', 'title']}),
-        ('Date information', {'fields': ['date_added', 'date_published']})
+        ('Date information', {'fields': ['date_added', 'date_published', 'date_modified']})
         ]
 
     inlines = [AuthorInline, SourceSiteInline, KeywordInline, SourceTwitterInline]
 
-    list_display = ('link_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_source_twitters', 'date_published', 'date_added', 'link_options')
+    list_display = ('link_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_source_twitters', 'date_added', 'date_published', 'date_modified', 'link_options')
     search_fields = ['url', 'title', 'author__name', 'keyword__name', 'sourcesite__url', 'sourcetwitter__name']
     list_filter = ['domain', 'keyword__name', 'sourcesite__domain', 'sourcetwitter__name']
     ordering = ['-date_added']
@@ -53,7 +53,11 @@ class ArticleAdmin(admin.ModelAdmin):
                     link = 'http://' + src.url[11:]
                 else:
                     link = src.url
-                sources += format('<a href="%s" target="_blank">%s</a>' % (link, link))
+                link_short = link[7:]
+                if len(link_short) > 30:
+                    link_short = link_short[:30]+"..."
+ 
+                sources += format('<a href="%s" target="_blank">%s</a>' % (link, link_short))
                 sources += '<br>'
         return sources[:-4]
 

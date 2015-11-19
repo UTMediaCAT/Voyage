@@ -8,6 +8,7 @@ class Article(models.Model):
     title = models.CharField(max_length=200, blank=True)
     date_added = models.DateTimeField('Date Added', blank=True, null=True)
     date_published = models.DateTimeField('Date Published', blank=True, null=True)
+    date_modified = models.DateTimeField('Date Modified', blank=True, null=True)
 
     def __unicode__(self):
         if len(self.title) >= 30:

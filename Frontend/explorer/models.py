@@ -42,7 +42,7 @@ class ReferringSite(models.Model):
     name = models.CharField(max_length=200, 
                             help_text='Your favorable alias of this site.\n' +
                                       'Maximum 200 characters')
-    check = models.BooleanField(default=True, verbose_name="Check Newspaper",
+    check = models.BooleanField(default=False, verbose_name="Check Newspaper",
                                 help_text=mark_safe('Check to display the amount of articles found by Newspaper (Displays as error).<br>Uncheck to save without testing Newspaper.'))
     tags = TaggableManager()
 
