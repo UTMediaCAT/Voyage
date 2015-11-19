@@ -151,3 +151,19 @@ class ExplorerArticle(object):#derive from object for getters/setters
             if(href):
                 result.append(Link(href=href, text=text))
         return result
+
+    def evaluate_css_selectors(self, css_selectors_with_regex):
+        lxml_tree = lxml.html.fromstring(self.html)
+        for select in css_selectors_with_regex:
+            try:
+                result = lxml_tree.cssselect(select.css)
+                if(select.regex):
+                    result = re.search(select.regex, result).groups()[-1]
+            except lxml.cssselect.SelectorSyntaxError:
+                logging.error("invaild css selector \"{0}\"".format(select))
+                continue
+            if(len(result) > 0):
+                if(len(result) > 1):
+                    logging.error("css selector \"{0}\" matched multiple elements. selecting the first one!".format(select))
+                return result[0].text_content()
+        return None

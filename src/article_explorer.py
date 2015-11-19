@@ -205,8 +205,21 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
 
             article.newspaper_parse()
 
-            authors = article.authors
-            pub_date = get_pub_date(article)
+            text = article._newspaper_text
+
+            if((not any(x.lower() in text.lower() for x in db_keywords)) and (not sources[0]) and (not twitter_accounts[0])):#[] gets coverted to false
+                logging.debug("skipping article because it's not a match")
+                continue 
+
+            keywords = []
+            for keyword in db_keywords:
+                if keyword.lower() in text.lower():
+                    keywords.append(keyword)
+
+            #load selectors from db!
+            #parameter is a namedtuple of "css" and "regex"
+            authors = article.evaluate_css_selectors([]) or article.authors
+            pub_date = article.evaluate_css_selectors([]) or get_pub_date(article)
             # Check if the entry already exists
             db_article_list = Article.objects.filter(url=url)
             if not db_article_list:
@@ -217,7 +230,8 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                                   domain=site["url"],
                                   date_added=timezone.localtime(
                                       timezone.now()),
-                                  date_published=pub_date)
+                                  date_published=pub_date,
+                                  text=text)
                 db_article.save()
 
                 db_article = Article.objects.get(url=url)
@@ -253,6 +267,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 # Do not update the added date
                 # db_article.date_added = today
                 db_article.date_published = pub_date
+                db_article.text = text
                 db_article.save()
 
                 for key in keywords:

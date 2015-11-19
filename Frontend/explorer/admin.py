@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import (GenericStackedInline, GenericTabularInline)
 from taggit.models import TaggedItem
-from explorer.models import ReferringSite, ReferringSiteFilter, SourceSite, Keyword, ReferringTwitter, SourceTwitter
+from explorer.models import ReferringSite, ReferringSiteFilter, ReferringSiteCssSelector, SourceSite, Keyword, ReferringTwitter, SourceTwitter
 from articles.models import Article
 from articles.models import SourceSite as ArticleSource
 from articles.models import Keyword as ArticleKeyword
@@ -56,7 +56,11 @@ class TaggitTabularInline(TaggitInlineBase, GenericTabularInline):
 
 class ReferringSiteFilterInline(admin.TabularInline):
     model = ReferringSiteFilter
-    extra = 1
+    extra = 0
+
+class ReferringSiteCssSelectorInline(admin.TabularInline):
+    model = ReferringSiteCssSelector
+    extra = 0
 
 
 class ReferringSiteAdminForm(forms.ModelForm):
@@ -86,7 +90,7 @@ class ReferringSiteAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['url', 'name', 'mode', 'check']})
         ]
-    inlines += [ReferringSiteFilterInline]
+    inlines += [ReferringSiteFilterInline, ReferringSiteCssSelectorInline]
     list_display = ('name', 'url', 'article_count', 'latest_article', 'mode', 'get_tags')
     search_fields = ['name', 'url']
     ordering = ['name']
