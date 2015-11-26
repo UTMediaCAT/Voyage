@@ -156,9 +156,9 @@ class ExplorerArticle(object):#derive from object for getters/setters
         lxml_tree = lxml.html.fromstring(self.html)
         for select in css_selectors_with_regex:
             try:
-                result = lxml_tree.cssselect(select.css)
-                if(select.regex):
-                    result = re.search(select.regex, result).groups()[-1]
+                result = lxml_tree.cssselect(select['pattern'])
+                if(select['regex']):
+                    result = re.search(select['regex'], result).groups()[-1]
             except lxml.cssselect.SelectorSyntaxError:
                 logging.error("invaild css selector \"{0}\"".format(select))
                 continue

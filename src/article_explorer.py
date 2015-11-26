@@ -136,7 +136,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
         article_count += newspaper_source.size()
         logging.info("populated {0} articles using newspaper".format(article_count))
     if(site["type"] == 1 or site["type"] == 2):
-        crawlersource_articles = Crawler.Crawler(site["url"], site["filter"])
+        crawlersource_articles = Crawler.Crawler(site["url"], site["filters"])
         article_count += crawlersource_articles.probabilistic_n
         logging.debug("expecting {0} from plan b crawler".format(crawlersource_articles.probabilistic_n))
     article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles).__iter__()
@@ -150,7 +150,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
             #have to put all the iteration stuff at the top because I used continue extensively in this loop
             processed += 1
 
-            if url_in_filter(article.url, site["filter"]):
+            if url_in_filter(article.url, site["filters"]):
                 logging.info("Matches with filter, skipping the {0}".format(article.url))
                 continue
 
@@ -218,8 +218,8 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
 
             #load selectors from db!
             #parameter is a namedtuple of "css" and "regex"
-            authors = article.evaluate_css_selectors([]) or article.authors
-            pub_date = article.evaluate_css_selectors([]) or get_pub_date(article)
+            authors = article.evaluate_css_selectors(site['css_selectors']) or article.authors
+            pub_date = article.evaluate_css_selectors(site['css_selectors']) or get_pub_date(article)
             # Check if the entry already exists
             db_article_list = Article.objects.filter(url=url)
             if not db_article_list:
@@ -412,9 +412,12 @@ def explore():
     referring_sites = []
     index = 0
     for site in ReferringSite.objects.all():
-        referring_sites.append({"name":site.name, "url":site.url, "type":site.mode, "filter":[]})
+        referring_sites.append({"name":site.name, "url":site.url, "type":site.mode, "filters":[], "css_selectors":[]})
         for filt in site.referringsitefilter_set.all():
-            referring_sites[index]["filter"].append([filt.pattern, filt.regex])
+            referring_sites[index]["filters"].append([filt.pattern, filt.regex])
+        for css in site.referringsitecssselector_set.all():
+            referring_sites[index]["css_selectors"].append({'field': css.field_choice, 'pattern': css.pattern, 'regex': css.regex}
+
         index += 1
     logging.info("Collected {0} Referring Sites from Database".format(len(referring_sites)))
 
