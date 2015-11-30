@@ -71,7 +71,7 @@ def getPDF(request, filename):
     path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', config['dir'] + "/" + config['article_subdir']))
     filename_ext = path + "/" + filename + ".pdf"
     pdf = open(filename_ext, "rb")
-    res = HttpResponse(pdf, content_type="application/pdf")
+    res = HttpResponse(pdf, mimetype="application/pdf")
     pdf.close()
 
     # To inspect details for the below code, see http://greenbytes.de/tech/tc2231/
