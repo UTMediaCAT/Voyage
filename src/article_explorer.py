@@ -283,6 +283,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                                               domain=source[1], matched=False, local=(source[1] in site["url"]))
 
             warc_creator.create_article_pdf(url)
+            warc_creator.create_article_warc(url)
         except (KeyboardInterrupt, SystemExit):
             raise
         except Exception as e:

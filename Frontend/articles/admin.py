@@ -90,7 +90,9 @@ class ArticleAdmin(admin.ModelAdmin):
 
     def link_options(self, obj):
         return format(('<a href="/admin/articles/article/%s">Details</a><br>' +\
-                       '<a href="/articles/warc/%s">Download</a>') % (str(obj.pk), obj.url.replace('/', '_')))
+                       '<a href="/articles/warc/%s">Warc</a><br>' +\
+                       '<a href="/articles/pdf/%s">PDF</a><br>' +\
+                       '<a href="/articles/img/%s">Image</a>') % (str(obj.pk), obj.url.replace('/', '_'), obj.url.replace('/', '_'), obj.url.replace('/', '_')))
 
 
     link_options.allow_tags = True
