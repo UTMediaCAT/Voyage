@@ -27,7 +27,7 @@ def create_warc(url, dir):
     subprocess.Popen(["phantomjs", "../../src/rasterize.js", url,  rename_url + ".pdf"], cwd="../"+dir )
 
     #subprocess.Popen(["tar", "cvzf", rename_url + ".tar", rename_url +".png", rename_url + ".pdf"], cwd="../"+dir)
-
+'''
 def create_article_warc(url):
     """(url)-->None
     giving url it will export warc file
@@ -39,6 +39,7 @@ def create_article_warc(url):
     config = configuration()['warc']
     create_warc(url, config['dir'] + "/" + config['article_subdir'])
 
+'''
 
 def create_twitter_warc(url):
     """(url)-->None
@@ -50,3 +51,14 @@ def create_twitter_warc(url):
     """
     config = configuration()['warc']
     create_warc(url, config['dir'] + "/" + config['twitter_subdir'])
+
+def create_article_pdf(url):
+    """(url)-->None
+    giving url it will export warc file
+
+    create_warc("http://www.facebook.com")
+    it should have a warc.gz file under
+    ARTICLE_WARC_DIR/http:__www.facebook.com.warc.gz
+    """
+    config = configuration()['pdf']
+    create_warc(url, config['dir'] + "/" + config['article_subdir'])
