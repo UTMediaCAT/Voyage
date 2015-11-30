@@ -26,6 +26,11 @@ warc:
     dir: warc
     article_subdir: article
     twitter_subdir: twitter
+pdf:
+    dir: pdf
+    article_subdir: article
+    twitter_subdir: twitter
+
 log:
     retention_days: 30
 crawler:
