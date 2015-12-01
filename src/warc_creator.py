@@ -30,10 +30,10 @@ def create_pdf(url, dir):
     logging.info("creating pdf \"{0}\" in \"{1}\"".format(rename_url, dir))
     subprocess.call(["mkdir", "-p", dir], cwd="..", close_fds=True)
 
-    # create png file
-    subprocess.Popen(["phantomjs", "../../src/rasterize.js", url,  rename_url +".png"], cwd="../"+dir )
-    # create pdf file
-    subprocess.Popen(["phantomjs", "../../src/rasterize.js", url,  rename_url + ".pdf"], cwd="../"+dir )
+    # create png and img file
+    subprocess.Popen(["phantomjs", "../../src/rasterize.js", url,  rename_url], cwd="../"+dir )
+
+
 
 
 
