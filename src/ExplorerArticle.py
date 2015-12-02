@@ -115,15 +115,15 @@ class ExplorerArticle(object):#derive from object for getters/setters
     @property
     def text(self, strip_html=False):
         if(strip_html):
-            if(self._readability_text):
+            if(self._newspaper_text):
+                return self._newspaper_text
+            else:
                 try:
                     return lxml.html.fromstring(self._readability_text).text_content()
                 except lxml.etree.Error as e:
                     return ""
-            else:
-                return self._newspaper_text
         else:
-            return self._readability_text or self._newspaper_text
+            return self._newspaper_text or self._readability_text
 
 
     def get_links(self, article_text_links_only=False):
@@ -156,9 +156,9 @@ class ExplorerArticle(object):#derive from object for getters/setters
         lxml_tree = lxml.html.fromstring(self.html)
         for select in css_selectors_with_regex:
             try:
-                result = lxml_tree.cssselect(select.css)
-                if(select.regex):
-                    result = re.search(select.regex, result).groups()[-1]
+                result = lxml_tree.cssselect(select['pattern'])
+                if(select['regex']):
+                    result = re.search(select['regex'], result).groups()[-1]
             except lxml.cssselect.SelectorSyntaxError:
                 logging.error("invaild css selector \"{0}\"".format(select))
                 continue

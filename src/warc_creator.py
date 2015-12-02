@@ -19,7 +19,23 @@ def create_warc(url, dir):
     rename_url = url.replace("/", "_")
     logging.info("creating warc \"{0}\" in \"{1}\"".format(rename_url, dir))
     subprocess.call(["mkdir", "-p", dir], cwd="..", close_fds=True)
-    subprocess.Popen(["wget", "--warc-file=" + rename_url, "-O", "/dev/null", url], cwd="../"+dir, close_fds=True)
+    subprocess.Popen(["wpull", "--user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36", "--no-robots", "--no-check-certificate", "--no-cookies", "--timeout", "20", "--session-timeout", "20", "--phantomjs", "--no-phantomjs-snapshot", "--phantomjs-max-time","150", "--warc-file",  rename_url,  url], cwd="../"+dir, close_fds=True, stderr=subprocess.PIPE)
+
+
+def create_pdf(url, dir):
+    """
+    creates a warc file from url and places it in dest
+    """
+    rename_url = url.replace("/", "_")
+    logging.info("creating pdf \"{0}\" in \"{1}\"".format(rename_url, dir))
+    subprocess.call(["mkdir", "-p", dir], cwd="..", close_fds=True)
+
+    # create png and img file
+    subprocess.Popen(["phantomjs", "../../src/rasterize.js", url,  rename_url], cwd="../"+dir )
+
+
+
+
 
 def create_article_warc(url):
     """(url)-->None
@@ -33,6 +49,7 @@ def create_article_warc(url):
     create_warc(url, config['dir'] + "/" + config['article_subdir'])
 
 
+
 def create_twitter_warc(url):
     """(url)-->None
     giving url it will export warc file
@@ -43,3 +60,14 @@ def create_twitter_warc(url):
     """
     config = configuration()['warc']
     create_warc(url, config['dir'] + "/" + config['twitter_subdir'])
+
+def create_article_pdf(url):
+    """(url)-->None
+    giving url it will export warc file
+
+    create_warc("http://www.facebook.com")
+    it should have a warc.gz file under
+    ARTICLE_WARC_DIR/http:__www.facebook.com.warc.gz
+    """
+    config = configuration()['pdf']
+    create_pdf(url, config['dir'] + "/" + config['article_subdir'])

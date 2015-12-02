@@ -3,6 +3,7 @@ from django.template import RequestContext, loader
 from articles.models import Article, Keyword, SourceSite, Author, SourceTwitter
 import sys, os, time, json, yaml, urllib
 import common
+import subprocess
 
 def index(request):
     if not request.user.is_authenticated():
@@ -40,8 +41,8 @@ def getJson(request):
     return res
 
 def getWarc(request, filename):
-    config = common.get_config()['warc']
 
+    config = common.get_config()['warc']
     path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', config['dir'] + "/" + config['article_subdir']))
     filename_ext = path + "/" + filename + ".warc.gz"
     warc = open(filename_ext, "rb")
@@ -61,4 +62,28 @@ def getWarc(request, filename):
         filename_header = 'filename*=UTF-8\'\'%s' % urllib.quote((filename + ".warc.gz").encode('utf-8'))
     res['Content-Disposition'] = 'attachment; ' + filename_header
     
+    return res
+    
+    
+
+def getPDF(request, filename):
+
+    config = common.get_config()['pdf']
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', config['dir'] + "/" + config['article_subdir']))
+    filename_ext = path + "/" + filename + ".pdf"
+    pdf = open(filename_ext, "rb")
+    res = HttpResponse(pdf, content_type="application/pdf")
+    pdf.close()
+
+    return res
+
+def getImg(request, filename):
+
+    config = common.get_config()['pdf']
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', config['dir'] + "/" + config['article_subdir']))
+    filename_ext = path + "/" + filename + ".png"
+    pdf = open(filename_ext, "rb")
+    res = HttpResponse(pdf, content_type="image/png")
+    pdf.close()
+
     return res
