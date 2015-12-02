@@ -417,7 +417,7 @@ def explore():
         for filt in site.referringsitefilter_set.all():
             referring_sites[index]["filters"].append([filt.pattern, filt.regex])
         for css in site.referringsitecssselector_set.all():
-            referring_sites[index]["css_selectors"].append({'field': css.field_choice, 'pattern': css.pattern, 'regex': css.regex}
+            referring_sites[index]["css_selectors"].append({'field': css.field_choice, 'pattern': css.pattern, 'regex': css.regex})
 
         index += 1
     logging.info("Collected {0} Referring Sites from Database".format(len(referring_sites)))
