@@ -237,12 +237,13 @@ def force_stop(explorer):
     Also, forces the comm file to be in stop state, allowing new explorer
     to start.
     """
-    pid = comm_read(explorer).split(' ')[1]
+    #pid = comm_read(explorer).split(' ')[1]
     name = name_format(explorer)
 
-    subprocess.call(['kill', '-9', pid])
-    comm_write(explorer, 'SS 12345')
-    return format('Force Stop: %s - %s' % (name, pid))
+    #subprocess.call(['kill', '-9', pid])
+    #comm_write(explorer, 'SS 12345')
+    subprocess.call("kill -9 ps -aux | grep -v grep |grep "+ explorer +  " | awk '{ print $2 }'", shell=True)
+    return format('Force Stop: %s - %s' % (name))
 
 
 def status_output(explorer):
