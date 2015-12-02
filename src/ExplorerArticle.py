@@ -5,6 +5,9 @@ from readability import Document
 import re
 import lxml.html
 from bs4 import UnicodeDammit
+import collections
+
+Link = collections.namedtuple("Link", ["href", "text"])
 
 class ExplorerArticle(object):#derive from object for getters/setters
     def __init__(self, url):
@@ -110,11 +113,20 @@ class ExplorerArticle(object):#derive from object for getters/setters
         return self._readability_title or self._newspaper_title
 
     @property
-    def text(self):
-        return self._readability_text or self._newspaper_text
+    def text(self, strip_html=False):
+        if(strip_html):
+            if(self._newspaper_text):
+                return self._newspaper_text
+            else:
+                try:
+                    return lxml.html.fromstring(self._readability_text).text_content()
+                except lxml.etree.Error as e:
+                    return ""
+        else:
+            return self._newspaper_text or self._readability_text
 
 
-    def get_urls(self, article_text_links_only=False):
+    def get_links(self, article_text_links_only=False):
         result = []
         try:
             if(article_text_links_only):
@@ -135,6 +147,23 @@ class ExplorerArticle(object):#derive from object for getters/setters
             return []
         for e in lxml_tree.cssselect("a"):
             href = e.get("href")
+            text = e.text_content()
             if(href):
-                result.append(href)
+                result.append(Link(href=href, text=text))
         return result
+
+    def evaluate_css_selectors(self, css_selectors_with_regex):
+        lxml_tree = lxml.html.fromstring(self.html)
+        for select in css_selectors_with_regex:
+            try:
+                result = lxml_tree.cssselect(select['pattern'])
+                if(select['regex']):
+                    result = re.search(select['regex'], result).groups()[-1]
+            except lxml.cssselect.SelectorSyntaxError:
+                logging.error("invaild css selector \"{0}\"".format(select))
+                continue
+            if(len(result) > 0):
+                if(len(result) > 1):
+                    logging.error("css selector \"{0}\" matched multiple elements. selecting the first one!".format(select))
+                return result[0].text_content()
+        return None

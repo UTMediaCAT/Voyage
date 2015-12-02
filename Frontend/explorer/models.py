@@ -42,7 +42,7 @@ class ReferringSite(models.Model):
     name = models.CharField(max_length=200, 
                             help_text='Your favorable alias of this site.\n' +
                                       'Maximum 200 characters')
-    check = models.BooleanField(default=True, verbose_name="Check Newspaper",
+    check = models.BooleanField(default=False, verbose_name="Check Newspaper",
                                 help_text=mark_safe('Check to display the amount of articles found by Newspaper (Displays as error).<br>Uncheck to save without testing Newspaper.'))
     tags = TaggableManager()
 
@@ -67,10 +67,28 @@ class ReferringSite(models.Model):
 class ReferringSiteFilter(models.Model):
     site = models.ForeignKey(ReferringSite)
     pattern = models.CharField(max_length=1000, help_text='Any URL that matches the pattern will be ignored from the crawler.')
-    regex = models.BooleanField(default=False, help_text='Use Regular Expression')
+    regex = models.BooleanField(default=False, help_text='Use Regular Expression instead of string comparison.')
 
     class Meta:
         verbose_name = "Filter"
+
+
+class ReferringSiteCssSelector(models.Model):
+    site = models.ForeignKey(ReferringSite)
+    field_choice = (
+        (0, 'Title'),
+        (1, 'Author'),
+        (2, 'Date Published'),
+        (3, 'Date Modified')
+    )
+    field = models.PositiveSmallIntegerField(default=0,
+                        choices=field_choice,
+                        verbose_name='Field')
+    pattern = models.CharField(max_length=1000, help_text='CSS Selector pattern')
+    regex = models.CharField(max_length=1000, help_text='Regular expression to further narrow down')
+
+    class Meta:
+        verbose_name = "CSS Selector"
 
 
 class ReferringTwitter(models.Model):

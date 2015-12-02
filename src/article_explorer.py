@@ -130,14 +130,13 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                                          memoize_articles=False,
                                          keep_article_html=True,
                                          fetch_images=False,
-                                         language='en',
                                          number_threads=1)
         logging.disable(logging.NOTSET)
         newspaper_articles = newspaper_source.articles
         article_count += newspaper_source.size()
         logging.info("populated {0} articles using newspaper".format(article_count))
     if(site["type"] == 1 or site["type"] == 2):
-        crawlersource_articles = Crawler.Crawler(site["url"], site["filter"])
+        crawlersource_articles = Crawler.Crawler(site["url"], site["filters"])
         article_count += crawlersource_articles.probabilistic_n
         logging.debug("expecting {0} from plan b crawler".format(crawlersource_articles.probabilistic_n))
     article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles).__iter__()
@@ -151,7 +150,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
             #have to put all the iteration stuff at the top because I used continue extensively in this loop
             processed += 1
 
-            if url_in_filter(article.url, site["filter"]):
+            if url_in_filter(article.url, site["filters"]):
                 logging.info("Matches with filter, skipping the {0}".format(article.url))
                 continue
 
@@ -206,8 +205,21 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
 
             article.newspaper_parse()
 
-            authors = article.authors
-            pub_date = get_pub_date(article)
+            text = article._newspaper_text
+
+            if((not any(x.lower() in text.lower() for x in db_keywords)) and (not sources[0]) and (not twitter_accounts[0])):#[] gets coverted to false
+                logging.debug("skipping article because it's not a match")
+                continue 
+
+            keywords = []
+            for keyword in db_keywords:
+                if keyword.lower() in text.lower():
+                    keywords.append(keyword)
+
+            #load selectors from db!
+            #parameter is a namedtuple of "css" and "regex"
+            authors = article.evaluate_css_selectors(site['css_selectors']) or article.authors
+            pub_date = article.evaluate_css_selectors(site['css_selectors']) or get_pub_date(article)
             # Check if the entry already exists
             db_article_list = Article.objects.filter(url=url)
             if not db_article_list:
@@ -218,7 +230,8 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                                   domain=site["url"],
                                   date_added=timezone.localtime(
                                       timezone.now()),
-                                  date_published=pub_date)
+                                  date_published=pub_date,
+                                  text=text)
                 db_article.save()
 
                 db_article = Article.objects.get(url=url)
@@ -254,6 +267,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 # Do not update the added date
                 # db_article.date_added = today
                 db_article.date_published = pub_date
+                db_article.text = text
                 db_article.save()
 
                 for key in keywords:
@@ -324,17 +338,17 @@ def get_sources_sites(article, sites):
     for site in sites:
         formatted_sites.add(tld.get_tld(site))
 
-    for url in article.get_urls(article_text_links_only=True):
+    for url in article.get_links(article_text_links_only=True):
         try:
-            domain = tld.get_tld(url)
+            domain = tld.get_tld(url.href)
         #apparently they don't inherit a common class so I have to hard code it
         except (tld.exceptions.TldBadUrl, tld.exceptions.TldDomainNotFound, tld.exceptions.TldIOError):
             continue
         if domain in formatted_sites:
             # If it matches even once, append the site to the list
-            result_urls_matched.append([url, domain])
+            result_urls_matched.append([url.href, domain])
         else:
-            result_urls_unmatched.append([url, domain])
+            result_urls_unmatched.append([url.href, domain])
 
     # Return the list
     return [result_urls_matched,result_urls_unmatched]
@@ -364,33 +378,7 @@ def get_pub_date(article):
     Keyword arguments:
     article         -- 'Newspaper.Article' object of article
     """
-    dates = []
-
-    # For each metadata stored by newspaper's parsing ability,
-    # check if any of the key contains 'date'
-    for key, value in article.newspaper_article.meta_data.iteritems():
-        if re.search("date", key, re.IGNORECASE):
-            # If the key contains 'date', try to parse the value as date
-            try:
-                dt = parser.parse(str(value))
-                # If parsing succeeded, then append it to the list
-                dates.append(dt)
-            except (KeyboardInterrupt, SystemExit):
-                raise
-            except:
-                pass
-    # If one of more dates were found,
-    # return the oldest date as new ones can be updated dates
-    # instead of published date
-    if dates:
-        date = sorted(dates, key=lambda x: str(x)[0])[0]
-        if timezone.is_naive(date):
-            return \
-                timezone.make_aware(date,
-                                    timezone=timezone.get_default_timezone())
-        else:
-            return timezone.localtime(date)
-    return None
+    return article.newspaper_article.publish_date
 
 
 def get_keywords(article, keywords):
@@ -425,9 +413,12 @@ def explore():
     referring_sites = []
     index = 0
     for site in ReferringSite.objects.all():
-        referring_sites.append({"name":site.name, "url":site.url, "type":site.mode, "filter":[]})
+        referring_sites.append({"name":site.name, "url":site.url, "type":site.mode, "filters":[], "css_selectors":[]})
         for filt in site.referringsitefilter_set.all():
-            referring_sites[index]["filter"].append([filt.pattern, filt.regex])
+            referring_sites[index]["filters"].append([filt.pattern, filt.regex])
+        for css in site.referringsitecssselector_set.all():
+            referring_sites[index]["css_selectors"].append({'field': css.field_choice, 'pattern': css.pattern, 'regex': css.regex}
+
         index += 1
     logging.info("Collected {0} Referring Sites from Database".format(len(referring_sites)))
 
