@@ -42,21 +42,21 @@ class ReferringSite(models.Model):
     name = models.CharField(max_length=200, 
                             help_text='Your favorable alias of this site.\n' +
                                       'Maximum 200 characters')
-    check = models.BooleanField(default=False, verbose_name="Check Newspaper",
-                                help_text=mark_safe('Check to display the amount of articles found by Newspaper (Displays as error).<br>Uncheck to save without testing Newspaper.'))
+    check = models.BooleanField(default=False, verbose_name="Test Newspaper RSS Scan",
+                                help_text=mark_safe('Check to display the amount of articles found by Newspaper RSS Scan (Displays as error).<br>Uncheck to save without testing Newspaper.'))
     tags = TaggableManager()
 
     crawl_choices = (
 	(0, 'Newspaper'),
-	(1, 'Plan B'),
+	(1, 'MediaCAT Crawler'),
 	(2, 'Both')
     )
     mode = models.PositiveSmallIntegerField(default=0,
 		        choices=crawl_choices,
-			verbose_name='Crawler',
+			verbose_name='Scanner',
                         help_text=mark_safe('Newspaper - Fast but may not work on some sites. Use Check Newspaper to determine the compatibility<br>' +
-                                            'Plan B - Slow but compatible with any sites.<br>' +
-                                            'Both - Uses both Newspaper and Plan B for maximum results.'))
+                                            'MediaCAT Crawler - Slow but compatible with any sites.<br>' +
+                                            'Both - Uses both Newspaper and MediaCAT CrawlerB for maximum results.'))
     class Meta:
         verbose_name = 'Referring Site'
 
