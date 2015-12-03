@@ -20,7 +20,7 @@ def create_warc(url, dir):
     rename_url = url.replace("/", "_")
     logging.info("creating warc \"{0}\" in \"{1}\"".format(rename_url, dir))
     subprocess.call(["mkdir", "-p", dir], cwd="..", close_fds=True)
-    subprocess.Popen(["wpull", "--user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36", "--no-robots", "--no-check-certificate", "--no-cookies", "--random-wait", "--phantomjs", "--no-phantomjs-snapshot", "--phantomjs-max-time", "150", "--warc-file",  rename_url,  url], cwd="../"+dir, close_fds=True, stderr=subprocess.PIPE)
+    return subprocess.Popen(["wpull", "--user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36", "--no-robots", "--no-check-certificate", "--no-cookies", "--random-wait", "--phantomjs", "--no-phantomjs-snapshot", "--phantomjs-max-time", "150", "--warc-file",  rename_url,  url], cwd="../"+dir, close_fds=True, stderr=subprocess.PIPE)
        
 
 def create_pdf(url, dir):
@@ -32,7 +32,7 @@ def create_pdf(url, dir):
     subprocess.call(["mkdir", "-p", dir], cwd="..", close_fds=True)
 
     # create png and img file
-    subprocess.Popen(["phantomjs", "../../src/rasterize.js", url,  rename_url], cwd="../"+dir )
+    return subprocess.Popen(["phantomjs", "../../src/rasterize.js", url,  rename_url], cwd="../"+dir )
 
 
 def enqueue_article(url):
@@ -54,7 +54,7 @@ def create_article_warc(url):
     ARTICLE_WARC_DIR/http:__www.facebook.com.warc.gz
     """
     config = configuration()['warc']
-    create_warc(url, config['dir'] + "/" + config['article_subdir'])
+    return create_warc(url, config['dir'] + "/" + config['article_subdir'])
 
 
 def create_twitter_warc(url):
@@ -66,7 +66,7 @@ def create_twitter_warc(url):
     TWITTER_WARC_DIR/https:__twitter.com_LeagueOfLegends
     """
     config = configuration()['warc']
-    create_warc(url, config['dir'] + "/" + config['twitter_subdir'])
+    return create_warc(url, config['dir'] + "/" + config['twitter_subdir'])
 
 
 def create_article_pdf(url):
@@ -78,4 +78,4 @@ def create_article_pdf(url):
     ARTICLE_WARC_DIR/http:__www.facebook.com.warc.gz
     """
     config = configuration()['pdf']
-    create_pdf(url, config['dir'] + "/" + config['article_subdir'])
+    return create_pdf(url, config['dir'] + "/" + config['article_subdir'])
