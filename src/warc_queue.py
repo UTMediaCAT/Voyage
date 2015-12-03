@@ -39,7 +39,7 @@ if __name__ == "__main__":
 		if (len(article_queue) > 0):
 			url = article_queue.pop(0)
 			article_processes.append(warc_creator.create_article_warc(url))
-			#article_processes.append(warc_creator.create_article_pdf(url))
+			article_processes.append(warc_creator.create_article_pdf(url))
 
 		article_processes[:] = [p for p in article_processes if p.poll() is None]
 		time.sleep(wait_time)
