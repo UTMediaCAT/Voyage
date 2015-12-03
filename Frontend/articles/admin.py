@@ -52,7 +52,7 @@ class ArticleAdmin(admin.ModelAdmin):
     def get_keywords(self, obj):
         keywords = ''
         for key in obj.keyword_set.all():
-            keywords += key.name + '<br>'
+            keywords += key.name + ',<br>'
         return keywords[:-4]
 
     get_keywords.short_description = 'Matched Keywords'
