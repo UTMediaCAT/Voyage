@@ -1,6 +1,28 @@
 import subprocess
 import yaml
 import logging
+import threading
+from subprocess32 import STDOUT, check_output as qx
+
+#this is used to set timeout for subprocess.Popen
+class RunCmd(threading.Thread):
+    def __init__(self, cmd, timeout):
+        threading.Thread.__init__(self)
+        self.cmd = cmd
+        self.timeout = timeout
+
+    def run(self):
+        self.p = sub.Popen(self.cmd)
+        self.p.wait()
+
+    def Run(self):
+        self.start()
+        self.join(self.timeout)
+
+        if self.is_alive():
+            self.p.terminate()      #use self.p.kill() if process needs a kill -9
+            self.join()
+
 
 def configuration():
     """ (None) -> dict
@@ -32,8 +54,7 @@ def create_pdf(url, dir):
     subprocess.call(["mkdir", "-p", dir], cwd="..", close_fds=True)
 
     # create png and img file
-    return subprocess.Popen(["phantomjs", "../../src/rasterize.js", url,  rename_url], cwd="../"+dir, close_fds=True)
-
+    return qx(["phantomjs", "../../src/rasterize.js", url,  rename_url], cwd="../"+dir, close_fds=True  ,stderr=STDOUT, timeout=60)
 
 def enqueue_article(url):
     """(url)-->None
