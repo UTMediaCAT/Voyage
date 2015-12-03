@@ -76,8 +76,9 @@ class ReferringSiteAdminForm(forms.ModelForm):
                             keep_article_html=False,
                             fetch_images=False,
                             language='en').size()
-            raise forms.ValidationError(mark_safe(('Newspaper found %i articles.<br>' +
-                                                   'If this amount is not reasonable to the amount the site does offers, consider changing crawler to <i>Plan B</i> or <i>Both</i>.')%count))
+            raise forms.ValidationError(mark_safe(('Newspaper RSS scan found %i articles.<br>' +
+                                                   'If this amount doesn\'t seem right, consider changing scanner to <i>MediaCAT Crawler</i> or <i>Both</i>.<br>' +
+                                                   'Uncheck \'Test Newspaper RSS Scan\' after you choose the scanner to dismiss this message.')%count))
             #self.add_error('check', 'Newspaper found %i articles.'%count)
         return self.cleaned_data
 

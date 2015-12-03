@@ -1,5 +1,6 @@
 from django.contrib import admin
 from articles.models import Article, Author, SourceSite, Keyword, SourceTwitter
+import re
 # Register your models here.
 
 import yaml, os
@@ -23,27 +24,40 @@ class SourceTwitterInline(admin.TabularInline):
 
 class ArticleAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None,               {'fields': ['url', 'domain', 'title']}),
-        ('Date information', {'fields': ['date_added', 'date_published', 'date_modified']})
+        ('Basic',               {'fields': ['url', 'domain']}),
+        ('Dates', {'fields': ['date_added', 'date_published', 'date_modified']}),
+        ('Content',               {'fields': ['title','highlighted_text']})
         ]
 
     inlines = [AuthorInline, SourceSiteInline, KeywordInline, SourceTwitterInline]
 
-    list_display = ('link_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_source_twitters', 'date_added', 'date_published', 'date_modified', 'link_options')
-    search_fields = ['url', 'title', 'author__name', 'keyword__name', 'sourcesite__url', 'sourcetwitter__name']
+    list_display = ('get_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_source_twitters', 'date_added', 'date_published', 'date_modified', 'link_options')
+    search_fields = ['url', 'domain', 'title', 'author__name', 'keyword__name', 'sourcesite__url', 'sourcetwitter__name']
     list_filter = ['domain', 'keyword__name', 'sourcesite__domain', 'sourcetwitter__name']
+    readonly_fields = ('url','domain','title','date_added','date_published','date_modified','text','highlighted_text',)
     ordering = ['-date_added']
     actions_on_top = True
-    list_per_page = 100
+    list_per_page = 20
+
+    def get_url(self, obj):
+        link_short = obj.url
+        if len(link_short) > 50:
+            link_short = link_short[:50]+"..."
+        return format('<a href="%s" target="_blank">%s</a>' % (obj.url, link_short))
+
+    get_url.short_description = 'URL'
+    get_url.admin_order_field = 'domain'
+    get_url.allow_tags = True
 
     def get_keywords(self, obj):
         keywords = ''
         for key in obj.keyword_set.all():
-            keywords += key.name + ', '
-        return keywords[:-2]
+            keywords += key.name + ',<br>'
+        return keywords[:-4]
 
     get_keywords.short_description = 'Matched Keywords'
     get_keywords.admin_order_field = 'keyword__name'
+    get_keywords.allow_tags = True
 
     def get_source_sites(self, obj):
         sources = ''
@@ -85,6 +99,19 @@ class ArticleAdmin(admin.ModelAdmin):
     get_authors.short_description = 'Authors'
     get_authors.admin_order_field = 'author__name'
 
+    def highlighted_text(self, obj):
+        tag_front="<strong><mark>"
+        tag_end = "</mark></strong>"
+        text = obj.text
+        for key in obj.keyword_set.all():
+            pattern = re.compile(key.name, re.IGNORECASE)
+            result = pattern.subn(tag_front+key.name+tag_end, text)
+            text = result[0]
+        return text
+
+    highlighted_text.short_description = 'Highlighted Text'
+    highlighted_text.allow_tags = True
+
     def link_url(self, obj):
         return format('<a href="%s" target="_blank">%s</a>' % (obj.url, obj.url))
 
@@ -94,8 +121,9 @@ class ArticleAdmin(admin.ModelAdmin):
 
     def link_options(self, obj):
         return format(('<a href="/admin/articles/article/%s">Details</a><br>' +\
-                       '<a href="/articles/warc/%s">Download</a>') % (str(obj.pk), obj.url.replace('/', '_')))
-
+                       '<a href="/articles/warc/%s">Donwload Warc</a><br>' +\
+                       '<a href="/articles/pdf/%s">View PDF</a><br>' +\
+                       '<a href="/articles/img/%s">View Screenshot</a>') % (str(obj.pk), obj.url.replace('/', '_'), obj.url.replace('/', '_'), obj.url.replace('/', '_')))
 
     link_options.allow_tags = True
     link_options.short_description = "Options"

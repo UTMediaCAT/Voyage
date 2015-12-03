@@ -1,0 +1,27 @@
+{% extends "admin/base_site.html" %}
+{% load staticfiles %}
+{% load explorer_tags %}
+
+
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/404.css' %}">
+<div class="error">
+        <div class="error-code m-b-10 m-t-20">404 <i class="fa fa-warning"></i></div>
+        <h3 class="font-bold">We couldn't find the page..</h3>
+
+        <div class="error-desc">
+            Sorry, but the resource you are looking for was either not found or does not exist. <br/>
+            Try in a few minitues later or click the button below to go back to the previous page.
+            <div>
+                <a class=" login-detail-panel-button btn" href="javascript:history.go(-1);">
+                        <i class="fa fa-arrow-left"></i>
+                        Go back to previous page
+                    </a>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
