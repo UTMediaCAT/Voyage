@@ -17,13 +17,12 @@ import warc_creator
 
 if __name__ == "__main__":
 	max_phantoms = 4
-	wait_time = 2
+	wait_time = 3
 	article_file_name = "article_warc.stream"
 
 	article_queue = []
 	while (True):
 		while (commands.getoutput('ps').count('phantomjs') >= max_phantoms):
-			print(commands.getoutput('ps').count('phantomjs'))
 			time.sleep(wait_time)
 
 		article_file = open(article_file_name, "r+")
@@ -33,7 +32,8 @@ if __name__ == "__main__":
 		article_file.truncate()
 		article_file.close()
 
-		print(article_queue[0])
 		url = article_queue.pop(0)
 		warc_creator.create_article_warc(url)
 		#warc_creator.create_article_pdf(url)
+
+		time.sleep(wait_time)
