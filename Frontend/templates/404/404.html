@@ -1,0 +1,31 @@
+{% extends "admin/base_site.html" %}
+{% load staticfiles %}
+{% load explorer_tags %}
+
+
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/404.css' %}">
+<div class="container">
+    	<div class="row">
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div class="error-template">
+							<h1>404 - Not Found</h1>
+
+							<div class="error-actions well well-lg">
+								<p>Sorry, the requested resource could not be found.</p>
+								<a title="Return to the previous page" href="javascript:history.go(-1);" class="btn btn-default btn-lg"><span class="glyphicon glyphicon-circle-arrow-left"></span>
+									Previous Page</a>
+								<a title="Home" href="/admin" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-dashboard"></span> Home </a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
