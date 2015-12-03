@@ -14,7 +14,7 @@ import time
 import signal
 import commands
 import warc_creator
-
+import subprocess32
 
 if __name__ == "__main__":
 	max_phantoms = 4
@@ -39,7 +39,11 @@ if __name__ == "__main__":
 		if (len(article_queue) > 0):
 			url = article_queue.pop(0)
 			article_processes.append(warc_creator.create_article_warc(url))
-			article_processes.append(warc_creator.create_article_pdf(url))
+			try:
+				article_processes.append(warc_creator.create_article_pdf(url))
+			except subprocess32.TimeoutExpired:
+				article_queue.append(url)
+				continue
 
 		article_processes[:] = [p for p in article_processes if p.poll() is None]
 		time.sleep(wait_time)
