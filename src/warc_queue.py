@@ -32,7 +32,7 @@ if __name__ == "__main__":
 		article_file.truncate()
 		article_file.close()
 
-		if (len(article_queue > 0)):
+		if (len(article_queue) > 0):
 			print(article_queue[0])
 			url = article_queue.pop(0)
 			warc_creator.create_article_warc(url)
