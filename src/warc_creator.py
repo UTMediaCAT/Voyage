@@ -32,7 +32,7 @@ def create_pdf(url, dir):
     subprocess.call(["mkdir", "-p", dir], cwd="..", close_fds=True)
 
     # create png and img file
-    return subprocess.Popen(["phantomjs", "../../src/rasterize.js", url,  rename_url], cwd="../"+dir )
+    return subprocess.Popen(["phantomjs", "../../src/rasterize.js", url,  rename_url], cwd="../"+dir, close_fds=True)
 
 
 def enqueue_article(url):
