@@ -25,7 +25,7 @@ if __name__ == "__main__":
 	article_processes = []
 	while (True):
 		while (len(article_processes) >= max_phantoms):
-			article_processes[:] = [p for p in article_processes if p.wait() is None]
+			article_processes[:] = [p for p in article_processes if p.poll() is None]
 			time.sleep(wait_time)
 
 		article_file = open(article_file_name, "r+")
@@ -41,5 +41,5 @@ if __name__ == "__main__":
 			article_processes.append(warc_creator.create_article_warc(url))
 			#article_processes.append(warc_creator.create_article_pdf(url))
 
-		article_processes[:] = [p for p in article_processes if p.wait() is None]
+		article_processes[:] = [p for p in article_processes if p.poll() is None]
 		time.sleep(wait_time)
