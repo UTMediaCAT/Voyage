@@ -39,7 +39,7 @@ def enqueue_article(url):
     """(url)-->None
     Saves the url into article queue file for warc_queue.py to pick up and download
     """
-    article_file_name = "article_warc_comm.stream"
+    article_file_name = "article_warc.stream"
     article_file = open(article_file_name, "a")
     article_file.write(url + "\n")
     article_file.close()

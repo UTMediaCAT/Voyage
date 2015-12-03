@@ -11,7 +11,7 @@ import django
 os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 from articles.models import*
 
-article_file_name = "article_warc_comm.stream"
+article_file_name = "article_warc.stream"
 
 article_file = open(article_file_name, "a")
 for article in Article.objects.all():

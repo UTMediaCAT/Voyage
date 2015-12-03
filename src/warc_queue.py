@@ -13,22 +13,26 @@ django.setup()
 import commands
 import warc_creator
 
-max_phantoms = 4
-wait_time = 2
-article_file_name = "article_warc_comm.stream"
 
-article_queue = []
-while (True):
-	while (commands.getoutput('ps').count('phantomjs') >= max_phantoms):
-		wait(wait_time)
+if __name__ == "__main__":
+	max_phantoms = 8
+	wait_time = 2
+	article_file_name = "article_warc.stream"
 
-	article_file = open(article_file_name, "r+")
-	for url in article_file:
-		article_queue.append(url.strip())
-	article_file.seek(0)
-	article_file.truncate()
-	article_file.close()
+	article_queue = []
+	while (True):
+		while (commands.getoutput('ps').count('phantomjs') >= max_phantoms):
+			print(commands.getoutput('ps').count('phantomjs'))
+			wait(wait_time)
 
-	url = article_queue.pop(0)
-	warc_creator.create_article_warc(url)
-	warc_creator.create_article_pdf(url)
+		print(article_queue)
+		article_file = open(article_file_name, "r+")
+		for url in article_file:
+			article_queue.append(url.strip())
+		article_file.seek(0)
+		article_file.truncate()
+		article_file.close()
+
+		url = article_queue.pop(0)
+		warc_creator.create_article_warc(url)
+		#warc_creator.create_article_pdf(url)
