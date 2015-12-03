@@ -20,7 +20,7 @@ def create_warc(url, dir):
     rename_url = url.replace("/", "_")
     logging.info("creating warc \"{0}\" in \"{1}\"".format(rename_url, dir))
     subprocess.call(["mkdir", "-p", dir], cwd="..", close_fds=True)
-    return subprocess.Popen(["wpull", "--user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36", "--no-robots", "--no-check-certificate", "--no-cookies", "--random-wait", "--phantomjs", "--no-phantomjs-snapshot", "--phantomjs-max-time", "150", "--warc-file",  rename_url,  url], cwd="../"+dir, close_fds=True, stderr=subprocess.PIPE)
+    return subprocess.Popen(["wpull", "--user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36", "--no-robots", "--no-check-certificate", "--no-cookies", "--random-wait", "--phantomjs", "--no-phantomjs-snapshot", "--phantomjs-max-time", "150", "--warc-file",  rename_url,  url], cwd="../"+dir, close_fds=True)
        
 
 def create_pdf(url, dir):
