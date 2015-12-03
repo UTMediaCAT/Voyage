@@ -11,6 +11,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 django.setup()
 
 import time
+import signal
 import commands
 import warc_creator
 
@@ -23,11 +24,13 @@ if __name__ == "__main__":
 	article_queue = []
 	while (True):
 		while (commands.getoutput('ps').count('phantomjs') >= max_phantoms):
+			signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 			time.sleep(wait_time)
 
 		article_file = open(article_file_name, "r+")
 		for url in article_file:
-			article_queue.append(url.strip())
+			if (url.strip() != ""):
+				article_queue.append(url.strip())
 		article_file.seek(0)
 		article_file.truncate()
 		article_file.close()
