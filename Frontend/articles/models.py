@@ -9,6 +9,7 @@ class Article(models.Model):
     date_added = models.DateTimeField('Date Added', blank=True, null=True)
     date_published = models.DateTimeField('Date Published', blank=True, null=True)
     date_modified = models.DateTimeField('Date Modified', blank=True, null=True)
+    text = models.TextField(max_length=None, blank=True)
 
     def __unicode__(self):
         if len(self.title) >= 30:
