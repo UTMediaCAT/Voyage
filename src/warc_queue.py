@@ -44,12 +44,14 @@ if __name__ == "__main__":
 			set time out for pdf generator
 			'''
 			p = warc_creator.create_article_pdf(url)
+
+			#wait for 30 seconds, if timeout, kill the process
 			num_polls = 0
 			while p.poll() is None:
 				# Waiting for the process to finish.
-				time.sleep(0.01)  # Avoid being a CPU busy loop.
+				time.sleep(0.1)  # Avoid being a CPU busy loop.
 				num_polls += 1
-				if num_polls > 3000:
+				if num_polls > 400:
 					p.kill()
 					article_queue.append(url)
 
