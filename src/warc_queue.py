@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
 		if (len(article_queue) > 0):
 			url = article_queue.pop(0)
-			#article_processes.append(warc_creator.create_article_warc(url))
+			article_processes.append(warc_creator.create_article_warc(url))
 
 			'''
 			set time out for pdf generator
@@ -52,7 +52,7 @@ if __name__ == "__main__":
 				time.sleep(0.1)  # Avoid being a CPU busy loop.
 				num_polls += 1
 				if num_polls > 400:
-					p.kill()
+					p.terminate()
 					article_queue.append(url)
 
 			article_processes.append(p)
