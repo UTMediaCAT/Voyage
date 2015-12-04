@@ -14,10 +14,10 @@ import time
 import signal
 import commands
 import warc_creator
-import subprocess32
+
 
 if __name__ == "__main__":
-	max_phantoms = 4
+	max_phantoms = 5
 	wait_time = 5
 	article_file_name = "article_warc.stream"
 
@@ -38,12 +38,25 @@ if __name__ == "__main__":
 
 		if (len(article_queue) > 0):
 			url = article_queue.pop(0)
-			article_processes.append(warc_creator.create_article_warc(url))
-			try:
-				article_processes.append(warc_creator.create_article_pdf(url))
-			except subprocess32.TimeoutExpired:
-				article_queue.append(url)
-				continue
+			#article_processes.append(warc_creator.create_article_warc(url))
+
+			'''
+			set time out for pdf generator
+			'''
+			p = warc_creator.create_article_pdf(url)
+			num_polls = 0
+			while p.poll() is None:
+				# Waiting for the process to finish.
+				time.sleep(0.01)  # Avoid being a CPU busy loop.
+				num_polls += 1
+				if num_polls > 3000:
+					p.kill()
+					article_queue.append(url)
+
+			article_processes.append(p)
+
+
 
 		article_processes[:] = [p for p in article_processes if p.poll() is None]
+
 		time.sleep(wait_time)
