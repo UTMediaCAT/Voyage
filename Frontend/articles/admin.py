@@ -104,7 +104,7 @@ class ArticleAdmin(admin.ModelAdmin):
         tag_end = "</mark></strong>"
         text = obj.text
         for key in obj.keyword_set.all():
-            pattern = re.compile(key.name, re.IGNORECASE)
+            pattern = re.compile('[^a-z]' + key.name + '[^a-z]', re.IGNORECASE)
             result = pattern.subn(tag_front+key.name+tag_end, text)
             text = result[0]
         return text
