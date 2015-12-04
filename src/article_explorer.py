@@ -287,12 +287,14 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 for source in sources[0]:
                     if not db_article.sourcesite_set.filter(url=source[0]):
                         db_article.sourcesite_set.create(url=source[0],
-                                              domain=source[1], matched=True, local=(source[1] in site["url"]))
+                                              domain=source[1], anchor_text=source[2],
+                                              matched=True, local=(source[1] in site["url"]))
 
                 for source in sources[1]:
                     if not db_article.sourcesite_set.filter(url=source[0]):
                         db_article.sourcesite_set.create(url=source[0],
-                                              domain=source[1], matched=False, local=(source[1] in site["url"]))
+                                              domain=source[1], anchor_text=source[2],
+                                              matched=False, local=(source[1] in site["url"]))
 
             warc_creator.enqueue_article(url)
         except (KeyboardInterrupt, SystemExit):
@@ -343,9 +345,9 @@ def get_sources_sites(article, sites):
             continue
         if domain in formatted_sites:
             # If it matches even once, append the site to the list
-            result_urls_matched.append([url.href, domain])
+            result_urls_matched.append([url.href, domain, url.text])
         else:
-            result_urls_unmatched.append([url.href, domain])
+            result_urls_unmatched.append([url.href, domain, url.text])
 
     # Return the list
     return [result_urls_matched,result_urls_unmatched]
