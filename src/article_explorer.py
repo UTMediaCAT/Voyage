@@ -248,11 +248,13 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
 
                 for source in sources[0]:
                     db_article.sourcesite_set.create(url=source[0],
-                                              domain=source[1], matched=True, local=(source[1] in site["url"]))
+                                              domain=source[1], anchor_text=source[2],
+                                              matched=True, local=(source[1] in site["url"]))
 
                 for source in sources[1]:
                     db_article.sourcesite_set.create(url=source[0],
-                                              domain=source[1], matched=False, local=(source[1] in site["url"]))
+                                              domain=source[1], anchor_text=source[2],
+                                              matched=False, local=(source[1] in site["url"]))
 
             else:
                 logging.info("Modifying existing Article in the DB")
