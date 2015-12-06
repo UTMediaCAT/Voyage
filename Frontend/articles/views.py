@@ -65,6 +65,8 @@ def getWarc(request, filename):
 
         return res
     except IOError:
+        # if the warc file doesn't exist, display 404 page to user, and enqueue the url
+        # to task queue to retry generating warc
         url = filename.replace("_", "/")
         warc_creator.enqueue_article(url)
         return render(request, '404/404.html')
@@ -76,14 +78,16 @@ def getPDF(request, filename):
         path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', config['dir'] + "/" + config['article_subdir']))
         filename_ext = path + "/" + filename + ".pdf"
         pdf = open(filename_ext, "rb")
+        # open pdf in browser instead of downloading it
         res = HttpResponse(pdf, content_type="application/pdf")
         pdf.close()
-
         return res
+
     except IOError:
+        # if the pdf file doesn't exist, display 404 page to user, and enqueue the url
+        # to task queue retry generating pdf
         url = filename.replace("_", "/")
         warc_creator.enqueue_article(url)
-
         return render(request, '404/404.html')
 
 def getImg(request, filename):
@@ -93,10 +97,13 @@ def getImg(request, filename):
         path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', config['dir'] + "/" + config['article_subdir']))
         filename_ext = path + "/" + filename + ".png"
         pdf = open(filename_ext, "rb")
+        # open img in browser instead of downloading it
         res = HttpResponse(pdf, content_type="image/png")
         pdf.close()
         return res
     except IOError:
+        # if the img file doesn't exist, display 404 page to user, and enqueue the url
+        # to task queue to retry generating img
         url = filename.replace("_", "/")
         warc_creator.enqueue_article(url)
         return render(request, '404/404.html')
