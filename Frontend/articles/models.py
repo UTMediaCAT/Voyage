@@ -28,9 +28,10 @@ class SourceSite(models.Model):
     article = models.ForeignKey(Article)
     url = models.CharField(max_length=2000)
     domain = models.URLField(max_length=2000, verbose_name="Source Site")
+    anchor_text = models.CharField(max_length=2000, verbose_name="Anchor Text")
     matched = models.BooleanField(default=False)
     local = models.BooleanField(default=True)
-    
+
     def __unicode__(self):
         return self.url
 

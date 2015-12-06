@@ -11,7 +11,7 @@ class AuthorInline(admin.TabularInline):
 
 class SourceSiteInline(admin.TabularInline):
     model = SourceSite
-    fields = ['url', 'domain', 'matched', 'local']
+    fields = ['url', 'domain', 'anchor_text', 'matched', 'local']
     extra = 0
 
 class KeywordInline(admin.TabularInline):
@@ -70,7 +70,7 @@ class ArticleAdmin(admin.ModelAdmin):
                 link_short = link[7:]
                 if len(link_short) > 30:
                     link_short = link_short[:30]+"..."
- 
+
                 sources += format('<a href="%s" target="_blank">%s</a>' % (link, link_short))
                 sources += '<br>'
         return sources[:-4]
