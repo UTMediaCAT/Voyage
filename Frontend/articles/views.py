@@ -3,6 +3,7 @@ from django.template import RequestContext, loader
 from articles.models import Article, Keyword, SourceSite, Author, SourceTwitter
 import sys, os, time, json, yaml, urllib
 import common
+import warc_creator
 import subprocess
 
 def index(request):
@@ -64,6 +65,8 @@ def getWarc(request, filename):
 
         return res
     except IOError:
+        url = filename.replace("_", "/")
+        warc_creator.enqueue_article(url)
         return render(request, '404/404.html')
     
 
@@ -78,8 +81,13 @@ def getPDF(request, filename):
 
         return res
     except IOError:
+        url = filename.replace("_", "/")
+        warc_creator.enqueue_article(url)
+
         return render(request, '404/404.html')
+
 def getImg(request, filename):
+
     try:
         config = common.get_config()['pdf']
         path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', config['dir'] + "/" + config['article_subdir']))
@@ -89,5 +97,7 @@ def getImg(request, filename):
         pdf.close()
         return res
     except IOError:
+        url = filename.replace("_", "/")
+        warc_creator.enqueue_article(url)
         return render(request, '404/404.html')
 
