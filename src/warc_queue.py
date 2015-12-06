@@ -1,4 +1,9 @@
-__author__ = 'sughandj'
+'''
+This script runs as  a task queue for warc, pdf and img generator. It limits the maximum number of process that
+generates warc, pdf and img so that the host will not get overloaded.
+This script will automatically run along with the server. It will terminates when server stopped running.
+'''
+__authors__ = 'sughandj', 'wangx173'
 
 import sys
 import os
@@ -15,56 +20,58 @@ import signal
 import commands
 import warc_creator
 
-
 if __name__ == "__main__":
-	max_phantoms = 2
-	wait_time = 5
 
-	article_queue = []
-	article_processes = []
-	while (True):
-		while (len(article_processes) >= max_phantoms):
-			article_processes[:] = [p for p in article_processes if p.poll() is None]
-			time.sleep(wait_time)
+    # number of phantomjs process can be run at a time
+    max_phantoms = 3
+    # amount of time between 2 iterations (secs)
+    wait_time = 5
+    article_queue = []
+    article_processes = []
 
-		article_file_name = "article_warc.stream"
-		#if not tasks remaining, retry thoes url that fialed before
-		if os.stat(article_file_name).st_size == 0:
-			article_file_name = "article_warc.stream.failure"
+    # The process keeps running in the background
+    while (True):
+        while (len(article_processes) >= max_phantoms):
+            article_processes[:] = [p for p in article_processes if p.poll() is None]
+            time.sleep(wait_time)
+        # article_warc.stream is the temporary file storing the list of urls(or tasks) that need to run.
+        article_file_name = "article_warc.stream"
+        # if not tasks remaining, retry thoes url that failed before
+        if os.stat(article_file_name).st_size == 0:
+            article_file_name = "article_warc.stream.failure"
+        # read the file and get all the urls
+        article_file = open(article_file_name, "r+")
+        for url in article_file:
+            if (url.strip() != "" and (not url.strip() in article_queue)):
+                article_queue.append(url.strip())
+        article_file.seek(0)
+        article_file.truncate()
+        article_file.close()
 
-		article_file = open(article_file_name, "r+")
-		for url in article_file:
-			if (url.strip() != "" and (not url.strip() in article_queue)):
-				article_queue.append(url.strip())
-		article_file.seek(0)
-		article_file.truncate()
-		article_file.close()
+        if (len(article_queue) > 0):
+            # get first element in the queue
+            url = article_queue.pop(0)
+            article_processes.append(warc_creator.create_article_warc(url))
 
-		if (len(article_queue) > 0):
-			url = article_queue.pop(0)
-			article_processes.append(warc_creator.create_article_warc(url))
+            # set time out for pdf generator
+            p = warc_creator.create_article_pdf(url)
+            # wait for 30 seconds, if timeout, kill the process
+            num_polls = 0
+            while p.poll() is None:
+                # Waiting for the process to finish.
+                time.sleep(0.1)  # Avoid being a CPU busy loop.
+                num_polls += 1
+                if num_polls > 600:  # after 60 secs, it will be considered as failure,
+					# the process will be terminated and put into failure list
+                    p.terminate()
+                    fail_name = "article_warc.stream.failure"
+                    fail = open(fail_name, "a")
+                    fail.write(url + "\n")
+                    fail.close()
+                    break
 
-			'''
-			set time out for pdf generator
-			'''
-			p = warc_creator.create_article_pdf(url)
+            article_processes.append(p)
 
-			#wait for 30 seconds, if timeout, kill the process
-			num_polls = 0
-			while p.poll() is None:
-				# Waiting for the process to finish.
-				time.sleep(0.1)  # Avoid being a CPU busy loop.
-				num_polls += 1
-				if num_polls > 600:
-					p.terminate()
-					fail_name = "article_warc.stream.failure"
-					fail = open(fail_name, "a")
-					fail.write(url + "\n")
-					fail.close()
-					break
-
-			article_processes.append(p)
-
-		article_processes[:] = [p for p in article_processes if p.poll() is None]
-
-		time.sleep(wait_time)
+        article_processes[:] = [p for p in article_processes if p.poll() is None]
+		# wait wait_time before next iteration
+        time.sleep(wait_time)
