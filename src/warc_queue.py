@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
 		article_file = open(article_file_name, "r+")
 		for url in article_file:
-			if (url.strip() != ""):
+			if (url.strip() != "" and (not url.strip() in article_queue)):
 				article_queue.append(url.strip())
 		article_file.seek(0)
 		article_file.truncate()
