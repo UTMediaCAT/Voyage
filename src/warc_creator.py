@@ -27,7 +27,7 @@ def create_warc(url, dir):
 
 def create_pdf(url, dir):
     """
-    creates a warc file from url and places it in dest
+    creates a pdf file from url and places it in dest
     """
     rename_url = url.replace("/", "_")
     logging.info("creating pdf \"{0}\" in \"{1}\"".format(rename_url, dir))
@@ -72,11 +72,11 @@ def create_twitter_warc(url):
 
 def create_article_pdf(url):
     """(url)-->None
-    giving url it will export warc file
+    giving url it will export pdf file
 
-    create_warc("http://www.facebook.com")
-    it should have a warc.gz file under
-    ARTICLE_WARC_DIR/http:__www.facebook.com.warc.gz
+    create_article_pdf("http://www.facebook.com")
+    it should have a .pdf file under
+    ARTICLE_WARC_DIR/http:__www.facebook.com.pdf
     """
     config = configuration()['pdf']
     return create_pdf(url, config['dir'] + "/" + config['article_subdir'])
