@@ -6,6 +6,8 @@ import re
 import lxml.html
 from bs4 import UnicodeDammit
 import collections
+import urlnorm
+from urlparse import urlparse, urljoin, urlunparse
 
 Link = collections.namedtuple("Link", ["href", "text"])
 
@@ -42,7 +44,14 @@ class ExplorerArticle(object):#derive from object for getters/setters
                 logging.debug(u"not a html: {0}".format(response.headers["content-type"]))
                 return False
 
-            self.canonical_url = response.url
+            try:
+                parsed_url = urlparse(response.url)
+                parsed_as_list = list(parsed_url)
+                parsed_as_list[5] = ''
+                self.canonical_url = urlunparse(urlnorm.norm_tuple(*parsed_as_list))
+            except Exception as e:
+                logging.info(u"skipping malformed url {0}. Error: {1}".format(response.url, str(e)))
+                return False
 
             if response.encoding != FAIL_ENCODING:
                 html = response.text
