@@ -23,7 +23,7 @@ import warc_creator
 if __name__ == "__main__":
 
     # number of phantomjs process can be run at a time
-    max_phantoms = 3
+    max_phantoms = 2
     # amount of time between 2 iterations (secs)
     wait_time = 5
     article_queue = []
