@@ -10,6 +10,8 @@ class Article(models.Model):
     date_published = models.DateTimeField('Date Published', blank=True, null=True)
     date_modified = models.DateTimeField('Date Modified', blank=True, null=True)
     text = models.TextField(max_length=None, blank=True)
+    found_by = models.CharField(max_length=100, blank=True)
+    language = models.CharField(max_length=200, blank=True)
 
     def __unicode__(self):
         if len(self.title) >= 30:
