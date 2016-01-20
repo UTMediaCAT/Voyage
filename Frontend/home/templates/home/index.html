@@ -38,7 +38,7 @@
           {% for rsite in rsites %}
           <tr>
               <td>{{ forloop.counter }}</td>
-              <td>{{ rsite }}</td>
+               <td><a href={{ rsite }}>{{ rsite }} </a> </td>
           </tr>
           {% endfor %}
           </tbody>
@@ -60,7 +60,7 @@
           {% for rtwitter in rtwitters %}
           <tr>
               <td>{{ forloop.counter }}</td>
-              <td>{{ rtwitter }}</td>
+               <td>{{ rtwitter }} </td>
           </tr>
           {% endfor %}
           </tbody>
@@ -82,7 +82,7 @@
           {% for ssite in ssites %}
           <tr>
               <td>{{ forloop.counter }}</td>
-              <td>{{ ssite }}</td>
+               <td><a href={{ ssite }}>{{ ssite }} </a> </td>
           </tr>
           {% endfor %}
           </tbody>
@@ -174,31 +174,7 @@
       <iframe width="100%" frameborder="0" onload="resizeIframe(this);" src="/visualizations/{{ result }}_js"></iframe>
   </div>
 
-{% elif downloads %}
 
-  <div class="showback">
-    <h4><i class="fa fa-angle-right"></i> Article JSON </h4>
-    <form method="post" action="/articles/getJson">
-      {% csrf_token %}
-      <input type="submit" class="btn btn-primary" value="Download"></input>
-    </form>
-  </div>
-
-  <div class="showback">
-    <h4><i class="fa fa-angle-right"></i> Tweet JSON </h4>
-    <form method="post" action="/tweets/getJson">
-      {% csrf_token %}
-      <input type="submit" class="btn btn-warning" value="Download"></input>
-    </form>
-  </div>
-
-  <div class="showback">
-    <h4><i class="fa fa-angle-right"></i> Scope JSON </h4>
-    <form method="post" action="/explorer/getJson">
-      {% csrf_token %}
-      <input type="submit" class="btn btn-danger" value="Download"></input>
-    </form>
-  </div>
 
 {% elif contact %}
 
