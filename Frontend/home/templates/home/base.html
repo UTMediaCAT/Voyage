@@ -1,7 +1,6 @@
 {% load staticfiles %}
 {% load explorer_tags %}
 
-<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -10,13 +9,10 @@
     <title>UTMediaCAT</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="{% static "home/css/bootstrap.css" %}" rel="stylesheet">
+    <link href="{% static "home/css/bootstrap.min.css" %}" rel="stylesheet">
     <!--external css-->
-    <link href="{% static "home/font-awesome/css/font-awesome.css" %}" rel="stylesheet" />
-        
-    <!-- Custom styles for this template -->
-    <link href="{% static "home/css/style.css" %}" rel="stylesheet">
-    <link href="{% static "home/css/style-responsive.css" %}" rel="stylesheet">
+    <link href="{% static "home/font-awesome/css/font-awesome.min.css" %}" rel="stylesheet">
+    <link href="{% static "home/css/modern-business.css" %}" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -27,119 +23,124 @@
 
   <body>
 
-  <section id="container" >
+
       <!-- **********************************************************************************************************************************************************
-      TOP BAR CONTENT & NOTIFICATIONS
+      MAIN  MENU
       *********************************************************************************************************************************************************** -->
-      <!--header start-->
-      <header class="header black-bg">
-              <div class="sidebar-toggle-box">
-                  <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
-              </div>
-            <!--logo start-->
-            <a href="/" class="logo"><b>UTMediaCAT</b></a>
-            <!--logo end-->
-            
-            <div class="top-menu">
-            	<ul class="nav pull-right top-menu">
-                    <li><a class="logout" href="https://github.com/UTMediaCAT/Voyage">View Github</a></li>
-            	</ul>
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">UTMediaCAT</a>
             </div>
-        </header>
-      <!--header end-->
-      
-      <!-- **********************************************************************************************************************************************************
-      MAIN SIDEBAR MENU
-      *********************************************************************************************************************************************************** -->
-      <!--sidebar start-->
-      <aside>
-          <div id="sidebar"  class="nav-collapse ">
-              <!-- sidebar menu start-->
-              <ul class="sidebar-menu" id="nav-accordion">
-              
-              	  <p class="centered"><a href="http://www.utsc.utoronto.ca/anthropology/alejandro-paz"><img src="#" class="img-circle" width="60"></a></p>
-              	  <h5 class="centered">UTMediaCat</h5>
-              	  	
-                  <li class="mt">
-                      <a class="{{ overview }}" href="/">
-                          <i class="fa fa-home"></i>
-                          <span>Overview</span>
-                      </a>
-                  </li>
-                  <li class="sub-menu">
-                      <a class="{{ statistics }}" href="javascript:;" >
-                          <i class=" fa fa-bar-chart-o"></i>
-                          <span>Statistics</span>
-                      </a>
-                      <ul class="sub">
-                          <li class="{{ statistics_articles }}"><a  href="statistics_articles">Articles</a></li>
-                          <li class="{{ statistics_tweets }}"><a  href="statistics_tweets">Tweets</a></li>
-                      </ul>
-                  </li>
-                  <li class="sub-menu">
-                      <a class="{{ visualizations }}" href="javascript:;" >
-                          <i class="fa fa-desktop"></i>
-                          <span>Visualizations</span>
-                      </a>
-                      <ul class="sub">
-                          <li class="{{ article_sourcesite }}"><a  href="article_sourcesite">Article - Source Site</a></li>
-                          <li class="{{ article_keyword }}"><a  href="article_keyword">Article - Keyword</a></li>
-                          <li class="{{ article_weighted }}"><a  href="article_weighted">Article - Weighted</a></li>
-                          <li class="{{ article_movable }}"><a  href="article_movable">Article - Movable</a></li>
-                          <li class="{{ tweet_sourcesite }}"><a  href="tweet_sourcesite">Tweet - Source Site</a></li>
-                          <li class="{{ tweet_keyword }}"><a  href="tweet_keyword">Tweet - Keyword</a></li>
-                          <li class="{{ tweet_weighted }}"><a  href="tweet_weighted">Tweet - Weighted</a></li>
-                          <li class="{{ tweet_movable }}"><a  href="tweet_movable">Tweet - Movable</a></li>
-                      </ul>
-                  </li>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/about">About</a>
+                    </li>
+                    <li>
+                        <a href="services.html">Services</a>
+                    </li>
+                    <li>
+                        <a href="contact.html">Contact</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Portfolio <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="portfolio-1-col.html">1 Column Portfolio</a>
+                            </li>
+                            <li>
+                                <a href="portfolio-2-col.html">2 Column Portfolio</a>
+                            </li>
+                            <li>
+                                <a href="portfolio-3-col.html">3 Column Portfolio</a>
+                            </li>
+                            <li>
+                                <a href="portfolio-4-col.html">4 Column Portfolio</a>
+                            </li>
+                            <li>
+                                <a href="portfolio-item.html">Single Portfolio Item</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Blog <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="blog-home-1.html">Blog Home 1</a>
+                            </li>
+                            <li>
+                                <a href="blog-home-2.html">Blog Home 2</a>
+                            </li>
+                            <li>
+                                <a href="blog-post.html">Blog Post</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Other Pages <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="full-width.html">Full Width Page</a>
+                            </li>
+                            <li>
+                                <a href="sidebar.html">Sidebar Page</a>
+                            </li>
+                            <li>
+                                <a href="faq.html">FAQ</a>
+                            </li>
+                            <li>
+                                <a href="404.html">404</a>
+                            </li>
+                            <li>
+                                <a href="pricing.html">Pricing Table</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
 
-                  <li class="sub-menu">
-                      <a class="{{ contact }}" href="contact">
-                          <i class="fa fa-envelope"></i>
-                          <span>Contact Us</span>
-                      </a>
-                  </li>
-              </ul>
-              <!-- sidebar menu end-->
-          </div>
-      </aside>
-      <!--sidebar end-->
-      
-      <!-- **********************************************************************************************************************************************************
-      MAIN CONTENT
-      *********************************************************************************************************************************************************** -->
-      <!--main content start-->
-      <section id="main-content">
-          <section class="wrapper site-min-height">
-            {% block content %}{% endblock %}
-		      </section><! --/wrapper -->
-      </section><!-- /MAIN CONTENT -->
+    <!-- **********************************************************************************************************************************************************
+    MAIN CONTENT
+    *********************************************************************************************************************************************************** -->
+    <!--main content start-->
+    <section id="main-content">
+      <section class="wrapper site-min-height">
+        {% block content %}{% endblock %}
+          </section><! --/wrapper -->
+    </section><!-- /MAIN CONTENT -->
+    <!--main content end-->
 
-      <!--main content end-->
-      <!--footer start-->
-      <footer class="site-footer">
-          <div class="text-center">
-              University of Toronto
-              <a href="#" class="go-top">
-                  <i class="fa fa-angle-up"></i>
-              </a>
-          </div>
-      </footer>
-      <!--footer end-->
-  </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="row">
+            <div class="col-lg-12">
+                <p>Copyright &copy; UTMediaCat 2016</p>
+            </div>
+        </div>
+    </footer>
+
+
 
     <!-- js placed at the end of the document so the pages load faster -->
     <script src="{% static "home/js/jquery.js" %}"></script>
     <script src="{% static "home/js/bootstrap.min.js" %}"></script>
-    <script src="{% static "home/js/jquery-ui-1.9.2.custom.min.js" %}"></script>
-    <script src="{% static "home/js/jquery.ui.touch-punch.min.js" %}"></script>
-    <script class="include" type="text/javascript" src="{% static "home/js/jquery.dcjqaccordion.2.7.js" %}"></script>
-    <script src="{% static "home/js/jquery.scrollTo.min.js" %}"></script>
-    <script src="{% static "home/js/jquery.nicescroll.js" %}" type="text/javascript"></script>
+    {% block myscript %}{% endblock %}
 
+    </body>
 
-    <!--common script for all pages-->
-    <script src="{% static "home/js/common-scripts.js" %}"></script>
-
-  </body>
 </html>
