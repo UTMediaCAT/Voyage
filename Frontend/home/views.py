@@ -36,7 +36,7 @@ def index(request):
 			rsites.append(rsite.url)
 
 		content["rsites"] = rsites
-		
+
 		rtwitter_objs = ReferringTwitter.objects.all()
 		rtwitters = []
 
@@ -75,3 +75,12 @@ def index(request):
 
 def about(request):
 	return render(request, 'home/about.html', {})
+
+def services(request):
+	return render(request, 'home/services.html', {})
+
+def faq(request):
+	return render(request, 'home/faq.html', {})
+
+def contact(request):
+	return render(request, 'home/contact.html', {})
