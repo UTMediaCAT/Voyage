@@ -26,6 +26,15 @@ If the version available through your package mananger is not 2.7.10 or above, y
 
 If any problem occurs, please contact one of us on the email address listed above.
 
+##Configuration
+You can edit the config.yaml file for personal settings
+
+:bangbang: IMPORTANT :bangbang: For production instances, be sure to use a new randomized SECRET_KEY in `Frontend/Frontend/settings.py`. A new SECRET key can be generate with the following python script:
+```
+import random
+''.join(random.SystemRandom().choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for _ in range(50))
+```
+
 ##Usage: Web Server
 ####Through terminal
 * To start `python server.py run`
@@ -39,9 +48,6 @@ The default is [http://127.0.0.1/admin](http://127.0.0.1/admin)
 __Default Login Credentials:__
 * User: admin
 * Password: admin
-
-##Configuration
-You can edit the config.yaml file for personal settings
 
 #Tabs
 ####Home
