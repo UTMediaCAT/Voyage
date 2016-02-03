@@ -33,7 +33,6 @@ class SourceSite(models.Model):
     anchor_text = models.CharField(max_length=2000, verbose_name="Anchor Text")
     matched = models.BooleanField(default=False)
     local = models.BooleanField(default=True)
-
     def __unicode__(self):
         return self.url
 

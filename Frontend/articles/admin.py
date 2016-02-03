@@ -1,5 +1,7 @@
 from django.contrib import admin
-from articles.models import Article, Author, SourceSite, Keyword, SourceTwitter
+from articles.models import Article, Author, Keyword, SourceTwitter, SourceSite
+
+
 import re
 # Register your models here.
 
@@ -131,3 +133,57 @@ class ArticleAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Article, ArticleAdmin)
+
+class SourceSiteAdmin(admin.ModelAdmin):
+
+
+    fieldsets = [
+        (None,               {'fields': ['url', 'domain', 'get_source_sites']})
+        ]
+    list_display = (['get_url','domain' , 'get_source_sites'] )
+    search_fields = [ 'url', 'domain', 'get_source_sites']
+    ordering = ['url']
+    actions_on_top = True
+    list_per_page = 20
+
+    def get_url(self, obj):
+
+        if 'http://www.' in obj.url:
+            link = 'http://' + obj.url[11:]
+            link_short = link[7:]
+        else:
+            link = obj.url
+            link_short = link[7:]
+
+            if len(link_short) > 30:
+                link_short = link_short[:30]+"..."
+
+
+        return format('<a href="%s" target="_blank">%s</a>' % (obj.url, link_short))
+
+    get_url.short_description = 'Source URL'
+    get_url.admin_order_field = 'url'
+    get_url.allow_tags = True
+
+    def get_source_sites(self, obj):
+        arctiles = ''
+        arctiles_set =  Article.objects.all()
+
+        for arc in arctiles_set:
+            if  arc == obj.article:
+                arctiles += arc.title + '<br>'
+
+        return arctiles[:-4]
+
+    get_source_sites.short_description = 'Matched Articles'
+    get_source_sites.admin_order_field = 'article'
+    get_source_sites.allow_tags = True
+
+
+    def get_queryset(self, request):
+        qs = super(SourceSiteAdmin, self).get_queryset(request)
+        qs = qs.filter(matched=True)
+        return qs
+
+
+admin.site.register(SourceSite, SourceSiteAdmin)
