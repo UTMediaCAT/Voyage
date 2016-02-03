@@ -147,19 +147,17 @@ class SourceSiteAdmin(admin.ModelAdmin):
     list_per_page = 20
 
     def get_url(self, obj):
-
-        if 'http://www.' in obj.url:
-            link = 'http://' + obj.url[11:]
-            link_short = link[7:]
+        link = obj.url.lstrip("/")
+        if 'http://www.' in link:
+                link = 'http://' + link[11:]
         else:
-            link = obj.url
-            link_short = link[7:]
+            link = 'http://' + link
 
-            if len(link_short) > 30:
-                link_short = link_short[:30]+"..."
+        link_short = link[7:]
+        if len(link_short) > 30:
+            link_short = link_short[:30]+"..."
 
-
-        return format('<a href="%s" target="_blank">%s</a>' % (obj.url, link_short))
+        return format('<a href="%s" target="_blank">%s</a>' % (link, link_short))
 
     get_url.short_description = 'Source URL'
     get_url.admin_order_field = 'url'
@@ -182,7 +180,7 @@ class SourceSiteAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super(SourceSiteAdmin, self).get_queryset(request)
-        qs = qs.filter(matched=True)
+        qs = qs.filter(matched=True).distinct()
         return qs
 
 
