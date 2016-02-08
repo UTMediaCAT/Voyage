@@ -214,21 +214,28 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 
             logging.info("match found")
 
-            #load selectors from db!
+            # 0 = Title
+            # 1 = Author
+            # 2 = Date Published
+            # 3 = Date Modified
             #parameter is a namedtuple of "css" and "regex"
-            authors = article.evaluate_css_selectors(site['css_selectors']) or article.authors
-            pub_date = article.evaluate_css_selectors(site['css_selectors']) or get_pub_date(article)
+            title = article.evaluate_css_selectors(site['css_selectors'][0]) or article.title
+            authors = article.evaluate_css_selectors(site['css_selectors'][1]) or article.authors
+            pub_date = article.evaluate_css_selectors(site['css_selectors'][2]) or get_pub_date(article)
+            mod_date = article.evaluate_css_selectors(site['css_selectors'][3])
+
             # Check if the entry already exists
             db_article_list = Article.objects.filter(url=url)
             if not db_article_list:
                 logging.info("Adding new Article to the DB")
                 # If the db_article is new to the database,
                 # add it to the database
-                db_article = Article(title=article.title, url=url,
+                db_article = Article(title=title, url=url,
                                   domain=site["url"],
                                   date_added=timezone.localtime(
                                       timezone.now()),
                                   date_published=pub_date,
+                                  date_modified=mod_date,
                                   text=text)
                 db_article.save()
 
@@ -261,12 +268,13 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 # If the db_article already exists,
                 # update all fields except date_added
                 db_article = db_article_list[0]
-                db_article.title = article.title
+                db_article.title = title
                 db_article.url = url
                 db_article.domain = site["url"]
                 # Do not update the added date
                 # db_article.date_added = today
                 db_article.date_published = pub_date
+                db_article.date_modified = mod_date
                 db_article.text = text
                 db_article.save()
 
@@ -414,11 +422,11 @@ def explore():
     referring_sites = []
     index = 0
     for site in ReferringSite.objects.all():
-        referring_sites.append({"name":site.name, "url":site.url, "type":site.mode, "filters":[], "css_selectors":[]})
+        referring_sites.append({"name":site.name, "url":site.url, "type":site.mode, "filters":[], "css_selectors":{0:[], 1:[], 2:[], 3:[]}})
         for filt in site.referringsitefilter_set.all():
             referring_sites[index]["filters"].append([filt.pattern, filt.regex])
         for css in site.referringsitecssselector_set.all():
-            referring_sites[index]["css_selectors"].append({'field': css.field_choice, 'pattern': css.pattern, 'regex': css.regex})
+            referring_sites[index]["css_selectors"][css.field_choice].append({'pattern': css.pattern, 'regex': css.regex})
 
         index += 1
     logging.info("Collected {0} Referring Sites from Database".format(len(referring_sites)))
