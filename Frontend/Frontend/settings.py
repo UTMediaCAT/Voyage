@@ -111,7 +111,7 @@ SUIT_CONFIG = {
         {'label': 'Scope', 'icon':'icon-screenshot', 
          'models': ('explorer.referringsite', 'explorer.referringtwitter', 'explorer.sourcesite', 'explorer.sourcetwitter', 'explorer.keyword')},
         
-        {'label': 'Data', 'icon':'icon-book', 'models': ('articles.article', 'tweets.tweet',  'articles.sourcesite', 'tweets.sourcesite')},
+        {'label': 'Data', 'icon':'icon-book', 'models': ('articles.article', 'tweets.tweet',  'articles.sourcesite' )},
 
         {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
 
