@@ -166,11 +166,12 @@ class SourceSiteAdmin(admin.ModelAdmin):
 
     def get_matched_article(self, obj):
         arctiles = ''
-        arctiles_set =  Article.objects.filter(id=obj.article.id)
+        source_set =  SourceSite.objects.filter(url=obj.url)
 
-        for arc in arctiles_set:
-                arctiles += format('<a href="%s" target="_blank">%s</a>' % (arc.url, arc.title))
-                arctiles +=  '<br>'
+        for source in source_set:
+            arctile =  Article.objects.get(id=source.article.id)
+            arctiles += format('<a href="%s" target="_blank">%s</a>' % (arctile.url, arctile.title))
+            arctiles +=  '<br>'
 
         return arctiles[:-4]
 
@@ -179,23 +180,28 @@ class SourceSiteAdmin(admin.ModelAdmin):
     get_matched_article.allow_tags = True
 
     def get_source_author(self, obj):
-        author = ''
-        author_set =  Author.objects.filter(article_id=obj.article.id)
+        authors = ''
 
-        for arc in author_set:
-                author += arc.name + ', '
+        source_set =  SourceSite.objects.filter(url=obj.url)
+        for source in source_set:
+            arctile =  Article.objects.get(id=source.article.id)
+            au = ""
+            for author in Author.objects.filter(article_id = arctile.id):
+                    au += author.name + ', '
 
-        return author[:-2]
+            authors += au +"<br>"
+
+        return authors[:-2]
 
     get_source_author.short_description = 'Authors'
     get_source_author.allow_tags = True
 
     def get_source_date(self, obj):
         date_add = ''
-        arctiles_set =  Article.objects.filter(id=obj.article.id)
-
-        for arc in arctiles_set:
-                date_add += arc.date_added.strftime("%B %d, %Y: %H:%M") + '<br>'
+        source_set =  SourceSite.objects.filter(url=obj.url)
+        for source in source_set:
+            arctile =  Article.objects.get(id=source.article.id)
+            date_add += arctile.date_added.strftime("%B %d, %Y: %H:%M") + '<br>'
 
         return date_add[:-4]
 
@@ -210,10 +216,14 @@ class SourceSiteAdmin(admin.ModelAdmin):
     link_options.allow_tags = True
     link_options.short_description = "Options"
 
-
+#to make each entry disinct in admin data list
     def get_queryset(self, request):
         qs = super(SourceSiteAdmin, self).get_queryset(request)
-        qs = qs.filter(matched=True).distinct()
+
+        qs = qs.filter(matched=True)
+        qs = qs.extra(where=[
+                "id IN ( SELECT id FROM (SELECT * FROM articles_sourcesite ) AS unique_sources GROUP BY url)"
+                ])
         return qs
 
 
