@@ -141,8 +141,8 @@ class SourceSiteAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['url', 'domain']})
         ]
-    list_display = (['get_url','domain' , 'get_source_sites','get_source_author', 'get_source_date', 'link_options' ] )
-    search_fields = [ 'url', 'domain',  'get_source_sites', 'get_source_author', 'get_source_date']
+    list_display = (['get_url','domain' , 'get_matched_article','get_source_author', 'get_source_date', 'link_options' ] )
+    search_fields = [ 'url', 'domain',  'get_matched_article', 'get_source_author', 'get_source_date']
     ordering = ['url']
     actions_on_top = True
     list_per_page = 20
@@ -164,7 +164,7 @@ class SourceSiteAdmin(admin.ModelAdmin):
     get_url.admin_order_field = 'url'
     get_url.allow_tags = True
 
-    def get_source_sites(self, obj):
+    def get_matched_article(self, obj):
         arctiles = ''
         arctiles_set =  Article.objects.filter(id=obj.article.id)
 
@@ -174,9 +174,9 @@ class SourceSiteAdmin(admin.ModelAdmin):
 
         return arctiles[:-4]
 
-    get_source_sites.short_description = 'Matched Articles'
-    get_source_sites.admin_order_field = 'article'
-    get_source_sites.allow_tags = True
+    get_matched_article.short_description = 'Matched Articles'
+    get_matched_article.admin_order_field = 'article'
+    get_matched_article.allow_tags = True
 
     def get_source_author(self, obj):
         author = ''
