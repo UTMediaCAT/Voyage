@@ -141,8 +141,8 @@ class SourceSiteAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['url', 'domain']})
         ]
-    list_display = (['get_url','domain' , 'get_matched_article','get_source_author', 'get_source_date', 'link_options' ] )
-    search_fields = [ 'url', 'domain',  'get_matched_article', 'get_source_author', 'get_source_date']
+    list_display = (['get_url','domain' , 'get_matched_article','get_source_author', 'get_source_date_added',  'get_source_date_published', 'link_options' ] )
+    search_fields = [ 'url', 'domain',  'get_matched_article', 'get_source_author', 'get_source_date_added']
     ordering = ['url']
     actions_on_top = True
     list_per_page = 20
@@ -196,7 +196,7 @@ class SourceSiteAdmin(admin.ModelAdmin):
     get_source_author.short_description = 'Authors'
     get_source_author.allow_tags = True
 
-    def get_source_date(self, obj):
+    def get_source_date_added(self, obj):
         date_add = ''
         source_set =  SourceSite.objects.filter(url=obj.url)
         for source in source_set:
@@ -205,10 +205,27 @@ class SourceSiteAdmin(admin.ModelAdmin):
 
         return date_add[:-4]
 
-    get_source_date.short_description = 'Date Added'
-    get_source_date.admin_order_field = 'article__date_added'
-    get_source_date.allow_tags = True
+    get_source_date_added.short_description = 'Date Added'
+    #get_source_date_added.admin_order_field = 'article__date_added'
+    get_source_date_added.allow_tags = True
 
+    def get_source_date_published(self, obj):
+        date_published = ''
+        source_set =  SourceSite.objects.filter(url=obj.url)
+        for source in source_set:
+            arctile =  Article.objects.get(id=source.article.id)
+            date = arctile.date_published
+            if not date:
+                date = ""
+            else:
+                date = date.strftime("%B %d, %Y: %H:%M")
+            date_published += date + '<br>'
+
+        return date_published[:-4]
+
+    get_source_date_published.short_description = 'Date Published'
+    #get_source_date_published.admin_order_field = 'article__date_published'
+    get_source_date_published.allow_tags = True
 
     def link_options(self, obj):
         return format(('<a href="/admin/articles/sourcesite/%s">Details</a><br>') % obj.id)
