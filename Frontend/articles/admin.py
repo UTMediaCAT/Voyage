@@ -134,14 +134,15 @@ class ArticleAdmin(admin.ModelAdmin):
 
 admin.site.register(Article, ArticleAdmin)
 
+
+# noinspection PyPackageRequirements,PyPackageRequirements
 class SourceSiteAdmin(admin.ModelAdmin):
 
-
     fieldsets = [
-        (None,               {'fields': ['url', 'domain', 'get_source_sites']})
+        (None,               {'fields': ['url', 'domain']})
         ]
-    list_display = (['get_url','domain' , 'get_source_sites'] )
-    search_fields = [ 'url', 'domain', 'get_source_sites']
+    list_display = (['get_url','domain' , 'get_matched_article','get_source_author', 'get_source_date', 'link_options' ] )
+    search_fields = [ 'url', 'domain',  'get_matched_article', 'get_source_author', 'get_source_date']
     ordering = ['url']
     actions_on_top = True
     list_per_page = 20
@@ -163,19 +164,51 @@ class SourceSiteAdmin(admin.ModelAdmin):
     get_url.admin_order_field = 'url'
     get_url.allow_tags = True
 
-    def get_source_sites(self, obj):
+    def get_matched_article(self, obj):
         arctiles = ''
-        arctiles_set =  Article.objects.all()
+        arctiles_set =  Article.objects.filter(id=obj.article.id)
 
         for arc in arctiles_set:
-            if  arc == obj.article:
-                arctiles += arc.title + '<br>'
+                arctiles += format('<a href="%s" target="_blank">%s</a>' % (arc.url, arc.title))
+                arctiles +=  '<br>'
 
         return arctiles[:-4]
 
-    get_source_sites.short_description = 'Matched Articles'
-    get_source_sites.admin_order_field = 'article'
-    get_source_sites.allow_tags = True
+    get_matched_article.short_description = 'Matched Articles'
+    get_matched_article.admin_order_field = 'article'
+    get_matched_article.allow_tags = True
+
+    def get_source_author(self, obj):
+        author = ''
+        author_set =  Author.objects.filter(article_id=obj.article.id)
+
+        for arc in author_set:
+                author += arc.name + ', '
+
+        return author[:-2]
+
+    get_source_author.short_description = 'Authors'
+    get_source_author.allow_tags = True
+
+    def get_source_date(self, obj):
+        date_add = ''
+        arctiles_set =  Article.objects.filter(id=obj.article.id)
+
+        for arc in arctiles_set:
+                date_add += arc.date_added.strftime("%B %d, %Y: %H:%M") + '<br>'
+
+        return date_add[:-4]
+
+    get_source_date.short_description = 'Date Added'
+    get_source_date.admin_order_field = 'article__date_added'
+    get_source_date.allow_tags = True
+
+
+    def link_options(self, obj):
+        return format(('<a href="/admin/articles/sourcesite/%s">Details</a><br>') % obj.id)
+
+    link_options.allow_tags = True
+    link_options.short_description = "Options"
 
 
     def get_queryset(self, request):
