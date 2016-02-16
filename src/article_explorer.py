@@ -213,7 +213,6 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 continue
                 
             logging.info("match found")
-
             # 0 = Title
             # 1 = Author
             # 2 = Date Published
@@ -223,6 +222,8 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
             authors = article.evaluate_css_selectors(site['css_selectors'][1]) or article.authors
             pub_date = article.evaluate_css_selectors(site['css_selectors'][2]) or get_pub_date(article)
             mod_date = article.evaluate_css_selectors(site['css_selectors'][3])
+
+            language = article.language
 
             # Check if the entry already exists
             db_article_list = Article.objects.filter(url=url)
@@ -236,6 +237,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                                       timezone.now()),
                                   date_published=pub_date,
                                   date_modified=mod_date,
+                                  language=language,
                                   text=text)
                 db_article.save()
 
@@ -275,6 +277,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 # db_article.date_added = today
                 db_article.date_published = pub_date
                 db_article.date_modified = mod_date
+                db_article.language = language
                 db_article.text = text
                 db_article.save()
 

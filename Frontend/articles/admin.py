@@ -54,7 +54,7 @@ class ArticleAdmin(admin.ModelAdmin):
         keywords = ''
         for key in obj.keyword_set.all():
             keywords += key.name + ',<br>'
-        return keywords[:-4]
+        return keywords[:-5]
 
     get_keywords.short_description = 'Matched Keywords'
     get_keywords.admin_order_field = 'keyword__name'
