@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import (GenericStackedInline, GenericTabularInline)
 from taggit.models import TaggedItem
-from explorer.models import ReferringSite, ReferringSiteFilter, ReferringSiteCssSelector, SourceSite, Keyword, ReferringTwitter, SourceTwitter
+from explorer.models import ReferringSite, ReferringSiteAlias, ReferringSiteFilter, ReferringSiteCssSelector, SourceSite, Keyword, ReferringTwitter, SourceTwitter
 from articles.models import Article
 from articles.models import SourceSite as ArticleSource
 from articles.models import Keyword as ArticleKeyword
@@ -46,6 +46,11 @@ class TaggitInlineBase():
     extra = 1
 
 
+class ReferringSiteAliasInline(admin.TabularInline):
+    model = ReferringSiteAlias
+    extra = 0
+
+
 class TaggitTabularInline(TaggitInlineBase, GenericTabularInline):
     """
     Add tabular inline for Taggit tags to admin.
@@ -57,6 +62,7 @@ class TaggitTabularInline(TaggitInlineBase, GenericTabularInline):
 class ReferringSiteFilterInline(admin.TabularInline):
     model = ReferringSiteFilter
     extra = 0
+
 
 class ReferringSiteCssSelectorInline(admin.TabularInline):
     model = ReferringSiteCssSelector
@@ -86,7 +92,7 @@ class ReferringSiteAdminForm(forms.ModelForm):
 class ReferringSiteAdmin(admin.ModelAdmin):
     model = ReferringSite
     form = ReferringSiteAdminForm
-    inlines = [TaggitTabularInline]
+    inlines = [ReferringSiteAliasInline, TaggitTabularInline]
     list_filter = [TaggitListFilter]
     fieldsets = [
         (None,               {'fields': ['url', 'name', 'mode', 'check']})
