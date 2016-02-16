@@ -18,9 +18,7 @@ def articles(request):
 
 def articles_js(request):
     data = Caching.getCacheData("Article_Statistics.Json")
-
-    print data
-
+    #print data
     return render(request, 'statistics/articles_js.html', data)
 
 def tweets(request):
@@ -32,8 +30,6 @@ def tweets(request):
     return render(request, 'statistics/tweets.html', context)
 
 def tweets_js(request):
-
     data = Caching.getCacheData("Tweet_Statistics.Json")
-
-    print data
+    #print data
     return render(request, 'statistics/tweets_js.html', data)
