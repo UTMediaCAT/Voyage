@@ -90,6 +90,9 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
     # Initialize multiprocessing by having cpu*4 workers
     pool = Pool(processes=cpu_count()*4, maxtasksperchild=1, initializer=init_worker)
 
+    # Use this instead of ^ when using multiprocessing.dummy
+    # pool = Pool(processes=cpu_count()*4)
+
     # pass database informations using partial
     pass_database = partial(parse_articles_per_site, db_keywords, source_sites, twitter_accounts_explorer)
 
@@ -213,7 +216,6 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 continue
                 
             logging.info("match found")
-
             # 0 = Title
             # 1 = Author
             # 2 = Date Published
@@ -224,6 +226,10 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
             pub_date = article.evaluate_css_selectors(site['css_selectors'][2]) or get_pub_date(article)
             mod_date = article.evaluate_css_selectors(site['css_selectors'][3])
 
+            language = article.language
+
+            date_now=timezone.localtime(timezone.now())
+
             # Check if the entry already exists
             db_article_list = Article.objects.filter(url=url)
             if not db_article_list:
@@ -232,10 +238,11 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 # add it to the database
                 db_article = Article(title=title, url=url,
                                   domain=site["url"],
-                                  date_added=timezone.localtime(
-                                      timezone.now()),
+                                  date_added=date_now,
+                                  date_last_seen=date_now,
                                   date_published=pub_date,
                                   date_modified=mod_date,
+                                  language=language,
                                   text=text)
                 db_article.save()
 
@@ -273,8 +280,10 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 db_article.domain = site["url"]
                 # Do not update the added date
                 # db_article.date_added = today
+                db_article.date_last_seen = date_now
                 db_article.date_published = pub_date
                 db_article.date_modified = mod_date
+                db_article.language = language
                 db_article.text = text
                 db_article.save()
 

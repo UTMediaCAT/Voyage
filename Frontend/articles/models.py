@@ -7,6 +7,7 @@ class Article(models.Model):
     domain = models.URLField(max_length=2000, verbose_name="Referring Site")
     title = models.CharField(max_length=200, blank=True)
     date_added = models.DateTimeField('Date Added', blank=True, null=True)
+    date_last_seen = models.DateTimeField('Date Last Seen', blank=True, null=True)
     date_published = models.DateTimeField('Date Published', blank=True, null=True)
     date_modified = models.DateTimeField('Date Modified', blank=True, null=True)
     text = models.TextField(max_length=None, blank=True)
