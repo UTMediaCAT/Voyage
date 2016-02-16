@@ -90,6 +90,9 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
     # Initialize multiprocessing by having cpu*4 workers
     pool = Pool(processes=cpu_count()*4, maxtasksperchild=1, initializer=init_worker)
 
+    # Use this instead of ^ when using multiprocessing.dummy
+    # pool = Pool(processes=cpu_count()*4)
+
     # pass database informations using partial
     pass_database = partial(parse_articles_per_site, db_keywords, source_sites, twitter_accounts_explorer)
 
@@ -226,7 +229,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
             language = article.language
 
             date_now=timezone.localtime(timezone.now())
-            
+
             # Check if the entry already exists
             db_article_list = Article.objects.filter(url=url)
             if not db_article_list:
