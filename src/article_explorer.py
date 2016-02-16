@@ -225,6 +225,8 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
 
             language = article.language
 
+            date_now=timezone.localtime(timezone.now())
+            
             # Check if the entry already exists
             db_article_list = Article.objects.filter(url=url)
             if not db_article_list:
@@ -233,8 +235,8 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 # add it to the database
                 db_article = Article(title=title, url=url,
                                   domain=site["url"],
-                                  date_added=timezone.localtime(
-                                      timezone.now()),
+                                  date_added=date_now,
+                                  date_last_seen=date_now,
                                   date_published=pub_date,
                                   date_modified=mod_date,
                                   language=language,
@@ -275,6 +277,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 db_article.domain = site["url"]
                 # Do not update the added date
                 # db_article.date_added = today
+                db_article.date_last_seen = date_now
                 db_article.date_published = pub_date
                 db_article.date_modified = mod_date
                 db_article.language = language

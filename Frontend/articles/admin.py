@@ -25,7 +25,7 @@ class SourceTwitterInline(admin.TabularInline):
 class ArticleAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Basic',               {'fields': ['url', 'domain']}),
-        ('Dates', {'fields': ['date_added', 'date_published', 'date_modified']}),
+        ('Dates', {'fields': ['date_added', 'date_last_seen', 'date_published', 'date_modified']}),
         ('Content',               {'fields': ['title', 'language', 'highlighted_text']}),
         ('Other Information', {'fields': ['found_by']})
         ]
@@ -35,7 +35,7 @@ class ArticleAdmin(admin.ModelAdmin):
     list_display = ('get_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_source_twitters', 'language', 'date_added', 'date_published', 'date_modified', 'link_options')
     search_fields = ['url', 'domain', 'title', 'author__name', 'keyword__name', 'sourcesite__url', 'sourcetwitter__name']
     list_filter = ['domain', 'keyword__name', 'sourcesite__domain', 'sourcetwitter__name', 'language']
-    readonly_fields = ('url', 'domain', 'title', 'language', 'found_by', 'date_added', 'date_published', 'date_modified', 'text', 'highlighted_text',)
+    readonly_fields = ('url', 'domain', 'title', 'language', 'found_by', 'date_added', 'date_last_seen', 'date_published', 'date_modified', 'text', 'highlighted_text',)
     ordering = ['-date_added']
     actions_on_top = True
     list_per_page = 20
