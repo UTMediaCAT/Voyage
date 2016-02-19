@@ -137,7 +137,8 @@ class SourceSiteAlias(models.Model):
                             help_text='Your favorable name of this site.')
 
     class Meta:
-        verbose_name = 'Source Site'
+        verbose_name = "Alias"
+        verbose_name_plural = "Aliases"
 
     def __unicode__(self):
         return self.alias
