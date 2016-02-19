@@ -133,6 +133,8 @@ class SourceSiteAlias(models.Model):
     primary = models.ForeignKey(SourceSite)
     alias = models.URLField(max_length=2000, unique=True,
                           help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://aljazeera.com)')
+    name = models.CharField(max_length=200, default="", blank=True,
+                            help_text='Your favorable name of this site.')
 
     class Meta:
         verbose_name = 'Source Site'
