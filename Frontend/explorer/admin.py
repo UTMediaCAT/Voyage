@@ -121,6 +121,7 @@ class ReferringSiteAdmin(admin.ModelAdmin):
         for tag in obj.tags.all():
             tags.append(str(tag))
         return ', '.join(tags)
+
     get_tags.short_description = "Tags"
 
 
@@ -164,7 +165,7 @@ class KeywordAdmin(admin.ModelAdmin):
         ]
 
 
-    list_display = ['name', 'match_count', 'get_tags']
+    list_display = ['name', 'match_count', 'get_aliases', 'get_tags']
     search_fields = ['name']
     actions_on_top = True
     list_per_page = 1000
@@ -175,11 +176,20 @@ class KeywordAdmin(admin.ModelAdmin):
 
     match_count.short_description = "Total Matches"
 
+    def get_aliases(self, obj):
+        aliases = []
+        for alias in obj.keywordalias_set.all():
+            aliases.append(str(alias.name))
+        return ', '.join(aliases)
+
+    get_aliases.short_description = "Aliases"
+
     def get_tags(self, obj):
         tags = []
         for tag in obj.tags.all():
             tags.append(str(tag))
         return ', '.join(tags)
+
     get_tags.short_description = "Tags"
 
 
@@ -218,6 +228,7 @@ class ReferringTwitterAdmin(admin.ModelAdmin):
         for tag in obj.tags.all():
             tags.append(str(tag))
         return ', '.join(tags)
+
     get_tags.short_description = "Tags"
 
 
@@ -238,6 +249,7 @@ class SourceTwitterAdmin(admin.ModelAdmin):
         for tag in obj.tags.all():
             tags.append(str(tag))
         return ', '.join(tags)
+
     get_tags.short_description = "Tags"
 
 
