@@ -257,7 +257,7 @@ class SourceTwitterAdmin(admin.ModelAdmin):
         (None,               {'fields': ['name']})
         ]
 
-    list_display = ['name', 'get_tags']
+    list_display = ['name', 'get_aliases', 'get_tags']
     search_fields = ['name']
     actions_on_top = True
     list_per_page = 1000
@@ -267,6 +267,14 @@ class SourceTwitterAdmin(admin.ModelAdmin):
         for tag in obj.tags.all():
             tags.append(str(tag))
         return ', '.join(tags)
+
+    def get_aliases(self, obj):
+        aliases = []
+        for alias in obj.sourcetwitteralias_set.all():
+            aliases.append(str(alias))
+        return ', '.join(aliases)
+
+    get_aliases.short_description = "Aliases"
 
     get_tags.short_description = "Tags"
 
