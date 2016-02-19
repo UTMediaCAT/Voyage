@@ -184,7 +184,7 @@ class KeywordAdmin(admin.ModelAdmin):
     def get_aliases(self, obj):
         aliases = []
         for alias in obj.keywordalias_set.all():
-            aliases.append(str(alias.name))
+            aliases.append(str(alias))
         return ', '.join(aliases)
 
     get_aliases.short_description = "Aliases"

@@ -151,10 +151,13 @@ class Keyword(models.Model):
 
 
 class KeywordAlias(models.Model):
-    keyword = models.ForeignKey(Keyword)
-    name = models.CharField(max_length=200, unique=True,
+    primary = models.ForeignKey(Keyword)
+    alias = models.CharField(max_length=200, unique=True,
                             help_text='Case insensitive. Maximum 200 characters (Ex. Canada)')
 
     class Meta:
         verbose_name = "Alias"
         verbose_name_plural = "Aliases"
+
+    def __unicode__(self):
+        return self.alias
