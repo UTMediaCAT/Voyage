@@ -136,7 +136,7 @@ class SourceSiteAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['url', 'name']})
         ]
-    list_display = ('name', 'url', 'cited_count', 'get_tags')
+    list_display = ('name', 'url', 'cited_count', 'get_aliases', 'get_tags')
     search_fields = ['name', 'url']
     ordering = ['name']
     actions_on_top = True
@@ -147,6 +147,14 @@ class SourceSiteAdmin(admin.ModelAdmin):
                len(TwitterSource.objects.filter(domain=obj.url))
 
     cited_count.short_description = "Total Cites"
+
+    def get_aliases(self, obj):
+        aliases = []
+        for alias in obj.sourcesitealias_set.all():
+            aliases.append(str(alias))
+        return ', '.join(aliases)
+
+    get_aliases.short_description = "Aliases"
 
     def get_tags(self, obj):
         tags = []
