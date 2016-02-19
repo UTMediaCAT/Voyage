@@ -39,8 +39,8 @@ def validate_site(site):
 class ReferringSite(models.Model):
     url = models.URLField(max_length=2000, unique=True, #validators=[validate_site],
                           help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://cnn.com)')
-    name = models.CharField(max_length=200,
-                            help_text='Your favorable alias of this site.\n' +
+    name = models.CharField(max_length=200, unique=True,
+                            help_text='Your favorable name of this site.\n' +
                                       'Maximum 200 characters')
     check = models.BooleanField(default=False, verbose_name="Test Newspaper RSS Scan",
                                 help_text=mark_safe('Check to display the amount of articles found by Newspaper RSS Scan (Displays as error).<br>Uncheck to save without testing Newspaper.'))
@@ -118,8 +118,8 @@ class SourceTwitter(models.Model):
 class SourceSite(models.Model):
     url = models.URLField(max_length=2000, unique=True,
                           help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://aljazeera.com)')
-    name = models.CharField(max_length=200,
-                            help_text='Your favorable alias of this site.')
+    name = models.CharField(max_length=200, unique=True,
+                            help_text='Your favorable name of this site.')
     tags = TaggableManager()
 
     class Meta:
