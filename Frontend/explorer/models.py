@@ -115,6 +115,19 @@ class SourceTwitter(models.Model):
         return self.name
 
 
+class SourceTwitterAlias(models.Model):
+    primary = models.ForeignKey(SourceTwitter)
+    alias = models.CharField(max_length=200, unique=True, validators=[validate_user],
+                            help_text='Do not include "@". Maximum 15 characters (Ex. CNN)')
+
+    class Meta:
+        verbose_name = "Alias"
+        verbose_name_plural = "Aliases"
+
+    def __unicode__(self):
+        return self.alias
+
+
 class SourceSite(models.Model):
     url = models.URLField(max_length=2000, unique=True,
                           help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://aljazeera.com)')
