@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import (GenericStackedInline, GenericTabularInline)
 from taggit.models import TaggedItem
-from explorer.models import ReferringSite, ReferringSiteFilter, ReferringSiteCssSelector, SourceSite, Keyword, KeywordAlias, ReferringTwitter, SourceTwitter
+from explorer.models import ReferringSite, ReferringSiteFilter, ReferringSiteCssSelector, SourceSite, SourceSiteAlias, Keyword, KeywordAlias, ReferringTwitter, SourceTwitter
 from articles.models import Article
 from articles.models import SourceSite as ArticleSource
 from articles.models import Keyword as ArticleKeyword
@@ -125,8 +125,13 @@ class ReferringSiteAdmin(admin.ModelAdmin):
     get_tags.short_description = "Tags"
 
 
+class SourceSiteAliasInline(admin.TabularInline):
+    model = SourceSiteAlias
+    extra = 1
+
+
 class SourceSiteAdmin(admin.ModelAdmin):
-    inlines = [TaggitTabularInline]
+    inlines = [SourceSiteAliasInline, TaggitTabularInline]
     list_filter = [TaggitListFilter]
     fieldsets = [
         (None,               {'fields': ['url', 'name']})

@@ -102,6 +102,7 @@ class ReferringTwitter(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class SourceTwitter(models.Model):
     name = models.CharField(max_length=200, unique=True, validators=[validate_user],
                             help_text='Do not include "@". Maximum 15 characters (Ex. CNN)')
@@ -112,6 +113,7 @@ class SourceTwitter(models.Model):
 
     def __unicode__(self):
         return self.name
+
 
 class SourceSite(models.Model):
     url = models.URLField(max_length=2000, unique=True,
@@ -125,6 +127,19 @@ class SourceSite(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class SourceSiteAlias(models.Model):
+    primary = models.ForeignKey(SourceSite)
+    alias = models.URLField(max_length=2000, unique=True,
+                          help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://aljazeera.com)')
+
+    class Meta:
+        verbose_name = 'Source Site'
+
+    def __unicode__(self):
+        return self.alias
+
 
 class Keyword(models.Model):
     name = models.CharField(max_length=200, unique=True,
