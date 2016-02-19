@@ -64,17 +64,6 @@ class ReferringSite(models.Model):
         return self.name
 
 
-class ReferringSiteAlias(models.Model):
-    site = models.ForeignKey(ReferringSite)
-    url = models.URLField(max_length=2000, unique=True, #validators=[validate_site],
-                          help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://cnn.com)')
-
-
-    class Meta:
-        verbose_name = "Alias"
-        verbose_name_plural = "Aliases"
-
-
 class ReferringSiteFilter(models.Model):
     site = models.ForeignKey(ReferringSite)
     pattern = models.CharField(max_length=1000, help_text='Any URL that matches the pattern will be ignored from the crawler.')
@@ -146,3 +135,11 @@ class Keyword(models.Model):
         return self.name
 
 
+class KeywordAlias(models.Model):
+    keyword = models.ForeignKey(Keyword)
+    name = models.CharField(max_length=200, unique=True,
+                            help_text='Case insensitive. Maximum 200 characters (Ex. Canada)')
+
+    class Meta:
+        verbose_name = "Alias"
+        verbose_name_plural = "Aliases"

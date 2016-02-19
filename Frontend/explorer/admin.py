@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import (GenericStackedInline, GenericTabularInline)
 from taggit.models import TaggedItem
-from explorer.models import ReferringSite, ReferringSiteAlias, ReferringSiteFilter, ReferringSiteCssSelector, SourceSite, Keyword, ReferringTwitter, SourceTwitter
+from explorer.models import ReferringSite, ReferringSiteFilter, ReferringSiteCssSelector, SourceSite, Keyword, KeywordAlias, ReferringTwitter, SourceTwitter
 from articles.models import Article
 from articles.models import SourceSite as ArticleSource
 from articles.models import Keyword as ArticleKeyword
@@ -46,11 +46,6 @@ class TaggitInlineBase():
     extra = 1
 
 
-class ReferringSiteAliasInline(admin.TabularInline):
-    model = ReferringSiteAlias
-    extra = 0
-
-
 class TaggitTabularInline(TaggitInlineBase, GenericTabularInline):
     """
     Add tabular inline for Taggit tags to admin.
@@ -92,7 +87,7 @@ class ReferringSiteAdminForm(forms.ModelForm):
 class ReferringSiteAdmin(admin.ModelAdmin):
     model = ReferringSite
     form = ReferringSiteAdminForm
-    inlines = [ReferringSiteAliasInline, TaggitTabularInline]
+    inlines = [TaggitTabularInline]
     list_filter = [TaggitListFilter]
     fieldsets = [
         (None,               {'fields': ['url', 'name', 'mode', 'check']})
@@ -156,8 +151,13 @@ class SourceSiteAdmin(admin.ModelAdmin):
     get_tags.short_description = "Tags"
 
 
+class KeywordAliasInline(admin.TabularInline):
+    model = KeywordAlias
+    extra = 1
+
+
 class KeywordAdmin(admin.ModelAdmin):
-    inlines = [TaggitTabularInline]
+    inlines = [KeywordAliasInline, TaggitTabularInline]
     list_filter = [TaggitListFilter]
     fieldsets = [
         (None,               {'fields': ['name']})
@@ -181,6 +181,7 @@ class KeywordAdmin(admin.ModelAdmin):
             tags.append(str(tag))
         return ', '.join(tags)
     get_tags.short_description = "Tags"
+
 
 class ReferringTwitterAdmin(admin.ModelAdmin):
     inlines = [TaggitTabularInline]
