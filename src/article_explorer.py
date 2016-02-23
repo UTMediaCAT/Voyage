@@ -462,7 +462,7 @@ def explore():
     twitter_accounts = ExplorerSourceTwitter.objects.all()
     for key in twitter_accounts:
         source_twitter_list.append(str(key.name))
-        for alias in site.sourcetwitteralias_set.all():
+        for alias in key.sourcetwitteralias_set.all():
             source_twitter_list.append(str(alias))
     logging.info("Collected {0} Source Twitter Accounts from Database".format(len(source_twitter_list)))
 
