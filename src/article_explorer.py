@@ -445,12 +445,16 @@ def explore():
     for site in ExplorerSourceSite.objects.all():
         # source_sites is now in form ['URL', ...]
         source_sites.append(site.url)
+        for alias in site.sourcesitealias_set.all():
+            source_sites.append(str(alias))
     logging.info("Collected {0} Source Sites from Database".format(len(source_sites)))
 
     # Retrieve all stored keywords
     keyword_list = []
     for key in ExplorerKeyword.objects.all():
         keyword_list.append(str(key.name))
+        for alias in key.keywordalias_set.all():
+            keyword_list.append(str(alias))
     logging.info("Collected {0} Keywords from Database".format(len(keyword_list)))
 
     # Retrieve all stored twitter_accounts
@@ -458,6 +462,8 @@ def explore():
     twitter_accounts = ExplorerSourceTwitter.objects.all()
     for key in twitter_accounts:
         source_twitter_list.append(str(key.name))
+        for alias in site.sourcetwitteralias_set.all():
+            source_twitter_list.append(str(alias))
     logging.info("Collected {0} Source Twitter Accounts from Database".format(len(source_twitter_list)))
 
     # Parse the articles in all sites
