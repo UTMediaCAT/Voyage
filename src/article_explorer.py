@@ -108,7 +108,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
         except (KeyboardInterrupt, SystemExit) as e:
             logging.warning("%s detected, exiting"%str(e))
             sys.exit(0)
-    
+
     # Fail-safe to ensure the processes are done
     pool.close()
     pool.join()
@@ -117,19 +117,19 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
 
 def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer, site):
 
-    logging.info("Started multiprocessing of Site: %s", site['name'])
+    logging.info("Started multiprocessing of Site: %s", site.name)
     #Setup logging for this site
-    setup_logging(site['name'])
+    setup_logging(site.name)
 
     article_count = 0
     newspaper_articles = []
     crawlersource_articles = []
-    logging.info("Site: %s Type:%i"%(site['name'], site['type']))
+    logging.info("Site: %s Type:%i"%(site.name, site.mode))
     #0 = newspaper, 1 = crawler, 2 = both
 
-    if(site["type"] == 0 or site["type"] == 2):
+    if(site.mode == 0 or site.mode == 2):
         logging.disable(logging.ERROR)
-        newspaper_source = newspaper.build(site["url"],
+        newspaper_source = newspaper.build(site.url,
                                          memoize_articles=False,
                                          keep_article_html=True,
                                          fetch_images=False,
@@ -138,12 +138,14 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
         newspaper_articles = newspaper_source.articles
         article_count += newspaper_source.size()
         logging.info("populated {0} articles using newspaper".format(article_count))
-    if(site["type"] == 1 or site["type"] == 2):
-        crawlersource_articles = Crawler.Crawler(site["url"], site["filters"])
+    if(site.mode == 1 or site.mode == 2):
+        crawlersource_articles = Crawler.Crawler(site)
         article_count += crawlersource_articles.probabilistic_n
         logging.debug("expecting {0} from plan b crawler".format(crawlersource_articles.probabilistic_n))
     article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles).__iter__()
     processed = 0
+
+    filters = site.referringsitefilter_set.all()
     while True:
         try:
             try:
@@ -153,14 +155,14 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
             #have to put all the iteration stuff at the top because I used continue extensively in this loop
             processed += 1
 
-            if url_in_filter(article.url, site["filters"]):
+            if url_in_filter(article.url, filters):
                 logging.info("Matches with filter, skipping the {0}".format(article.url))
                 continue
 
             print(
                 "%s (Article|%s) %i/%i          \r" %
                 (str(timezone.localtime(timezone.now()))[:-13],
-                 site["name"], processed, article_count))
+                 site.name, processed, article_count))
             logging.info("Processing %s"%article.url)
 
             url = article.url
@@ -216,15 +218,13 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 continue
                 
             logging.info("match found")
-            # 0 = Title
-            # 1 = Author
-            # 2 = Date Published
-            # 3 = Date Modified
+
+            #load selectors from db!
             #parameter is a namedtuple of "css" and "regex"
-            title = article.evaluate_css_selectors(site['css_selectors'][0]) or article.title
-            authors = article.evaluate_css_selectors(site['css_selectors'][1]) or article.authors
-            pub_date = article.evaluate_css_selectors(site['css_selectors'][2]) or get_pub_date(article)
-            mod_date = article.evaluate_css_selectors(site['css_selectors'][3])
+            title = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field_choice=0)) or article.title
+            authors = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field_choice=1)) or article.authors
+            pub_date = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field_choice=2)) or get_pub_date(article)
+            mod_date = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field_choice=3))
 
             language = article.language
 
@@ -237,7 +237,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 # If the db_article is new to the database,
                 # add it to the database
                 db_article = Article(title=title, url=url,
-                                  domain=site["url"],
+                                  domain=site.url,
                                   date_added=date_now,
                                   date_last_seen=date_now,
                                   date_published=pub_date,
@@ -263,12 +263,12 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 for source in sources[0]:
                     db_article.sourcesite_set.create(url=source[0],
                                               domain=source[1], anchor_text=source[2],
-                                              matched=True, local=(source[1] in site["url"]))
+                                              matched=True, local=(source[1] in site.url))
 
                 for source in sources[1]:
                     db_article.sourcesite_set.create(url=source[0],
                                               domain=source[1], anchor_text=source[2],
-                                              matched=False, local=(source[1] in site["url"]))
+                                              matched=False, local=(source[1] in site.url))
 
             else:
                 logging.info("Modifying existing Article in the DB")
@@ -277,7 +277,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 db_article = db_article_list[0]
                 db_article.title = title
                 db_article.url = url
-                db_article.domain = site["url"]
+                db_article.domain = site.url
                 # Do not update the added date
                 # db_article.date_added = today
                 db_article.date_last_seen = date_now
@@ -307,13 +307,13 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                     if not db_article.sourcesite_set.filter(url=source[0]):
                         db_article.sourcesite_set.create(url=source[0],
                                               domain=source[1], anchor_text=source[2],
-                                              matched=True, local=(source[1] in site["url"]))
+                                              matched=True, local=(source[1] in site.url))
 
                 for source in sources[1]:
                     if not db_article.sourcesite_set.filter(url=source[0]):
                         db_article.sourcesite_set.create(url=source[0],
                                               domain=source[1], anchor_text=source[2],
-                                              matched=False, local=(source[1] in site["url"]))
+                                              matched=False, local=(source[1] in site.url))
 
             warc_creator.enqueue_article(url)
         except (KeyboardInterrupt, SystemExit):
@@ -321,9 +321,9 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
         except Exception as e:
             logging.exception("Unhandled exception while crawling: " + str(e))
 
-    logging.info("Finished Site: %s"%site['name'])
+    logging.info("Finished Site: %s"%site.name)
     setup_logging(increment=False)
-    logging.info("Finished Site: %s"%site['name'])
+    logging.info("Finished Site: %s"%site.name)
 
 def url_in_filter(url, filters):
     """
@@ -331,8 +331,8 @@ def url_in_filter(url, filters):
     Filters can be in regex search or normal string comparison.    
     """
     for filt in filters:
-        if ((filt[1] and re.search(filt[0], url, re.IGNORECASE)) or
-            (not filt[1] and filt[0] in url)):
+        if ((filt.regex and re.search(filt.pattern, url, re.IGNORECASE)) or
+            (not filt.regex and filt.pattern in url)):
             return True
     return False
 
@@ -428,16 +428,7 @@ def explore():
     """
 
     # Retrieve and store monitoring site information
-    referring_sites = []
-    index = 0
-    for site in ReferringSite.objects.all():
-        referring_sites.append({"name":site.name, "url":site.url, "type":site.mode, "filters":[], "css_selectors":{0:[], 1:[], 2:[], 3:[]}})
-        for filt in site.referringsitefilter_set.all():
-            referring_sites[index]["filters"].append([filt.pattern, filt.regex])
-        for css in site.referringsitecssselector_set.all():
-            referring_sites[index]["css_selectors"][css.field_choice].append({'pattern': css.pattern, 'regex': css.regex})
-
-        index += 1
+    referring_sites = ReferringSite.objects.all()
     logging.info("Collected {0} Referring Sites from Database".format(len(referring_sites)))
 
     # Retrieve and store foreign site information
