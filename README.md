@@ -22,7 +22,11 @@ If the version available through your package mananger is not 2.7.10 or above, y
 ##Installation
 ####Through terminal
 * Download, extract the __master__ then execute on terminal `./InstallScript.sh`
-* Done!
+* Set up a mysql server and create a table with the following schema:
+```
+CREATE DATABASE crawler CHARACTER SET UTF8 COLLATE utf8_general_ci;
+```
+(you can replace crawler with another database name if you want). Then put in the database name and credentials in config.yaml
 
 If any problem occurs, please contact one of us on the email address listed above.
 
