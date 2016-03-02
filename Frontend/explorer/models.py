@@ -30,7 +30,7 @@ def validate_site(site):
                             language='en')
         if s.size() == 0:
             raise ValidationError('%s is not a valid Referring Site!' % site)
-    except:  
+    except:
         raise ValidationError('%s is not a valid Referring Site!' % site)
 
 
@@ -39,7 +39,7 @@ def validate_site(site):
 class ReferringSite(models.Model):
     url = models.URLField(max_length=2000, unique=True, #validators=[validate_site],
                           help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://cnn.com)')
-    name = models.CharField(max_length=200, 
+    name = models.CharField(max_length=200,
                             help_text='Your favorable alias of this site.\n' +
                                       'Maximum 200 characters')
     check = models.BooleanField(default=False, verbose_name="Test Newspaper RSS Scan",
@@ -85,7 +85,7 @@ class ReferringSiteCssSelector(models.Model):
                         choices=field_choice,
                         verbose_name='Field')
     pattern = models.CharField(max_length=1000, help_text='CSS Selector pattern')
-    regex = models.CharField(max_length=1000, help_text='Regular expression to further narrow down')
+    regex = models.CharField(max_length=1000, blank=True, help_text='Regular expression to further narrow down')
 
     class Meta:
         verbose_name = "CSS Selector"
@@ -114,9 +114,9 @@ class SourceTwitter(models.Model):
         return self.name
 
 class SourceSite(models.Model):
-    url = models.URLField(max_length=2000, unique=True, 
+    url = models.URLField(max_length=2000, unique=True,
                           help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://aljazeera.com)')
-    name = models.CharField(max_length=200, 
+    name = models.CharField(max_length=200,
                             help_text='Your favorable alias of this site.')
     tags = TaggableManager()
 
@@ -127,7 +127,7 @@ class SourceSite(models.Model):
         return self.name
 
 class Keyword(models.Model):
-    name = models.CharField(max_length=200, unique=True, 
+    name = models.CharField(max_length=200, unique=True,
                             help_text='Case insensitive. Maximum 200 characters (Ex. Canada)')
     tags = TaggableManager()
 

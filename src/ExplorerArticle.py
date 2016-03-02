@@ -122,6 +122,11 @@ class ExplorerArticle(object):#derive from object for getters/setters
         return self._readability_title or self._newspaper_title
 
     @property
+    def language(self):
+        return self.newspaper_article.meta_lang
+    
+
+    @property
     def text(self, strip_html=False):
         if(strip_html):
             if(self._newspaper_text):
