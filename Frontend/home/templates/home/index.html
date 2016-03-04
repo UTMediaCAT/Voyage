@@ -1,5 +1,5 @@
 {% extends "home/base.html" %}
-
+{% load staticfiles %}
 {% block content %}
 
      <!-- Header Carousel -->
@@ -16,19 +16,19 @@
             <div class="item active">
                 <div class="fill" style="background-image:url('http://www.seetorontonow.com/App_Themes/tourismtoronto/images/about-tourism-toronto.jpg');"></div>
                 <div class="carousel-caption">
-                    <h2>Caption 1</h2>
+                    <h2>Welcome to MediaCat </h2>
                 </div>
             </div>
             <div class="item">
-                <div class="fill" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/b/b4/Uoft_universitycollege.jpg');"></div>
+                <div class="fill" style="background-image:url({% static "home/front-page-sources/2014-02 Mediating Israel.jpg" %});"></div>
                 <div class="carousel-caption">
-                    <h2>Caption 2</h2>
+                    <h2>Welcome to MediaCat </h2>
                 </div>
             </div>
             <div class="item">
                 <div class="fill" style="background-image:url('http://placehold.it/1900x1080&text=Slide Three');"></div>
                 <div class="carousel-caption">
-                    <h2>Caption 3</h2>
+                    <h2>Welcome to MediaCat</h2>
                 </div>
             </div>
         </div>
@@ -145,7 +145,7 @@
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis, omnis doloremque non cum id reprehenderit, quisquam totam aspernatur tempora minima unde aliquid ea culpa sunt. Reiciendis quia dolorum ducimus unde.</p>
             </div>
             <div class="col-md-6">
-                <img class="img-responsive" src="http://placehold.it/700x450" alt="">
+                <img class="img-responsive" src="{% static "home/front-page-sources/2014-02 Mediating Israel.jpg" %}" alt="">
             </div>
         </div>
         <!-- /.row -->
@@ -174,7 +174,6 @@
     $('.carousel').carousel({
         interval: 5000 //changes the speed
     })
-    </script>
-<<<<<<< HEAD
+  </script>
 {% endblock myscript %}
 
