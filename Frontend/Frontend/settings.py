@@ -46,6 +46,8 @@ INSTALLED_APPS = (
     'statistics',
     'options',
     'visualizations',
+    'advanced_filters',
+    'easy_select2'
 )
 
 MIDDLEWARE_CLASSES = (

@@ -40,6 +40,8 @@ urlpatterns = patterns('',
     url(r'^downloads', include('home.urls')),
 
     url(r'^contact', include('home.urls')),
+
+    url(r'^advanced_filters/', include('advanced_filters.urls'))
 )
 
 urlpatterns += staticfiles_urlpatterns()
