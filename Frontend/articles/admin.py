@@ -9,38 +9,43 @@ import yaml, os
 
 class AuthorInline(admin.TabularInline):
     model = Author
+    readonly_fields = ('name',)
     extra = 0
 
 class SourceSiteInline(admin.TabularInline):
     model = SourceSite
-    fields = ['url', 'domain', 'anchor_text', 'matched', 'local']
+    readonly_fields = ('url', 'domain', 'anchor_text', 'matched', 'local',)
     extra = 0
 
 class KeywordInline(admin.TabularInline):
     model = Keyword
+    readonly_fields = ('name',)
     extra = 0
 
 class SourceTwitterInline(admin.TabularInline):
     model = SourceTwitter
+    readonly_fields = ('name', 'matched',)
     extra = 0
 
 class ArticleAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('Basic',               {'fields': ['url', 'domain']}),
-        ('Dates', {'fields': ['date_added', 'date_last_seen', 'date_published', 'date_modified']}),
+        ('Basic',               {'fields': ['domain', 'show_urls']}),
         ('Content',               {'fields': ['title', 'language', 'highlighted_text']}),
+        ('Dates', {'fields': ['date_added', 'date_last_seen', 'date_published', 'date_modified']}),
         ('Other Information', {'fields': ['found_by']})
         ]
 
     inlines = [AuthorInline, SourceSiteInline, KeywordInline, SourceTwitterInline]
 
     list_display = ('get_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_source_twitters', 'language', 'date_added', 'date_published', 'date_modified', 'link_options')
-    search_fields = ['url', 'domain', 'title', 'author__name', 'keyword__name', 'sourcesite__url', 'sourcetwitter__name']
+    search_fields = ['title', 'text']
     list_filter = ['domain', 'keyword__name', 'sourcesite__domain', 'sourcetwitter__name', 'language']
-    readonly_fields = ('url', 'domain', 'title', 'language', 'found_by', 'date_added', 'date_last_seen', 'date_published', 'date_modified', 'text', 'highlighted_text',)
+    readonly_fields = ('url', 'domain', 'title', 'language', 'found_by', 'date_added', 'date_last_seen', 'date_published', 'date_modified', 'text', 'highlighted_text', 'show_urls')
     ordering = ['-date_added']
     actions_on_top = True
     list_per_page = 20
+
+
 
     def get_url(self, obj):
         link_short = obj.url
@@ -114,6 +119,15 @@ class ArticleAdmin(admin.ModelAdmin):
 
     highlighted_text.short_description = 'Highlighted Text'
     highlighted_text.allow_tags = True
+
+    def show_urls(self, obj):
+        urls = ''
+        for url in obj.url_set.all():
+            urls += format('<a href="%s" target="_blank">%s</a><br />' % (url.name, url.name))
+        return urls
+
+    show_urls.short_description = 'URLs'
+    show_urls.allow_tags = True
 
     def link_url(self, obj):
         return format('<a href="%s" target="_blank">%s</a>' % (obj.url, obj.url))
