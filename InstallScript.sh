@@ -10,4 +10,4 @@ pip3 install wpull
 dir=`pwd`
 sed 's#projectdir:.*$#projectdir: '"${dir}"'#' config.yaml > tmp.yaml
 mv tmp.yaml config.yaml
-mkdir log
+mkdir -p log
