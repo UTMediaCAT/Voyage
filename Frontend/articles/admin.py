@@ -36,7 +36,7 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, admin.ModelAdmin):
     list_display = ('get_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_source_twitters', 'language', 'date_added', 'date_published', 'date_modified', 'link_options')
     search_fields = ['url', 'domain', 'title', 'author__name', 'keyword__name', 'sourcesite__url', 'sourcetwitter__name']
     list_filter = ('domain', 'keyword__name', 'sourcesite__domain', 'sourcetwitter__name', 'language')
-    advanced_filter_fields = ('domain', 'keyword__name', 'sourcesite__domain', 'sourcetwitter__name', 'language')
+    advanced_filter_fields = ('domain', ('keyword__name', 'Keyword'), 'sourcesite__domain', ('sourcetwitter__name', 'Source Twitter'), 'language')
     readonly_fields = ('url', 'domain', 'title', 'language', 'found_by', 'date_added', 'date_last_seen', 'date_published', 'date_modified', 'text', 'highlighted_text',)
     ordering = ['-date_added']
     actions_on_top = True
