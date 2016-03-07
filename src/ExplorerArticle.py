@@ -166,18 +166,18 @@ class ExplorerArticle(object):#derive from object for getters/setters
                 result.append(Link(href=href, text=text))
         return result
 
-    def evaluate_css_selectors(self, css_selectors_with_regex):
+    def evaluate_css_selectors(self, selectors):
         lxml_tree = lxml.html.fromstring(self.html)
-        for select in css_selectors_with_regex:
+        for select in selectors:
             try:
-                result = lxml_tree.cssselect(select['pattern'])
-                if(select['regex']):
-                    result = re.search(select['regex'], result).groups()[-1]
+                result = lxml_tree.cssselect(select.pattern)
+                if(select.regex):
+                    result = re.search(select.regex, result).groups()[-1]
             except lxml.cssselect.SelectorSyntaxError:
-                logging.error("invaild css selector \"{0}\"".format(select))
+                logging.error("invaild css selector \"{0}\"".format(select.pattern))
                 continue
             if(len(result) > 0):
                 if(len(result) > 1):
-                    logging.error("css selector \"{0}\" matched multiple elements. selecting the first one!".format(select))
+                    logging.error("css selector \"{0}\" matched multiple elements. selecting the first one!".format(select.pattern))
                 return result[0].text_content()
         return None

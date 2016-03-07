@@ -39,8 +39,8 @@ def validate_site(site):
 class ReferringSite(models.Model):
     url = models.URLField(max_length=2000, unique=True, #validators=[validate_site],
                           help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://cnn.com)')
-    name = models.CharField(max_length=200,
-                            help_text='Your favorable alias of this site.\n' +
+    name = models.CharField(max_length=200, unique=True,
+                            help_text='Your favorable name of this site.\n' +
                                       'Maximum 200 characters')
     check = models.BooleanField(default=False, verbose_name="Test Newspaper RSS Scan",
                                 help_text=mark_safe('Check to display the amount of articles found by Newspaper RSS Scan (Displays as error).<br>Uncheck to save without testing Newspaper.'))
@@ -102,6 +102,7 @@ class ReferringTwitter(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class SourceTwitter(models.Model):
     name = models.CharField(max_length=200, unique=True, validators=[validate_user],
                             help_text='Do not include "@". Maximum 15 characters (Ex. CNN)')
@@ -113,11 +114,25 @@ class SourceTwitter(models.Model):
     def __unicode__(self):
         return self.name
 
+
+class SourceTwitterAlias(models.Model):
+    primary = models.ForeignKey(SourceTwitter)
+    alias = models.CharField(max_length=200, unique=True, validators=[validate_user],
+                            help_text='Do not include "@". Maximum 15 characters (Ex. CNN)')
+
+    class Meta:
+        verbose_name = "Alias"
+        verbose_name_plural = "Aliases"
+
+    def __unicode__(self):
+        return self.alias
+
+
 class SourceSite(models.Model):
     url = models.URLField(max_length=2000, unique=True,
                           help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://aljazeera.com)')
-    name = models.CharField(max_length=200,
-                            help_text='Your favorable alias of this site.')
+    name = models.CharField(max_length=200, unique=True,
+                            help_text='Your favorable name of this site.')
     tags = TaggableManager()
 
     class Meta:
@@ -125,6 +140,22 @@ class SourceSite(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class SourceSiteAlias(models.Model):
+    primary = models.ForeignKey(SourceSite)
+    alias = models.URLField(max_length=2000, unique=True,
+                          help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://aljazeera.com)')
+    name = models.CharField(max_length=200, default="", blank=True,
+                            help_text='Your favorable name of this site.')
+
+    class Meta:
+        verbose_name = "Alias"
+        verbose_name_plural = "Aliases"
+
+    def __unicode__(self):
+        return self.alias
+
 
 class Keyword(models.Model):
     name = models.CharField(max_length=200, unique=True,
@@ -135,3 +166,14 @@ class Keyword(models.Model):
         return self.name
 
 
+class KeywordAlias(models.Model):
+    primary = models.ForeignKey(Keyword)
+    alias = models.CharField(max_length=200, unique=True,
+                            help_text='Case insensitive. Maximum 200 characters (Ex. Canada)')
+
+    class Meta:
+        verbose_name = "Alias"
+        verbose_name_plural = "Aliases"
+
+    def __unicode__(self):
+        return self.alias
