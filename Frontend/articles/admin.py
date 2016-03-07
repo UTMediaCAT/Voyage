@@ -32,7 +32,7 @@ class ArticleAdmin(admin.ModelAdmin):
         ('Basic',               {'fields': ['domain', 'show_urls']}),
         ('Content',               {'fields': ['title', 'language', 'highlighted_text']}),
         ('Dates', {'fields': ['date_added', 'date_last_seen', 'date_published', 'date_modified']}),
-        ('Other Information', {'fields': ['found_by']})
+        ('Other Information', {'fields': ['id', 'found_by', 'text_hash']})
         ]
 
     inlines = [AuthorInline, SourceSiteInline, KeywordInline, SourceTwitterInline]
@@ -40,7 +40,7 @@ class ArticleAdmin(admin.ModelAdmin):
     list_display = ('get_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_source_twitters', 'language', 'date_added', 'date_published', 'date_modified', 'link_options')
     search_fields = ['title', 'text']
     list_filter = ['domain', 'keyword__name', 'sourcesite__domain', 'sourcetwitter__name', 'language']
-    readonly_fields = ('url', 'domain', 'title', 'language', 'found_by', 'date_added', 'date_last_seen', 'date_published', 'date_modified', 'text', 'highlighted_text', 'show_urls')
+    readonly_fields = ('id', 'url', 'domain', 'title', 'language', 'found_by', 'date_added', 'date_last_seen', 'date_published', 'date_modified', 'text', 'highlighted_text', 'show_urls', 'text_hash')
     ordering = ['-date_added']
     actions_on_top = True
     list_per_page = 20
@@ -108,11 +108,11 @@ class ArticleAdmin(admin.ModelAdmin):
     get_authors.admin_order_field = 'author__name'
 
     def highlighted_text(self, obj):
-        tag_front="<strong><mark>"
-        tag_end = "</mark></strong>"
+        tag_front=" <strong><mark>"
+        tag_end = "</mark></strong> "
         text = obj.text
         for key in obj.keyword_set.all():
-            pattern = re.compile('[^a-z]' + key.name + '[^a-z]', re.IGNORECASE)
+            pattern = re.compile('([^a-z]' + key.name + '[^a-z])', re.IGNORECASE)
             result = pattern.subn(tag_front+key.name+tag_end, text)
             text = result[0]
         return text
