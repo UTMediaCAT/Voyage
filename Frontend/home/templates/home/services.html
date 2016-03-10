@@ -1,5 +1,5 @@
 {% extends "home/base.html" %}
-
+{% load staticfiles %}
 {% block content %}
 
 
@@ -9,13 +9,13 @@
         <!-- Page Heading/Breadcrumbs -->
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Services
+                <h1 class="page-header">Features
                     <small>Subheading</small>
                 </h1>
                 <ol class="breadcrumb">
                     <li><a href="/">Home</a>
                     </li>
-                    <li class="active">Services</li>
+                    <li class="active">Features</li>
                 </ol>
             </div>
         </div>
@@ -24,7 +24,7 @@
         <!-- Image Header -->
         <div class="row">
             <div class="col-lg-12">
-                <img class="img-responsive" src="http://placehold.it/1200x300" alt="">
+                <img class="img-responsive" src="{% static "home/front-page-sources/features.jpg" %}" alt="">
             </div>
         </div>
         <!-- /.row -->
@@ -33,7 +33,7 @@
         <!-- The circle icons use Font Awesome's stacked icon classes. For more information, visit http://fontawesome.io/examples/ -->
         <div class="row">
             <div class="col-lg-12">
-                <h2 class="page-header">Services Panels</h2>
+                <h2 class="page-header">Features Panels</h2>
             </div>
             <div class="col-md-3 col-sm-6">
                 <div class="panel panel-default text-center">
