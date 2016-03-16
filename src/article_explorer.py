@@ -221,10 +221,10 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
 
             #load selectors from db!
             #parameter is a namedtuple of "css" and "regex"
-            title = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field_choice=0)) or article.title
-            authors = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field_choice=1)) or article.authors
-            pub_date = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field_choice=2)) or get_pub_date(article)
-            mod_date = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field_choice=3))
+            title = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=0)) or article.title
+            authors = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=1)) or article.authors
+            pub_date = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=2)) or get_pub_date(article)
+            mod_date = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=3))
 
             language = article.language
 
