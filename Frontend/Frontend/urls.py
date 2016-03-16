@@ -29,17 +29,7 @@ urlpatterns = patterns('',
 
     # Home Page
 
-    url(r'^$', include('home.urls')),
-
-    url(r'^statistics_', include('home.urls')),
-
-    url(r'^article_', include('home.urls')),
-    
-    url(r'^tweet_', include('home.urls')),
-
-    url(r'^downloads', include('home.urls')),
-
-    url(r'^contact', include('home.urls')),
+    url(r'', include('home.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

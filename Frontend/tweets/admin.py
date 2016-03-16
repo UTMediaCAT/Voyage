@@ -103,3 +103,58 @@ class TweetAdmin(admin.ModelAdmin):
     link_options.short_description = "Options"
 
 admin.site.register(Tweet, TweetAdmin)
+
+
+class SourceSiteAdmin(admin.ModelAdmin):
+
+
+    fieldsets = [
+        (None,               {'fields': ['url', 'domain', 'get_source_sites']})
+        ]
+    list_display = (['get_url','domain' , 'get_source_sites'] )
+    search_fields = [ 'url', 'domain', 'get_source_sites']
+    ordering = ['url']
+    actions_on_top = True
+    list_per_page = 20
+
+    def get_url(self, obj):
+
+        if 'http://www.' in obj.url:
+            link = 'http://' + obj.url[11:]
+            link_short = link[7:]
+        else:
+            link = obj.url
+            link_short = link[7:]
+
+            if len(link_short) > 30:
+                link_short = link_short[:30]+"..."
+
+
+        return format('<a href="%s" target="_blank">%s</a>' % (obj.url, link_short))
+
+    get_url.short_description = 'Source URL'
+    get_url.admin_order_field = 'url'
+    get_url.allow_tags = True
+
+    def get_source_sites(self, obj):
+        tweets = ''
+        tweets_set =  Tweet.objects.all()
+
+        for tw in tweets_set:
+            if  tw == obj.article:
+                tweets += tw.title + '<br>'
+
+        return tweets[:-4]
+
+    get_source_sites.short_description = 'Matched Tweets'
+    get_source_sites.admin_order_field = 'tweet'
+    get_source_sites.allow_tags = True
+
+
+    def get_queryset(self, request):
+        qs = super(SourceSiteAdmin, self).get_queryset(request)
+        qs = qs.filter(matched=True)
+        return qs
+
+
+admin.site.register(SourceSite, SourceSiteAdmin)

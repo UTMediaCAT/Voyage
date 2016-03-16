@@ -1,0 +1,294 @@
+{% extends "home/base.html" %}
+{% load staticfiles %}
+{% block content %}
+
+
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <!-- Page Heading/Breadcrumbs -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">About
+                    <small>MediaCAT</small>
+                </h1>
+                <ol class="breadcrumb">
+                    <li><a href="/">Home</a>
+                    </li>
+                    <li class="active">About</li>
+                </ol>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <!-- Intro Content -->
+        <div class="row">
+            <div class="col-md-5">
+                <img class="img-responsive" style="height:450px;" src="{% static "home/front-page-sources/system.jpeg" %}" alt="">
+            </div>
+            <div class="col-md-7">
+                <h2>About MediaCat</h2>
+                <p>MediaCAT started as a collaboration between an anthropologist, a computer scientist, and digital librarians. Alejandro Paz, a digitally-curious anthropologist, was doing manual searches to see how digital news sites around the world were picking up on the expanding Israeli online news in English. He knew his ethnographic project would be helped by some kind of digital tracking tool (which surely must exist—no?). Kirsta Stapelfeldt, the director of the new Digital Scholarship Unit at UTSC  Library, thought the digital component had potential, and introduced it to Anya Tafliovich of the Computer and Mathematical Sciences Department. Anya was looking for interesting projects for her third year software engineering course in Fall 2014. Kim Pham, the Digital Projects & Technologies Librarian at UTSC, also came on board to help shepherd development. Helped along by a small seed grant from the Vice-Principal of Research Impact Fund, we hired students from Anya’s class to continue development during Summer and then Fall/Winter work studies in 2015/2016. We also hired anthropology students as work studies to help testing and to develop use case scenarios.</p>
+
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="page-header">Product Roadmap</h2>
+                <iframe src="https://docs.google.com/spreadsheets/d/1sKzaFAiMEVN6PpLZrO62jBCXG3hHCQC9EP6m8CJ9r7c/pubhtml?gid=31&amp;single=true&amp;widget=true&amp;headers=false"  width="100%" height="400"></iframe>
+            </div>
+
+        </div>
+        <!-- Call to Action Section -->
+        <hr>
+            <div class="well">
+                <div class="row">
+                    <div class="col-md-8">
+                        <p>The Old Meeting Documentations</p>
+                    </div>
+                    <div class="col-md-4">
+                        <a class="btn btn-lg btn-default btn-block" href="https://github.com/UTMediaCAT/Voyage">Project Documentation</a>
+                    </div>
+                </div>
+            </div>
+
+        <hr>
+        <!-- Team Members -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="page-header">Our Team</h2>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="thumbnail" style="height:500px;">
+                    <img class="img-responsive" style="height:350px;" src="{% static "home/front-page-sources/Paz.jpg" %}" >
+                    <div class="caption">
+                        <h3>Alejandro Paz<br>
+                            <small>Assistant Professor of Anthropology<br></small>
+
+                        </h3>
+
+                        <ul class="list-inline">
+                            <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="thumbnail" style="height:500px;">
+                    <img class="img-responsive" style="height:350px;" src="{% static "home/front-page-sources/Anya.jpg" %}"alt="">
+                    <div class="caption">
+                        <h3>Anya Tafliovich<br>
+                            <small>Associate Professor of Computer and Mathematical Sciences</small>
+                        </h3>
+
+                        <ul class="list-inline">
+                            <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="thumbnail" style="height:500px;">
+                    <img class="img-responsive" style="height:350px;" src="{% static "home/front-page-sources/Kim.jpg" %}" alt="">
+                    <div class="caption">
+                        <h3>Kim Pham<br>
+                            <small>Digital Projects & Technologies Librarian</small>
+                        </h3>
+
+                        <ul class="list-inline">
+                            <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="thumbnail" style="height:500px;">
+                    <img class="img-responsive" style="height:350px;" src="{% static "home/front-page-sources/Kirsta.jpeg" %}" alt="">
+                    <div class="caption">
+                        <h3>Kirsta Stapelfedlt<br>
+                            <small>Director of Digital Scholarship Unit at UTSC Library</small>
+                        </h3>
+
+                        <ul class="list-inline">
+                            <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="thumbnail" style="height:500px;">
+                    <img class="img-responsive" style="height:350px;" src="{% static "home/front-page-sources/Jai.jpg" %}" alt="">
+                    <div class="caption">
+                        <h3>Jai Sughand<br>
+                            <small>Student Developer</small>
+                        </h3>
+
+                        <ul class="list-inline">
+                            <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="thumbnail" style="height:500px;">
+                    <img class="img-responsive" style="height:350px;" src="{% static "home/front-page-sources/Roger.jpg" %}" alt="">
+                    <div class="caption">
+                        <h3>Xiang(Roger) Wang<br>
+                             <small>Student Developer</small>
+                        </h3>
+
+                        <ul class="list-inline">
+                            <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="thumbnail" style="height:500px;">
+                    <img class="img-responsive" style="height:350px;" src="{% static "home/front-page-sources/Yuya.jpg" %}" alt="">
+                    <div class="caption">
+                        <h3>Yuya Iwabuchi<br>
+                            <small>Student Developer</small>
+                        </h3>
+
+                        <ul class="list-inline">
+                            <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="thumbnail" style="height:500px;">
+                    <img class="img-responsive" style="height:350px;" src="{% static "home/front-page-sources/William.jpg" %}" alt="">
+                    <div class="caption">
+                        <h3>William Zhou<br>
+                            <small>Student Developer</small>
+                        </h3>
+
+                        <ul class="list-inline">
+                            <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="thumbnail" style="height:500px;">
+                    <img class="img-responsive" style="height:350px;" src="{% static "home/front-page-sources/Paul.jpg" %}" alt="">
+                    <div class="caption">
+                        <h3>Paul Kirow<br>
+                            <small>Student Developer</small>
+                        </h3>
+
+                        <ul class="list-inline">
+                            <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="thumbnail" style="height:500px;" >
+                    <img class="img-responsive" style="height:350px;" src="{% static "home/front-page-sources/Vinnie.jpg" %}" alt="">
+                    <div class="caption">
+                        <h3>Vinnie Abraham<br>
+                            <small>Digital Research Assistant</small>
+                        </h3>
+
+                        <ul class="list-inline">
+                            <li><a href="#"><i class="fa fa-2x fa-facebook-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-linkedin-square"></i></a>
+                            </li>
+                            <li><a href="#"><i class="fa fa-2x fa-twitter-square"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <!-- Our Customers -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="page-header">Supported By</h2>
+            </div>
+            <div class="col-md-3 col-sm-4 col-xs-6">
+                <a href="https://www.utsc.utoronto.ca/research/home">
+                <img class="img-responsive customer-img" src="{% static "home/front-page-sources/VPR Office Button.JPG" %}" alt="">
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-4 col-xs-6">
+                <a href="https://www.utsc.utoronto.ca/cms/computer-science-mathematics-statistics">
+                <img class="img-responsive customer-img" src="{% static "home/front-page-sources/Anthropology Button.JPG" %}" alt="">
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-4 col-xs-6">
+                <a href="https://www.utsc.utoronto.ca/anthropology/">
+                <img class="img-responsive customer-img" src="{% static "home/front-page-sources/CMS Button.PNG" %}" alt="">
+                </a>
+            </div>
+            <div class="col-md-3 col-sm-4 col-xs-6">
+                <a href="https://digitalscholarship.utsc.utoronto.ca">
+                <img class="img-responsive customer-img" src="{% static "home/front-page-sources/DSU Button.JPG" %}" alt="">
+                </a>
+            </div>
+
+        </div>
+        <!-- /.row -->
+
+        <hr>
+
+
+
+    </div>
+    <!-- /.container -->
+{% endblock %}
+

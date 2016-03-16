@@ -1,5 +1,7 @@
 from django.contrib import admin
-from articles.models import Article, Author, SourceSite, Keyword, SourceTwitter
+from articles.models import Article, Author, Keyword, SourceTwitter, SourceSite
+
+
 import re
 # Register your models here.
 
@@ -131,3 +133,115 @@ class ArticleAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Article, ArticleAdmin)
+
+
+# noinspection PyPackageRequirements,PyPackageRequirements
+class SourceSiteAdmin(admin.ModelAdmin):
+
+    fieldsets = [
+        (None,               {'fields': ['url', 'domain']})
+        ]
+    list_display = (['get_url','domain' , 'get_matched_article','get_source_author', 'get_source_date_added',  'get_source_date_published', 'link_options' ] )
+    search_fields = [ 'url', 'domain',  'get_matched_article', 'get_source_author', 'get_source_date_added']
+    ordering = ['url']
+    actions_on_top = True
+    list_per_page = 20
+
+    def get_url(self, obj):
+        link = obj.url.lstrip("/")
+        if 'http://www.' in link:
+                link = 'http://' + link[11:]
+        else:
+            link = 'http://' + link
+
+        link_short = link[7:]
+        if len(link_short) > 30:
+            link_short = link_short[:30]+"..."
+
+        return format('<a href="%s" target="_blank">%s</a>' % (link, link_short))
+
+    get_url.short_description = 'Source URL'
+    get_url.admin_order_field = 'url'
+    get_url.allow_tags = True
+
+    def get_matched_article(self, obj):
+        arctiles = ''
+        source_set =  SourceSite.objects.filter(url=obj.url)
+
+        for source in source_set:
+            arctile =  Article.objects.get(id=source.article.id)
+            arctiles += format('<a href="%s" target="_blank">%s</a>' % (arctile.url, arctile.title))
+            arctiles +=  '<br>'
+
+        return arctiles[:-4]
+
+    get_matched_article.short_description = 'Matched Articles'
+    get_matched_article.admin_order_field = 'article'
+    get_matched_article.allow_tags = True
+
+    def get_source_author(self, obj):
+        authors = ''
+
+        source_set =  SourceSite.objects.filter(url=obj.url)
+        for source in source_set:
+            arctile =  Article.objects.get(id=source.article.id)
+            au = ""
+            for author in Author.objects.filter(article_id = arctile.id):
+                    au += author.name + ', '
+
+            authors += au +"<br>"
+
+        return authors[:-2]
+
+    get_source_author.short_description = 'Authors'
+    get_source_author.allow_tags = True
+
+    def get_source_date_added(self, obj):
+        date_add = ''
+        source_set =  SourceSite.objects.filter(url=obj.url)
+        for source in source_set:
+            arctile =  Article.objects.get(id=source.article.id)
+            date_add += arctile.date_added.strftime("%B %d, %Y: %H:%M") + '<br>'
+
+        return date_add[:-4]
+
+    get_source_date_added.short_description = 'Date Added'
+    #get_source_date_added.admin_order_field = 'article__date_added'
+    get_source_date_added.allow_tags = True
+
+    def get_source_date_published(self, obj):
+        date_published = ''
+        source_set =  SourceSite.objects.filter(url=obj.url)
+        for source in source_set:
+            arctile =  Article.objects.get(id=source.article.id)
+            date = arctile.date_published
+            if not date:
+                date = ""
+            else:
+                date = date.strftime("%B %d, %Y: %H:%M")
+            date_published += date + '<br>'
+
+        return date_published[:-4]
+
+    get_source_date_published.short_description = 'Date Published'
+    #get_source_date_published.admin_order_field = 'article__date_published'
+    get_source_date_published.allow_tags = True
+
+    def link_options(self, obj):
+        return format(('<a href="/admin/articles/sourcesite/%s">Details</a><br>') % obj.id)
+
+    link_options.allow_tags = True
+    link_options.short_description = "Options"
+
+#to make each entry disinct in admin data list
+    def get_queryset(self, request):
+        qs = super(SourceSiteAdmin, self).get_queryset(request)
+
+        qs = qs.filter(matched=True)
+        qs = qs.extra(where=[
+                "id IN ( SELECT id FROM (SELECT * FROM articles_sourcesite ) AS unique_sources GROUP BY url)"
+                ])
+        return qs
+
+
+admin.site.register(SourceSite, SourceSiteAdmin)
