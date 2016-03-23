@@ -87,31 +87,35 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
     """
     added, updated, failed, no_match = 0, 0, 0, 0
 
-    # Initialize multiprocessing by having cpu*4 workers
-    pool = Pool(processes=cpu_count()*4, maxtasksperchild=1, initializer=init_worker)
+    if("DEBUG" in os.environ):
+        for s in referring_sites:
+            parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer, s)
+    else:
+        # Initialize multiprocessing by having cpu*2 workers
+        pool = Pool(processes=cpu_count()*2, maxtasksperchild=1, initializer=init_worker)
 
-    # Use this instead of ^ when using multiprocessing.dummy
-    # pool = Pool(processes=cpu_count()*4)
+        # Use this instead of ^ when using multiprocessing.dummy
+        # pool = Pool(processes=cpu_count()*4)
 
-    # pass database informations using partial
-    pass_database = partial(parse_articles_per_site, db_keywords, source_sites, twitter_accounts_explorer)
+        # pass database informations using partial
+        pass_database = partial(parse_articles_per_site, db_keywords, source_sites, twitter_accounts_explorer)
 
-    # Start the multiprocessing
-    result = pool.map_async(pass_database, referring_sites)
+        # Start the multiprocessing
+        result = pool.map_async(pass_database, referring_sites)
 
-    # Continue until all sites are done crawling
-    while (not result.ready()):
-        try:
-            # Check for any new command on communication stream
-            check_command()
-            time.sleep(5)
-        except (KeyboardInterrupt, SystemExit) as e:
-            logging.warning("%s detected, exiting"%str(e))
-            sys.exit(0)
+        # Continue until all sites are done crawling
+        while (not result.ready()):
+            try:
+                # Check for any new command on communication stream
+                check_command()
+                time.sleep(5)
+            except (KeyboardInterrupt, SystemExit) as e:
+                logging.warning("%s detected, exiting"%str(e))
+                sys.exit(0)
 
-    # Fail-safe to ensure the processes are done
-    pool.close()
-    pool.join()
+        # Fail-safe to ensure the processes are done
+        pool.close()
+        pool.join()
 
 
 
