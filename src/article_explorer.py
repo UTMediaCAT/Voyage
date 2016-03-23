@@ -36,7 +36,7 @@ import timeit
 # For getting today's date with respect to the TZ specified in Django Settings
 from django.utils import timezone
 # For extracting 'pub_date's string into Datetime object
-from dateutil import parser
+import dateutil
 # To connect and use the Django Database
 import django
 os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
@@ -222,8 +222,16 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
             #load selectors from db!
             #parameter is a namedtuple of "css" and "regex"
             title = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=0)) or article.title
-            authors = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=1)) or article.authors
-            pub_date = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=2)) or get_pub_date(article)
+            authors = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=1))
+            if(authors):
+                authors = [authors]
+            else:
+                authors = article.authors
+            pub_date = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=2))
+            if(pub_date):
+                pub_date = dateutil.parser.parse(pub_date)
+            else:
+                pub_date = get_pub_date(article)
             mod_date = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=3))
 
             language = article.language
