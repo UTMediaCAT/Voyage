@@ -19,7 +19,6 @@ import yaml
 
 # Change current working directory to src/ folder
 path = os.path.abspath(os.path.dirname(__file__))
-os.chdir(path)
 
 # Global variables for settings
 COMM_FILE = '_comm.stream'
