@@ -7,9 +7,7 @@ import os
 # To load configurations
 import yaml
 
-# Change current working directory to project root folder
-path = os.path.abspath(os.path.dirname(__file__))
-os.chdir(path)
+
 
 class InputError(Exception):
     """ (None) -> None
@@ -66,14 +64,21 @@ def stop_server(port):
 
 
 if __name__ == "__main__":
-    if not len(sys.argv) == 2:
-        raise_input_error()
-    else:
-        command = check_command(sys.argv[1])
-        config = configuration()['server']
-        if command == "run":
-            run_server(config['ip_address'], config['port'])
-            print 'Server Running'
+    # Change current working directory to project root folder
+    old_path  = os.getcwd()
+    path = os.path.abspath(os.path.dirname(__file__))
+    try:
+        os.chdir(path)
+        if not len(sys.argv) == 2:
+            raise_input_error()
         else:
-            stop_server(config['port'])
-            print 'Server Stopped'
+            command = check_command(sys.argv[1])
+            config = configuration()['server']
+            if command == "run":
+                run_server(config['ip_address'], config['port'])
+                print 'Server Running'
+            else:
+                stop_server(config['port'])
+                print 'Server Stopped'
+    finally:
+        os.chdir(old_path)

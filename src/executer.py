@@ -17,8 +17,7 @@ import os
 # To load configurations
 import yaml
 
-# Change current working directory to src/ folder
-path = os.path.abspath(os.path.dirname(__file__))
+
 
 # Global variables for settings
 COMM_FILE = '_comm.stream'
@@ -254,26 +253,32 @@ def status_output(explorer):
 
 if __name__ == '__main__':
 
-    # To be able to run the script with arguments
-    if len(sys.argv) == 3:
+    path = os.path.abspath(os.path.dirname(__file__))
+    old_path = os.getcwd()
+    try:
+        os.chdir(path)
+        # To be able to run the script with arguments
+        if len(sys.argv) == 3:
 
-        exp, com = input_format(sys.argv[1], sys.argv[2])
+            exp, com = input_format(sys.argv[1], sys.argv[2])
 
-        if com == 'status':
-            print status_output(exp)
+            if com == 'status':
+                print status_output(exp)
 
-        elif com == 'run':
-            print run(exp)
+            elif com == 'run':
+                print run(exp)
 
-        elif com == 'pause':
-            print pause(exp)
+            elif com == 'pause':
+                print pause(exp)
 
-        elif com == 'stop':
-            print stop(exp)
+            elif com == 'stop':
+                print stop(exp)
 
-        elif com == 'fstop':
-            print force_stop(exp)
+            elif com == 'fstop':
+                print force_stop(exp)
+            else:
+                raise_input_error()
         else:
             raise_input_error()
-    else:
-        raise_input_error()
+    finally:
+        os.chdir(old_path)
