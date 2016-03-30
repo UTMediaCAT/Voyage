@@ -45,6 +45,8 @@ from articles.models import*
 from articles.models import Keyword as ArticleKeyword
 from articles.models import SourceSite as ArticleSourceSite
 from articles.models import SourceTwitter as ArticleSourceTwitter
+from articles.models import Version as ArticleVersion
+from articles.models import Url as ArticleUrl
 from explorer.models import*
 from explorer.models import SourceTwitter as ExplorerSourceTwitter
 from explorer.models import Keyword as ExplorerKeyword
@@ -246,94 +248,118 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
             date_now=timezone.localtime(timezone.now())
 
             # Check if the entry already exists
-            db_article_list = Article.objects.filter(text_hash=text_hash)
-            if not db_article_list:
-                logging.info("Adding new Article to the DB")
-                # If the db_article is new to the database,
-                # add it to the database
-                db_article = Article(title=title,
-                                  domain=site.url,
-                                  date_added=date_now,
-                                  date_last_seen=date_now,
-                                  date_published=pub_date,
-                                  date_modified=mod_date,
-                                  language=language,
-                                  text=text,
-                                  text_hash=text_hash)
-                db_article.save()
+            version_match = ArticleVersion.objects.filter(text_hash=text_hash)
+            url_match = ArticleUrl.objects.filter(name=url)
 
-                db_article.url_set.create(name=url)
-
-                for key in keywords:
-                    db_article.keyword_set.create(name=key)
-
-                for author in authors:
-                    db_article.author_set.create(name=author)
-                for account in twitter_accounts[0]:
-
-                    db_article.sourcetwitter_set.create(name = account, matched = True)
-
-                for account in twitter_accounts[1]:
-                    db_article.sourcetwitter_set.create(name = account, matched = False)
-
-                for source in sources[0]:
-                    db_article.sourcesite_set.create(url=source[0],
-                                              domain=source[1], anchor_text=source[2],
-                                              matched=True, local=(source[1] in site.url))
-
-                for source in sources[1]:
-                    db_article.sourcesite_set.create(url=source[0],
-                                              domain=source[1], anchor_text=source[2],
-                                              matched=False, local=(source[1] in site.url))
-
-            else:
-                logging.info("Modifying existing Article in the DB")
-                # If the db_article already exists,
-                # update all fields except date_added
-                db_article = db_article_list[0]
-                db_article.title = title
-                # db_article.domain = site.url
-                # Do not update the added date
-                # db_article.date_added = today
-                db_article.date_last_seen = date_now
-                db_article.date_published = pub_date
-                db_article.date_modified = mod_date
-                # db_article.language = language
-                # db_article.text = text
-                # db_article.text_hash = text_hash
-                db_article.save()
-
-                if not db_article.url_set.filter(name=url):
+            # 4 cases:
+            # Version  Url      Outcome
+            # match    match    Update date_last_seen
+            # match    unmatch  Add new Url to article
+            # unmatch  match    Add new Version to artcile
+            # unmatch  unmatch  Create new Article with respective Version and Url
+            if version_match:
+                version = version_match[0]
+                if url_match:
+                    if version_match[0].article != url_match[0].article:
+                        logging.warning(u"Version and Url matches are not pointing to same article! versionMatchId: {0} urlMatchId:{1}".format(version.id, url_match[0].id))
+                        continue
+                    else:
+                        logging.info(u"Updating date last seen of {0}".format(version.article.id))
+                else:
+                    db_article = version.article
+                    logging.info(u"Adding new Url to Article {0}".format(db_article.id))
                     db_article.url_set.create(name=url)
+                version.date_last_seen = date_now
+                version.save()
+            else:
+                if url_match:
+                    db_article = url_match[0].article
+                    logging.info(u"Adding new Version to Article {0}".format(db_article.id))
+                    version = db_article.version_set.create(
+                        title=title,
+                        text=text,
+                        text_hash=text_hash,
+                        language=language,
+                        date_added=date_now,
+                        date_last_seen=date_now,
+                        date_published=pub_date)
 
-                for key in keywords:
-                    if not db_article.keyword_set.filter(name=key):
-                        db_article.keyword_set.create(name=key)
+                    for key in keywords:
+                        version.keyword_set.create(name=key)
 
-                for author in authors:
-                    if not db_article.author_set.filter(name=author):
-                        db_article.author_set.create(name=author)
+                    for author in authors:
+                        version.author_set.create(name=author)
+                    for account in twitter_accounts[0]:
+                        version.sourcetwitter_set.create(
+                            name=account,
+                            matched = True)
 
-                for account in twitter_accounts[0]:
-                    if not db_article.sourcetwitter_set.filter(name=account):
-                        db_article.sourcetwitter_set.create(name = account, matched = True)
+                    for account in twitter_accounts[1]:
+                        version.sourcetwitter_set.create(
+                            name=account,
+                            matched = False)
 
-                for account in twitter_accounts[1]:
-                    if not db_article.sourcetwitter_set.filter(name=account):
-                        db_article.sourcetwitter_set.create(name = account, matched = False)
+                    for source in sources[0]:
+                        version.sourcesite_set.create(
+                            url=source[0],
+                            domain=source[1],
+                            anchor_text=source[2],
+                            matched=True,
+                            local=(source[1] in site.url))
 
-                for source in sources[0]:
-                    if not db_article.sourcesite_set.filter(url=source[0]):
-                        db_article.sourcesite_set.create(url=source[0],
-                                              domain=source[1], anchor_text=source[2],
-                                              matched=True, local=(source[1] in site.url))
+                    for source in sources[1]:
+                        version.sourcesite_set.create(
+                            url=source[0],
+                            domain=source[1],
+                            anchor_text=source[2],
+                            matched=False,
+                            local=(source[1] in site.url))
+                else:
+                    logging.info("Adding new Article to the DB")
+                    # If the db_article is new to the database,
+                    # add it to the database
+                    db_article = Article(domain=site.url)
+                    db_article.save()
+                    db_article.url_set.create(name=url)
+                    version = db_article.version_set.create(
+                        title=title,
+                        text=text,
+                        text_hash=text_hash,
+                        language=language,
+                        date_added=date_now,
+                        date_last_seen=date_now,
+                        date_published=pub_date)
 
-                for source in sources[1]:
-                    if not db_article.sourcesite_set.filter(url=source[0]):
-                        db_article.sourcesite_set.create(url=source[0],
-                                              domain=source[1], anchor_text=source[2],
-                                              matched=False, local=(source[1] in site.url))
+                    for key in keywords:
+                        version.keyword_set.create(name=key)
 
+                    for author in authors:
+                        version.author_set.create(name=author)
+                    for account in twitter_accounts[0]:
+                        version.sourcetwitter_set.create(
+                            name=account,
+                            matched = True)
+
+                    for account in twitter_accounts[1]:
+                        version.sourcetwitter_set.create(
+                            name=account,
+                            matched = False)
+
+                    for source in sources[0]:
+                        version.sourcesite_set.create(
+                            url=source[0],
+                            domain=source[1],
+                            anchor_text=source[2],
+                            matched=True,
+                            local=(source[1] in site.url))
+
+                    for source in sources[1]:
+                        version.sourcesite_set.create(
+                            url=source[0],
+                            domain=source[1],
+                            anchor_text=source[2],
+                            matched=False,
+                            local=(source[1] in site.url))
             warc_creator.enqueue_article(url)
         except (KeyboardInterrupt, SystemExit):
             raise
