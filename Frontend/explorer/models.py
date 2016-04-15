@@ -144,10 +144,15 @@ class SourceSite(models.Model):
 
 class SourceSiteAlias(models.Model):
     primary = models.ForeignKey(SourceSite)
+<<<<<<< HEAD
     alias = models.URLField(max_length=255, unique=True,
                           help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://aljazeera.com)')
     name = models.CharField(max_length=200, default="", blank=True,
                             help_text='Your favorable name of this site.')
+=======
+    alias = models.CharField(max_length=200, unique=True,
+                            help_text='Case insensitive. Maximum 200 characters (Ex. Canada)')
+>>>>>>> master
 
     class Meta:
         verbose_name = "Alias"
@@ -164,16 +169,3 @@ class Keyword(models.Model):
 
     def __unicode__(self):
         return self.name
-
-
-class KeywordAlias(models.Model):
-    primary = models.ForeignKey(Keyword)
-    alias = models.CharField(max_length=200, unique=True,
-                            help_text='Case insensitive. Maximum 200 characters (Ex. Canada)')
-
-    class Meta:
-        verbose_name = "Alias"
-        verbose_name_plural = "Aliases"
-
-    def __unicode__(self):
-        return self.alias

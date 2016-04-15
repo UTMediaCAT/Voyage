@@ -443,25 +443,25 @@ def explore():
     referring_sites = ReferringSite.objects.all()
     logging.info("Collected {0} Referring Sites from Database".format(len(referring_sites)))
 
-    # Retrieve and store foreign site information
     source_sites = []
+    keyword_list = []
+    source_twitter_list = []
+
+    # Retrieve and store foreign site information
     for site in ExplorerSourceSite.objects.all():
         # source_sites is now in form ['URL', ...]
         source_sites.append(site.url)
         for alias in site.sourcesitealias_set.all():
-            source_sites.append(str(alias))
+            # Source site aliases are keywords
+            keyword_list.append(str(alias))
     logging.info("Collected {0} Source Sites from Database".format(len(source_sites)))
 
     # Retrieve all stored keywords
-    keyword_list = []
     for key in ExplorerKeyword.objects.all():
         keyword_list.append(str(key.name))
-        for alias in key.keywordalias_set.all():
-            keyword_list.append(str(alias))
     logging.info("Collected {0} Keywords from Database".format(len(keyword_list)))
 
     # Retrieve all stored twitter_accounts
-    source_twitter_list = []
     twitter_accounts = ExplorerSourceTwitter.objects.all()
     for key in twitter_accounts:
         source_twitter_list.append(str(key.name))
