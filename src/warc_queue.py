@@ -42,8 +42,7 @@ if __name__ == "__main__":
         # read the file and get all the urls
         article_file = open(article_file_name, "r+")
         for line in article_file:
-            print 'LINE: ' + line
-            if (line.strip() != '' and not line in article_queue):
+            if (len(line.split(' ')) == 2 and not line.split(' ') in article_queue):
                 article_queue.append(line.split(' '))
         article_file.seek(0)
         article_file.truncate()
