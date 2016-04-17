@@ -70,6 +70,9 @@ from multiprocessing import Pool, cpu_count
 from functools import partial
 import signal
 
+# For hashing the text
+import hashlib
+
 def init_worker():
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
@@ -148,7 +151,6 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
         logging.debug("expecting {0} from plan b crawler".format(crawlersource_articles.probabilistic_n))
     article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles).__iter__()
     processed = 0
-
     filters = site.referringsitefilter_set.all()
     while True:
         try:
@@ -213,7 +215,6 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 continue
 
             article.newspaper_parse()
-            text = article._newspaper_text
             # Rerun the get_keywords with text parsed by newspaper.
             keywords = get_keywords(article, db_keywords)
 
@@ -239,26 +240,29 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
             mod_date = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=3))
 
             language = article.language
+            text = article.get_text(strip_html=True)
+            text_hash = hash_sha256(text)
 
             date_now=timezone.localtime(timezone.now())
 
             # Check if the entry already exists
-            db_article_list = Article.objects.filter(url=url)
+            db_article_list = Article.objects.filter(text_hash=text_hash)
             if not db_article_list:
                 logging.info("Adding new Article to the DB")
                 # If the db_article is new to the database,
                 # add it to the database
-                db_article = Article(title=title, url=url,
+                db_article = Article(title=title,
                                   domain=site.url,
                                   date_added=date_now,
                                   date_last_seen=date_now,
                                   date_published=pub_date,
                                   date_modified=mod_date,
                                   language=language,
-                                  text=text)
+                                  text=text,
+                                  text_hash=text_hash)
                 db_article.save()
 
-                db_article = Article.objects.get(url=url)
+                db_article.url_set.create(name=url)
 
                 for key in keywords:
                     db_article.keyword_set.create(name=key)
@@ -288,16 +292,19 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 # update all fields except date_added
                 db_article = db_article_list[0]
                 db_article.title = title
-                db_article.url = url
-                db_article.domain = site.url
+                # db_article.domain = site.url
                 # Do not update the added date
                 # db_article.date_added = today
                 db_article.date_last_seen = date_now
                 db_article.date_published = pub_date
                 db_article.date_modified = mod_date
-                db_article.language = language
-                db_article.text = text
+                # db_article.language = language
+                # db_article.text = text
+                # db_article.text_hash = text_hash
                 db_article.save()
+
+                if not db_article.url_set.filter(name=url):
+                    db_article.url_set.create(name=url)
 
                 for key in keywords:
                     if not db_article.keyword_set.filter(name=key):
@@ -337,6 +344,13 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
     setup_logging(increment=False)
     logging.info("Finished Site: %s"%site.name)
 
+
+def hash_sha256(text):
+    hash_text = hashlib.sha256()
+    hash_text.update(text.encode('utf-8'))
+    return hash_text.hexdigest()
+
+
 def url_in_filter(url, filters):
     """
     Checks if any of the filters matches the url.
@@ -347,7 +361,6 @@ def url_in_filter(url, filters):
             (not filt.regex and filt.pattern in url)):
             return True
     return False
-
 
 
 def get_sources_sites(article, sites):
@@ -425,7 +438,7 @@ def get_keywords(article, keywords):
     # For each keyword, check if article's text contains it
     for key in keywords:
         regex = re.compile('[^a-z]' + key + '[^a-z]', re.IGNORECASE)
-        if regex.search(article.title) or regex.search(article.text):
+        if regex.search(article.title) or regex.search(article.get_text(strip_html=True)):
             # If the article's text contains the key, append it to the list
             matched_keywords.append(key)
     # Return the list
