@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'statistics',
     'options',
     'visualizations',
+    'libraries.nested_inline',
 )
 
 MIDDLEWARE_CLASSES = (
