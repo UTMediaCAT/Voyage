@@ -4,6 +4,7 @@ import logging
 import threading
 
 
+
 def configuration():
     """ (None) -> dict
     Returns a dictionary containing the micro settings from the
@@ -23,7 +24,7 @@ def create_warc(url, dir):
     logging.info("creating warc \"{0}\" in \"{1}\"".format(rename_url, dir))
     subprocess.call(["mkdir", "-p", dir], cwd="..", close_fds=True)
     return subprocess.Popen(["wpull", "--user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36", "--no-robots", "--no-check-certificate", "--no-cookies", "--random-wait", "--phantomjs", "--no-phantomjs-snapshot", "--phantomjs-max-time", "150", "--warc-file", rename_url,  url], cwd="../"+dir, close_fds=True)
-       
+
 
 def create_pdf(url, dir):
     """
@@ -40,8 +41,10 @@ def enqueue_article(url):
     """(url)-->None
     Saves the url into article queue file for warc_queue.py to pick up and download
     """
+    config = configuration()
+    dir = config['projectdir']+"/src/"
     article_file_name = "article_warc.stream"
-    article_file = open(article_file_name, "a")
+    article_file = open(dir + article_file_name, "a")
     article_file.write(url + "\n")
     article_file.close()
 
