@@ -212,8 +212,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
             logging.debug(u"matched sources: {0}".format(repr(sources)))
             twitter_accounts = get_sources_twitter(article, twitter_accounts_explorer)
             logging.debug(u"matched twitter_accounts: {0}".format(repr(twitter_accounts[0])))
-
-            if((not keywords) and (not sources[0]) and (not twitter_accounts[0])):#[] gets coverted to false
+            if((not keywords) and (not twitter_accounts[0]) and (all(map(lambda x: x[1] in site.url, sources[0])))):#[] gets coverted to false
                 logging.debug("skipping article because it's not a match")
                 continue
 
@@ -221,10 +220,9 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
             # Rerun the get_keywords with text parsed by newspaper.
             keywords = get_keywords(article, db_keywords)
 
-            if((not keywords) and (not sources[0]) and (not twitter_accounts[0])):#[] gets coverted to false
+            if((not keywords) and (not twitter_accounts[0]) and (all(map(lambda x: x[1] in site.url, sources[0])))):#[] gets coverted to false
                 logging.debug("skipping article because it's not a match")
                 continue
-                
             logging.info("match found")
 
             #load selectors from db!
