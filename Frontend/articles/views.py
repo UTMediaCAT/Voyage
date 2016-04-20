@@ -2,7 +2,7 @@ from django.shortcuts import render, HttpResponse
 from django.template import RequestContext, loader
 from articles.models import Article, Keyword, SourceSite, Author, SourceTwitter
 import sys, os, time, json, yaml, urllib
-    import common
+import common
 import warc_creator
 import subprocess
 
