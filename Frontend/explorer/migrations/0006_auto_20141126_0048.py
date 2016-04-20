@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='msite',
             name='url',
-            field=models.URLField(help_text=b'Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://cnn.com)', unique=True, max_length=2000, validators=[explorer.models.validate_site]),
+            field=models.URLField(help_text=b'Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://cnn.com)', unique=True, validators=[explorer.models.validate_site]),
             preserve_default=True,
         ),
         migrations.AlterField(

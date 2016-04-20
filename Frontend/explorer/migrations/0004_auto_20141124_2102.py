@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='fsite',
             name='url',
-            field=models.URLField(help_text=b'Must include "http://", and try to the url as simple as possible for maximum matches.\nMaximum 2000 characters', unique=True, max_length=2000),
+            field=models.URLField(help_text=b'Must include "http://", and try to the url as simple as possible for maximum matches.\nMaximum 2000 characters', unique=True),
             preserve_default=True,
         ),
         migrations.AlterField(
@@ -50,7 +50,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='msite',
             name='url',
-            field=models.URLField(help_text=b'Must include "http://", and try to the url as simple as possible for maximum matches.\nMaximum 2000 characters', unique=True, max_length=2000),
+            field=models.URLField(help_text=b'Must include "http://", and try to the url as simple as possible for maximum matches.\nMaximum 2000 characters', unique=True),
             preserve_default=True,
         ),
         migrations.AlterField(

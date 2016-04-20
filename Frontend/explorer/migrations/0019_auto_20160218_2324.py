@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
             name='SourceSiteAlias',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('alias', models.URLField(help_text=b'Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://aljazeera.com)', unique=True, max_length=2000)),
+                ('alias', models.URLField(help_text=b'Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://aljazeera.com)', unique=True)),
                 ('primary', models.ForeignKey(to='explorer.SourceSite')),
             ],
             options={
