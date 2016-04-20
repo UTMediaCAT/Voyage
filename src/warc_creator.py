@@ -2,22 +2,17 @@ import subprocess
 import yaml
 import logging
 import threading
-
-
 import os
 
-def script_dir():
-    '''
-    Get the directory in which this file itself resides no matter what current working dir is.
-    '''
-    return os.path.dirname(os.path.realpath(__file__))
+# dir of this file
+dir = os.path.dirname(os.path.abspath(__file__))
 
 def configuration():
     """ (None) -> dict
     Returns a dictionary containing the micro settings from the
     config.yaml file located in the directory containing this file
     """
-    config_yaml = open(script_dir()+"/../config.yaml", 'r')
+    config_yaml = open(dir + "/../config.yaml", 'r')
     config = yaml.load(config_yaml)
     config_yaml.close()
     return config
@@ -48,9 +43,9 @@ def enqueue_article(url):
     """(url)-->None
     Saves the url into article queue file for warc_queue.py to pick up and download
     """
-
-    article_file_name = "article_warc.stream"
-    article_file = open(script_dir() + "/" + article_file_name, "a")
+    dir = os.path.dirname(os.path.abspath(__file__))
+    article_file_name = dir + "/" + "article_warc.stream"
+    article_file = open(article_file_name, "a")
     article_file.write(url + "\n")
     article_file.close()
 
