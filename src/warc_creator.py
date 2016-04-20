@@ -1,18 +1,15 @@
 import subprocess
 import yaml
 import logging
-import threading
-import os
 
-# dir of this file
-dir = os.path.dirname(os.path.abspath(__file__))
+
 
 def configuration():
     """ (None) -> dict
     Returns a dictionary containing the micro settings from the
     config.yaml file located in the directory containing this file
     """
-    config_yaml = open(dir + "/../config.yaml", 'r')
+    config_yaml = open("/../config.yaml", 'r')
     config = yaml.load(config_yaml)
     config_yaml.close()
     return config
@@ -39,11 +36,10 @@ def create_pdf(url, dir):
     # create png and img file
     return subprocess.Popen(["phantomjs", "../../src/rasterize.js", url,  rename_url], cwd="../"+dir, close_fds=True)
 
-def enqueue_article(url):
+def enqueue_article(url, dir = "."):
     """(url)-->None
     Saves the url into article queue file for warc_queue.py to pick up and download
     """
-    dir = os.path.dirname(os.path.abspath(__file__))
     article_file_name = dir + "/" + "article_warc.stream"
     article_file = open(article_file_name, "a")
     article_file.write(url + "\n")
