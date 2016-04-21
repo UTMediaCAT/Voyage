@@ -69,9 +69,9 @@ def getWarc(request, filename):
     except IOError:
         # if the warc file doesn't exist, display 404 page to user, and enqueue the url
         # to task queue to retry generating warc
-        url = filename.replace("_", "/")
-        dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', "src"))
-        warc_creator.enqueue_article(url, dir)
+        # url = filename.replace("_", "/")
+        # dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', "src"))
+        # warc_creator.enqueue_article(url, dir)
         return render(request, '404/404.html')
 
 
@@ -89,9 +89,9 @@ def getPDF(request, filename):
     except IOError:
         # if the pdf file doesn't exist, display 404 page to user, and enqueue the url
         # to task queue retry generating pdf
-        url = filename.replace("_", "/")
-        dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', "src"))
-        warc_creator.enqueue_article(url, dir)
+        # url = filename.replace("_", "/")
+        # dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', "src"))
+        # warc_creator.enqueue_article(url, dir)
         return render(request, '404/404.html')
 
 def getImg(request, filename):
@@ -108,8 +108,8 @@ def getImg(request, filename):
     except IOError:
         # if the img file doesn't exist, display 404 page to user, and enqueue the url
         # to task queue to retry generating img
-        url = filename.replace("_", "/")
-        dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', "src"))
-        warc_creator.enqueue_article(url, dir)
+        # url = filename.replace("_", "/")
+        # dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', "src"))
+        # warc_creator.enqueue_article(url, dir)
         return render(request, '404/404.html')
 
