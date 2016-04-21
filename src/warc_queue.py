@@ -41,20 +41,23 @@ if __name__ == "__main__":
             article_file_name = "article_warc.stream.failure"
         # read the file and get all the urls
         article_file = open(article_file_name, "r+")
-        for url in article_file:
-            if (url.strip() != "" and (not url.strip() in article_queue)):
-                article_queue.append(url.strip())
+        for line in article_file:
+            if (len(line.split(' ')) == 2 and not line.split(' ') in article_queue):
+                article_queue.append(line.split(' '))
         article_file.seek(0)
         article_file.truncate()
         article_file.close()
 
         if (len(article_queue) > 0):
             # get first element in the queue
-            url = article_queue.pop(0)
-            article_processes.append(warc_creator.create_article_warc(url))
+            line = article_queue.pop(0)
+            url = line[0]
+            warc_file_name = line[1].strip()
+            print 'processing: ' + url + ' : ' + warc_file_name
+            article_processes.append(warc_creator.create_article_warc(url, warc_file_name))
 
             # set time out for pdf generator
-            p = warc_creator.create_article_pdf(url)
+            p = warc_creator.create_article_pdf(url, warc_file_name)
             # wait for 30 seconds, if timeout, kill the process
             num_polls = 0
             while p.poll() is None:

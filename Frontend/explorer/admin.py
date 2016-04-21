@@ -105,8 +105,9 @@ class ReferringSiteAdmin(admin.ModelAdmin):
     article_count.short_description = "Total Articles Archived"
 
     def latest_article(self, obj):
-        latest = Article.objects.filter(domain=obj.url)
+        latest = Article.objects.filter(domain=obj.url).last()
         if latest:
+            latest = latest.version_set
             delta = timezone.now() - latest.latest('date_added').date_added
             t1 = delta.days             # Days
             t2 = delta.seconds/3600     # Hours
