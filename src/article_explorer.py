@@ -75,6 +75,7 @@ import signal
 # For hashing the text
 import hashlib
 
+# For handling keyboard inturrupt
 def init_worker():
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
@@ -185,7 +186,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 if(not article.download()):
                     logging.warning("article skipped because download failed")
                     continue
-            url = article.canonical_url
+            url = article.canonical_url.strip()
 
             if (not article.is_parsed):
                 if (not article.preliminary_parse()):
@@ -360,7 +361,11 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                             anchor_text=source[2],
                             matched=False,
                             local=(source[1] in site.url))
-            warc_creator.enqueue_article(url)
+
+                # Add the article into queue
+                logging.info("Creating new WARC")
+                warc_creator.enqueue_article(url, text_hash)
+
         except (KeyboardInterrupt, SystemExit):
             raise
         except Exception as e:

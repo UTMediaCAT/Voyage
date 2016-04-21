@@ -49,7 +49,7 @@ class Article(models.Model):
 
 class Url(models.Model):
     article = models.ForeignKey(Article)
-    name = models.URLField(max_length=2000, verbose_name="URL")
+    name = models.URLField(max_length=2000, verbose_name="URL", unique=True)
 
     def __unicode__(self):
         return self.name
@@ -59,7 +59,7 @@ class Version(models.Model):
     article = models.ForeignKey(Article)
     title = models.CharField(max_length=200, blank=True)
     text = models.TextField(max_length=None, blank=True)
-    text_hash = models.CharField(max_length=100, blank=True)
+    text_hash = models.CharField(max_length=100, blank=True, unique=True)
     language = models.CharField(max_length=200, blank=True)
     date_added = models.DateTimeField('Date Added', blank=True, null=True)
     date_last_seen = models.DateTimeField('Date Last Seen', blank=True, null=True)

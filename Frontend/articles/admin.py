@@ -6,6 +6,7 @@ import re
 # Register your models here.
 
 import yaml, os
+import common
 import difflib
 
 class AuthorInline(NestedTabularInline):
@@ -34,16 +35,55 @@ class SourceTwitterInline(NestedTabularInline):
 
 class VersionInline(NestedStackedInline):
     model = Version
-    fields = ('title', 'highlighted_text', 'text_hash', 'language', 'date_added', 'date_last_seen', 'date_published', 'found_by',)
-    readonly_fields = ('title', 'highlighted_text', 'text_hash', 'language', 'date_added', 'date_last_seen', 'date_published', 'found_by',)
+    fields = ('title', 'highlighted_text', 'text_hash', 'language', 'date_added', 'date_last_seen', 'date_published', 'found_by', 'download_options',)
+    readonly_fields = ('title', 'highlighted_text', 'text_hash', 'language', 'date_added', 'date_last_seen', 'date_published', 'found_by', 'download_options',)
     inlines = [AuthorInline, SourceSiteInline, KeywordInline, SourceTwitterInline]
     extra = 0
+    def download_options(self, obj):
+
+        root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
+        config = common.get_config()
+        warc_file = root_dir + "/" + config['warc']['dir'] + "/" + config['warc']['article_subdir'] + "/" + obj.text_hash + ".warc.gz"
+        warc_available = os.path.isfile(warc_file)
+
+        pdf_file = root_dir + "/" + config['pdf']['dir'] + "/" + config['pdf']['article_subdir'] + "/" + obj.text_hash + ".pdf"
+        pdf_available = os.path.isfile(pdf_file)
+
+        img_file = root_dir + "/" + config['pdf']['dir'] + "/" + config['pdf']['article_subdir'] + "/" + obj.text_hash + ".png"
+        img_available = os.path.isfile(img_file)
+        # return format((
+        #     """
+        #     <div class="btn-group"> \
+        #         <button class="btn btn-default" %s><a href="/articles/warc/%s">Download Warc</a></button> \
+        #         <button class="btn btn-default" %s><a href="/articles/pdf/%s">View PDF</a></button> \
+        #         <button class="btn btn-default" %s><a href="/articles/img/%s">View Screenshot</a></button> \
+        #     </div> \
+        #     """) %
+        #     (
+        #         '' if warc_available else 'disabled', obj.text_hash,
+        #         '' if pdf_available else 'disabled', obj.text_hash,
+        #         '' if img_available else 'disabled', obj.text_hash,
+        #     ))
+
+        return format((
+            """
+            <div class="btn-group"> \
+                <a class="btn btn-success %s" %s>Download Warc</a> \
+                <a class="btn btn-success %s" %s>View PDF</a> \
+                <a class="btn btn-success %s" %s>View Screenshot</a> \
+            </div> \
+            """) %
+            (
+                '' if warc_available else 'disabled', 'href="/articles/warc/' + obj.text_hash + '"' if warc_available else '',
+                '' if pdf_available else 'disabled', 'href="/articles/pdf/' + obj.text_hash + '"' if pdf_available else '',
+                '' if img_available else 'disabled', 'href="/articles/img/' + obj.text_hash + '"' if img_available else '',
+            ))
+    download_options.short_description = "Donwload Options"
 
     def highlighted_text(self, obj):
         tag_front=" <strong><mark>"
         tag_end = "</mark></strong> "
         text = obj.text
-
         versions = list(obj.article.version_set.all())
         index = versions.index(obj)
         if (index > 0 and len(versions) - 1 >= index):
@@ -60,9 +100,9 @@ class VersionInline(NestedStackedInline):
                         else:
                             diff += line
                     elif line[0] == '+':
-                        diff += ' <span style="background-color: CornflowerBlue"><strong>' + line[1:] + '</strong>&nbsp;</span>'
+                        diff += ' <span style="background-color: CornflowerBlue"><strong> ' + line[1:] + ' </strong>&nbsp;</span>'
                     elif line[0] == '-':
-                        diff += ' <span style="text-decoration: line-through">' + line[1:] + '&nbsp;</span> '
+                        diff += ' <span style="text-decoration: line-through"> ' + line[1:] + ' &nbsp;</span> '
                     else:
                         diff += line
             text = diff
@@ -71,6 +111,8 @@ class VersionInline(NestedStackedInline):
             result = pattern.subn(tag_front+key.name+tag_end, text)
             text = result[0]
         return '<div style="font-size: 1.2em">' + text + '</div>'
+
+    highlighted_text.short_description = 'Text'
 
 class ArticleAdmin(NestedModelAdmin):
     fieldsets = [
@@ -209,9 +251,9 @@ class ArticleAdmin(NestedModelAdmin):
             '<a href="/articles/img/%s">View Screenshot</a><br />' +\
             '<div>Urls: %i<br />Versions: %i</div>') %
             (
-                str(obj.pk), obj.url.replace('/', '_'),
-                obj.url.replace('/', '_'),
-                obj.url.replace('/', '_'),
+                str(obj.pk), obj.text_hash,
+                obj.text_hash,
+                obj.text_hash,
                 obj.url_set.count(),
                 obj.version_set.count()))
 
