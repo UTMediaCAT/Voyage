@@ -1,5 +1,5 @@
 from django.contrib import admin
-from nested_inline.admin import NestedStackedInline, NestedTabularInline, NestedModelAdmin
+from libraries.nested_inline.admin import NestedStackedInline, NestedTabularInline, NestedModelAdmin
 from articles.models import Article, Version, Author, SourceSite, Keyword, SourceTwitter
 from advanced_filters.admin import AdminAdvancedFiltersMixin
 
@@ -125,7 +125,7 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
     list_display = ('get_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_language', 'get_date_added', 'get_date_published', 'get_date_last_seen', 'link_options')
     search_fields = ['title', 'text']
     advanced_filter_fields = ('domain', ('keyword__name', 'Keyword'), 'sourcesite__domain', ('sourcetwitter__name', 'Source Twitter'), 'language')
-    list_filter = ['domain']
+    list_filter = tuple(['domain'])
     readonly_fields = ('id', 'url', 'domain', 'title', 'language', 'found_by', 'date_added', 'date_last_seen', 'date_published', 'text', 'highlighted_text', 'show_urls', 'text_hash')
     actions_on_top = True
     list_per_page = 20
