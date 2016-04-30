@@ -125,9 +125,7 @@ class ExplorerArticle(object):#derive from object for getters/setters
     def language(self):
         return self.newspaper_article.meta_lang
     
-
-    @property
-    def text(self, strip_html=False):
+    def get_text(self, strip_html=False):
         if(strip_html):
             if(self._newspaper_text):
                 return self._newspaper_text
@@ -139,6 +137,7 @@ class ExplorerArticle(object):#derive from object for getters/setters
         else:
             return self._newspaper_text or self._readability_text
 
+    text = property(get_text)
 
     def get_links(self, article_text_links_only=False):
         result = []

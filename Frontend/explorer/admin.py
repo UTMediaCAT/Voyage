@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import (GenericStackedInline, GenericTabularInline)
 from taggit.models import TaggedItem
-from explorer.models import ReferringSite, ReferringSiteFilter, ReferringSiteCssSelector, SourceSite, SourceSiteAlias, Keyword, KeywordAlias, ReferringTwitter, SourceTwitter, SourceTwitterAlias
+from explorer.models import ReferringSite, ReferringSiteFilter, ReferringSiteCssSelector, SourceSite, SourceSiteAlias, Keyword, ReferringTwitter, SourceTwitter, SourceTwitterAlias
 from articles.models import Article
 from articles.models import SourceSite as ArticleSource
 from articles.models import Keyword as ArticleKeyword
@@ -105,8 +105,9 @@ class ReferringSiteAdmin(admin.ModelAdmin):
     article_count.short_description = "Total Articles Archived"
 
     def latest_article(self, obj):
-        latest = Article.objects.filter(domain=obj.url)
+        latest = Article.objects.filter(domain=obj.url).last()
         if latest:
+            latest = latest.version_set
             delta = timezone.now() - latest.latest('date_added').date_added
             t1 = delta.days             # Days
             t2 = delta.seconds/3600     # Hours
@@ -165,20 +166,15 @@ class SourceSiteAdmin(admin.ModelAdmin):
     get_tags.short_description = "Tags"
 
 
-class KeywordAliasInline(admin.TabularInline):
-    model = KeywordAlias
-    extra = 1
-
-
 class KeywordAdmin(admin.ModelAdmin):
-    inlines = [KeywordAliasInline, TaggitTabularInline]
+    inlines = [TaggitTabularInline]
     list_filter = [TaggitListFilter]
     fieldsets = [
         (None,               {'fields': ['name']})
         ]
 
 
-    list_display = ['name', 'match_count', 'get_aliases', 'get_tags']
+    list_display = ['name', 'match_count', 'get_tags']
     search_fields = ['name']
     actions_on_top = True
     list_per_page = 1000
@@ -188,14 +184,6 @@ class KeywordAdmin(admin.ModelAdmin):
                len(TwitterKeyword.objects.filter(name=obj.name))
 
     match_count.short_description = "Total Matches"
-
-    def get_aliases(self, obj):
-        aliases = []
-        for alias in obj.keywordalias_set.all():
-            aliases.append(str(alias))
-        return ', '.join(aliases)
-
-    get_aliases.short_description = "Aliases"
 
     def get_tags(self, obj):
         tags = []

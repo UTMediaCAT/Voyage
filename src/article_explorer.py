@@ -36,7 +36,7 @@ import timeit
 # For getting today's date with respect to the TZ specified in Django Settings
 from django.utils import timezone
 # For extracting 'pub_date's string into Datetime object
-from dateutil import parser
+import dateutil
 # To connect and use the Django Database
 import django
 os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
@@ -45,6 +45,8 @@ from articles.models import*
 from articles.models import Keyword as ArticleKeyword
 from articles.models import SourceSite as ArticleSourceSite
 from articles.models import SourceTwitter as ArticleSourceTwitter
+from articles.models import Version as ArticleVersion
+from articles.models import Url as ArticleUrl
 from explorer.models import*
 from explorer.models import SourceTwitter as ExplorerSourceTwitter
 from explorer.models import Keyword as ExplorerKeyword
@@ -70,6 +72,10 @@ from multiprocessing import Pool, cpu_count
 from functools import partial
 import signal
 
+# For hashing the text
+import hashlib
+
+# For handling keyboard inturrupt
 def init_worker():
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
@@ -87,31 +93,35 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
     """
     added, updated, failed, no_match = 0, 0, 0, 0
 
-    # Initialize multiprocessing by having cpu*4 workers
-    pool = Pool(processes=cpu_count()*4, maxtasksperchild=1, initializer=init_worker)
+    if("DEBUG" in os.environ):
+        for s in referring_sites:
+            parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer, s)
+    else:
+        # Initialize multiprocessing by having cpu*2 workers
+        pool = Pool(processes=cpu_count()*2, maxtasksperchild=1, initializer=init_worker)
 
-    # Use this instead of ^ when using multiprocessing.dummy
-    # pool = Pool(processes=cpu_count()*4)
+        # Use this instead of ^ when using multiprocessing.dummy
+        # pool = Pool(processes=cpu_count()*4)
 
-    # pass database informations using partial
-    pass_database = partial(parse_articles_per_site, db_keywords, source_sites, twitter_accounts_explorer)
+        # pass database informations using partial
+        pass_database = partial(parse_articles_per_site, db_keywords, source_sites, twitter_accounts_explorer)
 
-    # Start the multiprocessing
-    result = pool.map_async(pass_database, referring_sites)
+        # Start the multiprocessing
+        result = pool.map_async(pass_database, referring_sites)
 
-    # Continue until all sites are done crawling
-    while (not result.ready()):
-        try:
-            # Check for any new command on communication stream
-            check_command()
-            time.sleep(5)
-        except (KeyboardInterrupt, SystemExit) as e:
-            logging.warning("%s detected, exiting"%str(e))
-            sys.exit(0)
+        # Continue until all sites are done crawling
+        while (not result.ready()):
+            try:
+                # Check for any new command on communication stream
+                check_command()
+                time.sleep(5)
+            except (KeyboardInterrupt, SystemExit) as e:
+                logging.warning("%s detected, exiting"%str(e))
+                sys.exit(0)
 
-    # Fail-safe to ensure the processes are done
-    pool.close()
-    pool.join()
+        # Fail-safe to ensure the processes are done
+        pool.close()
+        pool.join()
 
 
 
@@ -144,7 +154,6 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
         logging.debug("expecting {0} from plan b crawler".format(crawlersource_articles.probabilistic_n))
     article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles).__iter__()
     processed = 0
-
     filters = site.referringsitefilter_set.all()
     while True:
         try:
@@ -177,7 +186,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
                 if(not article.download()):
                     logging.warning("article skipped because download failed")
                     continue
-            url = article.canonical_url
+            url = article.canonical_url.strip()
 
             if (not article.is_parsed):
                 if (not article.preliminary_parse()):
@@ -203,119 +212,158 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
             logging.debug(u"matched sources: {0}".format(repr(sources)))
             twitter_accounts = get_sources_twitter(article, twitter_accounts_explorer)
             logging.debug(u"matched twitter_accounts: {0}".format(repr(twitter_accounts[0])))
-
-            if((not keywords) and (not sources[0]) and (not twitter_accounts[0])):#[] gets coverted to false
+            if((not keywords) and (not twitter_accounts[0]) and (all(map(lambda x: x[1] in site.url, sources[0])))):#[] gets coverted to false
                 logging.debug("skipping article because it's not a match")
                 continue
 
             article.newspaper_parse()
-            text = article._newspaper_text
             # Rerun the get_keywords with text parsed by newspaper.
             keywords = get_keywords(article, db_keywords)
 
-            if((not keywords) and (not sources[0]) and (not twitter_accounts[0])):#[] gets coverted to false
+            if((not keywords) and (not twitter_accounts[0]) and (all(map(lambda x: x[1] in site.url, sources[0])))):#[] gets coverted to false
                 logging.debug("skipping article because it's not a match")
                 continue
-                
             logging.info("match found")
 
             #load selectors from db!
             #parameter is a namedtuple of "css" and "regex"
-            title = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field_choice=0)) or article.title
-            authors = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field_choice=1)) or article.authors
-            pub_date = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field_choice=2)) or get_pub_date(article)
-            mod_date = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field_choice=3))
+            title = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=0)) or article.title
+            authors = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=1))
+            if(authors):
+                authors = [authors]
+            else:
+                authors = article.authors
+            pub_date = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=2))
+            if(pub_date):
+                pub_date = dateutil.parser.parse(pub_date)
+            else:
+                pub_date = get_pub_date(article)
+            mod_date = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=3))
 
             language = article.language
+            text = article.get_text(strip_html=True)
+            text_hash = hash_sha256(text)
 
             date_now=timezone.localtime(timezone.now())
 
             # Check if the entry already exists
-            db_article_list = Article.objects.filter(url=url)
-            if not db_article_list:
-                logging.info("Adding new Article to the DB")
-                # If the db_article is new to the database,
-                # add it to the database
-                db_article = Article(title=title, url=url,
-                                  domain=site.url,
-                                  date_added=date_now,
-                                  date_last_seen=date_now,
-                                  date_published=pub_date,
-                                  date_modified=mod_date,
-                                  language=language,
-                                  text=text)
-                db_article.save()
+            version_match = ArticleVersion.objects.filter(text_hash=text_hash)
+            url_match = ArticleUrl.objects.filter(name=url)
 
-                db_article = Article.objects.get(url=url)
-
-                for key in keywords:
-                    db_article.keyword_set.create(name=key)
-
-                for author in authors:
-                    db_article.author_set.create(name=author)
-                for account in twitter_accounts[0]:
-
-                    db_article.sourcetwitter_set.create(name = account, matched = True)
-
-                for account in twitter_accounts[1]:
-                    db_article.sourcetwitter_set.create(name = account, matched = False)
-
-                for source in sources[0]:
-                    db_article.sourcesite_set.create(url=source[0],
-                                              domain=source[1], anchor_text=source[2],
-                                              matched=True, local=(source[1] in site.url))
-
-                for source in sources[1]:
-                    db_article.sourcesite_set.create(url=source[0],
-                                              domain=source[1], anchor_text=source[2],
-                                              matched=False, local=(source[1] in site.url))
-
+            # 4 cases:
+            # Version  Url      Outcome
+            # match    match    Update date_last_seen
+            # match    unmatch  Add new Url to article
+            # unmatch  match    Add new Version to artcile
+            # unmatch  unmatch  Create new Article with respective Version and Url
+            if version_match:
+                version = version_match[0]
+                if url_match:
+                    if version_match[0].article != url_match[0].article:
+                        logging.warning(u"Version and Url matches are not pointing to same article! versionMatchId: {0} urlMatchId:{1}".format(version.id, url_match[0].id))
+                        continue
+                    else:
+                        logging.info(u"Updating date last seen of {0}".format(version.article.id))
+                else:
+                    db_article = version.article
+                    logging.info(u"Adding new Url to Article {0}".format(db_article.id))
+                    db_article.url_set.create(name=url)
+                version.date_last_seen = date_now
+                version.save()
             else:
-                logging.info("Modifying existing Article in the DB")
-                # If the db_article already exists,
-                # update all fields except date_added
-                db_article = db_article_list[0]
-                db_article.title = title
-                db_article.url = url
-                db_article.domain = site.url
-                # Do not update the added date
-                # db_article.date_added = today
-                db_article.date_last_seen = date_now
-                db_article.date_published = pub_date
-                db_article.date_modified = mod_date
-                db_article.language = language
-                db_article.text = text
-                db_article.save()
+                if url_match:
+                    db_article = url_match[0].article
+                    logging.info(u"Adding new Version to Article {0}".format(db_article.id))
+                    version = db_article.version_set.create(
+                        title=title,
+                        text=text,
+                        text_hash=text_hash,
+                        language=language,
+                        date_added=date_now,
+                        date_last_seen=date_now,
+                        date_published=pub_date)
 
-                for key in keywords:
-                    if not db_article.keyword_set.filter(name=key):
-                        db_article.keyword_set.create(name=key)
+                    for key in keywords:
+                        version.keyword_set.create(name=key)
 
-                for author in authors:
-                    if not db_article.author_set.filter(name=author):
-                        db_article.author_set.create(name=author)
+                    for author in authors:
+                        version.author_set.create(name=author)
+                    for account in twitter_accounts[0]:
+                        version.sourcetwitter_set.create(
+                            name=account,
+                            matched = True)
 
-                for account in twitter_accounts[0]:
-                    if not db_article.sourcetwitter_set.filter(name=account):
-                        db_article.sourcetwitter_set.create(name = account, matched = True)
+                    for account in twitter_accounts[1]:
+                        version.sourcetwitter_set.create(
+                            name=account,
+                            matched = False)
 
-                for account in twitter_accounts[1]:
-                    if not db_article.sourcetwitter_set.filter(name=account):
-                        db_article.sourcetwitter_set.create(name = account, matched = False)
+                    for source in sources[0]:
+                        version.sourcesite_set.create(
+                            url=source[0],
+                            domain=source[1],
+                            anchor_text=source[2],
+                            matched=True,
+                            local=(source[1] in site.url))
 
-                for source in sources[0]:
-                    if not db_article.sourcesite_set.filter(url=source[0]):
-                        db_article.sourcesite_set.create(url=source[0],
-                                              domain=source[1], anchor_text=source[2],
-                                              matched=True, local=(source[1] in site.url))
+                    for source in sources[1]:
+                        version.sourcesite_set.create(
+                            url=source[0],
+                            domain=source[1],
+                            anchor_text=source[2],
+                            matched=False,
+                            local=(source[1] in site.url))
+                else:
+                    logging.info("Adding new Article to the DB")
+                    # If the db_article is new to the database,
+                    # add it to the database
+                    db_article = Article(domain=site.url)
+                    db_article.save()
+                    db_article.url_set.create(name=url)
+                    version = db_article.version_set.create(
+                        title=title,
+                        text=text,
+                        text_hash=text_hash,
+                        language=language,
+                        date_added=date_now,
+                        date_last_seen=date_now,
+                        date_published=pub_date)
 
-                for source in sources[1]:
-                    if not db_article.sourcesite_set.filter(url=source[0]):
-                        db_article.sourcesite_set.create(url=source[0],
-                                              domain=source[1], anchor_text=source[2],
-                                              matched=False, local=(source[1] in site.url))
+                    for key in keywords:
+                        version.keyword_set.create(name=key)
 
-            warc_creator.enqueue_article(url)
+                    for author in authors:
+                        version.author_set.create(name=author)
+                    for account in twitter_accounts[0]:
+                        version.sourcetwitter_set.create(
+                            name=account,
+                            matched = True)
+
+                    for account in twitter_accounts[1]:
+                        version.sourcetwitter_set.create(
+                            name=account,
+                            matched = False)
+
+                    for source in sources[0]:
+                        version.sourcesite_set.create(
+                            url=source[0],
+                            domain=source[1],
+                            anchor_text=source[2],
+                            matched=True,
+                            local=(source[1] in site.url))
+
+                    for source in sources[1]:
+                        version.sourcesite_set.create(
+                            url=source[0],
+                            domain=source[1],
+                            anchor_text=source[2],
+                            matched=False,
+                            local=(source[1] in site.url))
+
+                # Add the article into queue
+                logging.info("Creating new WARC")
+                warc_creator.enqueue_article(url, text_hash)
+
         except (KeyboardInterrupt, SystemExit):
             raise
         except Exception as e:
@@ -324,6 +372,13 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
     logging.info("Finished Site: %s"%site.name)
     setup_logging(increment=False)
     logging.info("Finished Site: %s"%site.name)
+
+
+def hash_sha256(text):
+    hash_text = hashlib.sha256()
+    hash_text.update(text.encode('utf-8'))
+    return hash_text.hexdigest()
+
 
 def url_in_filter(url, filters):
     """
@@ -335,7 +390,6 @@ def url_in_filter(url, filters):
             (not filt.regex and filt.pattern in url)):
             return True
     return False
-
 
 
 def get_sources_sites(article, sites):
@@ -413,7 +467,7 @@ def get_keywords(article, keywords):
     # For each keyword, check if article's text contains it
     for key in keywords:
         regex = re.compile('[^a-z]' + key + '[^a-z]', re.IGNORECASE)
-        if regex.search(article.title) or regex.search(article.text):
+        if regex.search(article.title) or regex.search(article.get_text(strip_html=True)):
             # If the article's text contains the key, append it to the list
             matched_keywords.append(key)
     # Return the list
@@ -431,25 +485,25 @@ def explore():
     referring_sites = ReferringSite.objects.all()
     logging.info("Collected {0} Referring Sites from Database".format(len(referring_sites)))
 
-    # Retrieve and store foreign site information
     source_sites = []
+    keyword_list = []
+    source_twitter_list = []
+
+    # Retrieve and store foreign site information
     for site in ExplorerSourceSite.objects.all():
         # source_sites is now in form ['URL', ...]
         source_sites.append(site.url)
         for alias in site.sourcesitealias_set.all():
-            source_sites.append(str(alias))
+            # Source site aliases are keywords
+            keyword_list.append(str(alias))
     logging.info("Collected {0} Source Sites from Database".format(len(source_sites)))
 
     # Retrieve all stored keywords
-    keyword_list = []
     for key in ExplorerKeyword.objects.all():
         keyword_list.append(str(key.name))
-        for alias in key.keywordalias_set.all():
-            keyword_list.append(str(alias))
     logging.info("Collected {0} Keywords from Database".format(len(keyword_list)))
 
     # Retrieve all stored twitter_accounts
-    source_twitter_list = []
     twitter_accounts = ExplorerSourceTwitter.objects.all()
     for key in twitter_accounts:
         source_twitter_list.append(str(key.name))

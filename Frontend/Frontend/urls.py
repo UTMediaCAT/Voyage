@@ -29,20 +29,9 @@ urlpatterns = patterns('',
 
     # Home Page
 
-    url(r'^$', include('home.urls')),
-
-    url(r'^statistics_', include('home.urls')),
-
-    url(r'^article_', include('home.urls')),
-    
-    url(r'^tweet_', include('home.urls')),
-
-    url(r'^downloads', include('home.urls')),
-
-    url(r'^contact', include('home.urls')),
+    url(r'', include('home.urls')),
 
     url(r'^advanced_filters/', include('advanced_filters.urls'))
 )
 
 urlpatterns += staticfiles_urlpatterns()
-

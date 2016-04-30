@@ -46,8 +46,9 @@ INSTALLED_APPS = (
     'statistics',
     'options',
     'visualizations',
+    'libraries.nested_inline',
     'advanced_filters',
-    'easy_select2'
+    'easy_select2',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -113,7 +114,7 @@ SUIT_CONFIG = {
         {'label': 'Scope', 'icon':'icon-screenshot', 
          'models': ('explorer.referringsite', 'explorer.referringtwitter', 'explorer.sourcesite', 'explorer.sourcetwitter', 'explorer.keyword')},
         
-        {'label': 'Data', 'icon':'icon-book', 'models': ('articles.article', 'tweets.tweet')},
+        {'label': 'Data', 'icon':'icon-book', 'models': ('articles.article', 'tweets.tweet',  'articles.sourcesite' )},
 
         {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
 

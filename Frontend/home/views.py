@@ -23,11 +23,11 @@ def index(request):
 		content[request.path[1:]] = "active"
 		content["result"] = visualizations_dict[request.path]
 
-	elif (request.path in ["/downloads", "/contact"]):
+	elif (request.path in ["/downloads", "/overview"]):
 		content[request.path[1:]] = "active"
 
 	else:
-		content["overview"] = "active"
+		content["about"] = "active"
 
 		rsite_objs = ReferringSite.objects.all()
 		rsites = []
@@ -36,7 +36,7 @@ def index(request):
 			rsites.append(rsite.url)
 
 		content["rsites"] = rsites
-		
+
 		rtwitter_objs = ReferringTwitter.objects.all()
 		rtwitters = []
 
@@ -69,4 +69,18 @@ def index(request):
 
 		content["keywords"] = keywords
 
-	return render(request, 'home/index.html', content)
+	return render(request, 'home/index.html', {})
+
+
+
+def about(request):
+	return render(request, 'home/about.html', {})
+
+def services(request):
+	return render(request, 'home/services.html', {})
+
+def faq(request):
+	return render(request, 'home/faq.html', {})
+
+def contact(request):
+	return render(request, 'home/contact.html', {})

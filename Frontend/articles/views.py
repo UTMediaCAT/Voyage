@@ -6,6 +6,8 @@ import common
 import warc_creator
 import subprocess
 
+
+
 def index(request):
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)
@@ -18,8 +20,8 @@ def index(request):
 
 def getJson(request):
     articles = {}
-    for art in Article.objects.all():      
-        articles[art.url] = {'site': art.domain, 'title': art.title, 
+    for art in Article.objects.all():
+        articles[art.url] = {'site': art.domain, 'title': art.title,
                              'date_added': str(art.date_added),
                              'date_published': str(art.date_published),
                              'matched_keywords': [],
@@ -28,7 +30,7 @@ def getJson(request):
     for key in Keyword.objects.all():
         articles[key.article.url]['matched_keywords'].append(key.name)
     for src in SourceSite.objects.all():
-        articles[src.article.url]['matched_source_sites'].append({'url':src.url, 
+        articles[src.article.url]['matched_source_sites'].append({'url':src.url,
                                                              'site': src.domain, 'matched': src.matched})
     for src in SourceTwitter.objects.all():
         articles[src.article.url]['matched_source_twitter_accounts'].append({'name':src.name,
@@ -37,7 +39,7 @@ def getJson(request):
         articles[ath.article.url]['authors'].append(ath.name)
 
     res = HttpResponse(json.dumps(articles, indent=4, sort_keys=True))
-    res['Content-Disposition'] = format('attachment; filename=articles-%s.json' 
+    res['Content-Disposition'] = format('attachment; filename=articles-%s.json'
                                         % time.strftime("%Y%m%d-%H%M%S"))
     return res
 
@@ -67,10 +69,11 @@ def getWarc(request, filename):
     except IOError:
         # if the warc file doesn't exist, display 404 page to user, and enqueue the url
         # to task queue to retry generating warc
-        url = filename.replace("_", "/")
-        warc_creator.enqueue_article(url)
+        # url = filename.replace("_", "/")
+        # dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', "src"))
+        # warc_creator.enqueue_article(url, dir)
         return render(request, '404/404.html')
-    
+
 
 def getPDF(request, filename):
     try:
@@ -86,8 +89,9 @@ def getPDF(request, filename):
     except IOError:
         # if the pdf file doesn't exist, display 404 page to user, and enqueue the url
         # to task queue retry generating pdf
-        url = filename.replace("_", "/")
-        warc_creator.enqueue_article(url)
+        # url = filename.replace("_", "/")
+        # dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', "src"))
+        # warc_creator.enqueue_article(url, dir)
         return render(request, '404/404.html')
 
 def getImg(request, filename):
@@ -104,7 +108,8 @@ def getImg(request, filename):
     except IOError:
         # if the img file doesn't exist, display 404 page to user, and enqueue the url
         # to task queue to retry generating img
-        url = filename.replace("_", "/")
-        warc_creator.enqueue_article(url)
+        # url = filename.replace("_", "/")
+        # dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../', "src"))
+        # warc_creator.enqueue_article(url, dir)
         return render(request, '404/404.html')
 
