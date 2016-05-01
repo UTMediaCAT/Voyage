@@ -47,7 +47,7 @@ INSTALLED_APPS = (
     'options',
     'visualizations',
     'libraries.nested_inline',
-    'advanced_filters',
+    'libraries.advanced_filters',
     'easy_select2',
 )
 

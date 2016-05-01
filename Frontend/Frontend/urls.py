@@ -31,7 +31,7 @@ urlpatterns = patterns('',
 
     url(r'', include('home.urls')),
 
-    url(r'^advanced_filters/', include('advanced_filters.urls'))
+    url(r'^advanced_filters/', include('libraries.advanced_filters.urls'))
 )
 
 urlpatterns += staticfiles_urlpatterns()
