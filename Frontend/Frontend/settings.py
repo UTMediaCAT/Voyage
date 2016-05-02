@@ -47,6 +47,8 @@ INSTALLED_APPS = (
     'options',
     'visualizations',
     'libraries.nested_inline',
+    'libraries.advanced_filters',
+    'easy_select2',
 )
 
 MIDDLEWARE_CLASSES = (

@@ -1,5 +1,6 @@
 from django.contrib import admin
-from nested_inline.admin import NestedStackedInline, NestedTabularInline, NestedModelAdmin
+from libraries.nested_inline.admin import NestedStackedInline, NestedTabularInline, NestedModelAdmin
+from libraries.advanced_filters.admin import AdminAdvancedFiltersMixin
 from articles.models import Article, Version, Author, SourceSite, Keyword, SourceTwitter
 
 import re
@@ -114,7 +115,7 @@ class VersionInline(NestedStackedInline):
 
     highlighted_text.short_description = 'Text'
 
-class ArticleAdmin(NestedModelAdmin):
+class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
     fieldsets = [
         ('Basic',               {'fields': ['id', 'domain', 'show_urls']})
         ]
@@ -123,7 +124,18 @@ class ArticleAdmin(NestedModelAdmin):
 
     list_display = ('get_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_language', 'get_date_added', 'get_date_published', 'get_date_last_seen', 'link_options')
     search_fields = ['title', 'text']
-    list_filter = ['domain']
+    advanced_filter_fields = (
+        'domain',
+        'version__sourcesite__domain',
+        'title',
+        'version__language',
+        ('version__keyword__name', 'Keyword'),
+        ('version__sourcetwitter__name', 'Source Twitter'),
+        ('version__date_added', 'Date Added'),
+        ('version__date_published', 'Date Published'),
+        ('version__date_last_seen', 'Date Last Seen')
+    )
+    list_filter = ('domain', 'version__keyword__name', 'version__sourcesite__domain', 'version__sourcetwitter__name', 'version__language')
     readonly_fields = ('id', 'url', 'domain', 'title', 'language', 'found_by', 'date_added', 'date_last_seen', 'date_published', 'text', 'highlighted_text', 'show_urls', 'text_hash')
     actions_on_top = True
     list_per_page = 20
@@ -203,14 +215,14 @@ class ArticleAdmin(NestedModelAdmin):
     def get_date_published(self, obj):
         return obj.date_published
 
-    get_date_published.short_description = 'Date published'
+    get_date_published.short_description = 'Date Published'
     get_date_published.admin_order_field = 'version__date_published'
     get_date_published.allow_tags = True
 
     def get_date_last_seen(self, obj):
         return obj.date_last_seen
 
-    get_date_last_seen.short_description = 'Date last seen'
+    get_date_last_seen.short_description = 'Date Last Seen'
     get_date_last_seen.admin_order_field = 'version__date_last_seen'
     get_date_last_seen.allow_tags = True
 
