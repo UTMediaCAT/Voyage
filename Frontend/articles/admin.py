@@ -135,7 +135,8 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
         ('version__date_published', 'Date Published'),
         ('version__date_last_seen', 'Date Last Seen'),
         ('version__text', 'Text'),
-        ('version__title', 'Title')
+        ('version__title', 'Title'),
+        ('version__author', 'Author'),
     )
     list_filter = ('domain', 'version__keyword__name', 'version__sourcesite__domain', 'version__sourcetwitter__name', 'version__language')
     readonly_fields = ('id', 'url', 'domain', 'title', 'language', 'found_by', 'date_added', 'date_last_seen', 'date_published', 'text', 'highlighted_text', 'show_urls', 'text_hash')
