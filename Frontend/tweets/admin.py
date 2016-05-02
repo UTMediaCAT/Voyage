@@ -1,4 +1,5 @@
 from django.contrib import admin
+from libraries.advanced_filters.admin import AdminAdvancedFiltersMixin
 from tweets.models import Tweet, SourceSite, SourceTwitter, Keyword, CountLog
 # Register your models here.
 
@@ -23,7 +24,7 @@ class CountLogInline(admin.TabularInline):
     fields = ['date', 'retweet_count', 'favorite_count']
     extra = 0
 
-class TweetAdmin(admin.ModelAdmin):
+class TweetAdmin(AdminAdvancedFiltersMixin, admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['tweet_id', 'name', 'text']}),
         ('Date information', {'fields': ['date_added', 'date_published']})
@@ -34,7 +35,16 @@ class TweetAdmin(admin.ModelAdmin):
     list_display = ('link_user', 'link_id', 'text', 'get_keywords', 'get_source_sites', 'get_source_twitters', 'date_published', 'date_added', 'link_options')
 
     search_fields = ['tweet_id', 'text', 'user', 'keyword__name', 'sourcesite__url', 'sourcetwitter__name']
-    list_filter = ['name', 'keyword__name', 'sourcesite__domain', 'sourcetwitter__name']
+    advanced_filter_fields = (
+        'text',
+        'user',
+        ('keyword__name', 'Keyword'),
+        ('sourcesite__domain', 'Source Site'),
+        ('sourcetwitter__name', 'Source Twitter'),
+        ('date_added', 'Date Added'),
+        ('date_published', 'Date Published'),
+    )
+    list_filter = ('name', 'keyword__name', 'sourcesite__domain', 'sourcetwitter__name')
     ordering = ['-date_added']
     actions_on_top = True
     list_per_page = 100
