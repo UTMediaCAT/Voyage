@@ -34,6 +34,7 @@ PhantomJS should be available on Ubuntu. If it's not available in your distribut
 from the root of the repo:
 ```
 pip -r requirements.txt
+pip3 install wpull
 ```
 
 * Run the install script:
@@ -41,7 +42,7 @@ pip -r requirements.txt
 ./InstallScript.sh
 ```
 
-* [Install and set up a mysql server](https://www.digitalocean.com/community/tutorials/how-to-install-mysql-on-ubuntu-14-04). Afterwards, [create a database](https://www.digitalocean.com/community/tutorials/how-to-create-and-manage-databases-in-mysql-and-mariadb-on-a-cloud-server) named "crawler", and an associated user (optional, but recommended)]. Ensure the databases is created with the following command:
+* [Install and set up a mysql server](https://www.digitalocean.com/community/tutorials/how-to-install-mysql-on-ubuntu-14-04). Afterwards, [create a database](https://www.digitalocean.com/community/tutorials/how-to-create-and-manage-databases-in-mysql-and-mariadb-on-a-cloud-server) named "crawler", and an associated user (optional, but recommended). Ensure the databases is created with the following command:
 ```
 CREATE DATABASE crawler CHARACTER SET UTF8 COLLATE utf8_general_ci;
 ```
