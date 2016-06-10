@@ -6,7 +6,7 @@ Voyage currently has 2 components:
 ##Requirements
 Before installation, verify you meet the following requirements
 #####[Python 2.7.10+](https://www.python.org/downloads/release/python-2710/)
-The required version should be installed on Debian Jessie and above. You can check your current version by `python --version`
+The required version should be installed on Debian Jessie (and up), as well as Ubuntu 16.04 LTS (and up). You can check your current version by `python --version`
 
 If the version available through your package mananger is not 2.7.10 or above, you will need to manually build and install 2.7.10. Luckily, there is a tool for doing that.
 
