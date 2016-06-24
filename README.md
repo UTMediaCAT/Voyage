@@ -21,6 +21,10 @@ You can check your current version by `wget --version`
 
 ##Installation
 ####Through terminal
+* To swtich the root user: 
+```
+sudo -i
+```
 * Install apt dependencies: 
 ```
 apt-get update && apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev libjpeg-dev python3-pip  libmysqlclient-dev phantomjs
