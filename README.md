@@ -33,7 +33,7 @@ PhantomJS should be available on Ubuntu. If it's not available in your distribut
 
 from the root of the repo:
 ```
-pip -r requirements.txt
+pip install -r requirements.txt
 pip3 install wpull
 ```
 
