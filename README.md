@@ -63,6 +63,8 @@ import random
 * To start `python server.py run`
 * To stop `python server.py stop`
 
+By defualt, this Django app is set to listen on all public IPs.
+
 You can now access the server through http://IP:PORT/admin
 
 The default is [http://127.0.0.1/admin](http://127.0.0.1/admin)
