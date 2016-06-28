@@ -39,4 +39,4 @@ crawler:
     mysql:
       user: root
       password: root
-      name: voyage
+      name: crawler
