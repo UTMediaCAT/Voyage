@@ -28,12 +28,11 @@ class Crawler(object):
                                   passwd=common.get_config()["crawler"]["mysql"]["password"],
                                   db=common.get_config()["crawler"]["mysql"]["name"], charset="utf8")
         self.cursor = self.db.cursor()
-        self.visited_table = "visited_" + str(site.id)
+        self.visited_set = set()
         self.tovisit_table = "tovisit_" + str(site.id)
-        self.cursor.execute("DROP TABLE IF EXISTS " + self.visited_table)
-        self.cursor.execute("CREATE TABLE " + self.visited_table + " (url VARCHAR(1024), PRIMARY KEY(url)) ROW_FORMAT=DYNAMIC")
-        self.cursor.execute("DROP TABLE IF EXISTS " + self.tovisit_table)
-        self.cursor.execute("CREATE TABLE " + self.tovisit_table + " (id INT NOT NULL AUTO_INCREMENT, url VARCHAR(1024), PRIMARY KEY(id))")
+
+        self.cursor.execute(u"DROP TABLE IF EXISTS " + self.tovisit_table)
+        self.cursor.execute(u"CREATE TABLE " + self.tovisit_table + " (id INT NOT NULL AUTO_INCREMENT, url VARCHAR(1024), PRIMARY KEY(id))")
         self.cursor.execute(u"INSERT INTO " + self.tovisit_table + " VALUES (DEFAULT, %s)", (site.url,))
         self.db.commit()
 
@@ -93,7 +92,7 @@ class Crawler(object):
                     #when executing an INSERT statement cursor.execute returns the number of rows updated. If the url
                     #exists in the visited table, then no rows will be updated. Thus if a row is updated, we know that
                     #it has not been visited and we should add it to the visit queue
-                    if(self.cursor.execute(u"INSERT INTO " + self.visited_table + u" VALUES (%s) ON DUPLICATE KEY UPDATE url=url", (url,))):
+                    if (url in self.visited_set):
                         self.cursor.execute(u"INSERT INTO " + self.tovisit_table + u" VALUES (DEFAULT , %s)", (url,))
                         logging.info(u"added {0} to the visit queue".format(url))
 
@@ -127,3 +126,4 @@ class Crawler(object):
                 (not filt.regex and filt.pattern in url)):
                 return True
         return False
+
