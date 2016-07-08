@@ -34,6 +34,7 @@ import warc_creator
 # For getting real url for get_source_sites
 import requests
 import collections
+import common
 
 
 def configuration():
@@ -74,6 +75,7 @@ class ExplorerStreamListener(tweepy.StreamListener):
 
     def on_status(self, status):
         try:
+            print status.text
             tweet_keywords = self.get_keywords(status.text)
             (tweet_matched_urls, tweet_unmatched_urls) = self.get_source_sites(status.entities['urls'])
             (tweet_matched_accounts, tweet_unmatched_accounts) = self.get_sources_twitter(status.text)
@@ -84,40 +86,74 @@ class ExplorerStreamListener(tweepy.StreamListener):
                 tweet_id = status.id
                 tweet_date = timezone.localtime( timezone.make_aware(status.created_at, timezone=timezone.get_fixed_timezone(180)))
                 tweet_author = status.user.screen_name
-                #geo = .coordinates or .geo
-                tweet_reply_to_user = status.in_reply_to_screen_name
-                tweet_reply_to_tweet = status.in_reply_to_status_id_str
-                tweet_client = status.source
+
+                tweet_reply_to_user = status.in_reply_to_screen_name or ""
+                tweet_reply_to_tweet = status.in_reply_to_status_id_str or ""
+                tweet_client = status.source or ""
                 tweet_filter_level = status.filter_level
 
-                if(status.entities["media"]):
+                db_status = Tweet(tweet_id=tweet_id, name=tweet_author,
+                                      date_added=timezone.localtime(timezone.now()),
+                                      date_published=tweet_date,
+                                      text=tweet_text, reply_to_user=tweet_reply_to_user, reply_to_tweet=tweet_reply_to_tweet,
+                                  client=tweet_client, filter_level=tweet_filter_level)
+                db_status.save()
+
+                db_status = Tweet.objects.get(tweet_id=tweet_id)
+
+
+                if("media" in status.entities):
                     media = status.entities["media"]
                     for m in media:
                         display_url = m["expanded_url"]
                         direct_url = m["media_url_https"]
                         type = m["type"]
 
+                        #from https://gist.github.com/zed/c2168b9c52b032b5fb7d
+                        import posixpath
+                        from urlparse import urlsplit
+                        from urllib import unquote
+                        def url2filename(url):
+                            '''
+                            Return basename corresponding to url.
+                            >>> print(url2filename('http://example.com/path/to/file%C3%80?opt=1'))
+                            file
+                            >>> print(url2filename('http://example.com/slash%2fname')) # '/' in name
+                            Traceback (most recent call last):
+                            ...
+                            ValueError
+                            '''
+                            urlpath = urlsplit(url).path
+                            basename = posixpath.basename(unquote(urlpath))
+                            if (os.path.basename(basename) != basename or
+                                unquote(posixpath.basename(urlpath)) != basename):
+                                raise ValueError  # reject '%2f' or 'dir%5Cbasename.ext' on Windows
+                            return basename
+                        file_name = url2filename(direct_url)
+                        save_to = os.path.join(common.get_config()["twitter"]["media_dir"], file_name)
+
+                        req = requests.get(direct_url, stream=True)
+                        with open(save_to, 'wb') as f:
+                            for chunk in req.iter_content(chunk_size=4096):
+                                f.write(chunk)
+                        req.close()
+                        db_status.tweetmedia_set.create(file_name=file_name, display_url=display_url, type=type)
+
+
                 #works better than matching manually
-                if(status.entities["urls"]):
+                if("urls" in status.entities):
                     urls = status.entities["urls"]
                     for u in urls:
                         url = u["expanded_url"]
                         (text_start, text_end) = u["indices"]
 
-                if(status.entities["user_mentions"]):
+                if("user_mentions" in status.entities):
                     mentions = status.entities["user_mentions"]
                     for m in mentions:
                         name = m["name"]
                         id = m["id_str"]
                         (text_start, text_end) = m["indices"]
 
-                db_status = Tweet(tweet_id=tweet_id, name=tweet_author,
-                                      date_added=timezone.localtime(timezone.now()),
-                                      date_published=tweet_date,
-                                      text=tweet_text)
-                db_status.save()
-
-                db_status = Tweet.objects.get(tweet_id=tweet_id)
 
                 for account in tweet_matched_accounts:
                     db_status.sourcetwitter_set.create(name = account, matched = True)

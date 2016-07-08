@@ -9,6 +9,11 @@ class Tweet(models.Model):
     date_added = models.DateTimeField('Date Added', blank=True, null=True)
     date_published = models.DateTimeField('Date Published', blank=True, null=True)
 
+    reply_to_user = models.CharField(max_length=32, default='')
+    reply_to_tweet = models.CharField(max_length=64, default='')
+    client = models.CharField(max_length=256, default='')
+    filter_level = models.CharField(max_length=16, default='')
+
     def __unicode__(self):
         return self.tweet_id
 
@@ -45,3 +50,9 @@ class Keyword(models.Model):
 
     def __unicode__(self):
         return self.name
+
+class TweetMedia(models.Model):
+    tweet = models.ForeignKey(Tweet)
+    file_name = models.CharField(max_length=2000)
+    display_url = models.CharField(max_length=2000)
+    type = models.CharField(max_length=200)
