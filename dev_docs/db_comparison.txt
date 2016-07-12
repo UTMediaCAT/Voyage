@@ -1,0 +1,13 @@
+PostgreSQL - Very strict about ensuring data is valid before inserting/updating
+             ACID (Atomicity, Consistency, Isolation, Durability) is strict as well.
+MySQL - Could change SQL mode to ensure data integrity, but any MySQL client could override this.
+        ACID (Atomicity, Consistency, Isolation, Durability) is not guaranteed.
+
+PostgresSQL - Superior for a single server  (which is what i assume we will be working with)
+MySQL - Superior in replication
+
+PostgresSQL is object relational which could be useful.
+MySQL tends to be easier to work with.
+
+MySQL isn't the best at concurrency (read-write wise)
+PostgresSQL tends to scale well for concurrency
