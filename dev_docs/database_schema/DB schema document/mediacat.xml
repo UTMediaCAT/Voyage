@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<database name="mediacat" type="MySQL - 5.7.12-0ubuntu1.1">
+   <tables>
+      <table name="articles_article" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT">
+            <child column="article_id" foreignKey="articles_url_article_id_7d94cb5365b39d74_fk_articles_article_id" implied="false" onDeleteCascade="false" table="articles_url"/>
+            <child column="article_id" foreignKey="articles_vers_article_id_532037b9343bb79f_fk_articles_article_id" implied="false" onDeleteCascade="false" table="articles_version"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="domain" nullable="true" remarks="" size="2000" type="VARCHAR"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table name="articles_author" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="true" remarks="" size="200" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="version_id" nullable="false" remarks="" size="10" type="INT">
+            <parent column="id" foreignKey="articles_auth_version_id_2c1fcf0cff41482b_fk_articles_version_id" implied="false" onDeleteCascade="false" table="articles_version"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="articles_author_316e8552" unique="false">
+            <column ascending="true" name="version_id"/>
+         </index>
+      </table>
+      <table name="articles_keyword" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="true" remarks="" size="200" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="version_id" nullable="false" remarks="" size="10" type="INT">
+            <parent column="id" foreignKey="articles_keyw_version_id_74bccc0554ad6f68_fk_articles_version_id" implied="false" onDeleteCascade="false" table="articles_version"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="articles_keyword_316e8552" unique="false">
+            <column ascending="true" name="version_id"/>
+         </index>
+      </table>
+      <table name="articles_sourcesite" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="1" name="url" nullable="true" remarks="" size="2000" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="domain" nullable="true" remarks="" size="2000" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="3" name="matched" nullable="false" remarks="" size="0" type="BIT"/>
+         <column autoUpdated="false" digits="0" id="4" name="local" nullable="false" remarks="" size="0" type="BIT"/>
+         <column autoUpdated="false" digits="0" id="5" name="anchor_text" nullable="false" remarks="" size="2000" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="6" name="version_id" nullable="false" remarks="" size="10" type="INT">
+            <parent column="id" foreignKey="articles_sour_version_id_3e24cbaa818458b0_fk_articles_version_id" implied="false" onDeleteCascade="false" table="articles_version"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="articles_sourcesite_316e8552" unique="false">
+            <column ascending="true" name="version_id"/>
+         </index>
+      </table>
+      <table name="articles_sourcetwitter" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="" size="200" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="matched" nullable="false" remarks="" size="0" type="BIT"/>
+         <column autoUpdated="false" digits="0" id="3" name="version_id" nullable="false" remarks="" size="10" type="INT">
+            <parent column="id" foreignKey="articles_sour_version_id_4470df18a182cfd9_fk_articles_version_id" implied="false" onDeleteCascade="false" table="articles_version"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="articles_sourcetwitter_316e8552" unique="false">
+            <column ascending="true" name="version_id"/>
+         </index>
+      </table>
+      <table name="articles_url" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="" size="200" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="article_id" nullable="false" remarks="" size="10" type="INT">
+            <parent column="id" foreignKey="articles_url_article_id_7d94cb5365b39d74_fk_articles_article_id" implied="false" onDeleteCascade="false" table="articles_article"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="articles_url_a00c1b00" unique="false">
+            <column ascending="true" name="article_id"/>
+         </index>
+         <index name="articles_url_name_75912cbca6b4c7c7_uniq" unique="true">
+            <column ascending="true" name="name"/>
+         </index>
+      </table>
+      <table name="articles_version" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT">
+            <child column="version_id" foreignKey="articles_auth_version_id_2c1fcf0cff41482b_fk_articles_version_id" implied="false" onDeleteCascade="false" table="articles_author"/>
+            <child column="version_id" foreignKey="articles_keyw_version_id_74bccc0554ad6f68_fk_articles_version_id" implied="false" onDeleteCascade="false" table="articles_keyword"/>
+            <child column="version_id" foreignKey="articles_sour_version_id_3e24cbaa818458b0_fk_articles_version_id" implied="false" onDeleteCascade="false" table="articles_sourcesite"/>
+            <child column="version_id" foreignKey="articles_sour_version_id_4470df18a182cfd9_fk_articles_version_id" implied="false" onDeleteCascade="false" table="articles_sourcetwitter"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="title" nullable="false" remarks="" size="200" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="text" nullable="false" remarks="" size="2147483647" type="LONGTEXT"/>
+         <column autoUpdated="false" digits="0" id="3" name="text_hash" nullable="false" remarks="" size="100" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="4" name="language" nullable="false" remarks="" size="200" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="5" name="date_added" nullable="true" remarks="" size="19" type="DATETIME"/>
+         <column autoUpdated="false" digits="0" id="6" name="date_last_seen" nullable="true" remarks="" size="19" type="DATETIME"/>
+         <column autoUpdated="false" digits="0" id="7" name="date_published" nullable="true" remarks="" size="19" type="DATETIME"/>
+         <column autoUpdated="false" digits="0" id="8" name="found_by" nullable="false" remarks="" size="100" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="9" name="article_id" nullable="false" remarks="" size="10" type="INT">
+            <parent column="id" foreignKey="articles_vers_article_id_532037b9343bb79f_fk_articles_article_id" implied="false" onDeleteCascade="false" table="articles_article"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="articles_version_a00c1b00" unique="false">
+            <column ascending="true" name="article_id"/>
+         </index>
+         <index name="articles_version_text_hash_26e09592119aff0_uniq" unique="true">
+            <column ascending="true" name="text_hash"/>
+         </index>
+      </table>
+      <table name="explorer_keyword" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="true" remarks="" size="200" type="VARCHAR"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="explorer_keyword_keyword_17ecdd413de315bc_uniq" unique="true">
+            <column ascending="true" name="name"/>
+         </index>
+      </table>
+      <table name="explorer_referringsite" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT">
+            <child column="site_id" foreignKey="explorer_r_site_id_5891d9163d6913d3_fk_explorer_referringsite_id" implied="false" onDeleteCascade="false" table="explorer_referringsitecssselector"/>
+            <child column="site_id" foreignKey="explorer_r_site_id_533f21f8d2de99a8_fk_explorer_referringsite_id" implied="false" onDeleteCascade="false" table="explorer_referringsitefilter"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="url" nullable="true" remarks="" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="name" nullable="false" remarks="" size="200" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="3" name="mode" nullable="true" remarks="" size="5" type="SMALLINT UNSIGNED"/>
+         <column autoUpdated="false" digits="0" id="4" name="check" nullable="false" remarks="" size="0" type="BIT"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="explorer_msite_url_291fa7b42472bc69_uniq" unique="true">
+            <column ascending="true" name="url"/>
+         </index>
+         <index name="explorer_referringsite_name_a1b7cc898d50ff7_uniq" unique="true">
+            <column ascending="true" name="name"/>
+         </index>
+      </table>
+      <table name="explorer_referringsitecssselector" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="1" name="field" nullable="false" remarks="" size="5" type="SMALLINT UNSIGNED"/>
+         <column autoUpdated="false" digits="0" id="2" name="pattern" nullable="false" remarks="" size="1000" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="3" name="regex" nullable="false" remarks="" size="1000" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="4" name="site_id" nullable="false" remarks="" size="10" type="INT">
+            <parent column="id" foreignKey="explorer_r_site_id_5891d9163d6913d3_fk_explorer_referringsite_id" implied="false" onDeleteCascade="false" table="explorer_referringsite"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="explorer_referringsitecssselector_9365d6e7" unique="false">
+            <column ascending="true" name="site_id"/>
+         </index>
+      </table>
+      <table name="explorer_referringsitefilter" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="1" name="pattern" nullable="false" remarks="" size="1000" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="regex" nullable="false" remarks="" size="0" type="BIT"/>
+         <column autoUpdated="false" digits="0" id="3" name="site_id" nullable="false" remarks="" size="10" type="INT">
+            <parent column="id" foreignKey="explorer_r_site_id_533f21f8d2de99a8_fk_explorer_referringsite_id" implied="false" onDeleteCascade="false" table="explorer_referringsite"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="explorer_referringsitefilter_9365d6e7" unique="false">
+            <column ascending="true" name="site_id"/>
+         </index>
+      </table>
+      <table name="explorer_referringtwitter" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="true" remarks="" size="200" type="VARCHAR"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="explorer_taccount_account_3a072bc1a1adf1db_uniq" unique="true">
+            <column ascending="true" name="name"/>
+         </index>
+      </table>
+      <table name="explorer_sourcesite" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT">
+            <child column="primary_id" foreignKey="explorer_s_primary_id_60b03c820027bddb_fk_explorer_sourcesite_id" implied="false" onDeleteCascade="false" table="explorer_sourcesitealias"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="url" nullable="true" remarks="" size="255" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="name" nullable="false" remarks="" size="200" type="VARCHAR"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="explorer_fsite_url_419e2c6880f7a286_uniq" unique="true">
+            <column ascending="true" name="url"/>
+         </index>
+         <index name="explorer_sourcesite_name_7162215e257efeb1_uniq" unique="true">
+            <column ascending="true" name="name"/>
+         </index>
+      </table>
+      <table name="explorer_sourcesitealias" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="1" name="alias" nullable="false" remarks="" size="200" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="primary_id" nullable="false" remarks="" size="10" type="INT">
+            <parent column="id" foreignKey="explorer_s_primary_id_60b03c820027bddb_fk_explorer_sourcesite_id" implied="false" onDeleteCascade="false" table="explorer_sourcesite"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="alias" unique="true">
+            <column ascending="true" name="alias"/>
+         </index>
+         <index name="explorer_sourcesitealias_095f2624" unique="false">
+            <column ascending="true" name="primary_id"/>
+         </index>
+      </table>
+      <table name="explorer_sourcetwitter" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT">
+            <child column="primary_id" foreignKey="explore_primary_id_67b5e475db6c86f8_fk_explorer_sourcetwitter_id" implied="false" onDeleteCascade="false" table="explorer_sourcetwitteralias"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="" size="200" type="VARCHAR"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="name" unique="true">
+            <column ascending="true" name="name"/>
+         </index>
+      </table>
+      <table name="explorer_sourcetwitteralias" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="1" name="alias" nullable="false" remarks="" size="200" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="primary_id" nullable="false" remarks="" size="10" type="INT">
+            <parent column="id" foreignKey="explore_primary_id_67b5e475db6c86f8_fk_explorer_sourcetwitter_id" implied="false" onDeleteCascade="false" table="explorer_sourcetwitter"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="alias" unique="true">
+            <column ascending="true" name="alias"/>
+         </index>
+         <index name="explorer_sourcetwitteralias_095f2624" unique="false">
+            <column ascending="true" name="primary_id"/>
+         </index>
+      </table>
+      <table name="tweets_countlog" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="1" name="retweet_count" nullable="false" remarks="" size="10" type="INT UNSIGNED"/>
+         <column autoUpdated="false" digits="0" id="2" name="favorite_count" nullable="false" remarks="" size="10" type="INT UNSIGNED"/>
+         <column autoUpdated="false" digits="0" id="3" name="date" nullable="true" remarks="" size="19" type="DATETIME"/>
+         <column autoUpdated="false" digits="0" id="4" name="tweet_id" nullable="false" remarks="" size="10" type="INT">
+            <parent column="id" foreignKey="tweets_countlog_tweet_id_3258f27f0927568d_fk_tweets_tweet_id" implied="false" onDeleteCascade="false" table="tweets_tweet"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="tweets_countlog_cea90699" unique="false">
+            <column ascending="true" name="tweet_id"/>
+         </index>
+      </table>
+      <table name="tweets_keyword" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="true" remarks="" size="200" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="tweet_id" nullable="false" remarks="" size="10" type="INT">
+            <parent column="id" foreignKey="tweets_keyword_tweet_id_657702573fa87688_fk_tweets_tweet_id" implied="false" onDeleteCascade="false" table="tweets_tweet"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="tweets_keyword_cea90699" unique="false">
+            <column ascending="true" name="tweet_id"/>
+         </index>
+      </table>
+      <table name="tweets_sourcesite" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="1" name="url" nullable="true" remarks="" size="2000" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="tweet_id" nullable="false" remarks="" size="10" type="INT">
+            <parent column="id" foreignKey="tweets_source_tweet_id_1c126d60f1b9965_fk_tweets_tweet_id" implied="false" onDeleteCascade="false" table="tweets_tweet"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="3" name="domain" nullable="true" remarks="" size="2000" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="4" name="matched" nullable="false" remarks="" size="0" type="BIT"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="tweets_source_cea90699" unique="false">
+            <column ascending="true" name="tweet_id"/>
+         </index>
+      </table>
+      <table name="tweets_sourcetwitter" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT"/>
+         <column autoUpdated="false" digits="0" id="1" name="name" nullable="false" remarks="" size="200" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="matched" nullable="false" remarks="" size="0" type="BIT"/>
+         <column autoUpdated="false" digits="0" id="3" name="tweet_id" nullable="false" remarks="" size="10" type="INT">
+            <parent column="id" foreignKey="tweets_sourcetwitte_tweet_id_39c999d1f6db6c5d_fk_tweets_tweet_id" implied="false" onDeleteCascade="false" table="tweets_tweet"/>
+         </column>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="tweets_sourcetwitter_cea90699" unique="false">
+            <column ascending="true" name="tweet_id"/>
+         </index>
+      </table>
+      <table name="tweets_tweet" numRows="0" remarks="" type="TABLE">
+         <column autoUpdated="true" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="INT">
+            <child column="tweet_id" foreignKey="tweets_countlog_tweet_id_3258f27f0927568d_fk_tweets_tweet_id" implied="false" onDeleteCascade="false" table="tweets_countlog"/>
+            <child column="tweet_id" foreignKey="tweets_keyword_tweet_id_657702573fa87688_fk_tweets_tweet_id" implied="false" onDeleteCascade="false" table="tweets_keyword"/>
+            <child column="tweet_id" foreignKey="tweets_source_tweet_id_1c126d60f1b9965_fk_tweets_tweet_id" implied="false" onDeleteCascade="false" table="tweets_sourcesite"/>
+            <child column="tweet_id" foreignKey="tweets_sourcetwitte_tweet_id_39c999d1f6db6c5d_fk_tweets_tweet_id" implied="false" onDeleteCascade="false" table="tweets_sourcetwitter"/>
+         </column>
+         <column autoUpdated="false" digits="0" id="1" name="tweet_id" nullable="false" remarks="" size="200" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="2" name="name" nullable="true" remarks="" size="200" type="VARCHAR"/>
+         <column autoUpdated="false" digits="0" id="3" name="date_added" nullable="true" remarks="" size="19" type="DATETIME"/>
+         <column autoUpdated="false" digits="0" id="4" name="date_published" nullable="true" remarks="" size="19" type="DATETIME"/>
+         <column autoUpdated="false" digits="0" id="5" name="text" nullable="false" remarks="" size="200" type="VARCHAR"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="PRIMARY" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+   </tables>
+</database>
