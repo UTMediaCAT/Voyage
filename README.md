@@ -31,7 +31,7 @@ sudo -i
 ```
 * Install apt dependencies: 
 ```
-apt-get update && apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev libjpeg-dev python3-pip  libmysqlclient-dev phantomjs
+apt-get update && apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev libjpeg-dev python3-pip  libmysqlclient-dev phantomjs postgresql postgresql-contrib
 ```
 PhantomJS should be available on Ubuntu. If it's not available in your distribution, you may install it manually by downloading the [prebuilt version](http://phantomjs.org/download.html) and extracting the contents of bin `/usr/local/bin`.
 
@@ -49,12 +49,6 @@ pip3 install wpull
 ```
 ./InstallScript.sh
 ```
-
-* [Install and set up a mysql server](https://www.digitalocean.com/community/tutorials/how-to-install-mysql-on-ubuntu-14-04). Afterwards, [create a database](https://www.digitalocean.com/community/tutorials/how-to-create-and-manage-databases-in-mysql-and-mariadb-on-a-cloud-server) named "crawler", and an associated user (optional, but recommended). Ensure the databases is created with the following command:
-```
-CREATE DATABASE crawler CHARACTER SET UTF8 COLLATE utf8_general_ci;
-```
-Then put in the database name and credentials in config.yaml in the crawler section.
 
 
 ##Configuration
