@@ -62,8 +62,8 @@ import random
 
 ##Usage: Web Server
 ####Through terminal
-* To start `python server.py run`
-* To stop `python server.py stop`
+* To start `sudo python server.py run`
+* To stop `sudo python server.py stop`
 
 By defualt, this Django app is set to listen on all public IPs.
 
