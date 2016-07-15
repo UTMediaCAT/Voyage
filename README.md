@@ -70,7 +70,12 @@ import random
 ```
 
 ##Usage: Web Server
-####Through terminal
+####Before starting the web server, please run the following to apply migrations:
+```
+python Frontend/manage.py makemigrations
+python Frontend/manage.py migrate
+```
+####Then you can strat/stop the server
 * To start `sudo python server.py run`
 * To stop `sudo python server.py stop`
 
