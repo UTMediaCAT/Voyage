@@ -58,7 +58,33 @@ pip3 install wpull
 ```
 ./InstallScript.sh
 ```
+##Set Up Database
+####Log into admin account
+In order to use Postgres, we'll need to log into that account. You can do that by typing:
+```
+sudo -i -u postgres
+```
+You will be asked for your normal user password and then will be given a shell prompt for the postgres user.
+####Get a Postgres Prompt
+You can get a Postgres prompt immediately by typing:
+```
+psql
+```
+####Add a password for the user:
+By default, when you create a PostgreSQL cluster, password authentication for the database superuser (“postgres”) is disabled. In 
+order to make Django have access to this user, you will need to add password savely for this user.
 
+In the Postgres prompt:
+```
+postgres=# \password
+Enter new password: password
+Enter it again:password
+```
+####Create Database
+In the Postgres prompt:
+```
+postgres=# create database mediacat;
+```
 
 ##Configuration
 You can edit the config.yaml file for personal settings
