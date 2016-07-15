@@ -24,7 +24,16 @@ If the version available through your package mananger is not 2.7.10 or above, y
 You can check your current version by `wget --version`
 
 ##Installation
-####Through terminal
+####Option 1: Default Install
+* Clone the repo
+* Go to the main folder
+* Run DefaultInstall script
+```
+sudo ./DefaultInstall.sh 
+```
+
+####Option 2: Custom Install
+You can modify the steps below based on your own development enviroment.
 * To swtich the root user: 
 ```
 sudo -i
