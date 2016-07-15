@@ -5,7 +5,7 @@ import re
 import logging
 from ExplorerArticle import ExplorerArticle
 import urlnorm
-import MySQLdb
+import psycopg2
 '''
 An iterator class for iterating over articles in a given site
 '''
@@ -24,9 +24,11 @@ class Crawler(object):
         self.probabilistic_n = common.get_config()["crawler"]["n"]
         self.probabilistic_k = common.get_config()["crawler"]["k"]
 
-        self.db = MySQLdb.connect(host="localhost", user=common.get_config()["crawler"]["mysql"]["user"],
-                                  passwd=common.get_config()["crawler"]["mysql"]["password"],
-                                  db=common.get_config()["crawler"]["mysql"]["name"], charset="utf8")
+        self.db = psycopg2.connect(host='localhost'
+                                   database=common.get_config()["crawler"]["postgresql"]["name"],
+                                   user=common.get_config()["crawler"]["postgresql"]["user"],
+                                   password=common.get_config()["crawler"]["postgresql"]["password"])
+                                   
         self.cursor = self.db.cursor()
         self.visited_set = set()
         self.tovisit_table = "tovisit_" + str(site.id)
@@ -126,4 +128,3 @@ class Crawler(object):
                 (not filt.regex and filt.pattern in url)):
                 return True
         return False
-
