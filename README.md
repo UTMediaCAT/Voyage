@@ -1,10 +1,10 @@
-##UTMediaCAT 
+##UTMediaCAT
 MediaCAT is open-source web-based application, with a curated search engine. It crawls designated news websites and twitter accounts for citations of or hyperlinks to a list of source sites. MediaCAT then archives all referring stories and source stories, in preparation for an advanced analysis of the relations across the digital news-scape.
 
 ####[Home page](https://mediacat.utsc.utoronto.ca/)
 
 Voyage currently has 2 components:
-* __Web Server__ is capable of editing and displaying all the stored data as well as scopes you will provide to _Explorer_, through your favorite browser. 
+* __Web Server__ is capable of editing and displaying all the stored data as well as scopes you will provide to _Explorer_, through your favorite browser.
 * __Explorer__ searches the web using scopes given through to the _Web Server_ and goes for exploring for you. It will automatically store all relevant informations found on the way, so that you can show all the loot through _Web Server_.
 
 ##Requirements
@@ -30,18 +30,26 @@ You can check your current version by `wget --version`
 * Go to the main folder
 * Run DefaultInstall script
 ```
-sudo ./DefaultInstall.sh 
+sudo ./DefaultInstall.sh
+```
+
+######ValueError: A 0.7-series setuptools cannot be installed with distribute:
+If that occurs you'll need to remove setuptools from pythons distribution packages, and continue. This can be done by running the following:
+```
+rm -rf /usr/local/lib/python2.7/dist-packages/setuptools*
+sudo pip install setuptools
+sudo ./DefaultInstall.sh
 ```
 
 ####Option 2: Custom Install
 You can modify the steps below based on your own development enviroment.
-* To swtich the root user: 
+* To swtich the root user:
 ```
 sudo -i
 ```
-* Install apt dependencies: 
+* Install apt dependencies:
 ```
-apt-get update && apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev libjpeg-dev python3-pip  libmysqlclient-dev phantomjs postgresql postgresql-contrib
+apt-get update && apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev libjpeg-dev python3-pip  libmysqlclient-dev phantomjs postgresql python-psycopg2 libpq-dev postgresql-contrib
 ```
 PhantomJS should be available on Ubuntu. If it's not available in your distribution, you may install it manually by downloading the [prebuilt version](http://phantomjs.org/download.html) and extracting the contents of bin `/usr/local/bin`.
 
@@ -72,7 +80,7 @@ You can get a Postgres prompt immediately by typing:
 psql
 ```
 ####Add a password for the user:
-By default, when you create a PostgreSQL cluster, password authentication for the database superuser (“postgres”) is disabled. In 
+By default, when you create a PostgreSQL cluster, password authentication for the database superuser (“postgres”) is disabled. In
 order to make Django have access to this user, you will need to add password savely for this user.
 
 In the Postgres prompt:
@@ -97,7 +105,7 @@ import random
 ```
 
 ##Usage: Web Server
-####If it is your FIRST time to run the server: 
+####If it is your FIRST time to run the server:
 please make sure to apply migrations under [Frontend forlder](https://github.com/UTMediaCAT/Voyage/tree/master/Frontend):
 ```
 python manage.py makemigrations
