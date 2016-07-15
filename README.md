@@ -96,18 +96,18 @@ import random
 ```
 
 ##Usage: Web Server
-####Before starting the web server, please run the following to apply migration under [Frontend forlder](https://github.com/UTMediaCAT/Voyage/tree/master/Frontend):
+####If it is your FIRST time to run the server: 
+please make sure to apply migrations under [Frontend forlder](https://github.com/UTMediaCAT/Voyage/tree/master/Frontend):
 ```
 python manage.py makemigrations
 python mmanage.py migrate
 ```
-
-####You need to create admin users by running under [Frontend forlder](https://github.com/UTMediaCAT/Voyage/tree/master/Frontend):
+And create admin users
 ```
 python manage.py createsuperuser
 ```
 
-####Then you can strat/stop the server
+####Otherwise strat/stop the server:
 * To start `sudo python server.py run`
 * To stop `sudo python server.py stop`
 
