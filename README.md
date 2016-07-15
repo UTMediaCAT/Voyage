@@ -96,11 +96,17 @@ import random
 ```
 
 ##Usage: Web Server
-####Before starting the web server, please run the following to apply migrations:
+####Before starting the web server, please run the following to apply migration under [Frontend forlder](https://github.com/UTMediaCAT/Voyage/tree/master/Frontend):
 ```
-python Frontend/manage.py makemigrations
-python Frontend/manage.py migrate
+python manage.py makemigrations
+python mmanage.py migrate
 ```
+
+####You need to create admin users by running under [Frontend forlder](https://github.com/UTMediaCAT/Voyage/tree/master/Frontend):
+```
+python manage.py createsuperuser
+```
+
 ####Then you can strat/stop the server
 * To start `sudo python server.py run`
 * To stop `sudo python server.py stop`
@@ -110,12 +116,6 @@ By defualt, this Django app is set to listen on all public IPs.
 You can now access the server through http://IP:PORT/admin
 
 The default is [http://127.0.0.1/admin](http://127.0.0.1/admin)
-
-
-__Default Login Credentials:__
-* User: admin
-* Password: admin
-
 #Tabs
 ####Home
 Here you can view your action history and quick navigations to the database
