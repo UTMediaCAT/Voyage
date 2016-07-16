@@ -94,11 +94,31 @@ In the Postgres prompt:
 ```
 postgres=# create database mediacat;
 ```
+ 
+####To integrate this database with Django:
+Plase configure the databse setting in  `Frontend/Frontend/settings.py`. 
+For example:
+```
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'mediacat',
+        'USER': 'postgres',
+        'PASSWORD': 'password',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+```
+
 
 ##Configuration
 You can edit the config.yaml file for personal settings
 
-:bangbang: IMPORTANT :bangbang: For production instances, be sure to use a new randomized SECRET_KEY in `Frontend/Frontend/settings.py`. A new SECRET key can be generate with the following python script:
+:bangbang: IMPORTANT :bangbang: 
+
+For production instances, be sure to use a new randomized SECRET_KEY in `Frontend/Frontend/settings.py`. 
+A new SECRET key can be generate with the following python script:
 ```
 import random
 ''.join(random.SystemRandom().choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for _ in range(50))
