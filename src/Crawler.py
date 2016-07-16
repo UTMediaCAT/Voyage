@@ -24,7 +24,7 @@ class Crawler(object):
         self.probabilistic_n = common.get_config()["crawler"]["n"]
         self.probabilistic_k = common.get_config()["crawler"]["k"]
 
-        self.db = psycopg2.connect(host='localhost'
+        self.db = psycopg2.connect(host='localhost',
                                    database=common.get_config()["crawler"]["postgresql"]["name"],
                                    user=common.get_config()["crawler"]["postgresql"]["user"],
                                    password=common.get_config()["crawler"]["postgresql"]["password"])
