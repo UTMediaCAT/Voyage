@@ -1,0 +1,54 @@
+IITS Virtual Server:
+url:mediacat.utsc.utoronto.ca
+ip addr:142.1.97.150
+how to access:
+		1. ssh to mathlab.utsc.utoronto.ca
+		2. on mathlab, ssh to mediacat.utsc.utoronto.ca
+
+
+There are two mediacat instances currently running on the IITS Server. One is for production and the other is for testing. 
+
+Production eviroment:
+
+	user: mediacat_pord (is sudo user? yes)
+	dir: /home/mediacat_prod/Voyage
+	database setting: 
+			DATABASES = {
+		    'default': {
+		        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+		        'NAME': 'mediacat',
+		        'USER': 'postgres',
+		        'PASSWORD': 'password',
+		        'HOST': 'localhost',
+		        'PORT': '5432',
+		    }
+		}
+
+	The site is served on port: 80
+	url to visit the site: mathlab.utsc.utoronto.ca
+	login info:
+		username: admin
+		passwrd: admin
+
+Testing eviroment:
+
+	user: mediacat_pord (is sudo user? no)
+	dir: /home/mediacat_test/Voyage
+	database setting: 
+			DATABASES = {
+		    'default': {
+		        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+		        'NAME': 'mediacat_test',
+		        'USER': 'postgres',
+		        'PASSWORD': 'password',
+		        'HOST': 'localhost',
+		        'PORT': '5432',
+		    }
+		}
+
+	The site is served on port: 8080
+	url to visit the site: mathlab.utsc.utoronto.ca:8080
+	login info:
+		username: admin
+		passwrd: admin
+
