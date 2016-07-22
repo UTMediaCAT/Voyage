@@ -116,7 +116,6 @@ A new SECRET key can be generate with the following python script:
 import random
 ''.join(random.SystemRandom().choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for _ in range(50))
 ```
->>>>>>> postgresql_migrate
 
 ##Usage: Web Server
 ####If it is your FIRST time to run the server:
@@ -175,7 +174,6 @@ Once your scope is ready, you may start exploring by clicking __Run__ on the sta
 * __Article Explorer__ will explore through the _Referring Sites_ for articles
 * __Twitter Explorer__ will explore through _Twitter_ for _Twitter Accounts's_ posts
 
-___
 ___
 
 ##UnitTest
