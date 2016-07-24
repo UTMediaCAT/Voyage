@@ -30,7 +30,7 @@ class Crawler(object):
                                    password=common.get_config()["crawler"]["postgresql"]["password"])
                                    
         self.cursor = self.db.cursor()
-        self.visited_set = set()
+        self.already_added_urls = set()
         self.tovisit_table = "tovisit_" + str(site.id)
 
         self.cursor.execute(u"DROP TABLE IF EXISTS " + self.tovisit_table)
@@ -94,7 +94,7 @@ class Crawler(object):
                     #when executing an INSERT statement cursor.execute returns the number of rows updated. If the url
                     #exists in the visited table, then no rows will be updated. Thus if a row is updated, we know that
                     #it has not been visited and we should add it to the visit queue
-                    if (url in self.visited_set):
+                    if (url in self.already_added_urls):
                         self.cursor.execute(u"INSERT INTO " + self.tovisit_table + u" VALUES (DEFAULT , %s)", (url,))
                         logging.info(u"added {0} to the visit queue".format(url))
 
