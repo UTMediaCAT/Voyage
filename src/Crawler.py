@@ -34,7 +34,7 @@ class Crawler(object):
         self.tovisit_table = "tovisit_" + str(site.id)
 
         self.cursor.execute(u"DROP TABLE IF EXISTS " + self.tovisit_table)
-        self.cursor.execute(u"CREATE TABLE " + self.tovisit_table + " (id INT NOT NULL AUTO_INCREMENT, url VARCHAR(1024), PRIMARY KEY(id))")
+        self.cursor.execute(u"CREATE TABLE" + self.tovisit_table + " (id SERIAL PRIMARY KEY, url VARCHAR(1024))")
         self.cursor.execute(u"INSERT INTO " + self.tovisit_table + " VALUES (DEFAULT, %s)", (site.url,))
         self.db.commit()
 
