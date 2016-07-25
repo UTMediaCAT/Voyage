@@ -48,8 +48,8 @@ from ExplorerArticle import ExplorerArticle
 
 class FakeSite:
     def __init__(self):
-        self.url = "http://theguardian.com//"
-        self.id = 1
+        self.url = "http://theguardian.com/"
+        self.id = 3
 
 def parse_articles_per_site():
     processed = 0

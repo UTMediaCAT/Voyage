@@ -35,12 +35,12 @@ class Crawler(object):
         self.visited_table = "visited_" + str(site.id)
         self.tovisit_table = "tovisit_" + str(site.id)
 
-        #self.cursor.execute("DROP TABLE IF EXISTS " + self.visited_table)
-        #self.cursor.execute("CREATE TABLE " + self.visited_table + " (url VARCHAR(1024) PRIMARY KEY)")
+        self.cursor.execute("DROP TABLE IF EXISTS " + self.visited_table)
+        self.cursor.execute("CREATE TABLE " + self.visited_table + " (url VARCHAR(1024) PRIMARY KEY)")
         self.cursor.execute("DROP TABLE IF EXISTS " + self.tovisit_table)
         self.cursor.execute(u"CREATE TABLE " + self.tovisit_table + " (id SERIAL PRIMARY KEY, url VARCHAR(1024))")
 
-        #self.cursor.execute(u"INSERT INTO " + self.visited_table + " VALUES (%s)", (site.url,))
+        self.cursor.execute(u"INSERT INTO " + self.visited_table + " VALUES (%s)", (site.url,))
         self.cursor.execute(u"INSERT INTO " + self.tovisit_table + " VALUES (DEFAULT, %s)", (site.url,))
 
         self.db.commit()
@@ -109,13 +109,13 @@ class Crawler(object):
                     #when executing an INSERT statement cursor.execute returns the number of rows updated. If the url
                     #exists in the visited table, then no rows will be updated. Thus if a row is updated, we know that
                     #it has not been visited and we should add it to the visit queue
-                    #self.cursor.execute(u"SELECT EXISTS(SELECT * FROM " + self.visited_table + " WHERE url=%s)",(url,))
-                    #if(self.cursor.fetchone()[0]):
-                    #    continue
+                    self.cursor.execute(u"SELECT EXISTS(SELECT * FROM " + self.visited_table + " WHERE url=%s)",(url,))
+                    if(self.cursor.fetchone()[0]):
+                        continue
 
-                    if (url not in self.already_added_urls):
-                        self.cursor.execute(u"INSERT INTO " + self.tovisit_table + u" VALUES (DEFAULT , %s)", (url,))
-                        logging.info(u"added {0} to the visit queue".format(url))
+                    self.cursor.execute(u"INSERT INTO " + self.tovisit_table + u" VALUES (DEFAULT , %s)", (url,))
+                    self.cursor.execute(u"INSERT INTO " + self.visited_table + u" VALUES (%s)", (url,))
+                    logging.info(u"added {0} to the visit queue".format(url))
                 self.db.commit()
                 process_links_total = time.time() - process_links_start
                 profile_data = [tovisit_pop_total, article_download_total, get_links_total, len(links), process_links_total]
