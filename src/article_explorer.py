@@ -55,10 +55,22 @@ def parse_articles_per_site():
     processed = 0
 
     article_iterator = Crawler.Crawler(FakeSite()).__iter__()
+    profile_log = open("profile.csv", "w")
+    profile_log.write("total,crawler_total,preliminary_parse_total,explorer_article_total,get_keywords_total,get_sources_sites_total,get_sources_twitter_total,tovisit_pop_total,article_download_total,get_links_total,len(links),process_links_total\n")
     while True:
+        total_start = time.time()
+        crawler_total = -1
+        preliminary_parse_total = -1
+        explorer_article_total = -1
+        get_keywords_total = -1
+        get_sources_sites_total = -1
+        get_sources_twitter_total = -1
+
         try:
             try:
-                article = article_iterator.next()
+                crawler_start = time.time()
+                (article, crawler_profile_data) = article_iterator.next()
+                crawler_total = time.time() - crawler_start
             except StopIteration:
                 break
             #have to put all the iteration stuff at the top because I used continue extensively in this loop
@@ -72,7 +84,10 @@ def parse_articles_per_site():
                 url = url[:7] + url[11:]
             elif 'https://www.' in url:
                 url = url[:8] + url[12:]
+
+            explorer_article_start = time.time()
             article = ExplorerArticle(article.url)
+            explorer_article_total = time.time() - explorer_article_start
             logging.debug("ExplorerArticle Created")
             # Try to download and extract the useful data
             if(not article.is_downloaded):
@@ -82,7 +97,10 @@ def parse_articles_per_site():
             url = article.canonical_url.strip()
 
             if (not article.is_parsed):
-                if (not article.preliminary_parse()):
+                preliminary_parse_start = time.time()
+                result = article.preliminary_parse()
+                preliminary_parse_total = time.time() - preliminary_parse_start
+                if (not result):
                     logging.warning("article skipped because parse failed")
                     continue
 
@@ -98,17 +116,30 @@ def parse_articles_per_site():
                 continue
 
             # Regex the keyword from the article's text
+            get_keywords_start = time.time()
             keywords = get_keywords(article, ["paris", "middle east", "test", "israel", "gaza"])
+            get_keywords_total = time.time() - get_keywords_start
             logging.debug(u"matched keywords: {0}".format(repr(keywords)))
             # Regex the links within article's html
+            get_sources_sites_start = time.time()
             sources = get_sources_sites(article, [])
+            get_sources_sites_total = time.time() - get_sources_sites_start
             logging.debug(u"matched sources: {0}".format(repr(sources)))
+            get_sources_twitter_start = time.time()
             twitter_accounts = get_sources_twitter(article, [])
+            get_sources_twitter_total = time.time() - get_sources_twitter_start
             logging.debug(u"matched twitter_accounts: {0}".format(repr(twitter_accounts[0])))
         except (KeyboardInterrupt, SystemExit):
             raise
         except Exception as e:
             logging.exception("Unhandled exception while crawling: " + str(e))
+        total = time.time() - total_start
+
+        all_data = [total, crawler_total, preliminary_parse_total, explorer_article_total, get_keywords_total, get_sources_sites_total, get_sources_twitter_total] + crawler_profile_data
+        all_data_str = [str(x) for x in all_data]
+        profile_log.write(",".join(all_data_str) + "\n")
+        profile_log.flush()
+
 
 
 def url_in_filter(url, filters):

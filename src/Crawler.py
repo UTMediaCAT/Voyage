@@ -6,6 +6,7 @@ import logging
 from ExplorerArticle import ExplorerArticle
 import urlnorm
 import psycopg2
+import time
 '''
 An iterator class for iterating over articles in a given site
 '''
@@ -56,6 +57,7 @@ class Crawler(object):
         #standard non-recursive tree iteration
         try:
             while(True):
+                tovisit_pop_start = time.time()
                 self.cursor.execute("SELECT * FROM " + self.tovisit_table + " ORDER BY id LIMIT 1")
                 row = self.cursor.fetchone()
                 if(row):
@@ -65,6 +67,7 @@ class Crawler(object):
                     self.db.commit()
                 else:
                     raise StopIteration
+                tovisit_pop_total = time.time() - tovisit_pop_start
 
                 if(self._should_skip()):
                     logging.info(u"skipping {0} randomly".format(current_url))
@@ -72,11 +75,19 @@ class Crawler(object):
 
                 logging.info(u"visiting {0}".format(current_url))
                 #use newspaper to download and parse the article
+
+                article_download_start = time.time()
                 article = ExplorerArticle(current_url)
                 article.download()
+                article_download_total = time.time() - article_download_start
 
                 #get get urls from the article
-                for link in article.get_links():
+                get_links_start = time.time()
+                links = article.get_links()
+                get_links_total = time.time() - get_links_start
+
+                process_links_start = time.time()
+                for link in links:
                     url = urljoin(current_url, link.href, False)
                     if self.url_in_filter(url, self.filters):
                         logging.info("skipping url \"{0}\" because it matches filter".format(url))
@@ -105,9 +116,11 @@ class Crawler(object):
                     if (url not in self.already_added_urls):
                         self.cursor.execute(u"INSERT INTO " + self.tovisit_table + u" VALUES (DEFAULT , %s)", (url,))
                         logging.info(u"added {0} to the visit queue".format(url))
-
+                self.db.commit()
+                process_links_total = time.time() - process_links_start
+                profile_data = [tovisit_pop_total, article_download_total, get_links_total, len(links), process_links_total]
                 self.pages_visited += 1
-                return article
+                return (article, profile_data)
         except Exception as e:
             raise e
         finally:
