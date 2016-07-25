@@ -13,9 +13,39 @@ import newspaper
 
 import unittest
 
+class PublishDateTest(unittest.TestCase):
+    def test_no_date(self):
+        a = ExplorerArticle('')
+        a.html = 'body'
+        a.newspaper_parse()
+        self.assertEqual(get_pub_date(a), None,
+                         "The dates don't match")
+
+    def test_single_date(self):
+        a = ExplorerArticle('')
+        a.html = '<meta property="article:published_time" content="2013-12-30T21:42:01+00:00"/>'
+        a.newspaper_parse()
+        self.assertEqual(
+            get_pub_date(a).date(),
+            datetime.strptime(
+                '2013-12-30',
+                "%Y-%m-%d").date(),
+            "The dates don't match")
+
+    def test_multi_dates(self):
+        a = ExplorerArticle('')
+        a.html = '<meta property="article:modified_time" content="2014/07/22"/>'\
+        '<meta property="article:published_time" content="2014/07/23"'
+        a.newspaper_parse()
+        self.assertEqual(
+            get_pub_date(a).date(),
+            datetime.strptime(
+                '2014-07-23',
+                "%Y-%m-%d").date(),
+            "The dates don't match")
+
 
 class TestArticleExplorer(unittest.TestCase):
-
     def setUp(self):
         sys.stdout = open(os.devnull, "w")
 
@@ -175,86 +205,57 @@ class TestArticleExplorer(unittest.TestCase):
     def test_get_keywords_with_no_keyword(self):
 
         keywords = []
-        a = newspaper.article
-        a.title = "title"
-        a.text = "test get keywords"
+        a = ExplorerArticle('')
+        a.newspaper_article.title = "title"
+        a.newspaper_article.text = "test get keywords"
         self.assertEqual(get_keywords(a, keywords), [],
                          "This keywords list is not empty")
 
     def test_get_keywords_with_single_keyword(self):
 
         keywords = ["keywords"]
-        a = newspaper.article
-        a.title = "title"
-        a.text = "test get keywords"
+        a = ExplorerArticle('')
+        a.newspaper_article.title = "title"
+        a.newspaper_article.text = "test get keywords"
         self.assertEqual(get_keywords(a, keywords), ["keywords"],
                          "The keywords don't match")
 
         keywords = ["keywords"]
-        a = newspaper.article
-        a.title = "title"
-        a.text = "test get keyword"
+        a = ExplorerArticle('')
+        a.newspaper_article.title = "title"
+        a.newspaper_article.text = "test get keyword"
         self.assertEqual(get_keywords(a, keywords), [],
                          "The keywords don't match")
 
         keywords = ["keywords"]
-        a = newspaper.article
-        a.title = "keyword"
-        a.text = "test"
+        a = ExplorerArticle('')
+        a.newspaper_article.title = "keyword"
+        a.newspaper_article.text = "test"
         self.assertEqual(get_keywords(a, keywords), [],
                          "The keywords don't match")
 
     def test_get_keywords_with_multi_keyword(self):
 
         keywords = ["keywords", "test"]
-        a = newspaper.article
-        a.title = "test"
-        a.text = "get keywords"
+        a = ExplorerArticle('')
+        a.newspaper_article.title = "test"
+        a.newspaper_article.text = "get keywords"
         self.assertEqual(get_keywords(a, keywords), ["keywords", "test"],
                          "The keywords don't match")
 
         keywords = ["keywords", "test"]
-        a = newspaper.article
-        a.title = "title"
-        a.text = "test get keywords"
+        a = ExplorerArticle('')
+        a.newspaper_article.title = "title"
+        a.newspaper_article.text = "test get keywords"
         self.assertEqual(get_keywords(a, keywords), ["keywords", "test"],
                          "The keywords don't match")
 
         keywords = ["keywords", "test"]
-        a = newspaper.article
-        a.title = "keyword"
-        a.text = "tes"
+        a = ExplorerArticle('')
+        a.newspaper_article.title = "keyword"
+        a.newspaper_article.text = "tes"
         self.assertEqual(get_keywords(a, keywords), [],
                          "The keywords don't match")
-
-    def test_get_pub_date_with_no_date(self):
-
-        a = newspaper.article
-        a.meta_data = {"test": "test"}
-        self.assertEqual(get_pub_date(a), None,
-                         "The dates don't match")
-
-    def test_get_pub_date_with_with_single_date(self):
-
-        a = newspaper.article
-        a.meta_data = {"date": "2014/07/22", "test": "test"}
-        self.assertEqual(
-            get_pub_date(a).date(),
-            datetime.strptime(
-                '2014-07-22',
-                "%Y-%m-%d").date(),
-            "The dates don't match")
-
-    def test_get_pub_date_with_with_multi_dates(self):
-
-        a = newspaper.article
-        a.meta_data = {"date": "2014/07/22", "date": "2014/07/23"}
-        self.assertEqual(
-            get_pub_date(a).date(),
-            datetime.strptime(
-                '2014-07-23',
-                "%Y-%m-%d").date(),
-            "The dates don't match")
 
 if __name__ == '__main__':
     unittest.main(exit=False)
