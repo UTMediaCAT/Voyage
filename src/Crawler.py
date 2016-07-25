@@ -17,7 +17,7 @@ class Crawler(object):
         creates a Crawler with a given origin_url
         '''
         self.site = site
-        self.filters = site.referringsitefilter_set.all()
+        self.filters = []
         self.domain = urlparse(site.url).netloc
         self.pages_visited = 0
 
@@ -25,9 +25,9 @@ class Crawler(object):
         self.probabilistic_k = common.get_config()["crawler"]["k"]
 
         self.db = psycopg2.connect(host='localhost',
-                                   database=common.get_config()["crawler"]["postgresql"]["name"],
-                                   user=common.get_config()["crawler"]["postgresql"]["user"],
-                                   password=common.get_config()["crawler"]["postgresql"]["password"])
+                                   database="crawler",
+                                   user="postgres",
+                                   password="OFpeXDVuMTQtKlsD")
                                    
         self.cursor = self.db.cursor()
         self.already_added_urls = set()
@@ -37,7 +37,7 @@ class Crawler(object):
         #self.cursor.execute("DROP TABLE IF EXISTS " + self.visited_table)
         #self.cursor.execute("CREATE TABLE " + self.visited_table + " (url VARCHAR(1024) PRIMARY KEY)")
         self.cursor.execute("DROP TABLE IF EXISTS " + self.tovisit_table)
-        self.cursor.execute(u"CREATE TABLE" + self.tovisit_table + " (id SERIAL PRIMARY KEY, url VARCHAR(1024))")
+        self.cursor.execute(u"CREATE TABLE " + self.tovisit_table + " (id SERIAL PRIMARY KEY, url VARCHAR(1024))")
 
         #self.cursor.execute(u"INSERT INTO " + self.visited_table + " VALUES (%s)", (site.url,))
         self.cursor.execute(u"INSERT INTO " + self.tovisit_table + " VALUES (DEFAULT, %s)", (site.url,))
@@ -56,11 +56,13 @@ class Crawler(object):
         #standard non-recursive tree iteration
         try:
             while(True):
-                if(self.cursor.execute("SELECT * FROM " + self.tovisit_table + " ORDER BY id LIMIT 1")):
-                    row = self.cursor.fetchone()
+                self.cursor.execute("SELECT * FROM " + self.tovisit_table + " ORDER BY id LIMIT 1")
+                row = self.cursor.fetchone()
+                if(row):
                     row_id = row[0]
                     current_url = row[1]
                     self.cursor.execute("DELETE FROM " + self.tovisit_table + " WHERE id=%s", (row_id,))
+                    self.db.commit()
                 else:
                     raise StopIteration
 
@@ -100,7 +102,7 @@ class Crawler(object):
                     #if(self.cursor.fetchone()[0]):
                     #    continue
 
-                    if (url in self.already_added_urls):
+                    if (url not in self.already_added_urls):
                         self.cursor.execute(u"INSERT INTO " + self.tovisit_table + u" VALUES (DEFAULT , %s)", (url,))
                         logging.info(u"added {0} to the visit queue".format(url))
 
