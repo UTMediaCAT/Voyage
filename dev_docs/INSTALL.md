@@ -17,7 +17,7 @@ You can check your current version by `wget --version`
 
 ###Install apt dependencies
 ```
-sudo apt-get update && sudo apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev libjpeg-dev python3-pip  libmysqlclient-dev git
+sudo apt-get update && sudo apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev libjpeg-dev python3-pip libpq-dev git
 ```
 ###Install PhantomJS
 If PhantomJS is available on your distribution (such as Ubuntu), you may install it using apt-get.
