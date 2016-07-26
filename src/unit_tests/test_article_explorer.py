@@ -17,6 +17,9 @@ import unittest
 class ArticleTestBase(unittest.TestCase):
     SENTENCE = "I can eat glass, it does not hurt me."
 
+    def assertEq(self, expected, actual, msg=''):
+        self.assertEqual(expected, actual, "%s\nExpected: %s\nActual: %s"%(msg, expected, actual))
+
     def setUp(self):
         sys.stdout = open(os.devnull, "w")
 
@@ -32,42 +35,41 @@ class GetPubDateTest(ArticleTestBase):
     def test_no_date(self):
         a = self.from_html('abc')
         a.newspaper_parse()
-        self.assertEqual(get_pub_date(a), None,
+        self.assertEq(None, get_pub_date(a),
                          "The dates don't match")
 
     def test_single_date(self):
         a = self.from_html(
             '<meta property="article:published_time" content="2013-12-30T21:42:01+00:00"/>')
         a.newspaper_parse()
-        self.assertEqual(
-            get_pub_date(a).date(),
+        self.assertEq(
             datetime.strptime(
                 '2013-12-30',
                 "%Y-%m-%d").date(),
+            get_pub_date(a).date(),
             "The dates don't match")
 
     def test_multi_dates(self):
         a = self.from_html('<meta property="article:modified_time" content="2014/07/22"/>'
                            '<meta property="article:published_time" content="2014/07/23"')
         a.newspaper_parse()
-        self.assertEqual(
-            get_pub_date(a).date(),
+        self.assertEq(
             datetime.strptime(
                 '2014-07-23',
                 "%Y-%m-%d").date(),
+            get_pub_date(a).date(),
             "The dates don't match")
 
 
 class GetSourcesSitesTest(ArticleTestBase):
 
     def assertEmpty(self, urls):
-        self.assertEqual(urls, [[], []],
-                         "The URL list is not empty: " + str(urls))
+        self.assertEq([[], []], urls,
+                         "The URL list is not empty")
 
     def assertResult(self, actual, matched=[], unmatched=[]):
-        self.assertEqual(actual,
-                         [matched, unmatched],
-                         "The URLs do not match, got: " + str(actual))
+        self.assertEq([matched, unmatched], actual, 
+                         "The URLs do not match")
 
     def test_no_site(self):
 
@@ -153,127 +155,61 @@ class GetSourcesSitesTest(ArticleTestBase):
         self.assertEmpty(matched_unmatched)
 
 
-class TestArticleExplorer(unittest.TestCase):
-    def setUp(self):
-        sys.stdout = open(os.devnull, "w")
+class GetKeywordsTest(ArticleTestBase):
 
-        sys.stout = sys.__stdout__
-
-    def tearDown(self):
-        sys.stdout = sys.__stdout__
-
-    def test_populate_sites_with_no_site(self):
-
-        monitoring_sites = []
-
-        populated_sites = populate_sites(monitoring_sites)
-
-        self.assertEqual(len(populated_sites), 0,
-                         "The number of populated_sites does not match")
-
-    def test_populate_sites_with_single_site(self):
-
-        monitoring_sites = [["cnn", "http://www.cnn.com/", 2]]
-
-        populated_sites = populate_sites(monitoring_sites)
-
-        self.assertEqual(len(populated_sites), 1,
-                         "The number of populated_sites does not match")
-
-        self.assertEqual(populated_sites[0][0], "cnn",
-                         "The name of the populated_site does not match")
-
-        self.assertEqual(populated_sites[0][1].url, 'http://www.cnn.com/',
-                         "The url of the populated_site does not match")
-
-    def test_populate_sites_with_multiple_sites(self):
-
-        monitoring_sites = [["cnn",
-                             "http://www.cnn.com/",
-                             2],
-                            ["time",
-                             "http://time.com/",
-                             3],
-                            ["cbc",
-                             "http://www.cbc.ca/",
-                             5]]
-
-        populated_sites = populate_sites(monitoring_sites)
-
-        self.assertEqual(len(populated_sites), 3,
-                         "The number of populated_sites does not match")
-
-        self.assertEqual(populated_sites[0][0], "cnn",
-                         "The name of the populated_site does not match")
-
-        self.assertEqual(populated_sites[0][1].url, 'http://www.cnn.com/',
-                         "The url of the populated_site does not match")
-
-        self.assertEqual(populated_sites[1][0], "time",
-                         "The name of the populated_site does not match")
-
-        self.assertEqual(populated_sites[1][1].url, 'http://time.com/',
-                         "The url of the populated_site does not match")
-
-        self.assertEqual(populated_sites[2][0], "cbc",
-                         "The name of the populated_site does not match")
-
-        self.assertEqual(populated_sites[2][1].url, 'http://www.cbc.ca/',
-                         "The url of the populated_site does not match")
-
-    def test_get_keywords_with_no_keyword(self):
+    def test_no_keyword(self):
 
         keywords = []
         a = ExplorerArticle('')
         a.newspaper_article.title = "title"
         a.newspaper_article.text = "test get keywords"
-        self.assertEqual(get_keywords(a, keywords), [],
+        self.assertEq([], get_keywords(a, keywords), 
                          "This keywords list is not empty")
 
-    def test_get_keywords_with_single_keyword(self):
+    def test_single_keyword(self):
 
         keywords = ["keywords"]
         a = ExplorerArticle('')
         a.newspaper_article.title = "title"
         a.newspaper_article.text = "test get keywords"
-        self.assertEqual(get_keywords(a, keywords), ["keywords"],
+        self.assertEq(["keywords"], get_keywords(a, keywords),
                          "The keywords don't match")
 
         keywords = ["keywords"]
         a = ExplorerArticle('')
         a.newspaper_article.title = "title"
         a.newspaper_article.text = "test get keyword"
-        self.assertEqual(get_keywords(a, keywords), [],
+        self.assertEq([], get_keywords(a, keywords),
                          "The keywords don't match")
 
         keywords = ["keywords"]
         a = ExplorerArticle('')
         a.newspaper_article.title = "keyword"
         a.newspaper_article.text = "test"
-        self.assertEqual(get_keywords(a, keywords), [],
+        self.assertEq([], get_keywords(a, keywords),
                          "The keywords don't match")
 
-    def test_get_keywords_with_multi_keyword(self):
+    def test_multi_keyword(self):
 
         keywords = ["keywords", "test"]
         a = ExplorerArticle('')
         a.newspaper_article.title = "test"
         a.newspaper_article.text = "get keywords"
-        self.assertEqual(get_keywords(a, keywords), ["keywords", "test"],
+        self.assertEq(get_keywords(a, keywords), ["keywords", "test"],
                          "The keywords don't match")
 
         keywords = ["keywords", "test"]
         a = ExplorerArticle('')
         a.newspaper_article.title = "title"
         a.newspaper_article.text = "test get keywords"
-        self.assertEqual(get_keywords(a, keywords), ["keywords", "test"],
+        self.assertEq(get_keywords(a, keywords), ["keywords", "test"],
                          "The keywords don't match")
 
         keywords = ["keywords", "test"]
         a = ExplorerArticle('')
         a.newspaper_article.title = "keyword"
         a.newspaper_article.text = "tes"
-        self.assertEqual(get_keywords(a, keywords), [],
+        self.assertEq(get_keywords(a, keywords), [],
                          "The keywords don't match")
 
 if __name__ == '__main__':
