@@ -148,7 +148,7 @@ class ExplorerArticle(object):#derive from object for getters/setters
                 else:
                     if(not self.newspaper_article.is_parsed):
                         self.newspaper_article.parse()
-                        if(self.newspaper_article.clean_top_node):
+                        if self.newspaper_article.clean_top_node is not None:
                             lxml_tree = self.newspaper_article.clean_top_node
                         else:
                             logging.warning("no links could be obtained because both methods of obtaining a cleaned document failed")

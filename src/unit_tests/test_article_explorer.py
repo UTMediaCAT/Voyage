@@ -13,17 +13,31 @@ import newspaper
 
 import unittest
 
-class PublishDateTest(unittest.TestCase):
-    def test_no_date(self):
+
+class ArticleTestBase(unittest.TestCase):
+    SENTENCE = "I can eat glass, it does not hurt me."
+
+    def setUp(self):
+        sys.stdout = open(os.devnull, "w")
+
+    def tearDown(self):
+        sys.stdout = sys.__stdout__
+
+    def from_html(self, html):
         a = ExplorerArticle('')
-        a.html = 'body'
+        a.html = '<!DOCTYPE html>' + html
+        return a
+
+class GetPubDateTest(ArticleTestBase):
+    def test_no_date(self):
+        a = self.from_html('abc')
         a.newspaper_parse()
         self.assertEqual(get_pub_date(a), None,
                          "The dates don't match")
 
     def test_single_date(self):
-        a = ExplorerArticle('')
-        a.html = '<meta property="article:published_time" content="2013-12-30T21:42:01+00:00"/>'
+        a = self.from_html(
+            '<meta property="article:published_time" content="2013-12-30T21:42:01+00:00"/>')
         a.newspaper_parse()
         self.assertEqual(
             get_pub_date(a).date(),
@@ -33,9 +47,8 @@ class PublishDateTest(unittest.TestCase):
             "The dates don't match")
 
     def test_multi_dates(self):
-        a = ExplorerArticle('')
-        a.html = '<meta property="article:modified_time" content="2014/07/22"/>'\
-        '<meta property="article:published_time" content="2014/07/23"'
+        a = self.from_html('<meta property="article:modified_time" content="2014/07/22"/>'
+                           '<meta property="article:published_time" content="2014/07/23"')
         a.newspaper_parse()
         self.assertEqual(
             get_pub_date(a).date(),
@@ -43,6 +56,101 @@ class PublishDateTest(unittest.TestCase):
                 '2014-07-23',
                 "%Y-%m-%d").date(),
             "The dates don't match")
+
+
+class GetSourcesSitesTest(ArticleTestBase):
+
+    def assertEmpty(self, urls):
+        self.assertEqual(urls, [[], []],
+                         "The URL list is not empty: " + str(urls))
+
+    def assertResult(self, actual, matched=[], unmatched=[]):
+        self.assertEqual(actual,
+                         [matched, unmatched],
+                         "The URLs do not match, got: " + str(actual))
+
+    def test_no_site(self):
+
+        site = ["http://www.cnn.com", "cnn.com", "link"]
+
+        foreign_sites = []
+
+        a = self.from_html(
+            self.SENTENCE + "<a href='http://www.cnn.com'>link</a>")
+        matched_unmatched = get_sources_sites(a, [])
+        self.assertResult(matched_unmatched, unmatched=[site])
+
+        a = self.from_html(self.SENTENCE)
+        matched_unmatched = get_sources_sites(a, [])
+        self.assertEmpty(matched_unmatched)
+
+        a = self.from_html(
+            self.SENTENCE + "<a href='http://www.cnn.com'>link</a>")
+        matched_unmatched = get_sources_sites(a, [])
+        self.assertResult(matched_unmatched, unmatched=[site])
+
+    def test_single_site(self):
+
+        site = ["http://www.cnn.com", "cnn.com", "link"]
+
+        foreign_sites = ["http://www.cnn.com"]
+        a = self.from_html(self.SENTENCE + "<a 'http://www.cnn.com'>link</a>")
+        matched_unmatched = get_sources_sites(a, foreign_sites)
+        self.assertEmpty(matched_unmatched)
+
+        foreign_sites = ["http://www.cnn.com"]
+        a = self.from_html(
+            self.SENTENCE + "<a href='http://www.cnn.com'>link</a>")
+        matched_unmatched = get_sources_sites(a, foreign_sites)
+        self.assertResult(matched_unmatched, matched=[site])
+
+        foreign_sites = ["http://www.cnn.com/"]
+        a = self.from_html(self.SENTENCE)
+        matched_unmatched = get_sources_sites(a, foreign_sites)
+        self.assertEmpty(matched_unmatched)
+
+    def test_multi_site(self):
+        foreign_sites = ["http://www.cnn.com", "http://www.cbc.ca"]
+        a = self.from_html(
+            self.SENTENCE + "<a href='http://www.cnn.com/article'>link</a>")
+        matched_unmatched = get_sources_sites(a, foreign_sites)
+        self.assertResult(matched_unmatched,
+                          matched=[['http://www.cnn.com/article', 'cnn.com', 'link']])
+
+        foreign_sites = ["http://www.cnn.com", "http://www.cbc.ca"]
+        a = self.from_html(
+            self.SENTENCE + "<a href='http://www.cbc.ca/news'>link</a>")
+        matched_unmatched = get_sources_sites(a, foreign_sites)
+        self.assertResult(matched_unmatched,
+                          matched=[['http://www.cbc.ca/news', 'cbc.ca', 'link']])
+
+        foreign_sites = ["http://www.cnn.com", "http://www.cbc.ca"]
+        a = self.from_html(self.SENTENCE +
+                           "<a href='http://www.cnn.com'>link1</a> <a href='http://www.cbc.ca'>link2</a>")
+        matched_unmatched = get_sources_sites(a, foreign_sites)
+        self.assertResult(matched_unmatched,
+                          matched=[
+                              ['http://www.cnn.com', 'cnn.com', 'link1'],
+                              ['http://www.cbc.ca', 'cbc.ca', 'link2']
+                          ])
+
+        foreign_sites = [
+            "http://www.cnn.com",
+            "http://www.cbc.ca",
+            "http://www.time.com"]
+        a = self.from_html(self.SENTENCE +
+                           "<a href='http://www.cnn.com/news'>link1</a> <a href='http://www.cbc.ca/news'>link2</a>")
+        matched_unmatched = get_sources_sites(a, foreign_sites)
+        self.assertResult(matched_unmatched,
+                          matched=[
+                              ['http://www.cnn.com/news', 'cnn.com', 'link1'],
+                              ['http://www.cbc.ca/news', 'cbc.ca', 'link2']
+                          ])
+
+        foreign_sites = ["http://www.cnn.com", "http://www.cbc.ca"]
+        a = self.from_html(self.SENTENCE + "<div><p> http://www.cbc.ca </p></div>")
+        matched_unmatched = get_sources_sites(a, foreign_sites)
+        self.assertEmpty(matched_unmatched)
 
 
 class TestArticleExplorer(unittest.TestCase):
@@ -112,95 +220,6 @@ class TestArticleExplorer(unittest.TestCase):
 
         self.assertEqual(populated_sites[2][1].url, 'http://www.cbc.ca/',
                          "The url of the populated_site does not match")
-
-    def test_get_sources_with_no_site(self):
-
-        foreign_sites = []
-        html = "<a href='http://www.cnn.com'></a>"
-        matched_urls = get_sources(html, foreign_sites)
-        self.assertEqual(matched_urls, [],
-                         "The URL list is not empty")
-
-        foreign_sites = []
-        html = ""
-        matched_urls = get_sources(html, foreign_sites)
-        self.assertEqual(matched_urls, [],
-                         "The URL list is not empty")
-
-        foreign_sites = []
-        html = "<a href='http://www.cnn.com'></a>"
-        matched_urls = get_sources(html, foreign_sites)
-        self.assertEqual(matched_urls, [],
-                         "The URL list is not empty")
-
-    def test_get_sources_with_single_site(self):
-
-        foreign_sites = ["http://www.cnn.com"]
-        html = "<a 'http://www.cnn.com'></a>"
-        matched_urls = get_sources(html, foreign_sites)
-        self.assertEqual(matched_urls, [],
-                         "The URLs dosen't match")
-
-        foreign_sites = ["http://www.cnn.com"]
-        html = "<a href='http://www.cnn.com'></a>"
-        matched_urls = get_sources(html, foreign_sites)
-        self.assertEqual(matched_urls,
-                         [["http://www.cnn.com",
-                           "http://www.cnn.com"]],
-                         "The wrong match of ulrs")
-
-        foreign_sites = ["http://www.cnn.com/"]
-        html = ""
-        matched_urls = get_sources(html, foreign_sites)
-        self.assertEqual(matched_urls, [],
-                         "The URL list is not empty")
-
-    def test_get_sources_with_multi_site(self):
-        foreign_sites = ["http://www.cnn.com", "http://www.cbc.ca"]
-        html = "<a href='http://www.cnn.com/article'></a>"
-        matched_urls = get_sources(html, foreign_sites)
-        self.assertEqual(matched_urls,
-                         [['http://www.cnn.com/article',
-                           "http://www.cnn.com"]],
-                         "The URLs dosen't match")
-
-        foreign_sites = ["http://www.cnn.com", "http://www.cbc.ca"]
-        html = "<a href='http://www.cbc.ca/news'></a>"
-        matched_urls = get_sources(html, foreign_sites)
-        self.assertEqual(matched_urls,
-                         [['http://www.cbc.ca/news',
-                           "http://www.cbc.ca",
-                           ]],
-                         "The URLs dosen't match")
-
-        foreign_sites = ["http://www.cnn.com", "http://www.cbc.ca"]
-        html = "<a href='http://www.cnn.com'></a> <a href='http://www.cbc.ca'></a>"
-        matched_urls = get_sources(html, foreign_sites)
-        self.assertEqual(matched_urls,
-                         [["http://www.cnn.com",
-                           "http://www.cnn.com"],
-                          ["http://www.cbc.ca",
-                           "http://www.cbc.ca"]],
-                         "The URLs dosen't match")
-
-        foreign_sites = [
-            "http://www.cnn.com",
-            "http://www.cbc.ca",
-            "http://www.time.com"]
-        html = "<a href='http://www.cnn.com/news'></a> <a href='http://www.cbc.ca/news'></a>"
-        matched_urls = get_sources(html, foreign_sites)
-        self.assertEqual(matched_urls,
-                         [['http://www.cnn.com/news',
-                           "http://www.cnn.com"],
-                          ['http://www.cbc.ca/news',
-                           "http://www.cbc.ca"]],
-                         "The URLs dosen't match")
-
-        foreign_sites = ["http://www.cnn.com", "http://www.cbc.ca"]
-        html = "<div><p> http://www.cbc.ca </p></div>"
-        matched_urls = get_sources(html, foreign_sites)
-        self.assertEqual(matched_urls, [],
-                         "The URL list is not empty")
 
     def test_get_keywords_with_no_keyword(self):
 
