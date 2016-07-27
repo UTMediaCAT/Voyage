@@ -37,7 +37,7 @@ class Crawler(object):
         #self.cursor.execute("DROP TABLE IF EXISTS " + self.visited_table)
         #self.cursor.execute("CREATE TABLE " + self.visited_table + " (url VARCHAR(1024) PRIMARY KEY)")
         self.cursor.execute("DROP TABLE IF EXISTS " + self.tovisit_table)
-        self.cursor.execute(u"CREATE TABLE" + self.tovisit_table + " (id SERIAL PRIMARY KEY, url VARCHAR(1024))")
+        self.cursor.execute(u"CREATE TABLE " + self.tovisit_table + " (id SERIAL PRIMARY KEY, url VARCHAR(1024))")
 
         #self.cursor.execute(u"INSERT INTO " + self.visited_table + " VALUES (%s)", (site.url,))
         self.cursor.execute(u"INSERT INTO " + self.tovisit_table + " VALUES (DEFAULT, %s)", (site.url,))
@@ -56,8 +56,9 @@ class Crawler(object):
         #standard non-recursive tree iteration
         try:
             while(True):
-                if(self.cursor.execute("SELECT * FROM " + self.tovisit_table + " ORDER BY id LIMIT 1")):
-                    row = self.cursor.fetchone()
+                self.cursor.execute("SELECT * FROM " + self.tovisit_table + " ORDER BY id LIMIT 1")
+                row = self.cursor.fetchone()
+                if(row):
                     row_id = row[0]
                     current_url = row[1]
                     self.cursor.execute("DELETE FROM " + self.tovisit_table + " WHERE id=%s", (row_id,))
@@ -101,8 +102,9 @@ class Crawler(object):
                     #    continue
 
                     if (url in self.already_added_urls):
-                        self.cursor.execute(u"INSERT INTO " + self.tovisit_table + u" VALUES (DEFAULT , %s)", (url,))
-                        logging.info(u"added {0} to the visit queue".format(url))
+                        continue
+                    self.cursor.execute(u"INSERT INTO " + self.tovisit_table + u" VALUES (DEFAULT , %s)", (url,))
+                    logging.info(u"added {0} to the visit queue".format(url))
 
                 self.pages_visited += 1
                 return article
