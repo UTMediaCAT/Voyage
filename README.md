@@ -7,6 +7,7 @@ Voyage currently has 2 components:
 * __Web Server__ is capable of editing and displaying all the stored data as well as scopes you will provide to _Explorer_, through your favorite browser.
 * __Explorer__ searches the web using scopes given through to the _Web Server_ and goes for exploring for you. It will automatically store all relevant informations found on the way, so that you can show all the loot through _Web Server_.
 
+
 ##Requirements
 Before installation, verify you meet the following requirements
 #####[Python 2.7.10+](https://www.python.org/downloads/release/python-2710/)
@@ -131,7 +132,6 @@ python manage.py createsuperuser
 ####Otherwise start/stop the server:
 
 * To start `python server.py run`
-* To stop `python server.py stop`
 
 (note: if using port 80, then```sudo``` is needed to run/stop the server) 
 
@@ -140,6 +140,9 @@ By default, this Django app is set to listen on all public IPs (port 80).
 You can now access the server through http://IP:PORT/admin
 
 The default is [http://127.0.0.1/admin](http://127.0.0.1/admin)
+
+
+
 #Tabs
 ####Home
 Here you can view your action history and quick navigations to the database
@@ -171,7 +174,6 @@ Once your scope is ready, you may start exploring by clicking __Run__ on the sta
 * __Article Explorer__ will explore through the _Referring Sites_ for articles
 * __Twitter Explorer__ will explore through _Twitter_ for _Twitter Accounts's_ posts
 
-___
 ___
 
 ##UnitTest
