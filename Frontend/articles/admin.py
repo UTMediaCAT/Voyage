@@ -261,9 +261,6 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
     def link_options(self, obj):
         return format((
             '<a href="/admin/articles/article/%s">Details</a><br />' +\
-            '<a href="/articles/warc/%s">Donwload Warc</a><br />' +\
-            '<a href="/articles/pdf/%s">View PDF</a><br />' +\
-            '<a href="/articles/img/%s">View Screenshot</a><br />' +\
             '<div>Urls: %i<br />Versions: %i</div>') %
             (
                 str(obj.pk), obj.text_hash,
