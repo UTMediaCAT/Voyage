@@ -47,14 +47,14 @@ class ReferringSite(models.Model):
     tags = TaggableManager()
 
     crawl_choices = (
-	(0, 'Newspaper'),
+	(0, 'RSS'),
 	(1, 'MediaCAT Crawler'),
 	(2, 'Both')
     )
     mode = models.PositiveSmallIntegerField(default=0,
 		        choices=crawl_choices,
 			verbose_name='Scanner',
-                        help_text=mark_safe('Newspaper - Fast but may not work on some sites.<br>' + # Use Check Newspaper to determine the compatibility<br>' +
+                        help_text=mark_safe('RSS - Fast but may not work on some sites.<br>' + # Use Check Newspaper to determine the compatibility<br>' +
                                             'MediaCAT Crawler - Slow but compatible with any sites.<br>' +
                                             'Both - Uses both Newspaper and MediaCAT CrawlerB for maximum results.'))
     class Meta:
