@@ -7,7 +7,7 @@ def configuration():
     Returns a dictionary containing the micro settings from the
     config.yaml file located in the directory containing this file
     """
-    config_yaml = open("/../config.yaml", 'r')
+    config_yaml = open("../config.yaml", 'r')
     config = yaml.load(config_yaml)
     config_yaml.close()
     return config
