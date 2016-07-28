@@ -64,33 +64,33 @@ class ReferringSiteCssSelectorInline(admin.TabularInline):
     extra = 0
 
 
-class ReferringSiteAdminForm(forms.ModelForm):
-    class Meta:
-        Model = ReferringSite
+# class ReferringSiteAdminForm(forms.ModelForm):
+#     class Meta:
+#         Model = ReferringSite
 
-    def clean(self):
-        url = self.cleaned_data['url']
-        check = self.cleaned_data['check']
+#     def clean(self):
+#         url = self.cleaned_data['url']
+#         check = self.cleaned_data['check']
 
-        if check:
-            count = newspaper.build(url, memoize_articles=False,
-                            keep_article_html=False,
-                            fetch_images=False,
-                            language='en').size()
-            raise forms.ValidationError(mark_safe(('Newspaper RSS scan found %i articles.<br>' +
-                                                   'If this amount doesn\'t seem right, consider changing scanner to <i>MediaCAT Crawler</i> or <i>Both</i>.<br>' +
-                                                   'Uncheck \'Test Newspaper RSS Scan\' after you choose the scanner to dismiss this message.')%count))
-            #self.add_error('check', 'Newspaper found %i articles.'%count)
-        return self.cleaned_data
+#         if check:
+#             count = newspaper.build(url, memoize_articles=False,
+#                             keep_article_html=False,
+#                             fetch_images=False,
+#                             language='en').size()
+#             raise forms.ValidationError(mark_safe(('Newspaper RSS scan found %i articles.<br>' +
+#                                                    'If this amount doesn\'t seem right, consider changing scanner to <i>MediaCAT Crawler</i> or <i>Both</i>.<br>' +
+#                                                    'Uncheck \'Test Newspaper RSS Scan\' after you choose the scanner to dismiss this message.')%count))
+#             #self.add_error('check', 'Newspaper found %i articles.'%count)
+#         return self.cleaned_data
 
 
 class ReferringSiteAdmin(admin.ModelAdmin):
     model = ReferringSite
-    form = ReferringSiteAdminForm
+    # form = ReferringSiteAdminForm
     inlines = [TaggitTabularInline]
     list_filter = [TaggitListFilter]
     fieldsets = [
-        (None,               {'fields': ['url', 'name', 'mode', 'check']})
+        (None,               {'fields': ['url', 'name', 'mode']})
         ]
     inlines += [ReferringSiteFilterInline, ReferringSiteCssSelectorInline]
     list_display = ('name', 'url', 'article_count', 'latest_article', 'mode', 'get_tags')
