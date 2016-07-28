@@ -14,8 +14,11 @@ TWITTER_HTML = "https://twitter.com/wesbos/status/519123918422958081"
 WRONG_ARTICLE_HTML = "http://www.cbc.ca/news/world/nor-easter" + \
                      "-storm-blasts-eastern-u-s-with"
 WRONG_TWITTER_HTML = "https://twitter.com/wesbos/statu"
+
 WARC_ARTICLE_DIRECTORY = "../warc/article"
 WARC_TWITTER_DIRECTORY = "../warc/twitter"
+
+PDF_ARTICLE_DIRECTORY = "../pdf/article"
 
 class TestWarcCreator(unittest.TestCase):
 
@@ -24,13 +27,29 @@ class TestWarcCreator(unittest.TestCase):
         shutil.rmtree(WARC_TWITTER_DIRECTORY, ignore_errors=True)
 
     def get_warc_name(self, dir, name_without_ext):
+        """
+        gets the valid warc filename
+        """
         return dir + '/' + name_without_ext.replace('/', '_') + '.warc.gz'
+
+    def get_pdf_name(self, dir, name_without_ext):
+        """
+        gets the valid pdf filename 
+        """
+        return dir + '/' + name_without_ext.replace('/', '_') + '.pdf'
 
     def assertWarcFile(self, dir, name_without_ext):
         """
         assert the given warc file exists
         """
         path = self.get_warc_name(dir, name_without_ext)
+        self.assertTrue(os.path.isfile(path))
+
+    def assertPdfFile(self, dir, name_without_ext):
+        """
+        assert the given pdf file exists
+        """
+        path = self.get_pdf_name(dir, name_without_ext)
         self.assertTrue(os.path.isfile(path))
 
     def test_create_article_warc(self):
@@ -93,6 +112,16 @@ class TestWarcCreator(unittest.TestCase):
         mtime2 = os.path.getmtime(warc_name)
 
         self.assertGreater(mtime2, mtime1)
+
+    def test_create_article_pdf(self):
+        """
+        create a real article pdf should work
+        """
+        filename = ARTICLE_HTML.replace('/', '_')
+        pdf_name = self.get_pdf_name(PDF_ARTICLE_DIRECTORY, ARTICLE_HTML)
+
+        wc.create_article_pdf(ARTICLE_HTML, filename).wait()
+        self.assertPdfFile(PDF_ARTICLE_DIRECTORY, filename)
 
 if __name__ == "__main__":
     unittest.main()
