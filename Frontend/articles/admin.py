@@ -264,9 +264,6 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
             '<div>Urls: %i<br />Versions: %i</div>') %
             (
                 str(obj.pk), obj.text_hash,
-                obj.text_hash,
-                obj.text_hash,
-                obj.url_set.count(),
                 obj.version_set.count()))
 
     link_options.allow_tags = True
