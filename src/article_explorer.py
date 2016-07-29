@@ -71,7 +71,7 @@ from ExplorerArticle import ExplorerArticle
 from multiprocessing import Pool, cpu_count
 from functools import partial
 import signal
-
+from django.db import connection
 # For hashing the text
 import hashlib
 
@@ -97,6 +97,8 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
         for s in referring_sites:
             parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer, s)
     else:
+
+        connection.close()
         # Initialize multiprocessing by having cpu*2 workers
         pool = Pool(processes=cpu_count()*2, maxtasksperchild=1, initializer=init_worker)
 
