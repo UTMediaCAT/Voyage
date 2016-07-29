@@ -86,6 +86,7 @@ Enter it again:password
 In the Postgres prompt:
 ```
 postgres=# create database mediacat;
+postgres=# create database crawler;
 ```
  
 ####To integrate this database with Django:
