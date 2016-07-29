@@ -39,4 +39,4 @@ crawler:
     postgresql:
       user: postgres
       password: password
-      name: mediacat
+      name: crawler
