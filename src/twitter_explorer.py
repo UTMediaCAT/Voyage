@@ -153,7 +153,7 @@ def get_keywords(text, keywords):
 
     # Searches if keyword is in tweet regardless of casing
     for key in keywords:
-        if re.search('[^a-z]' + key + '[^a-z]', text.encode('utf8'), re.IGNORECASE):
+        if re.search('(?:^|[^a-z])' + key + '(?:[^a-z]|$)', text.encode('utf8'), re.IGNORECASE):
             matched_keywords.append(key)
 
     return matched_keywords

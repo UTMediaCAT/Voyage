@@ -9,14 +9,15 @@ import twitter_explorer as te
 import unittest
 import tweepy
 
+from base import ExplorerTestBase
 
-class TestTwitterExplorer(unittest.TestCase):
+class TestTwitterExplorer(ExplorerTestBase):
 
     def setUp(self):
         self.test_account = 'acmeteam4'
-        self.test_keywords = ['nevereverthere', '.ly', '.com', 'test', 'acme4', '6', '3', '2', 'google', 'time', 'no']
-        self.test_sources = ['http://google.com', 'http://google.ca','http://cnn.com', 'http://TIME.com', 'genius.com/President']
-    
+        self.test_keywords = ['nevereverthere', '.ly', '.com', 'test', 'acme4', 'testacme4', '3', 'testacme2', 'google', 'time', 'no']
+        self.test_sources = ['http://google.com', 'http://google.ca','http://cnn.com', 'http://TIME.com', 'http://genius.com/President']
+
     def tearDown(self):
         self.test_account = None
         self.test_keywords = None
@@ -44,7 +45,7 @@ class TestTwitterExplorer(unittest.TestCase):
 
         #test account only has 5 tweets
         eleven_requested_tweets = te.get_tweets(self.test_account, 11)
-        
+
         self.assertEquals(len(three_tweets), 3,
                           'request for 3 tweets did not return 3 tweets')
         self.assertEquals(len(five_tweets), 5,
@@ -59,7 +60,7 @@ class TestTwitterExplorer(unittest.TestCase):
                           'request for 3 tweets returned invalid tweet')
         self.assertEquals(three_tweets[2].text, 'testacme2',
                           'request for 3 tweets returned invalid tweet')
-        
+
         self.assertEquals(five_tweets[0].text, 'testacme4',
                           'request for 5 tweets returned invalid tweet')
         self.assertEquals(five_tweets[1].text, 'testacme3',
@@ -111,18 +112,18 @@ class TestTwitterExplorer(unittest.TestCase):
         """
         eight_tweets = te.get_tweets(self.test_account, 8)
         holder = {}
-        
+
         for i in [0,1,2,3,4]:
             tweet = eight_tweets[i]
-            matched = te.get_keywords(tweet, self.test_keywords)
+            matched = te.get_keywords(tweet.text, self.test_keywords)
             holder.update({tweet.id : matched})
             self.assertIsInstance(matched, list,
                               'Not returing list of matched keywords')
-        expected = {531976729007771648: ['test', 'acme4'],
-                    531976714730364929: ['test', '3'],
-                    531976660015652864: ['test'],
-                    531976696397070336: ['test', '2'],
-                    531976682128031744: ['test']}
+        expected = {531976729007771648: ['testacme4'],
+                    531976714730364929: [],
+                    531976696397070336: ['testacme2'],
+                    531976682128031744: [],
+                    531976660015652864: []}
 
 
         self.assertEquals(holder, expected,
@@ -130,7 +131,7 @@ class TestTwitterExplorer(unittest.TestCase):
 
         holder = {}
         for tweet in eight_tweets:
-            matched = te.get_keywords(tweet, [])
+            matched = te.get_keywords(tweet.text, [])
             holder.update({tweet.id : matched})
 
         expected = {531976714730364929: [],
@@ -141,66 +142,42 @@ class TestTwitterExplorer(unittest.TestCase):
                     531976696397070336: [],
                     531976627870527488: [],
                     531975600152805376: []}
-        
+
         self.assertEquals(holder, expected,
                           'Not returning empty list when no keywords are selected.')
 
-    def testGetSources(self):
+    def testGetSourceSites(self):
         """
         Tests to see if correct sources are gathered from specified tweets
         """
         eight_tweets = te.get_tweets(self.test_account, 8)
         holder = {}
-        
+
         for tweet in eight_tweets:
-            matched = te.get_sources(tweet, self.test_sources)
+            matched = te.get_source_sites(tweet.entities['urls'], self.test_sources)
             holder.update({tweet.id : matched})
             self.assertIsInstance(matched, list,
                               'Not returning list of matched sources')
-        for element in [531976729007771648, 531976714730364929, 531976660015652864,
+        for tweetid in [531976729007771648, 531976714730364929, 531976660015652864,
                         531976696397070336, 531976682128031744]:
-            self.assertEquals(holder[element],[],
-                              'Not returning correct list of sources for each test tweet.')
+            self.assertSourceURL(holder[tweetid])
 
         #can't test exact site as using url lib will change them if they generate
         #for example each google search url will be different
-        self.assertEquals(len(holder[531976454138241024]), 2,
+        self.assertEq(len(holder[531976454138241024][0]), 2,
                           'Not returning correct amount of sources for test tweet')
-        self.assertEquals(len(holder[531976627870527488]), 2,
+        self.assertEq(len(holder[531976627870527488][0]), 2,
                           'Not returning correct amount of sources for test tweet')
-        self.assertEquals(len(holder[531975600152805376]), 3,
+        self.assertEq(len(holder[531975600152805376][0]), 3,
                           'Not returning correct amount of sources for test tweet')
 
         holder = {}
         for tweet in eight_tweets:
-            matched = te.get_sources(tweet, [])
+            matched = te.get_source_sites(tweet.entities['urls'], [])
             holder.update({tweet.id : matched})
 
-        expected = {531976714730364929: [],
-                    531976454138241024: [],
-                    531976660015652864: [],
-                    531976682128031744: [],
-                    531976729007771648: [],
-                    531976696397070336: [],
-                    531976627870527488: [],
-                    531975600152805376: []}
-        
-        self.assertEquals(holder, expected,
-                          'Not returning empty list when no sources are selected.')
-
-    def testStressGetTweets(self):
-        """
-        Tests to see if twitter_explorer handles that rate call correctly, and completes task
-        """
-        holder = []
-        i = 0
-        count = 0
-        while i < 3000:
-            holder.append(te.get_tweets('acmeteam4', 1))
-            i +=1#        for tweets in holder:
-            count += 1
-
-        self.assertEquals(count, 3000, 'getting amount of tweets over rate limit failed')
+        for i, urls in holder.iteritems():
+            self.assertEq(0, len(urls[0]), 'Not returning empty list when no sources are selected.')
 
 if __name__ == '__main__':
     unittest.main()

@@ -466,7 +466,7 @@ def get_keywords(article, keywords):
 
     # For each keyword, check if article's text contains it
     for key in keywords:
-        regex = re.compile('(?:^|[^a-z])' + key + '(?:$|[^a-z])', re.IGNORECASE)
+        regex = re.compile('(?:^|[^a-z])' + key + '(?:[^a-z]|$)', re.IGNORECASE)
         if regex.search(article.title) or regex.search(article.get_text(strip_html=True)):
             # If the article's text contains the key, append it to the list
             matched_keywords.append(key)

@@ -7,18 +7,15 @@ sys.path.append(path)
 os.chdir(path)
 from article_explorer import*
 from datetime import datetime
-
+from base import ExplorerTestBase
 
 import newspaper
 
 import unittest
 
 
-class ArticleTestBase(unittest.TestCase):
+class ArticleExplorerTestBase(ExplorerTestBase):
     SENTENCE = "I can eat glass, it does not hurt me."
-
-    def assertEq(self, expected, actual, msg=''):
-        self.assertEqual(expected, actual, "%s\nExpected: %s\nActual: %s"%(msg, expected, actual))
 
     def setUp(self):
         sys.stdout = open(os.devnull, "w")
@@ -31,7 +28,7 @@ class ArticleTestBase(unittest.TestCase):
         a.html = '<!DOCTYPE html>' + html
         return a
 
-class GetPubDateTest(ArticleTestBase):
+class GetPubDateTest(ArticleExplorerTestBase):
     def test_no_date(self):
         a = self.from_html('abc')
         a.newspaper_parse()
@@ -61,15 +58,11 @@ class GetPubDateTest(ArticleTestBase):
             "The dates don't match")
 
 
-class GetSourcesSitesTest(ArticleTestBase):
+class GetSourcesSitesTest(ArticleExplorerTestBase):
 
     def assertEmpty(self, urls):
         self.assertEq([[], []], urls,
                          "The URL list is not empty")
-
-    def assertResult(self, actual, matched=[], unmatched=[]):
-        self.assertEq([matched, unmatched], actual, 
-                         "The URLs do not match")
 
     def test_no_site(self):
 
@@ -80,7 +73,7 @@ class GetSourcesSitesTest(ArticleTestBase):
         a = self.from_html(
             self.SENTENCE + "<a href='http://www.cnn.com'>link</a>")
         matched_unmatched = get_sources_sites(a, [])
-        self.assertResult(matched_unmatched, unmatched=[site])
+        self.assertSourceURL(matched_unmatched, unmatched=[site])
 
         a = self.from_html(self.SENTENCE)
         matched_unmatched = get_sources_sites(a, [])
@@ -89,7 +82,7 @@ class GetSourcesSitesTest(ArticleTestBase):
         a = self.from_html(
             self.SENTENCE + "<a href='http://www.cnn.com'>link</a>")
         matched_unmatched = get_sources_sites(a, [])
-        self.assertResult(matched_unmatched, unmatched=[site])
+        self.assertSourceURL(matched_unmatched, unmatched=[site])
 
     def test_single_site(self):
 
@@ -104,7 +97,7 @@ class GetSourcesSitesTest(ArticleTestBase):
         a = self.from_html(
             self.SENTENCE + "<a href='http://www.cnn.com'>link</a>")
         matched_unmatched = get_sources_sites(a, foreign_sites)
-        self.assertResult(matched_unmatched, matched=[site])
+        self.assertSourceURL(matched_unmatched, matched=[site])
 
         foreign_sites = ["http://www.cnn.com/"]
         a = self.from_html(self.SENTENCE)
@@ -116,21 +109,21 @@ class GetSourcesSitesTest(ArticleTestBase):
         a = self.from_html(
             self.SENTENCE + "<a href='http://www.cnn.com/article'>link</a>")
         matched_unmatched = get_sources_sites(a, foreign_sites)
-        self.assertResult(matched_unmatched,
+        self.assertSourceURL(matched_unmatched,
                           matched=[['http://www.cnn.com/article', 'cnn.com', 'link']])
 
         foreign_sites = ["http://www.cnn.com", "http://www.cbc.ca"]
         a = self.from_html(
             self.SENTENCE + "<a href='http://www.cbc.ca/news'>link</a>")
         matched_unmatched = get_sources_sites(a, foreign_sites)
-        self.assertResult(matched_unmatched,
+        self.assertSourceURL(matched_unmatched,
                           matched=[['http://www.cbc.ca/news', 'cbc.ca', 'link']])
 
         foreign_sites = ["http://www.cnn.com", "http://www.cbc.ca"]
         a = self.from_html(self.SENTENCE +
                            "<a href='http://www.cnn.com'>link1</a> <a href='http://www.cbc.ca'>link2</a>")
         matched_unmatched = get_sources_sites(a, foreign_sites)
-        self.assertResult(matched_unmatched,
+        self.assertSourceURL(matched_unmatched,
                           matched=[
                               ['http://www.cnn.com', 'cnn.com', 'link1'],
                               ['http://www.cbc.ca', 'cbc.ca', 'link2']
@@ -143,7 +136,7 @@ class GetSourcesSitesTest(ArticleTestBase):
         a = self.from_html(self.SENTENCE +
                            "<a href='http://www.cnn.com/news'>link1</a> <a href='http://www.cbc.ca/news'>link2</a>")
         matched_unmatched = get_sources_sites(a, foreign_sites)
-        self.assertResult(matched_unmatched,
+        self.assertSourceURL(matched_unmatched,
                           matched=[
                               ['http://www.cnn.com/news', 'cnn.com', 'link1'],
                               ['http://www.cbc.ca/news', 'cbc.ca', 'link2']
@@ -155,7 +148,7 @@ class GetSourcesSitesTest(ArticleTestBase):
         self.assertEmpty(matched_unmatched)
 
 
-class GetKeywordsTest(ArticleTestBase):
+class GetKeywordsTest(ArticleExplorerTestBase):
 
     def test_no_keyword(self):
 
