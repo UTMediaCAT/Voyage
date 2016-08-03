@@ -1,6 +1,7 @@
 #!/bin/bash
 
-
+# Please make sure the the password file .pgpass is created for the current user
+# https://www.postgresql.org/docs/current/static/libpq-pgpass.html
 
 args=("$@")
 
@@ -9,7 +10,7 @@ output_dir="${args[1]}"
 case "${args[2]}" in
 	"add")
 		DATE=`date +'%Y-%m-%d_%H:%M:%S'`
-		pg_dump -U postgres $database > "$output_dir/$database.sql.$DATE";;
+		pg_dump  $database > "$output_dir/$database.sql.$DATE";;
 
 	"remove")
 		if [ "${args[3]}" == "" ]; then
