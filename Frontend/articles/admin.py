@@ -281,7 +281,7 @@ class SourceSiteAdmin(admin.ModelAdmin):
         (None,               {'fields': ['url', 'domain']})
         ]
     list_display = (['get_url','domain' , 'get_matched_article','get_source_author', 'get_source_date_added',  'get_source_date_published', 'link_options' ] )
-    search_fields = [ 'url', 'domain',  'get_matched_article', 'get_source_author', 'get_source_date_added','get_source_date_published']
+    search_fields = [ 'url', 'domain' ]
     ordering = ['url']
     actions_on_top = True
     list_per_page = 20
@@ -317,7 +317,7 @@ class SourceSiteAdmin(admin.ModelAdmin):
         return arctiles[:-4]
 
     get_matched_article.short_description = 'Matched Articles'
-    get_matched_article.admin_order_field = 'article'
+    get_matched_article.admin_order_field = 'version'
     get_matched_article.allow_tags = True
 
     def get_source_author(self, obj):
@@ -356,7 +356,7 @@ class SourceSiteAdmin(admin.ModelAdmin):
         return date_add[:-4]
 
     get_source_date_added.short_description = 'Date Added'
-    #get_source_date_added.admin_order_field = 'article__date_added'
+    get_source_date_added.admin_order_field = 'version__date_added'
     get_source_date_added.allow_tags = True
 
     def get_source_date_published(self, obj):
@@ -378,7 +378,8 @@ class SourceSiteAdmin(admin.ModelAdmin):
         return date_published[:-4]
 
     get_source_date_published.short_description = 'Date Published'
-    #get_source_date_published.admin_order_field = 'article__date_published'
+    get_source_date_published.admin_order_field = 'version__date_published'
+
     get_source_date_published.allow_tags = True
 
     def link_options(self, obj):
@@ -388,12 +389,12 @@ class SourceSiteAdmin(admin.ModelAdmin):
     link_options.short_description = "Options"
 
 #to make each entry disinct in admin data list
-
+'''
     def get_queryset(self, request):
         qs = super(SourceSiteAdmin, self).get_queryset(request)
         #qs = qs.filter(matched=True)
         qs = qs.order_by('url').distinct("url")
         return qs
-
+'''
 
 admin.site.register(SourceSite, SourceSiteAdmin)
