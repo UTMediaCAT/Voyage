@@ -123,7 +123,7 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
     inlines = [VersionInline]
 
     list_display = ('get_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_language', 'get_date_added', 'get_date_published', 'get_date_last_seen', 'link_options')
-    search_fields = ['title', 'text']
+    search_fields = ['version__text','version__title']
     advanced_filter_fields = (
         'domain',
         'version__sourcesite__domain',
@@ -281,8 +281,10 @@ class SourceSiteAdmin(admin.ModelAdmin):
         (None,               {'fields': ['url', 'domain']})
         ]
     list_display = (['get_url','domain' , 'get_matched_article','get_source_author', 'get_source_date_added',  'get_source_date_published', 'link_options' ] )
-    search_fields = [ 'url', 'domain' ]
-    ordering = ['url']
+    search_fields = [ 'url', 'domain','version__text','version__title' ]
+
+    list_filter = ('domain', 'version__keyword__name', 'version__sourcetwitter__name', 'version__language')
+    ordering = ['version__date_added']
     actions_on_top = True
     list_per_page = 20
 
@@ -315,7 +317,7 @@ class SourceSiteAdmin(admin.ModelAdmin):
         return arctiles[:-4]
 
     get_matched_article.short_description = 'Matched Articles'
-    get_matched_article.admin_order_field = 'version'
+    get_matched_article.admin_order_field = 'version__title'
     get_matched_article.allow_tags = True
 
     def get_source_author(self, obj):
