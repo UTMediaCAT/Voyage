@@ -14,7 +14,7 @@ case "${args[2]}" in
 
 	"remove")
 		if [ "${args[3]}" == "" ]; then
-			echo "Usage: ./ServerBackup.sh [remove] [days]    	Remove the backup file older than [days] days"
+			echo "Usage: ./db_backup.sh [remove] [days]    	Remove the backup file older than [days] days"
 		else 
 
 
@@ -32,8 +32,8 @@ case "${args[2]}" in
 		fi ;;
 	*)
 		echo "Usage:"
-		echo "./ServerBackup.sh [database_name] [output_dir] [add]         	Backup the database"
-		echo "./ServerBackup.sh [database_name] [output_dir] [remove] [days]    	Remove the backup file older than [days] days";;
+		echo "./db_backup.sh [database_name] [output_dir] [add]         	Backup the database"
+		echo "./db_backup.sh [database_name] [output_dir] [remove] [days]    	Remove the backup file older than [days] days";;
 
 	
 
