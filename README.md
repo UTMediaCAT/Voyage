@@ -30,7 +30,7 @@ sudo ./DefaultInstall.sh
 If that occurs you'll need to remove setuptools from pythons distribution packages, and continue. This can be done by running the following:
 ```
 rm -rf /usr/local/lib/python2.7/dist-packages/setuptools*
-sudo pip install setuptools --upgrade
+sudo pip install setuptools
 sudo ./DefaultInstall.sh
 ```
 
@@ -42,7 +42,7 @@ sudo -i
 ```
 * Install apt dependencies:
 ```
-apt-get update && apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev python-psycopg2 zlib1g-dev libjpeg-dev python3-pip phantomjs postgresql postgresql-contrib
+apt-get update && apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev libjpeg-dev python3-pip phantomjs postgresql postgresql-contrib
 ```
 PhantomJS should be available on Ubuntu. If it's not available in your distribution, you may install it manually by downloading the [prebuilt version](http://phantomjs.org/download.html) and extracting the contents of bin `/usr/local/bin`.
 
@@ -88,9 +88,9 @@ In the Postgres prompt:
 postgres=# create database mediacat;
 postgres=# create database crawler;
 ```
-
+ 
 ####To integrate this database with Django:
-Plase configure the databse setting in  `Frontend/Frontend/settings.py`.
+Plase configure the databse setting in  `Frontend/Frontend/settings.py`. 
 For example:
 ```
 DATABASES = {
@@ -109,9 +109,9 @@ DATABASES = {
 ##Configuration
 You can edit the config.yaml file for personal settings
 
-:bangbang: IMPORTANT :bangbang:
+:bangbang: IMPORTANT :bangbang: 
 
-For production instances, be sure to use a new randomized SECRET_KEY in `Frontend/Frontend/settings.py`.
+For production instances, be sure to use a new randomized SECRET_KEY in `Frontend/Frontend/settings.py`. 
 A new SECRET key can be generate with the following python script:
 ```
 import random
@@ -134,7 +134,7 @@ python manage.py createsuperuser
 
 * To start `python server.py run`
 
-(note: if using port 80, then```sudo``` is needed to run/stop the server)
+(note: if using port 80, then```sudo``` is needed to run/stop the server) 
 
 By default, this Django app is set to listen on all public IPs (port 80).
 

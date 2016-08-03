@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '=zj#((#_#y-@6mu8q81cs(6gl@v*si!=!gnvzqeg#8yi*ip4ux'
+SECRET_KEY = '+r!(k=mpt5oe*i&ghi%fg$&&veh(rg2f2=rd#tnb8+@!pisf6u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -119,9 +119,9 @@ SUIT_CONFIG = {
     'SEARCH_URL': '/admin/articles/article/',
 
     'MENU': (
-        {'label': 'Scope', 'icon':'icon-screenshot',
+        {'label': 'Scope', 'icon':'icon-screenshot', 
          'models': ('explorer.referringsite', 'explorer.referringtwitter', 'explorer.sourcesite', 'explorer.sourcetwitter', 'explorer.keyword')},
-
+        
         {'label': 'Data', 'icon':'icon-book', 'models': ('articles.article', 'tweets.tweet',  'articles.sourcesite' )},
 
         {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
