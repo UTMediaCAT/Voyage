@@ -4,6 +4,7 @@ import tweepy, os, yaml, newspaper
 from django.utils.safestring import mark_safe
 from taggit.managers import TaggableManager
 import common
+from Frontend.fields import URLProtocolField
 
 def authorize():
     """ (None) -> tweepy.API
@@ -37,8 +38,8 @@ def validate_site(site):
 # Create your models here.
 
 class ReferringSite(models.Model):
-    url = models.URLField(max_length=2000, unique=True, #validators=[validate_site],
-                          help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://cnn.com)')
+    url = URLProtocolField(max_length=2000, unique=True, #validators=[validate_site],
+                          help_text='Choose a simple URL to maximize matches. Maximum 2000 characters (Ex. http://cnn.com)')
     name = models.CharField(max_length=200, unique=True,
                             help_text='Your favorable name of this site.\n' +
                                       'Maximum 200 characters')
@@ -129,8 +130,8 @@ class SourceTwitterAlias(models.Model):
 
 
 class SourceSite(models.Model):
-    url = models.URLField(max_length=2000, unique=True,
-                          help_text='Must include "http://", and choose the url as simple as possible for maximum matches. Maximum 2000 characters (Ex. http://aljazeera.com)')
+    url = URLProtocolField(max_length=2000, unique=True,
+                          help_text='Choose a simple URL to maximize matches. Maximum 2000 characters (Ex. http://aljazeera.com)')
     name = models.CharField(max_length=200, unique=True,
                             help_text='Your favorable name of this site.')
     tags = TaggableManager()
