@@ -30,7 +30,7 @@ class URLProtocolField(models.CharField):
                 # misformatted URLs.
                 raise ValidationError(self.error_messages['invalid'], code='invalid')
 
-        value = super(URLProtocolField, self).to_python(value)
+        value = super(URLProtocolField, self).to_python(value.lower())
         if value:
             url_fields = split_url(value)
             if not url_fields[0]:
