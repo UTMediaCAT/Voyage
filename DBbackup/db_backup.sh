@@ -5,15 +5,16 @@
 
 args=("$@")
 
-database="${args[0]}"
-output_dir="${args[1]}"
-case "${args[2]}" in
+username="${args[0]}"
+database="${args[1]}"
+output_dir="${args[2]}"
+case "${args[3]}" in
 	"add")
 		DATE=`date +'%Y-%m-%d_%H:%M:%S'`
-		pg_dump  $database > "$output_dir/$database.sql.$DATE";;
+		pg_dump  -U $username $database > "$output_dir/$database.sql.$DATE";;
 
 	"remove")
-		if [ "${args[3]}" == "" ]; then
+		if [ "${args[4]}" == "" ]; then
 			echo "Usage: ./db_backup.sh [remove] [days]    	Remove the backup file older than [days] days"
 		else 
 
@@ -22,7 +23,7 @@ case "${args[2]}" in
 			do
 				old_day=`echo $old  | tail -c 20 | tr _ " "`
 
-				if [ `date -d "$old_day" +%s` -lt `date -d "${args[3]} days ago" +%s` ]; then
+				if [ `date -d "$old_day" +%s` -lt `date -d "${args[4]} days ago" +%s` ]; then
 					rm -r "$old"
 				fi
 
@@ -32,8 +33,8 @@ case "${args[2]}" in
 		fi ;;
 	*)
 		echo "Usage:"
-		echo "./db_backup.sh [database_name] [output_dir] [add]         	Backup the database"
-		echo "./db_backup.sh [database_name] [output_dir] [remove] [days]    	Remove the backup file older than [days] days";;
+		echo "./db_backup.sh [User][database_name] [output_dir] [add]         	Backup the database"
+		echo "./db_backup.sh [User][database_name] [output_dir] [remove] [days]    	Remove the backup file older than [days] days";;
 
 	
 
