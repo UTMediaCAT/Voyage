@@ -289,9 +289,7 @@ class SourceSiteAdmin(admin.ModelAdmin):
     def get_url(self, obj):
         link = obj.url.lstrip("/")
         if 'http://www.' in link:
-                link = 'http://' + link[11:]
-        else:
-            link = 'http://' + link
+            link = 'http://' + link[11:]
 
         link_short = link[7:]
         if len(link_short) > 30:
