@@ -57,13 +57,13 @@ if __name__ == "__main__":
 
             # set time out for pdf generator
             p = warc_creator.create_article_pdf(url, warc_file_name)
-            # wait for 30 seconds, if timeout, kill the process
+            # wait for 200 seconds, if timeout, kill the process
             num_polls = 0
             while p.poll() is None:
                 # Waiting for the process to finish.
                 time.sleep(0.1)  # Avoid being a CPU busy loop.
                 num_polls += 1
-                if num_polls > 1500:  # after 60 secs, it will be considered as failure,
+                if num_polls > 2000:  # after 150 secs, it will be considered as failure,
 					# the process will be terminated and put into failure list
                     p.terminate()
                     fail_name = "article_warc.stream.failure"
