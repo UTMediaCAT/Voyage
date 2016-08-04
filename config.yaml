@@ -22,6 +22,7 @@ communication:
     retry_delta: 1
     sleep_time: 5
 warc:
+    max_phantoms: 5
     dir: warc
     article_subdir: article
     twitter_subdir: twitter

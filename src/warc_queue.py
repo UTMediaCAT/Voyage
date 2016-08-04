@@ -16,14 +16,13 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 django.setup()
 
 import time
-import signal
-import commands
+import common
 import warc_creator
 
 if __name__ == "__main__":
 
     # number of phantomjs process can be run at a time
-    max_phantoms = 2
+    max_phantoms = common.get_config()["warc"]["max_phantoms"]
     # amount of time between 2 iterations (secs)
     wait_time = 10
     article_queue = []
