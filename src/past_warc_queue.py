@@ -5,11 +5,13 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..',
                                              'Frontend')))
-
+import django
 import warc_creator
 os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 from articles.models import*
 
+# setup django
+django.setup()
 article_file_name = "article_warc.stream"
 
 article_file = open(article_file_name, "a")
