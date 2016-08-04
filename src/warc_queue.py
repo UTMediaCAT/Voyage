@@ -25,7 +25,7 @@ if __name__ == "__main__":
     # number of phantomjs process can be run at a time
     max_phantoms = 2
     # amount of time between 2 iterations (secs)
-    wait_time = 5
+    wait_time = 10
     article_queue = []
     article_processes = []
 
@@ -64,7 +64,7 @@ if __name__ == "__main__":
                 # Waiting for the process to finish.
                 time.sleep(0.1)  # Avoid being a CPU busy loop.
                 num_polls += 1
-                if num_polls > 600:  # after 60 secs, it will be considered as failure,
+                if num_polls > 1500:  # after 60 secs, it will be considered as failure,
 					# the process will be terminated and put into failure list
                     p.terminate()
                     fail_name = "article_warc.stream.failure"

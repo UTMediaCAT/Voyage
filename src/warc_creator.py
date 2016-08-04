@@ -1,16 +1,8 @@
 import subprocess
 import yaml
 import logging
+import common
 
-def configuration():
-    """ (None) -> dict
-    Returns a dictionary containing the micro settings from the
-    config.yaml file located in the directory containing this file
-    """
-    config_yaml = open("/../config.yaml", 'r')
-    config = yaml.load(config_yaml)
-    config_yaml.close()
-    return config
 
 
 def create_warc(url, file_name, directory):
@@ -19,7 +11,7 @@ def create_warc(url, file_name, directory):
     """
     logging.info("creating warc \"{0}\" as \"{1}\" in \"{2}\"".format(url, file_name, directory))
     subprocess.call(["mkdir", "-p", directory], cwd="..", close_fds=True)
-    return subprocess.Popen(["wpull", "--user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36", "--no-robots", "--no-check-certificate", "--no-cookies", "--random-wait", "--phantomjs", "--no-phantomjs-snapshot", "--phantomjs-max-time", "150", "-no-warc-keep-log","--delete-after","--warc-file", file_name,  url], cwd="../"+directory, close_fds=True)
+    return subprocess.Popen(["wpull", "--user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36", "--no-robots", "--no-check-certificate", "--no-cookies", "--random-wait", "--phantomjs", "--no-phantomjs-snapshot", "--phantomjs-max-time", "150", "--no-warc-keep-log","--delete-after","--warc-file", file_name,  url], cwd="../"+directory, close_fds=True)
 
 def create_pdf(url, file_name, directory):
     """
@@ -49,7 +41,8 @@ def create_article_warc(url, file_name):
     it should have a warc.gz file under
     ARTICLE_WARC_DIR/http:__www.facebook.com.warc.gz
     """
-    config = configuration()['warc']
+
+    config = common.get_config()["warc"]
     return create_warc(url, file_name, config['dir'] + "/" + config['article_subdir'])
 
 
@@ -62,7 +55,7 @@ def create_twitter_warc(url):
     TWITTER_WARC_DIR/https:__twitter.com_LeagueOfLegends
     """
     file_name = url.replace("/", "_")
-    config = configuration()['warc']
+    config = common.get_config()["warc"]
     return create_warc(url, file_name, config['dir'] + "/" + config['twitter_subdir'])
 
 
@@ -74,5 +67,5 @@ def create_article_pdf(url, file_name):
     it should have a .pdf file under
     ARTICLE_WARC_DIR/http:__www.facebook.com.pdf
     """
-    config = configuration()['pdf']
+    config = common.get_config()["pdf"]
     return create_pdf(url, file_name, config['dir'] + "/" + config['article_subdir'])

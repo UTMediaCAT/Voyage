@@ -14,6 +14,6 @@ from articles.models import*
 article_file_name = "article_warc.stream"
 
 article_file = open(article_file_name, "a")
-for article in Article.objects.all():
+for article in Version.objects.all():
 	article_file.write(article.url.encode("utf-8") + "\n")
 article_file.close()
