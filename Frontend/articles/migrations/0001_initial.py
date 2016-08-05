@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import Frontend.fields
 
 
 class Migration(migrations.Migration):
@@ -14,7 +15,7 @@ class Migration(migrations.Migration):
             name='Article',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('domain', models.URLField(max_length=2000, verbose_name=b'Referring Site')),
+                ('domain', Frontend.fields.URLProtocolField(max_length=2000, verbose_name=b'Referring Site')),
             ],
             options={
             },
@@ -45,7 +46,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('url', models.CharField(max_length=2000)),
-                ('domain', models.URLField(max_length=2000, verbose_name=b'Source Site')),
+                ('domain', Frontend.fields.URLProtocolField(max_length=2000, verbose_name=b'Source Site')),
                 ('anchor_text', models.CharField(max_length=2000, verbose_name=b'Anchor Text')),
                 ('matched', models.BooleanField(default=False)),
                 ('local', models.BooleanField(default=True)),
@@ -69,7 +70,7 @@ class Migration(migrations.Migration):
             name='Url',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.URLField(unique=True, max_length=2000, verbose_name=b'URL')),
+                ('name', Frontend.fields.URLProtocolField(unique=True, max_length=2000, verbose_name=b'URL')),
                 ('article', models.ForeignKey(to='articles.Article')),
             ],
             options={

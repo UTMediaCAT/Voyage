@@ -1,4 +1,5 @@
 from django.db import models
+from Frontend.fields import URLProtocolField
 
 # Create your models here.
 
@@ -16,7 +17,7 @@ class Tweet(models.Model):
 class SourceSite(models.Model):
     tweet = models.ForeignKey(Tweet)
     url = models.CharField(max_length=2000)
-    domain = models.URLField(max_length=2000, verbose_name="Source Site")
+    domain = URLProtocolField(max_length=2000, verbose_name="Source Site")
     matched = models.BooleanField(default=False)
 
     def __unicode__(self):
