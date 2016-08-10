@@ -26,13 +26,11 @@ class TestExecuter (unittest.TestCase):
         comm.close()
         self.assertEqual(ex.comm_read(EXP), "WS 23123",
                          "read explorer stream fail")
-        self.tearDown()
 
     def test_get_status(self):
         ex.comm_write(EXP, "WS 12323")
         self.assertEqual(ex.get_status(EXP), "W",
                          "get status should get the first of the stream file")
-        self.tearDown()
 
     def test_explorer_format(self):
         self.assertEqual(ex.explorer_format("ArTiClE"), "article",
@@ -52,7 +50,6 @@ class TestExecuter (unittest.TestCase):
         self.assertEqual(ex.explorer_format("twitters"), None,
                          "other than 'article' and 'twitter' should return "
                          + "none")
-        self.tearDown()
 
     def test_command_format(self):
         self.assertEqual(ex.command_format("StAtuS"), "status",
@@ -77,7 +74,6 @@ class TestExecuter (unittest.TestCase):
         self.assertEqual(ex.explorer_format("StoPs"), None,
                          "other than 'status','run','pause','stop' "
                          + "should return none")
-        self.tearDown()
 
     def test_status_format(self):
         self.assertEqual(ex.status_format("R"), "Running",
@@ -92,19 +88,16 @@ class TestExecuter (unittest.TestCase):
                          "case of status is sensitive")
         self.assertEqual(ex.status_format("G"), None,
                          "other than 'W', 'S', 'P', 'R' should return none")
-        self.tearDown()
 
     def test_input_format(self):
         self.assertEqual(ex.input_format("Twitter", "Run"),
                          ("twitter", "run"), "it should return tupple")
         self.assertEqual(ex.input_format("Article", "Stop"),
                          ("article", "stop"), "it should return tupple")
-        self.tearDown()
 
     def test_name_format(self):
         self.assertEqual(ex.name_format("asgg"),
                          "Asgg Explorer", "format fail")
-        self.tearDown()
 
     def test_run(self):
         ex.comm_write(EXP, "RR 22321")
@@ -129,7 +122,6 @@ class TestExecuter (unittest.TestCase):
                                 ex.name_format(EXP)), ex.run(EXP),
                          "use run function in stop should show msg and no "
                          + "other change")
-        self.tearDown()
 
     def test_pause(self):
         ex.comm_write(EXP, "RP 12323")
@@ -154,7 +146,6 @@ class TestExecuter (unittest.TestCase):
                                 % ex.name_format(EXP)), ex.pause(EXP),
                          "use pause function in wait should show msg and "
                          + "no other change")
-        self.tearDown()
 
     def test_stop(self):
         ex.comm_write(EXP, "RR 12332")
@@ -181,7 +172,6 @@ class TestExecuter (unittest.TestCase):
                                 ex.name_format(EXP)), ex.stop(EXP),
                          "use stop function in stop should show msg and "
                          + "no other change")
-        self.tearDown()
 
 if __name__ == "__main__":
     unittest.main()
