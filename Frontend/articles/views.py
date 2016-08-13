@@ -27,15 +27,15 @@ def getJson(request):
                              'matched_source_sites': [], 'matched_source_twitter_accounts': [], 'authors': []}
 
     for key in Keyword.objects.all():
-        articles[key.article.url]['matched_keywords'].append(key.name)
+        articles[key.version.url]['matched_keywords'].append(key.name)
     for src in SourceSite.objects.all():
-        articles[src.article.url]['matched_source_sites'].append({'url':src.url,
+        articles[src.version.url]['matched_source_sites'].append({'url':src.url,
                                                              'site': src.domain, 'matched': src.matched})
     for src in SourceTwitter.objects.all():
-        articles[src.article.url]['matched_source_twitter_accounts'].append({'name':src.name,
+        articles[src.version.url]['matched_source_twitter_accounts'].append({'name':src.name,
                                                              'matched': src.matched})
     for ath in Author.objects.all():
-        articles[ath.article.url]['authors'].append(ath.name)
+        articles[ath.version.url]['authors'].append(ath.name)
 
     res = HttpResponse(json.dumps(articles, indent=4, sort_keys=True))
     res['Content-Disposition'] = format('attachment; filename=articles-%s.json'
