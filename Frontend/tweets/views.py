@@ -18,10 +18,11 @@ def getJson(request):
         tweets[src.tweet.tweet_id]['source_sites'].append({'url':src.url, 
                                                            'url_site': src.domain,
 							   'matched': src.matched})
-        for acc in SourceTwitter.objects.all():
-            tweets[src.tweet.tweet_id]['source_twitter'].append({'account':acc.name, 'matched': acc.matched})
-        for log in CountLog.objects.all():
-            tweets[src.tweet.tweet_id]['count_log'].append({'retweet_count': log.retweet_count, 'favorite_count': log.favorite_count, 'date': log.date})
+
+    for acc in SourceTwitter.objects.all():
+        tweets[src.tweet.tweet_id]['source_twitter'].append({'account':acc.name, 'matched': acc.matched})
+    for log in CountLog.objects.all():
+        tweets[src.tweet.tweet_id]['count_log'].append({'retweet_count': log.retweet_count, 'favorite_count': log.favorite_count, 'date': log.date})
 
 
     res = HttpResponse(json.dumps(tweets, indent=2, sort_keys=True))
