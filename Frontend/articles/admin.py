@@ -123,7 +123,7 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
     inlines = [VersionInline]
 
     list_display = ('get_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_language', 'get_date_added', 'get_date_published', 'get_date_last_seen', 'link_options')
-    search_fields = ['title', 'text']
+    search_fields = ['version__text','version__title']
     advanced_filter_fields = (
         'domain',
         'version__sourcesite__domain',
@@ -261,14 +261,9 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
     def link_options(self, obj):
         return format((
             '<a href="/admin/articles/article/%s">Details</a><br />' +\
-            '<a href="/articles/warc/%s">Donwload Warc</a><br />' +\
-            '<a href="/articles/pdf/%s">View PDF</a><br />' +\
-            '<a href="/articles/img/%s">View Screenshot</a><br />' +\
             '<div>Urls: %i<br />Versions: %i</div>') %
             (
-                str(obj.pk), obj.text_hash,
-                obj.text_hash,
-                obj.text_hash,
+                str(obj.pk),
                 obj.url_set.count(),
                 obj.version_set.count()))
 
@@ -286,17 +281,17 @@ class SourceSiteAdmin(admin.ModelAdmin):
         (None,               {'fields': ['url', 'domain']})
         ]
     list_display = (['get_url','domain' , 'get_matched_article','get_source_author', 'get_source_date_added',  'get_source_date_published', 'link_options' ] )
-    search_fields = [ 'url', 'domain',  'get_matched_article', 'get_source_author', 'get_source_date_added']
-    ordering = ['url']
+    search_fields = [ 'url', 'domain','version__text','version__title' ]
+
+    list_filter = ('domain', 'version__keyword__name', 'version__sourcetwitter__name', 'version__language')
+    ordering = ['version__date_added']
     actions_on_top = True
     list_per_page = 20
 
     def get_url(self, obj):
         link = obj.url.lstrip("/")
         if 'http://www.' in link:
-                link = 'http://' + link[11:]
-        else:
-            link = 'http://' + link
+            link = 'http://' + link[11:]
 
         link_short = link[7:]
         if len(link_short) > 30:
@@ -310,65 +305,81 @@ class SourceSiteAdmin(admin.ModelAdmin):
 
     def get_matched_article(self, obj):
         arctiles = ''
-        source_set =  SourceSite.objects.filter(url=obj.url)
-
+        source_set =  SourceSite.objects.filter(url=obj.url).order_by("version_id").distinct()
+        existed_article_ids=set()
         for source in source_set:
-            arctile =  Article.objects.get(id=source.article.id)
-            arctiles += format('<a href="%s" target="_blank">%s</a>' % (arctile.url, arctile.title))
-            arctiles +=  '<br>'
-
+            version =  Version.objects.get(id=source.version_id)
+            arctile = Article.objects.get(id = version.article_id)
+            if not arctile.id in existed_article_ids:
+                existed_article_ids.add(arctile.id)
+                arctiles += format('<a href="/admin/articles/article/%s">%s</a>' % (arctile.id, arctile.title))
+                arctiles +=  '<br>'
         return arctiles[:-4]
 
     get_matched_article.short_description = 'Matched Articles'
-    get_matched_article.admin_order_field = 'article'
+    get_matched_article.admin_order_field = 'version__title'
     get_matched_article.allow_tags = True
 
     def get_source_author(self, obj):
         authors = ''
 
-        source_set =  SourceSite.objects.filter(url=obj.url)
+        source_set =  SourceSite.objects.filter(url=obj.url).order_by("version_id").distinct()
+        existed_article_ids=set()
         for source in source_set:
-            arctile =  Article.objects.get(id=source.article.id)
-            au = ""
-            for author in Author.objects.filter(article_id = arctile.id):
-                    au += author.name + ', '
+            version =  Version.objects.get(id=source.version_id)
+            arctile = Article.objects.get(id = version.article_id)
+            if not arctile.id in existed_article_ids:
+                existed_article_ids.add(arctile.id)
+                au = ""
+                for author in Author.objects.filter(version_id = version.id):
+                        au += author.name + ', '
 
-            authors += au +"<br>"
+                authors += au +"<br>"
 
         return authors[:-2]
 
     get_source_author.short_description = 'Authors'
     get_source_author.allow_tags = True
 
+
     def get_source_date_added(self, obj):
         date_add = ''
-        source_set =  SourceSite.objects.filter(url=obj.url)
+        source_set =  SourceSite.objects.filter(url=obj.url).order_by("version_id").distinct()
+        existed_article_ids=set()
         for source in source_set:
-            arctile =  Article.objects.get(id=source.article.id)
-            date_add += arctile.date_added.strftime("%B %d, %Y: %H:%M") + '<br>'
+            version =  Version.objects.get(id=source.version_id)
+            arctile = Article.objects.get(id = version.article_id)
+            if not arctile.id in existed_article_ids:
+                existed_article_ids.add(arctile.id)
+                date_add += version.date_added.strftime("%B %d, %Y: %H:%M") + '<br>'
 
         return date_add[:-4]
 
     get_source_date_added.short_description = 'Date Added'
-    #get_source_date_added.admin_order_field = 'article__date_added'
+    get_source_date_added.admin_order_field = 'version__date_added'
     get_source_date_added.allow_tags = True
 
     def get_source_date_published(self, obj):
         date_published = ''
-        source_set =  SourceSite.objects.filter(url=obj.url)
+        source_set =  SourceSite.objects.filter(url=obj.url).order_by("version_id").distinct()
+        existed_article_ids=set()
         for source in source_set:
-            arctile =  Article.objects.get(id=source.article.id)
-            date = arctile.date_published
-            if not date:
-                date = ""
-            else:
-                date = date.strftime("%B %d, %Y: %H:%M")
-            date_published += date + '<br>'
+            version =  Version.objects.get(id=source.version_id)
+            arctile = Article.objects.get(id = version.article_id)
+            if not arctile.id in existed_article_ids:
+                existed_article_ids.add(arctile.id)
+                date = version.date_published
+                if not date:
+                    date = ""
+                else:
+                    date = date.strftime("%B %d, %Y: %H:%M")
+                date_published += date + '<br>'
 
         return date_published[:-4]
 
     get_source_date_published.short_description = 'Date Published'
-    #get_source_date_published.admin_order_field = 'article__date_published'
+    get_source_date_published.admin_order_field = 'version__date_published'
+
     get_source_date_published.allow_tags = True
 
     def link_options(self, obj):
@@ -378,14 +389,12 @@ class SourceSiteAdmin(admin.ModelAdmin):
     link_options.short_description = "Options"
 
 #to make each entry disinct in admin data list
+'''
     def get_queryset(self, request):
         qs = super(SourceSiteAdmin, self).get_queryset(request)
-
-        qs = qs.filter(matched=True)
-        qs = qs.extra(where=[
-                "id IN ( SELECT id FROM (SELECT * FROM articles_sourcesite ) AS unique_sources GROUP BY url)"
-                ])
+        #qs = qs.filter(matched=True)
+        qs = qs.order_by('url').distinct("url")
         return qs
-
+'''
 
 admin.site.register(SourceSite, SourceSiteAdmin)

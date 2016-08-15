@@ -5,7 +5,7 @@ import re
 import logging
 from ExplorerArticle import ExplorerArticle
 import urlnorm
-import MySQLdb
+import psycopg2
 '''
 An iterator class for iterating over articles in a given site
 '''
@@ -24,16 +24,24 @@ class Crawler(object):
         self.probabilistic_n = common.get_config()["crawler"]["n"]
         self.probabilistic_k = common.get_config()["crawler"]["k"]
 
-        self.db = MySQLdb.connect(host="localhost", user=common.get_config()["crawler"]["mysql"]["user"],
-                                  passwd=common.get_config()["crawler"]["mysql"]["password"],
-                                  db=common.get_config()["crawler"]["mysql"]["name"], charset="utf8")
+        self.db = psycopg2.connect(host='localhost',
+                                   database=common.get_config()["crawler"]["postgresql"]["name"],
+                                   user=common.get_config()["crawler"]["postgresql"]["user"],
+                                   password=common.get_config()["crawler"]["postgresql"]["password"])
+                                   
         self.cursor = self.db.cursor()
-        self.visited_set = set()
+        self.already_added_urls = set()
+        self.visited_table = "visited_" + str(site.id)
         self.tovisit_table = "tovisit_" + str(site.id)
 
-        self.cursor.execute(u"DROP TABLE IF EXISTS " + self.tovisit_table)
-        self.cursor.execute(u"CREATE TABLE " + self.tovisit_table + " (id INT NOT NULL AUTO_INCREMENT, url VARCHAR(1024), PRIMARY KEY(id))")
+        #self.cursor.execute("DROP TABLE IF EXISTS " + self.visited_table)
+        #self.cursor.execute("CREATE TABLE " + self.visited_table + " (url VARCHAR(1024) PRIMARY KEY)")
+        self.cursor.execute("DROP TABLE IF EXISTS " + self.tovisit_table)
+        self.cursor.execute(u"CREATE TABLE " + self.tovisit_table + " (id SERIAL PRIMARY KEY, url VARCHAR(1024))")
+
+        #self.cursor.execute(u"INSERT INTO " + self.visited_table + " VALUES (%s)", (site.url,))
         self.cursor.execute(u"INSERT INTO " + self.tovisit_table + " VALUES (DEFAULT, %s)", (site.url,))
+
         self.db.commit()
 
     def __iter__(self):
@@ -48,8 +56,9 @@ class Crawler(object):
         #standard non-recursive tree iteration
         try:
             while(True):
-                if(self.cursor.execute("SELECT * FROM " + self.tovisit_table + " ORDER BY id LIMIT 1")):
-                    row = self.cursor.fetchone()
+                self.cursor.execute("SELECT * FROM " + self.tovisit_table + " ORDER BY id LIMIT 1")
+                row = self.cursor.fetchone()
+                if(row):
                     row_id = row[0]
                     current_url = row[1]
                     self.cursor.execute("DELETE FROM " + self.tovisit_table + " WHERE id=%s", (row_id,))
@@ -85,16 +94,17 @@ class Crawler(object):
                     if(not parsed_url.netloc.endswith(self.domain)):
                         continue
 
+                    #when executing an INSERT statement cursor.execute returns the number of rows updated. If the url
+                    #exists in the visited table, then no rows will be updated. Thus if a row is updated, we know that
+                    #it has not been visited and we should add it to the visit queue
                     #self.cursor.execute(u"SELECT EXISTS(SELECT * FROM " + self.visited_table + " WHERE url=%s)",(url,))
                     #if(self.cursor.fetchone()[0]):
                     #    continue
 
-                    #when executing an INSERT statement cursor.execute returns the number of rows updated. If the url
-                    #exists in the visited table, then no rows will be updated. Thus if a row is updated, we know that
-                    #it has not been visited and we should add it to the visit queue
-                    if (url in self.visited_set):
-                        self.cursor.execute(u"INSERT INTO " + self.tovisit_table + u" VALUES (DEFAULT , %s)", (url,))
-                        logging.info(u"added {0} to the visit queue".format(url))
+                    if (url in self.already_added_urls):
+                        continue
+                    self.cursor.execute(u"INSERT INTO " + self.tovisit_table + u" VALUES (DEFAULT , %s)", (url,))
+                    logging.info(u"added {0} to the visit queue".format(url))
 
                 self.pages_visited += 1
                 return article
@@ -126,4 +136,3 @@ class Crawler(object):
                 (not filt.regex and filt.pattern in url)):
                 return True
         return False
-

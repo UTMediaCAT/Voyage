@@ -1,9 +1,10 @@
 from django.db import models
+from Frontend.fields import URLProtocolField
 
 # Create your models here.
 
 class Article(models.Model):
-    domain = models.URLField(max_length=2000, verbose_name="Referring Site")
+    domain = URLProtocolField(max_length=2000, verbose_name="Referring Site")
 
     def __unicode__(self):
         if len(self.title) >= 30:
@@ -49,7 +50,7 @@ class Article(models.Model):
 
 class Url(models.Model):
     article = models.ForeignKey(Article)
-    name = models.URLField(max_length=2000, verbose_name="URL", unique=True)
+    name = URLProtocolField(max_length=2000, verbose_name="URL", unique=True)
 
     def __unicode__(self):
         return self.name
@@ -81,7 +82,7 @@ class Author(models.Model):
 class SourceSite(models.Model):
     version = models.ForeignKey(Version)
     url = models.CharField(max_length=2000)
-    domain = models.URLField(max_length=2000, verbose_name="Source Site")
+    domain = URLProtocolField(max_length=2000, verbose_name="Source Site")
     anchor_text = models.CharField(max_length=2000, verbose_name="Anchor Text")
     matched = models.BooleanField(default=False)
     local = models.BooleanField(default=True)

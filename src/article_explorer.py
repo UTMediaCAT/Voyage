@@ -71,7 +71,7 @@ from ExplorerArticle import ExplorerArticle
 from multiprocessing import Pool, cpu_count
 from functools import partial
 import signal
-
+from django.db import connection
 # For hashing the text
 import hashlib
 
@@ -97,6 +97,8 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
         for s in referring_sites:
             parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer, s)
     else:
+
+        connection.close()
         # Initialize multiprocessing by having cpu*2 workers
         pool = Pool(processes=cpu_count()*2, maxtasksperchild=1, initializer=init_worker)
 
@@ -154,7 +156,7 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
         logging.debug("expecting {0} from plan b crawler".format(crawlersource_articles.probabilistic_n))
     article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles).__iter__()
     processed = 0
-    filters = site.referringsitefilter_set.all()
+    filters = set(site.referringsitefilter_set.all())
     while True:
         try:
             try:
@@ -227,8 +229,10 @@ def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer
 
             #load selectors from db!
             #parameter is a namedtuple of "css" and "regex"
-            title = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=0)) or article.title
-            authors = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=1))
+            css_title = set(site.referringsitecssselector_set.filter(field=0))
+            title = article.evaluate_css_selectors(css_title) or article.title
+            css_author = set(site.referringsitecssselector_set.filter(field=1))
+            authors = article.evaluate_css_selectors(css_author)
             if(authors):
                 authors = [authors]
             else:

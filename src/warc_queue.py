@@ -16,16 +16,15 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 django.setup()
 
 import time
-import signal
-import commands
+import common
 import warc_creator
 
 if __name__ == "__main__":
 
     # number of phantomjs process can be run at a time
-    max_phantoms = 2
+    max_phantoms = common.get_config()["warc"]["max_phantoms"]
     # amount of time between 2 iterations (secs)
-    wait_time = 5
+    wait_time = 10
     article_queue = []
     article_processes = []
 
@@ -58,13 +57,13 @@ if __name__ == "__main__":
 
             # set time out for pdf generator
             p = warc_creator.create_article_pdf(url, warc_file_name)
-            # wait for 30 seconds, if timeout, kill the process
+            # wait for 200 seconds, if timeout, kill the process
             num_polls = 0
             while p.poll() is None:
                 # Waiting for the process to finish.
                 time.sleep(0.1)  # Avoid being a CPU busy loop.
                 num_polls += 1
-                if num_polls > 600:  # after 60 secs, it will be considered as failure,
+                if num_polls > 2000:  # after 150 secs, it will be considered as failure,
 					# the process will be terminated and put into failure list
                     p.terminate()
                     fail_name = "article_warc.stream.failure"

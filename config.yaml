@@ -13,7 +13,7 @@ twitter:
     access_token: 2825329492-TKU4s0Mky7vazr60WKHQV7R6sJT2wYE4ysR3Gm3
     access_token_secret: I740fF6x6v0srzbY7LCAjNWXXOzZRMBFbkoiwZ5FgqC5s
 article:
-    min_iteration_time: 600
+    min_iteration_time: 86400
 storage:
     date_format: _%Y-%m-%dT%H:%M #leave _ at the start
     # "%Y-%m-%dT%H:%M"  - Universal date format for consistency
@@ -23,6 +23,7 @@ communication:
     retry_delta: 1
     sleep_time: 5
 warc:
+    max_phantoms: 5
     dir: warc
     article_subdir: article
     twitter_subdir: twitter
@@ -36,7 +37,7 @@ log:
 crawler:
     n: 5000
     k: 0.6
-    mysql:
-      user: root
-      password: root
+    postgresql:
+      user: postgres
+      password: password
       name: crawler
