@@ -16,5 +16,5 @@ article_file_name = "article_warc.stream"
 
 article_file = open(article_file_name, "a")
 for version in Version.objects.all():
-     warc_creator.enqueue_article(Article.objects.get(id = version.article_id).url.encode("utf-8"), version.text_hash)
+     warc_creator.enqueue_article(Article.objects.get(id = version.article_id).url, version.text_hash)
 article_file.close()

@@ -29,7 +29,7 @@ def enqueue_article(url, file_name, directory = "."):
     """
     article_file_name = directory + "/" + "article_warc.stream"
     article_file = open(article_file_name, "a")
-    article_file.write(url + " " + file_name + "\n")
+    article_file.write((url + " " + file_name + "\n").decode("utf-8"))
     article_file.close()
 
 
