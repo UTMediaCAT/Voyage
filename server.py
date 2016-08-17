@@ -51,7 +51,7 @@ def run_server(ip_address, port):
     subprocess.call(['./src/RunServer.sh', 
                      format('%s:%i' % (ip_address, port))])
     #this script is not used anymore
-    os.chmod('./src/RunSchedule.sh', 0700)
+    os.chmod('./src/RunBackgroundProcess.sh', 0700)
     subprocess.call(['./src/RunBackgroundProcess.sh'])
 
 
