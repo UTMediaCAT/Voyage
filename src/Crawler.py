@@ -42,6 +42,7 @@ class Crawler(object):
 
         self.cursor.execute(u"INSERT INTO " + self.visited_table + " VALUES (%s)", (site.url,))
         self.cursor.execute(u"INSERT INTO " + self.tovisit_table + " VALUES (DEFAULT, %s)", (site.url,))
+        self.transactions_file = open("transactions.csv", "w")
 
         self.db.commit()
 
@@ -63,6 +64,7 @@ class Crawler(object):
                 if(row):
                     row_id = row[0]
                     current_url = row[1]
+                    self.transactions_file.write("1" + current_url)
                     self.cursor.execute("DELETE FROM " + self.tovisit_table + " WHERE id=%s", (row_id,))
                     self.db.commit()
                 else:
@@ -110,11 +112,13 @@ class Crawler(object):
                     #exists in the visited table, then no rows will be updated. Thus if a row is updated, we know that
                     #it has not been visited and we should add it to the visit queue
                     self.cursor.execute(u"SELECT EXISTS(SELECT * FROM " + self.visited_table + " WHERE url=%s)",(url,))
+                    self.transactions_file.write("2" + url)
                     if(self.cursor.fetchone()[0]):
                         continue
 
                     self.cursor.execute(u"INSERT INTO " + self.tovisit_table + u" VALUES (DEFAULT , %s)", (url,))
                     self.cursor.execute(u"INSERT INTO " + self.visited_table + u" VALUES (%s)", (url,))
+                    self.transactions_file.write("3" + url)
                     logging.info(u"added {0} to the visit queue".format(url))
                 self.db.commit()
                 process_links_total = time.time() - process_links_start
@@ -125,6 +129,7 @@ class Crawler(object):
             raise e
         finally:
             self.db.commit()
+            self.transactions_file.flush()
 
     def _should_skip(self):
         n = self.probabilistic_n
