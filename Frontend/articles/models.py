@@ -1,5 +1,6 @@
 from django.db import models
 from Frontend.fields import URLProtocolField
+from django.conf.global_settings import LANGUAGES
 
 # Create your models here.
 
@@ -61,7 +62,7 @@ class Version(models.Model):
     title = models.CharField(max_length=200, blank=True)
     text = models.TextField(max_length=None, blank=True)
     text_hash = models.CharField(max_length=100, blank=True, unique=True)
-    language = models.CharField(max_length=200, blank=True)
+    language = models.CharField(max_length=200, choices=LANGUAGES, blank=True)
     date_added = models.DateTimeField('Date Added', blank=True, null=True)
     date_last_seen = models.DateTimeField('Date Last Seen', blank=True, null=True)
     date_published = models.DateTimeField('Date Published', blank=True, null=True)
