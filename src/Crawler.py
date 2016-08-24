@@ -112,8 +112,10 @@ class Crawler(object):
                     #exists in the visited table, then no rows will be updated. Thus if a row is updated, we know that
                     #it has not been visited and we should add it to the visit queue
                     self.cursor.execute(u"SELECT EXISTS(SELECT * FROM " + self.visited_table + " WHERE url=%s)",(url,))
-                    self.transactions_file.write("2" + url+"\n")
-                    if(self.cursor.fetchone()[0]):
+                    exists = bool(self.cursor.fetchone()[0])
+                    self.transactions_file.write("2" + "y" if exists else "n" + url+"\n")
+
+                    if(exists):
                         continue
 
                     self.cursor.execute(u"INSERT INTO " + self.tovisit_table + u" VALUES (DEFAULT , %s)", (url,))
