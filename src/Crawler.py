@@ -56,6 +56,8 @@ class Crawler(object):
         #standard non-recursive tree iteration
         try:
             while(True):
+                if(self.pages_visited > self.probabilistic_n):
+                    raise StopIteration
                 self.cursor.execute("SELECT * FROM " + self.tovisit_table + " ORDER BY id LIMIT 1")
                 row = self.cursor.fetchone()
                 if(row):
@@ -108,6 +110,9 @@ class Crawler(object):
 
                 self.pages_visited += 1
                 return article
+        except StopIteration as e:
+            self.cleanup()
+            raise e
         except Exception as e:
             raise e
         finally:
@@ -116,7 +121,6 @@ class Crawler(object):
     def _should_skip(self):
         n = self.probabilistic_n
         k = self.probabilistic_k
-        return False
         return random.random() <= Crawler._s_curve(self.pages_visited/n, k)
 
     @staticmethod
@@ -136,3 +140,14 @@ class Crawler(object):
                 (not filt.regex and filt.pattern in url)):
                 return True
         return False
+
+    def __del__(self):
+        self.cleanup()
+
+    def cleanup(self):
+        if(self.db):
+            self.db.close()
+            self.db = None
+        if(self.cursor):
+            self.cursor.close()
+            self.cursor = None
