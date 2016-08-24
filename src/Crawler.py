@@ -12,7 +12,7 @@ An iterator class for iterating over articles in a given site
 '''
 
 class Crawler(object):
-    def __init__(self, site):
+    def __init__(self, site, transactions_file):
         '''
         (Crawler, str) -> Crawler
         creates a Crawler with a given origin_url
@@ -42,7 +42,7 @@ class Crawler(object):
 
         self.cursor.execute(u"INSERT INTO " + self.visited_table + " VALUES (%s)", (site.url,))
         self.cursor.execute(u"INSERT INTO " + self.tovisit_table + " VALUES (DEFAULT, %s)", (site.url,))
-        self.transactions_file = open("transactions.csv", "w")
+        self.transactions_file = transactions_file
 
         self.db.commit()
 
