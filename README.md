@@ -42,7 +42,7 @@ sudo -i
 ```
 * Install apt dependencies:
 ```
-apt-get update && apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev libjpeg-dev python3-pip phantomjs postgresql postgresql-contrib
+apt-get update && apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev libjpeg-dev python3-pip phantomjs postgresql postgresql-contrib libpq-dev
 ```
 PhantomJS should be available on Ubuntu. If it's not available in your distribution, you may install it manually by downloading the [prebuilt version](http://phantomjs.org/download.html) and extracting the contents of bin `/usr/local/bin`.
 
