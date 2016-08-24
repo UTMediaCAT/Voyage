@@ -113,7 +113,7 @@ class Crawler(object):
                     #it has not been visited and we should add it to the visit queue
                     self.cursor.execute(u"SELECT EXISTS(SELECT * FROM " + self.visited_table + " WHERE url=%s)",(url,))
                     exists = bool(self.cursor.fetchone()[0])
-                    self.transactions_file.write("2" + "y" if exists else "n" + url+"\n")
+                    self.transactions_file.write("2" + ("y" if exists else "n") + url+"\n")
 
                     if(exists):
                         continue
