@@ -28,7 +28,7 @@ class Crawler(object):
         self.db = psycopg2.connect(host='localhost',
                                    database="crawler",
                                    user="postgres",
-                                   password="OFpeXDVuMTQtKlsD")
+                                   password="password")
                                    
         self.cursor = self.db.cursor()
         self.already_added_urls = set()
@@ -112,13 +112,13 @@ class Crawler(object):
                     #exists in the visited table, then no rows will be updated. Thus if a row is updated, we know that
                     #it has not been visited and we should add it to the visit queue
                     self.cursor.execute(u"SELECT EXISTS(SELECT * FROM " + self.visited_table + " WHERE url=%s)",(url,))
-                    self.transactions_file.write("2" + url)
+                    self.transactions_file.write("2" + url+"\n")
                     if(self.cursor.fetchone()[0]):
                         continue
 
                     self.cursor.execute(u"INSERT INTO " + self.tovisit_table + u" VALUES (DEFAULT , %s)", (url,))
                     self.cursor.execute(u"INSERT INTO " + self.visited_table + u" VALUES (%s)", (url,))
-                    self.transactions_file.write("3" + url)
+                    self.transactions_file.write("3" + url+"\n")
                     logging.info(u"added {0} to the visit queue".format(url))
                 self.db.commit()
                 process_links_total = time.time() - process_links_start
