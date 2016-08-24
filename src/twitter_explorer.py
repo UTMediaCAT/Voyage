@@ -290,6 +290,9 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
                                                 domain=source[1], matched = False)
 
                     added += 1
+                    warc_creator.create_twitter_warc(
+                    'https://twitter.com/' + tweet.name + '/status/' +
+                    str(tweet_id))
 
                 else:
 
@@ -329,9 +332,7 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
 
                     updated += 1
 
-                warc_creator.create_twitter_warc(
-                    'https://twitter.com/' + tweet.name + '/status/' +
-                    str(tweet_id))
+
             else:
                 no_match += 1
             processed += 1

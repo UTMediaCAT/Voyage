@@ -12,7 +12,7 @@ import difflib
 
 class AuthorInline(NestedTabularInline):
     model = Author
-    readonly_fields = ('name',)
+    fields = ['name']
     fk_name = 'version'
     extra = 0
 
@@ -22,11 +22,17 @@ class SourceSiteInline(NestedTabularInline):
     fk_name = 'version'
     extra = 0
 
+    def has_add_permission(self, request):
+        return False
+
 class KeywordInline(NestedTabularInline):
     model = Keyword
     readonly_fields = ('name',)
     fk_name = 'version'
     extra = 0
+
+    def has_add_permission(self, request):
+        return False
 
 class SourceTwitterInline(NestedTabularInline):
     model = SourceTwitter
@@ -34,12 +40,16 @@ class SourceTwitterInline(NestedTabularInline):
     fk_name = 'version'
     extra = 0
 
+    def has_add_permission(self, request):
+        return False
+
 class VersionInline(NestedStackedInline):
     model = Version
     fields = ('title', 'highlighted_text', 'text_hash', 'language', 'date_added', 'date_last_seen', 'date_published', 'found_by', 'download_options',)
-    readonly_fields = ('title', 'highlighted_text', 'text_hash', 'language', 'date_added', 'date_last_seen', 'date_published', 'found_by', 'download_options',)
+    readonly_fields = ('highlighted_text', 'text_hash', 'date_added', 'date_last_seen', 'found_by', 'download_options',)
     inlines = [AuthorInline, SourceSiteInline, KeywordInline, SourceTwitterInline]
     extra = 0
+    
     def download_options(self, obj):
 
         root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
@@ -80,6 +90,9 @@ class VersionInline(NestedStackedInline):
                 '' if img_available else 'disabled', 'href="/articles/img/' + obj.text_hash + '"' if img_available else '',
             ))
     download_options.short_description = "Donwload Options"
+
+    def has_add_permission(self, request):
+            return False
 
     def highlighted_text(self, obj):
         tag_front=" <strong><mark>"
