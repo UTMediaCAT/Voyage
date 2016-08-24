@@ -55,7 +55,7 @@ class FakeSite:
 def parse_articles_per_site():
     with gzip.open("profile.csv.gz", "w") as profile_log, gzip.open("transactions.csv.gz", "w", 5) as transactions_file:
         processed = 0
-        article_iterator = Crawler.Crawler(FakeSite()).__iter__()
+        article_iterator = Crawler.Crawler(FakeSite(), transactions_file).__iter__()
         profile_log.write("total,crawler_total,preliminary_parse_total,explorer_article_total,get_keywords_total,get_sources_sites_total,get_sources_twitter_total,tovisit_pop_total,article_download_total,get_links_total,len(links),process_links_total\n")
         while True:
             total_start = time.time()
