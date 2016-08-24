@@ -57,7 +57,6 @@ class GetPubDateTest(ArticleExplorerTestBase):
             get_pub_date(a).date(),
             "The dates don't match")
 
-
 class GetSourcesSitesTest(ArticleExplorerTestBase):
 
     def assertEmpty(self, urls):
@@ -73,7 +72,7 @@ class GetSourcesSitesTest(ArticleExplorerTestBase):
         a = self.from_html(
             self.SENTENCE + "<a href='http://www.cnn.com'>link</a>")
         matched_unmatched = get_sources_sites(a, [])
-        self.assertSourceURL(matched_unmatched, unmatched=[site])
+        self.assertSources(matched_unmatched, unmatched=[site])
 
         a = self.from_html(self.SENTENCE)
         matched_unmatched = get_sources_sites(a, [])
@@ -82,7 +81,7 @@ class GetSourcesSitesTest(ArticleExplorerTestBase):
         a = self.from_html(
             self.SENTENCE + "<a href='http://www.cnn.com'>link</a>")
         matched_unmatched = get_sources_sites(a, [])
-        self.assertSourceURL(matched_unmatched, unmatched=[site])
+        self.assertSources(matched_unmatched, unmatched=[site])
 
     def test_single_site(self):
 
@@ -97,7 +96,7 @@ class GetSourcesSitesTest(ArticleExplorerTestBase):
         a = self.from_html(
             self.SENTENCE + "<a href='http://www.cnn.com'>link</a>")
         matched_unmatched = get_sources_sites(a, foreign_sites)
-        self.assertSourceURL(matched_unmatched, matched=[site])
+        self.assertSources(matched_unmatched, matched=[site])
 
         foreign_sites = ["http://www.cnn.com/"]
         a = self.from_html(self.SENTENCE)
@@ -109,21 +108,21 @@ class GetSourcesSitesTest(ArticleExplorerTestBase):
         a = self.from_html(
             self.SENTENCE + "<a href='http://www.cnn.com/article'>link</a>")
         matched_unmatched = get_sources_sites(a, foreign_sites)
-        self.assertSourceURL(matched_unmatched,
+        self.assertSources(matched_unmatched,
                           matched=[['http://www.cnn.com/article', 'cnn.com', 'link']])
 
         foreign_sites = ["http://www.cnn.com", "http://www.cbc.ca"]
         a = self.from_html(
             self.SENTENCE + "<a href='http://www.cbc.ca/news'>link</a>")
         matched_unmatched = get_sources_sites(a, foreign_sites)
-        self.assertSourceURL(matched_unmatched,
+        self.assertSources(matched_unmatched,
                           matched=[['http://www.cbc.ca/news', 'cbc.ca', 'link']])
 
         foreign_sites = ["http://www.cnn.com", "http://www.cbc.ca"]
         a = self.from_html(self.SENTENCE +
                            "<a href='http://www.cnn.com'>link1</a> <a href='http://www.cbc.ca'>link2</a>")
         matched_unmatched = get_sources_sites(a, foreign_sites)
-        self.assertSourceURL(matched_unmatched,
+        self.assertSources(matched_unmatched,
                           matched=[
                               ['http://www.cnn.com', 'cnn.com', 'link1'],
                               ['http://www.cbc.ca', 'cbc.ca', 'link2']
@@ -136,7 +135,7 @@ class GetSourcesSitesTest(ArticleExplorerTestBase):
         a = self.from_html(self.SENTENCE +
                            "<a href='http://www.cnn.com/news'>link1</a> <a href='http://www.cbc.ca/news'>link2</a>")
         matched_unmatched = get_sources_sites(a, foreign_sites)
-        self.assertSourceURL(matched_unmatched,
+        self.assertSources(matched_unmatched,
                           matched=[
                               ['http://www.cnn.com/news', 'cnn.com', 'link1'],
                               ['http://www.cbc.ca/news', 'cbc.ca', 'link2']
@@ -147,6 +146,79 @@ class GetSourcesSitesTest(ArticleExplorerTestBase):
         matched_unmatched = get_sources_sites(a, foreign_sites)
         self.assertEmpty(matched_unmatched)
 
+class GetSourcesTwitterTest(ArticleExplorerTestBase):
+    def get_article_with_twitters(self, accounts):
+        a = self.from_html(self.SENTENCE + ": " + " ".join(accounts))
+        a.newspaper_parse()
+        self.assertIsNotNone(a.text)
+        return a
+
+    def test_no_source(self):
+        a = self.get_article_with_twitters(["@mediacat"])
+        self.assertSources(
+            get_sources_twitter(a, []), 
+            unmatched=["mediacat"])
+    
+    def test_regex(self):
+        non_twitters = [
+            'm1@gmail',
+            'm1@gmail.com',
+            '@123abc',
+            '123@abc',
+        ]
+
+        twitters = [
+            ('@mediacat', 'mediacat'),
+            ('@mc123', 'mc123'),
+            ('@m123c4', 'm123c4'),
+            ('+@mc123', 'mc123'),
+        ]
+
+        for nt in non_twitters:
+            a = self.get_article_with_twitters([nt])
+            self.assertSources(
+                get_sources_twitter(a, []),
+                msg=nt)
+
+        for t in twitters:
+            a = self.get_article_with_twitters([t[0]])
+            self.assertSources(
+                get_sources_twitter(a, []),
+                unmatched=[t[1]],
+                msg=repr(t)
+            )
+    def test_single_source(self):
+        a = self.get_article_with_twitters(["@mediacat123"])
+        self.assertSources(
+            get_sources_twitter(a, ["mediacat"]),
+            unmatched=["mediacat123"]
+        )
+
+        a = self.get_article_with_twitters(["@mediacat"])
+        self.assertSources(
+            get_sources_twitter(a, ["mediacat"]),
+            matched=["mediacat"]
+        )
+
+        a = self.get_article_with_twitters(["@mediacat", "@m123"])
+        self.assertSources(
+            get_sources_twitter(a, ["mediacat"]),
+            matched=["mediacat"],
+            unmatched=["m123"]
+        )
+
+    def test_multiple_sources(self):
+        a = self.get_article_with_twitters(["@mediacat"])
+        self.assertSources(
+            get_sources_twitter(a, ["mediacat", "m123"]),
+            matched=["mediacat"]
+        )
+
+        a = self.get_article_with_twitters(["@m123", "@mediacat"])
+        self.assertSources(
+            get_sources_twitter(a, ["mediacat", "m123"]),
+            matched=["mediacat", "m123"]
+        )
 
 class GetKeywordsTest(ArticleExplorerTestBase):
 
@@ -204,6 +276,55 @@ class GetKeywordsTest(ArticleExplorerTestBase):
         a.newspaper_article.text = "tes"
         self.assertEq(get_keywords(a, keywords), [],
                          "The keywords don't match")
+
+class UrlInFilterTest(ArticleExplorerTestBase):
+    def test_substring(self):
+        f1 = ReferringSiteFilter()
+        f1.pattern = 'cbc.ca'
+        f1.regex = False
+        self.assertTrue(url_in_filter('http://www.cbc.ca', [f1]))
+        self.assertTrue(url_in_filter('www.cbc.ca', [f1]))
+        self.assertFalse(url_in_filter('http://www.cnn.ca', [f1]))
+
+    def test_regex(self):
+        f1 = ReferringSiteFilter()
+        f1.pattern = r'news\.\w*\.com'
+        f1.regex = True
+        self.assertTrue(url_in_filter('http://news.yahoo.com', [f1]))
+        self.assertTrue(url_in_filter('http://news.google.com', [f1]))
+        self.assertTrue(url_in_filter('news.google.com', [f1]))
+        self.assertFalse(url_in_filter('http://news.google.ca', [f1]))
+        self.assertFalse(url_in_filter('http://www.google.com', [f1]))
+        self.assertFalse(url_in_filter('http://www.huffingtonpost.com', [f1]))
+
+    def test_multiple_filters(self):
+        filters = []
+
+        f = ReferringSiteFilter()
+        f.pattern = 'cbc.ca'
+        f.regex = False
+        filters.append(f)
+
+        f = ReferringSiteFilter()
+        f.pattern = 'yahoo.ca'
+        f.regex = False
+        filters.append(f)
+        
+        f = ReferringSiteFilter()
+        f.pattern = 'yahoo.com'
+        f.regex = False
+        filters.append(f)
+        
+        f = ReferringSiteFilter()
+        f.pattern = r'.*\.com'
+        f.regex = True
+        filters.append(f)
+        
+        self.assertFalse(url_in_filter('google.ca', filters))
+        self.assertTrue(url_in_filter('google.com', filters))
+        self.assertTrue(url_in_filter('yahoo.com', filters))
+        self.assertTrue(url_in_filter('www.yahoo.ca', filters))
+        self.assertTrue(url_in_filter('http://www.cbc.ca', filters))
 
 if __name__ == '__main__':
     unittest.main(exit=False)

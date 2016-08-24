@@ -160,7 +160,7 @@ class TestTwitterExplorer(ExplorerTestBase):
                               'Not returning list of matched sources')
         for tweetid in [531976729007771648, 531976714730364929, 531976660015652864,
                         531976696397070336, 531976682128031744]:
-            self.assertSourceURL(holder[tweetid])
+            self.assertSources(holder[tweetid])
 
         #can't test exact site as using url lib will change them if they generate
         #for example each google search url will be different
