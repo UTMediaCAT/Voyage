@@ -4,6 +4,18 @@ from subprocess import Popen
 from explorer.models import ReferringSite, SourceSite, Keyword, ReferringTwitter, SourceTwitter
 import sys, os, time, json
 
+import newspaper
+
+def validate_site(site):
+    try:
+        s = newspaper.build(site, memoize_articles=False,
+                            keep_article_html=True,
+                            fetch_images=False,
+                            language='en')
+        return HttpResponse(format('%s articles found using RSS Scan!' % s.size()))
+    except:
+        return HttpResponse(format('%s is not a valid Referring Site!' % site))
+
 def command(request):
     if request.method == 'POST':
         if request.POST.get('acommand') == 'Run':
@@ -37,6 +49,9 @@ def command(request):
         if request.POST.get('tcommand') == '[F]Stop':
             path = os.path.dirname(os.path.realpath(__file__))
             Popen(["python", path + "/../../src/executer.py", "twitter", "fstop"], cwd=path)
+
+        if request.POST.get('url'):
+        	return validate_site(request.POST.get('url'))
 
 
     return HttpResponseRedirect("/admin")

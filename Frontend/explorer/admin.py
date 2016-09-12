@@ -99,10 +99,13 @@ class ReferringSiteAdmin(admin.ModelAdmin):
     actions_on_top = True
     list_per_page = 1000
 
+    change_form_template = 'admin/referringSite_change_form.html'
+
     def article_count(self, obj):
         return len(Article.objects.filter(domain=obj.url))
 
     article_count.short_description = "Total Articles Archived"
+
 
     def latest_article(self, obj):
         latest = Article.objects.filter(domain=obj.url).last()
