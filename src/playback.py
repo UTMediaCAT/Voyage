@@ -14,7 +14,6 @@ def replay_memory(stream):
     visited = set()
     visited.add(sys.argv[1] + '\n')
 
-    skipFirst = True
     i = 0
     z = 0
     for line in stream:
@@ -32,6 +31,27 @@ def replay_memory(stream):
             visited.add(line[1:])
     print z
 
+def replay_memory_and_fix(stream):
+    tovisit = collections.deque([sys.argv[1] + '\n'])
+    visited = set()
+    visited.add(sys.argv[1] + '\n')
+
+    for line in stream:
+        if(line[0] == '1'):#pop from tovisit queue
+            print line
+            result = tovisit.pop()
+            #assertEqual(result, line[1:])
+        elif(line[0] == '2'):#check if url exists
+            print line
+            expected_value = line[1] == 'y'
+            #assertEqual((line[2:] in visited), expected_value)
+        elif(line[0] == '3'):#insert into visited and tovisit
+            if(line[1:] not in visited):
+                tovisit.appendleft(line[1:])
+                visited.add(line[1:])
+                print line
+
+
 
 def replay_postgres(stream):
     db = psycopg2.connect(host='localhost', database="crawler", user="postgres", password="password")
@@ -47,7 +67,6 @@ def replay_postgres(stream):
     cursor.execute(u"INSERT INTO " + visited_table + " VALUES (%s)", (sys.argv[1],))
     cursor.execute(u"INSERT INTO " + tovisit_table + " VALUES (DEFAULT, %s)", (sys.argv[1],))
 
-    skipFirst = True
     for line in stream:
         if(line[0] == '1'):#pop from tovisit queue
             cursor.execute("SELECT * FROM " + tovisit_table + " ORDER BY id LIMIT 1")
@@ -68,9 +87,10 @@ def replay_postgres(stream):
             cursor.execute(u"INSERT INTO " + visited_table + u" VALUES (%s)", (line[1:],))
 
 if __name__ == "__main__":
-    start = time.time()
-    replay_memory(sys.stdin)
-    print "memory: " + str(time.time() - start)
+    replay_memory_and_fix(sys.stdin)
+    #start = time.time()
+    #replay_memory(sys.stdin)
+    #print "memory: " + str(time.time() - start)
 
     #start = time.time()
     #replay_postgres(sys.stdin)
