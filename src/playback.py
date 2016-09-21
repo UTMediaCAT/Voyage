@@ -16,18 +16,21 @@ def replay_memory(stream):
 
     skipFirst = True
     i = 0
+    z = 0
     for line in stream:
         i += 1
-        print(i)
+        #print(i)
         if(line[0] == '1'):#pop from tovisit queue
             result = tovisit.pop()
-            assertEqual(result, line[1:])
+            #assertEqual(result, line[1:])
         elif(line[0] == '2'):#check if url exists
             expected_value = line[1] == 'y'
-            assertEqual((line[2:] in visited), expected_value)
+            z += int(line[2:] in visited)
+            #assertEqual((line[2:] in visited), expected_value)
         elif(line[0] == '3'):#insert into visited and tovisit
             tovisit.appendleft(line[1:])
             visited.add(line[1:])
+    print z
 
 
 def replay_postgres(stream):
@@ -53,13 +56,13 @@ def replay_postgres(stream):
             result = row[1]
             cursor.execute("DELETE FROM " + tovisit_table + " WHERE id=%s", (row_id,))
 
-            assertEqual(result, line[1:])
+            #assertEqual(result, line[1:])
         elif(line[0] == '2'):#check if url exists
             expected_value = line[1] == 'y'
 
             cursor.execute(u"SELECT EXISTS(SELECT * FROM " + visited_table + " WHERE url=%s)",(line[2:],))
             exists = bool(cursor.fetchone()[0])
-            assertEqual(exists, expected_value)
+            #assertEqual(exists, expected_value)
         elif(line[0] == '3'):#insert into visited and tovisit
             cursor.execute(u"INSERT INTO " + tovisit_table + u" VALUES (DEFAULT , %s)", (line[1:],))
             cursor.execute(u"INSERT INTO " + visited_table + u" VALUES (%s)", (line[1:],))
