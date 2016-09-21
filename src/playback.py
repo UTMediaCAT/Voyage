@@ -70,8 +70,8 @@ def replay_postgres(stream):
 if __name__ == "__main__":
     start = time.time()
     replay_memory(sys.stdin)
-    print "memory: " + (time.time() - start)
+    print "memory: " + str(time.time() - start)
 
     #start = time.time()
     #replay_postgres(sys.stdin)
-    #print "memory: " + (time.time() - start)
+    #print "memory: " + str(time.time() - start)
