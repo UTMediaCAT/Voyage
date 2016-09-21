@@ -10,9 +10,9 @@ def assertEqual(a,b):
         assert False
 
 def replay_memory(stream):
-    tovisit = collections.deque([sys.argv[1]])
+    tovisit = collections.deque([sys.argv[1] + '\n'])
     visited = set()
-    visited.add(sys.argv[1])
+    visited.add(sys.argv[1] + '\n')
 
     skipFirst = True
     i = 0

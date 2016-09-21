@@ -64,7 +64,7 @@ class Crawler(object):
                 if(row):
                     row_id = row[0]
                     current_url = row[1]
-                    self.transactions_file.write("1" + current_url)
+                    self.transactions_file.write("1" + current_url + "\n")
                     self.cursor.execute("DELETE FROM " + self.tovisit_table + " WHERE id=%s", (row_id,))
                     self.db.commit()
                 else:
