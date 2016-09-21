@@ -13,9 +13,15 @@ def replay_memory(stream):
     tovisit = collections.deque(["dummy"])
     visited = set()
     visited.add("dummy")
+
+    skipFirst = True
     for line in stream:
         if(line[0] == '1'):#pop from tovisit queue
-            assertEqual(tovisit.pop(), line[1:])
+            result = tovisit.pop()
+            if(skipFirst):
+                skipFirst = False
+            else:
+                assertEqual(tovisit.pop(), line[1:])
         elif(line[0] == '2'):#check if url exists
             expected_value = line[1] == 'y'
             assertEqual((line[2:] in visited), expected_value)
@@ -38,15 +44,19 @@ def replay_postgres(stream):
     cursor.execute(u"INSERT INTO " + visited_table + " VALUES (%s)", ("dummy",))
     cursor.execute(u"INSERT INTO " + tovisit_table + " VALUES (DEFAULT, %s)", ("dummy",))
 
+    skipFirst = True
     for line in stream:
         if(line[0] == '1'):#pop from tovisit queue
             cursor.execute("SELECT * FROM " + tovisit_table + " ORDER BY id LIMIT 1")
             row = cursor.fetchone()
             row_id = row[0]
-            current_url = row[1]
+            result = row[1]
             cursor.execute("DELETE FROM " + tovisit_table + " WHERE id=%s", (row_id,))
 
-            assertEqual(current_url, line[1:])
+            if(skipFirst):
+                skipFirst = False
+            else:
+                assertEqual(result, line[1:])
         elif(line[0] == '2'):#check if url exists
             expected_value = line[1] == 'y'
 
