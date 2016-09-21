@@ -3,10 +3,16 @@ import time
 import sys
 import collections
 
+def assertEqualStr(a,b):
+    if(a != b):
+        print("expected: " + a)
+        print("got: " + b)
+        assert False
+
 def replay_memory(stream):
     tovisit = collections.deque(["dummy"])
     visited = set()
-    tovisit.add("dummy")
+    visited.add("dummy")
     for line in stream:
         if(line[0] == '1'):#pop from tovisit queue
             assert tovisit.pop() == line[1:]
@@ -56,6 +62,6 @@ if __name__ == "__main__":
     replay_memory(sys.stdin)
     print "memory: " + (time.time() - start)
 
-    start = time.time()
-    replay_postgres(sys.stdin)
-    print "memory: " + (time.time() - start)
+    #start = time.time()
+    #replay_postgres(sys.stdin)
+    #print "memory: " + (time.time() - start)
