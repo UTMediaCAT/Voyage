@@ -15,13 +15,13 @@ def replay_memory(stream):
     visited.add(sys.argv[1])
 
     skipFirst = True
+    i = 0
     for line in stream:
+        i += 1
+        print(i)
         if(line[0] == '1'):#pop from tovisit queue
             result = tovisit.pop()
-            if(skipFirst):
-                skipFirst = False
-            else:
-                assertEqual(tovisit.pop(), line[1:])
+            assertEqual(tovisit.pop(), line[1:])
         elif(line[0] == '2'):#check if url exists
             expected_value = line[1] == 'y'
             assertEqual((line[2:] in visited), expected_value)
@@ -53,10 +53,7 @@ def replay_postgres(stream):
             result = row[1]
             cursor.execute("DELETE FROM " + tovisit_table + " WHERE id=%s", (row_id,))
 
-            if(skipFirst):
-                skipFirst = False
-            else:
-                assertEqual(result, line[1:])
+            assertEqual(result, line[1:])
         elif(line[0] == '2'):#check if url exists
             expected_value = line[1] == 'y'
 
