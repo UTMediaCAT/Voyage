@@ -10,15 +10,12 @@ def assertEqual(a,b):
         assert False
 
 def replay_memory(stream):
-    tovisit = collections.deque(["dummy"])
+    tovisit = collections.deque([sys.argv[1]])
     visited = set()
-    visited.add("dummy")
+    visited.add(sys.argv[1])
 
     skipFirst = True
-    i = 0
     for line in stream:
-        i += 1
-        print(i)
         if(line[0] == '1'):#pop from tovisit queue
             result = tovisit.pop()
             if(skipFirst):
@@ -44,8 +41,8 @@ def replay_postgres(stream):
     cursor.execute("DROP TABLE IF EXISTS " + tovisit_table)
     cursor.execute(u"CREATE TABLE " + tovisit_table + " (id SERIAL PRIMARY KEY, url VARCHAR(1024))")
 
-    cursor.execute(u"INSERT INTO " + visited_table + " VALUES (%s)", ("dummy",))
-    cursor.execute(u"INSERT INTO " + tovisit_table + " VALUES (DEFAULT, %s)", ("dummy",))
+    cursor.execute(u"INSERT INTO " + visited_table + " VALUES (%s)", (sys.argv[1],))
+    cursor.execute(u"INSERT INTO " + tovisit_table + " VALUES (DEFAULT, %s)", (sys.argv[1],))
 
     skipFirst = True
     for line in stream:
