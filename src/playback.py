@@ -21,7 +21,7 @@ def replay_memory(stream):
         print(i)
         if(line[0] == '1'):#pop from tovisit queue
             result = tovisit.pop()
-            assertEqual(tovisit.pop(), line[1:])
+            assertEqual(result, line[1:])
         elif(line[0] == '2'):#check if url exists
             expected_value = line[1] == 'y'
             assertEqual((line[2:] in visited), expected_value)
