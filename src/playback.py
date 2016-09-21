@@ -23,7 +23,7 @@ def replay_memory(stream):
             else:
                 assertEqual(tovisit.pop(), line[1:])
         elif(line[0] == '2'):#check if url exists
-            expected_value = line[1] == 'y'
+            expected_value = line[1] != 'y'
             assertEqual((line[2:] in visited), expected_value)
         elif(line[0] == '3'):#insert into visited and tovisit
             tovisit.appendleft(line[1:])
@@ -58,7 +58,7 @@ def replay_postgres(stream):
             else:
                 assertEqual(result, line[1:])
         elif(line[0] == '2'):#check if url exists
-            expected_value = line[1] == 'y'
+            expected_value = line[1] != 'y'
 
             cursor.execute(u"SELECT EXISTS(SELECT * FROM " + visited_table + " WHERE url=%s)",(line[2:],))
             exists = bool(cursor.fetchone()[0])
