@@ -90,7 +90,8 @@ class Crawler(object):
 
                 process_links_start = time.time()
                 for link in links:
-                    url = urljoin(current_url, link.href, False)
+
+                    url = urljoin(current_url, str(link.href).strip(), False)
                     if self.url_in_filter(url, self.filters):
                         logging.info("skipping url \"{0}\" because it matches filter".format(url))
                         continue
@@ -108,6 +109,7 @@ class Crawler(object):
                     if(not parsed_url.netloc.endswith(self.domain)):
                         continue
 
+                    url.replace("\n", " ")
                     #when executing an INSERT statement cursor.execute returns the number of rows updated. If the url
                     #exists in the visited table, then no rows will be updated. Thus if a row is updated, we know that
                     #it has not been visited and we should add it to the visit queue
