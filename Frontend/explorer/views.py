@@ -53,6 +53,12 @@ def command(request):
         if request.POST.get('url'):
         	return validate_site(request.POST.get('url'))
 
+        if request.POST.get('referring'):
+            referring = request.POST.get('referring')
+            for site in SourceSite.objects.all():
+                if site.url == referring:
+                    return HttpResponse(format('%s exists in Source Sites Scope.' % referring))
+            return HttpResponse(format('%s does not exist in Source Sites Scope.' % referring))
 
     return HttpResponseRedirect("/admin")
 
