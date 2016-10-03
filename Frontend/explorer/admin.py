@@ -13,6 +13,8 @@ from django import forms
 import newspaper
 from django.utils.safestring import mark_safe
 
+# For url encoding of shortcut links
+import urllib
 
 class TaggitListFilter(admin.SimpleListFilter):
     """
@@ -140,17 +142,23 @@ class SourceSiteAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['url', 'name']})
         ]
-    list_display = ('name', 'url', 'cited_count', 'get_aliases', 'get_tags')
+    list_display = ('name', 'url', 'cited_article_count', 'get_aliases', 'get_tags')
     search_fields = ['name', 'url']
     ordering = ['name']
     actions_on_top = True
     list_per_page = 1000
 
-    def cited_count(self, obj):
-        return len(ArticleSource.objects.filter(domain=obj.url)) + \
-               len(TwitterSource.objects.filter(domain=obj.url))
+    def cited_article_count(self, obj):
+    	url = obj.url[:-1] if obj.url[-1] == '/' else obj.url
+        return '<a target="_blank" href="/admin/articles/article/?q=&version__sourcesite__domain=' + \
+        	str(urllib.quote_plus(url)) + '">' + \
+        	str(Article.objects.filter(version__sourcesite__domain=url).distinct().count()) +\
+        	'</a>'
+        #+ \
+        #       len(TwitterSource.objects.filter(domain=obj.url))
 
-    cited_count.short_description = "Total Cites"
+    cited_article_count.short_description = "Total Cites in Article"
+    cited_article_count.allow_tags = True
 
     def get_aliases(self, obj):
         aliases = []
@@ -177,16 +185,19 @@ class KeywordAdmin(admin.ModelAdmin):
         ]
 
 
-    list_display = ['name', 'match_count', 'get_tags']
+    list_display = ['name', 'match_article_count', 'get_tags']
     search_fields = ['name']
     actions_on_top = True
     list_per_page = 1000
 
-    def match_count(self, obj):
-        return len(ArticleKeyword.objects.filter(name=obj.name)) + \
-               len(TwitterKeyword.objects.filter(name=obj.name))
+    def match_article_count(self, obj):
+        return '<a target="_blank" href="/admin/articles/article/?q=&version__keyword__name=' + \
+        	str(urllib.quote_plus(obj.name)) + '">' + \
+        	str(Article.objects.filter(version__keyword__name=obj.name).distinct().count()) +\
+        	'</a>'
 
-    match_count.short_description = "Total Matches"
+    match_article_count.short_description = "Total Matches in Article"
+    match_article_count.allow_tags = True
 
     def get_tags(self, obj):
         tags = []

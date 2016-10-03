@@ -80,8 +80,8 @@ class VersionInline(NestedStackedInline):
             """
             <div class="btn-group"> \
                 <a class="btn btn-success %s" %s>Download Warc</a> \
-                <a class="btn btn-success %s" %s>View PDF</a> \
-                <a class="btn btn-success %s" %s>View Screenshot</a> \
+                <a class="btn btn-success %s" target="_blank" %s>View PDF</a> \
+                <a class="btn btn-success %s" target="_blank" %s>View Screenshot</a> \
             </div> \
             """) %
             (
