@@ -151,73 +151,100 @@
             {% endfor %}
           {% endblock %}
 
+          <!-- FOR SOURCE SITE ENTRY CHECK -->
 
+          <script>
+           function onClickCheckSource() {
+              var url = document.getElementById('id_url').value;
+              var params = 'csrfmiddlewaretoken={{ csrf_token }}' + '&referring=' + url;
 
+              var xhr = new XMLHttpRequest();
+              xhr.open('POST', '/explorer/', true)
+              //Send the proper header information along with the request
+              xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+              xhr.setRequestHeader("Content-length", params.length);
+              xhr.setRequestHeader("Connection", "close");
+              xhr.onreadystatechange = function() {
+                  if (xhr.readyState == XMLHttpRequest.DONE) {
+                      alert(xhr.responseText);
+                  }
+              }
+              xhr.send(params);
+            }
+          </script>
 
+          <div class="control-group form-row field-url ">
+              <div>
+                  <div class="control-label">
+                      <label class="required" for="id_url">Check Source Site:</label>
+                  </div>
+                  <div class="controls">
+                    {% csrf_token %}
+                      <button id="check-source-button" style="width: 220px;" onclick="onClickCheckSource()" type="button">Click Here</button>
+                      <span class="help-inline">Check whether the domain exists in Source Sites scope</span>
+                  </div>
+              </div>
+          </div>
+
+          <!-- FOR SOURCE SITE ENTRY CHECK END -->
 
 
           <!-- FOR REFERRAL SITE RSS SCAN CHECK -->
-         <script>
-         function setIsChecking(isChecking) {
-            var button = document.getElementById('rss-scan-button')
 
-            if (isChecking) {
-                button.disabled = true;
-                button.textContent = 'Checking ...'
-            } else {
-                button.disabled = false;
-                button.textContent = 'Click Here'
+          <script>
+            function setIsChecking(isChecking) {
+              var button = document.getElementById('rss-scan-button')
+
+              if (isChecking) {
+                  button.disabled = true;
+                  button.textContent = 'Checking ...'
+              } else {
+                  button.disabled = false;
+                  button.textContent = 'Click Here'
+              }
             }
-         }
 
-         function onClickRssScan() {
-            setIsChecking(true);
+           function onClickRssScan() {
+              setIsChecking(true);
 
-         	var url = document.getElementById('id_url').value;
-            if (url === '') {
-                setIsChecking(false);
-                alert('Please enter a valid Referring Site!');
-                return;
+           	  var url = document.getElementById('id_url').value;
+              if (url === '') {
+                  setIsChecking(false);
+                  alert('Please enter a valid Referring Site!');
+                  return;
+              }
+              var params = 'csrfmiddlewaretoken={{ csrf_token }}' + '&url=' + url;
+
+           	  var xhr = new XMLHttpRequest();
+              xhr.open('POST', '/explorer/', true)
+              //Send the proper header information along with the request
+              xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+              xhr.setRequestHeader("Content-length", params.length);
+              xhr.setRequestHeader("Connection", "close");
+              xhr.onreadystatechange = function() {
+                  if (xhr.readyState == XMLHttpRequest.DONE) {
+                      setIsChecking(false);
+                      alert(xhr.responseText);
+                  }
+              }
+           	  xhr.send(params);
             }
-            var params = 'csrfmiddlewaretoken={{ csrf_token }}' + '&url=' + url;
+          </script>
 
-         	var xhr = new XMLHttpRequest();
-            xhr.open('POST', '/explorer/', true)
-			//Send the proper header information along with the request
-			xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            xhr.setRequestHeader("Content-length", params.length);
-            xhr.setRequestHeader("Connection", "close");
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == XMLHttpRequest.DONE) {
-                    setIsChecking(false);
-                    alert(xhr.responseText);
-                }
-            }
-         	xhr.send(params);
-         }
-         </script>
-		<div class="control-group form-row field-url ">
-		    <div>
-		        <div class="control-label">
-		            <label class="required" for="id_url">Check RSS Scan:</label>
-		        </div>
-		        <div class="controls">
-		        	{% csrf_token %}
-		            <button id="rss-scan-button" style="width: 220px;" onclick="onClickRssScan()" type="button">Click Here</button>
-		            <span class="help-inline">RSS Scan check may take up to 1 minute</span>
-		        </div>
-		    </div>
-		</div>
-
+      		<div class="control-group form-row field-url ">
+      		    <div>
+      		        <div class="control-label">
+      		            <label class="required" for="id_url">Check RSS Scan:</label>
+      		        </div>
+      		        <div class="controls">
+      		        	{% csrf_token %}
+      		            <button id="rss-scan-button" style="width: 220px;" onclick="onClickRssScan()" type="button">Click Here</button>
+      		            <span class="help-inline">RSS Scan check may take up to 1 minute</span>
+      		        </div>
+      		    </div>
+      		</div>
 
           <!-- FOR REFERRAL SITE RSS SCAN CHECK END -->
-
-
-
-
-
-
-
 
           {% block after_field_sets %}{% endblock %}
 

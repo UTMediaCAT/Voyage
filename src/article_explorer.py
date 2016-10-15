@@ -79,7 +79,7 @@ import hashlib
 def init_worker():
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
-def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_explorer):
+def parse_articles(referring_sites, db_keywords, source_sites_and_aliases, twitter_accounts_explorer):
     """ (list of [str, newspaper.source.Source, str],
          list of str, list of str, str) -> None
     Downloads each db_article in the site, extracts, compares
@@ -89,13 +89,13 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
     Keyword arguments:
     referring_sites     -- List of [name, 'built_article'] of each site
     db_keywords         -- List of keywords
-    source_sites       -- List of foreign sites
+    source_sites_and_aliases       -- Dictionary of foreign site: list of aliases
     """
     added, updated, failed, no_match = 0, 0, 0, 0
 
     if("DEBUG" in os.environ):
         for s in referring_sites:
-            parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer, s)
+            parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accounts_explorer, s)
     else:
 
         connection.close()
@@ -106,7 +106,7 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
         # pool = Pool(processes=cpu_count()*4)
 
         # pass database informations using partial
-        pass_database = partial(parse_articles_per_site, db_keywords, source_sites, twitter_accounts_explorer)
+        pass_database = partial(parse_articles_per_site, db_keywords, source_sites_and_aliases, twitter_accounts_explorer)
 
         # Start the multiprocessing
         result = pool.map_async(pass_database, referring_sites)
@@ -127,11 +127,22 @@ def parse_articles(referring_sites, db_keywords, source_sites, twitter_accounts_
 
 
 
-def parse_articles_per_site(db_keywords, source_sites, twitter_accounts_explorer, site):
+def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accounts_explorer, site):
 
     logging.info("Started multiprocessing of Site: %s", site.name)
     #Setup logging for this site
     setup_logging(site.name)
+
+    #Remove the source site that matches site
+    if site.url in source_sites_and_aliases:
+        logging.info("Removed Source Site (Referring Site is identical): " + site.url)
+        del source_sites_and_aliases[site.url]
+
+    #Generate list of source sites
+    source_sites = source_sites_and_aliases.keys()
+
+    #Add aliases to keywords (TODO: track alias seperately)
+    db_keywords = sum(source_sites_and_aliases.values(), [])
 
     article_count = 0
     newspaper_articles = []
@@ -490,18 +501,17 @@ def explore():
     referring_sites = ReferringSite.objects.all()
     logging.info("Collected {0} Referring Sites from Database".format(len(referring_sites)))
 
-    source_sites = []
+    source_sites_and_aliases = {}
     keyword_list = []
     source_twitter_list = []
 
     # Retrieve and store foreign site information
     for site in ExplorerSourceSite.objects.all():
-        # source_sites is now in form ['URL', ...]
-        source_sites.append(site.url)
+        alias_list = []
         for alias in site.sourcesitealias_set.all():
-            # Source site aliases are keywords
-            keyword_list.append(str(alias))
-    logging.info("Collected {0} Source Sites from Database".format(len(source_sites)))
+            alias_list.append(str(alias))
+        source_sites_and_aliases[site.url] = alias_list
+    logging.info("Collected {0} Source Sites from Database".format(len(source_sites_and_aliases)))
 
     # Retrieve all stored keywords
     for key in ExplorerKeyword.objects.all():
@@ -517,7 +527,7 @@ def explore():
     logging.info("Collected {0} Source Twitter Accounts from Database".format(len(source_twitter_list)))
 
     # Parse the articles in all sites
-    parse_articles(referring_sites, keyword_list, source_sites, source_twitter_list)
+    parse_articles(referring_sites, keyword_list, source_sites_and_aliases, source_twitter_list)
 
 def comm_write(text):
     """ (Str) -> None
