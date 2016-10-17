@@ -196,12 +196,12 @@ class KeywordAdmin(admin.ModelAdmin):
         ]
 
 
-    list_display = ['name', 'match_article_count', 'get_tags']
+    list_display = ['name', 'total_match_count', 'get_tags']
     search_fields = ['name']
     actions_on_top = True
     list_per_page = 1000
 
-    def match_article_count(self, obj):
+    def total_match_count(self, obj):
         article_match_count = Article.objects.filter(version__keyword__name=obj.name).distinct().count()
         article_tag = '<a target="_blank" href="/admin/articles/article/?q=&version__keyword__name=' + \
             str(urllib.quote_plus(obj.name)) + '">' + \
@@ -215,8 +215,8 @@ class KeywordAdmin(admin.ModelAdmin):
         total_match_count = article_match_count + tweet_match_count
         return '<span>{} ({} / {})</span>'.format(total_match_count, article_tag, tweet_tag)
 
-    match_article_count.short_description = "Total Matches (Articles/Tweets)"
-    match_article_count.allow_tags = True
+    total_match_count.short_description = "Total Matches (Articles/Tweets)"
+    total_match_count.allow_tags = True
 
     def get_tags(self, obj):
         tags = []
@@ -281,10 +281,27 @@ class SourceTwitterAdmin(admin.ModelAdmin):
         (None,               {'fields': ['name']})
         ]
 
-    list_display = ['name', 'get_aliases', 'get_tags']
+    list_display = ['name', 'total_mention_count', 'get_aliases', 'get_tags']
     search_fields = ['name']
     actions_on_top = True
     list_per_page = 1000
+
+    def total_mention_count(self, obj):
+        article_match_count = Article.objects.filter(version__sourcetwitter__name=obj.name).distinct().count()
+        article_tag = '<a target="_blank" href="/admin/articles/article/?q=&version__sourcetwitter__name=' + \
+            str(urllib.quote_plus(obj.name)) + '">' + \
+            str(article_match_count) + \
+            '</a>'
+        tweet_match_count = Tweet.objects.filter(sourcetwitter__name=obj.name).distinct().count()
+        tweet_tag = '<a target="_blank" href="/admin/tweets/tweet/?q=&sourcetwitter__name=' + \
+            str(urllib.quote_plus(obj.name)) + '">' + \
+            str(tweet_match_count) + \
+            '</a>'
+        total_match_count = article_match_count + tweet_match_count
+        return '<span>{} ({} / {})</span>'.format(total_match_count, article_tag, tweet_tag)
+
+    total_mention_count.short_description = "Total Mentions (Articles/Tweets)"
+    total_mention_count.allow_tags = True
 
     def get_tags(self, obj):
         tags = []
