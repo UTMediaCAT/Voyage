@@ -104,10 +104,14 @@ class ReferringSiteAdmin(admin.ModelAdmin):
     change_form_template = 'admin/referringSite_change_form.html'
 
     def article_count(self, obj):
-        return len(Article.objects.filter(domain=obj.url))
+        url = obj.url
+        return '<a target="_blank" href="/admin/articles/article/?q=&domain=' + \
+            str(urllib.quote_plus(url)) + '">' + \
+            str(Article.objects.filter(domain=obj.url).count()) +\
+            '</a>'
 
     article_count.short_description = "Total Articles Archived"
-
+    article_count.allow_tags = True
 
     def latest_article(self, obj):
         latest = Article.objects.filter(domain=obj.url).last()
@@ -142,23 +146,30 @@ class SourceSiteAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['url', 'name']})
         ]
-    list_display = ('name', 'url', 'cited_article_count', 'get_aliases', 'get_tags')
+    list_display = ('name', 'url', 'total_cites_count', 'get_aliases', 'get_tags')
     search_fields = ['name', 'url']
     ordering = ['name']
     actions_on_top = True
     list_per_page = 1000
 
-    def cited_article_count(self, obj):
-    	url = obj.url[:-1] if obj.url[-1] == '/' else obj.url
-        return '<a target="_blank" href="/admin/articles/article/?q=&version__sourcesite__domain=' + \
-        	str(urllib.quote_plus(url)) + '">' + \
-        	str(Article.objects.filter(version__sourcesite__domain=url).distinct().count()) +\
-        	'</a>'
-        #+ \
-        #       len(TwitterSource.objects.filter(domain=obj.url))
+    def total_cites_count(self, obj):
+        # Domain is stored without last forward slash
+        url = obj.url[:-1] if obj.url[-1] == '/' else obj.url
+        article_cites_count = Article.objects.filter(version__sourcesite__domain=url).distinct().count()
+        article_tag = '<a target="_blank" href="/admin/articles/article/?q=&version__sourcesite__domain=' + \
+            str(urllib.quote_plus(url)) + '">' + \
+            str(article_cites_count) + \
+            '</a>'
+        tweet_cites_count = Tweet.objects.filter(sourcesite__domain=url).distinct().count()
+        tweet_tag = '<a target="_blank" href="/admin/tweets/tweet/?q=&sourcesite__domain=' + \
+            str(urllib.quote_plus(url)) + '">' + \
+            str(tweet_cites_count) + \
+            '</a>'
+        total_cites_count = article_cites_count + tweet_cites_count
+        return '<span>{} ({} / {})</span>'.format(total_cites_count, article_tag, tweet_tag)
 
-    cited_article_count.short_description = "Total Cites in Article"
-    cited_article_count.allow_tags = True
+    total_cites_count.short_description = "Total Cites (Articles/Tweets)"
+    total_cites_count.allow_tags = True
 
     def get_aliases(self, obj):
         aliases = []
@@ -191,12 +202,20 @@ class KeywordAdmin(admin.ModelAdmin):
     list_per_page = 1000
 
     def match_article_count(self, obj):
-        return '<a target="_blank" href="/admin/articles/article/?q=&version__keyword__name=' + \
-        	str(urllib.quote_plus(obj.name)) + '">' + \
-        	str(Article.objects.filter(version__keyword__name=obj.name).distinct().count()) +\
-        	'</a>'
+        article_match_count = Article.objects.filter(version__keyword__name=obj.name).distinct().count()
+        article_tag = '<a target="_blank" href="/admin/articles/article/?q=&version__keyword__name=' + \
+            str(urllib.quote_plus(obj.name)) + '">' + \
+            str(article_match_count) + \
+            '</a>'
+        tweet_match_count = Tweet.objects.filter(keyword__name=obj.name).distinct().count()
+        tweet_tag = '<a target="_blank" href="/admin/tweets/tweet/?q=&keyword__name=' + \
+            str(urllib.quote_plus(obj.name)) + '">' + \
+            str(tweet_match_count) + \
+            '</a>'
+        total_match_count = article_match_count + tweet_match_count
+        return '<span>{} ({} / {})</span>'.format(total_match_count, article_tag, tweet_tag)
 
-    match_article_count.short_description = "Total Matches in Article"
+    match_article_count.short_description = "Total Matches (Articles/Tweets)"
     match_article_count.allow_tags = True
 
     def get_tags(self, obj):
@@ -221,9 +240,12 @@ class ReferringTwitterAdmin(admin.ModelAdmin):
     list_per_page = 1000
 
     def tweet_count(self, obj):
-        return len(Tweet.objects.filter(name__iexact=obj.name))
-
+        return '<a target="_blank" href="/admin/tweets/tweet/?q=&name=' + \
+            str(urllib.quote_plus(obj.name)) + '">' + \
+            str(Tweet.objects.filter(name__iexact=obj.name).count()) +\
+            '</a>'
     tweet_count.short_description = "Total Tweets Archived"
+    tweet_count.allow_tags = True
 
     def latest_tweet(self, obj):
         latest = Tweet.objects.filter(name__iexact=obj.name)
