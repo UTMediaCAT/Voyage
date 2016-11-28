@@ -1,8 +1,21 @@
 from django.shortcuts import HttpResponse
 from django.http import HttpResponseRedirect
 from subprocess import Popen
-from explorer.models import ReferringSite, SourceSite, Keyword, ReferringTwitter, SourceTwitter
+from explorer.models import (
+    ReferringSite,
+    ReferringSiteFilter,
+    ReferringSiteCssSelector,
+    ReferringTwitter,
+    SourceTwitter,
+    SourceTwitterAlias,
+    SourceSite,
+    SourceSiteAlias,
+    Keyword
+)
 import sys, os, time, json
+from taggit.models import TaggedItem
+
+from django.core import serializers
 
 import newspaper
 
@@ -63,22 +76,24 @@ def command(request):
     return HttpResponseRedirect("/admin")
 
 def getJson(request):
-    scope = {'referring_sites':{}, 'source_sites': {}, 
-             'keywords': [], 'referring_twitter_accounts': [], 'source_twitter_accounts': []}
+    scope = {
+        'name': 'mediacat-scope',
+        'version': '0.0.1',
+        'date': time.strftime("%c"),
+    }
 
-    for site in ReferringSite.objects.all():
-        scope['referring_sites'][site.url] = {'name': site.name}
+    json_serializer = serializers.get_serializer('json')()
 
-    for site in SourceSite.objects.all():
-        scope['source_sites'][site.url] = {'name': site.name}
-
-    for key in Keyword.objects.all():
-        scope['keywords'].append(key.name)
-
-    for acc in ReferringTwitter.objects.all():
-        scope['referring_twitter_accounts'].append(acc.name)
-    for acc in SourceTwitter.objects.all():
-	scope['source_twitter_accounts'].append(acc.name)
+    scope['referring_sites'] = json.loads(json_serializer.serialize(ReferringSite.objects.all()))
+    scope['referring_sites_filter'] = json.loads(json_serializer.serialize(ReferringSiteFilter.objects.all()))
+    scope['referring_sites_css_selector'] = json.loads(json_serializer.serialize(ReferringSiteCssSelector.objects.all()))
+    scope['referring_twitter'] = json.loads(json_serializer.serialize(ReferringTwitter.objects.all()))
+    scope['source_twitter'] = json.loads(json_serializer.serialize(SourceTwitter.objects.all()))
+    scope['source_twitter_alias'] = json.loads(json_serializer.serialize(SourceTwitterAlias.objects.all()))
+    scope['source_sites'] = json.loads(json_serializer.serialize(SourceSite.objects.all()))
+    scope['source_sites_alias'] = json.loads(json_serializer.serialize(SourceSiteAlias.objects.all()))
+    scope['keywords'] = json.loads(json_serializer.serialize(Keyword.objects.all()))
+    scope['taggit'] = json.loads(json_serializer.serialize(TaggedItem.objects.all()))
 
     res = HttpResponse(json.dumps(scope, indent=2, sort_keys=True))
     res['Content-Disposition'] = format('attachment; filename=scope-%s.json' 
