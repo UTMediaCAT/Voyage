@@ -134,7 +134,6 @@ class Crawler(object):
 
                 return article
         except StopIteration as e:
-            self.cleanup()
             raise e
         except Exception as e:
             raise e
