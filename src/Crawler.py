@@ -101,8 +101,6 @@ class Crawler(object):
                 except Empty:
                     raise StopIteration('to_visit is empty')
 
-                self.visited.add(current_url)
-
                 logging.info(u"visiting {0}".format(current_url))
                 #use newspaper to download and parse the article
                 article = ExplorerArticle(current_url)
@@ -136,6 +134,9 @@ class Crawler(object):
                     # Append the url to to_visit queue
                     self.to_visit.put(url)
                     logging.info(u"added {0} to the to_visit".format(url))
+
+                    # Append the url to visited to remove duplicates
+                    self.visited.add(current_url)
 
                     # Update the Queue
                     self.to_visit.task_done()
