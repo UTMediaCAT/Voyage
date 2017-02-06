@@ -79,7 +79,7 @@ class Crawler(object):
         try:
             while(True):
 
-                if (len(self.visited) > self.limit):
+                if (self.limit <= 0 or len(self.visited) > self.limit):
                     raise StopIteration('Limit reached: {:d}'.format(self.limit))
                 # if(self.pages_visited > self.probabilistic_n):
                 #     raise StopIteration

@@ -35,9 +35,4 @@ pdf:
 log:
     retention_days: 30
 crawler:
-    n: 5000
-    k: 0.6
-    postgresql:
-      user: postgres
-      password: password
-      name: crawler
+    limit: 5000
