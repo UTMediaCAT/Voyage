@@ -28,7 +28,7 @@ class Crawler(object):
 
         # http://alexeyvishnevsky.com/2013/11/tips-on-optimizing-scrapy-for-a-high-performance/
         # fork of pybloom: https://github.com/joseph-fox/python-bloomfilter
-        self.visited = ScalableBloomFilter(
+        self.ignore_filter = ScalableBloomFilter(
             initial_capacity=10000000,
             error_rate=0.00001)
 
@@ -129,8 +129,8 @@ class Crawler(object):
                     if(not parsed_url.netloc.endswith(self.domain)):
                         continue
 
-                    # If the url have been visited in the past, skip
-                    if (url in self.visited):
+                    # If the url have been added to ignore list, skip
+                    if (url in self.ignore_filter):
                         continue
 
                     # Append the url to to_visit queue
@@ -138,12 +138,11 @@ class Crawler(object):
                     logging.info(u"added {0} to the to_visit".format(url))
 
                     # Append the url to visited to remove duplicates
-                    self.visited.add(url)
+                    self.ignore_filter.add(url)
 
                 # Update the Queue
                 self.to_visit.task_done()
 
-                # 
                 self.visited_count += 1
 
                 return article
