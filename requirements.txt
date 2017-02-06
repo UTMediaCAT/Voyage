@@ -16,3 +16,4 @@ django-easy-select2==1.2.5
 django-braces==1.4.0
 simplejson==3.6.5
 pybloom_live==2.2.0
+pqueue==0.1.6

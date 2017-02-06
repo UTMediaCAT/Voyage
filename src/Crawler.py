@@ -6,8 +6,11 @@ import logging
 from ExplorerArticle import ExplorerArticle
 import urlnorm
 import psycopg2
+
 from pybloom_live import ScalableBloomFilter
-from collections import deque
+from pqueue import Queue
+from Queue import Empty
+from django.utils.text import slugify
 
 '''
 An iterator class for iterating over articles in a given site
@@ -28,10 +31,12 @@ class Crawler(object):
         self.visited = ScalableBloomFilter(
             initial_capacity=10000000,
             error_rate=0.00001)
-        self.to_visit = deque()
+
+
+        self.to_visit = Queue('../tmpqueue/{}'.format(slugify(unicode(site.name))))
 
         # Initial url
-        self.to_visit.append(site.url)
+        self.to_visit.put(site.url)
 
         # Limit
         self.limit = common.get_config()["crawler"]["limit"]
@@ -92,8 +97,8 @@ class Crawler(object):
                 #     continue
 
                 try:
-                    current_url = self.to_visit.pop()
-                except IndexError:
+                    current_url = self.to_visit.get_nowait()
+                except Empty:
                     raise StopIteration('to_visit is empty')
 
                 self.visited.add(current_url)
@@ -129,8 +134,11 @@ class Crawler(object):
                         continue
 
                     # Append the url to to_visit queue
-                    self.to_visit.append(url)
+                    self.to_visit.put(url)
                     logging.info(u"added {0} to the to_visit".format(url))
+
+                    # Update the Queue
+                    self.to_visit.task_done()
 
                 return article
         except StopIteration as e:
