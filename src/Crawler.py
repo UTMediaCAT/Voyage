@@ -32,6 +32,8 @@ class Crawler(object):
             initial_capacity=10000000,
             error_rate=0.00001)
 
+        self.visited_count = 0
+
 
         self.to_visit = Queue('../tmpqueue/{}'.format(slugify(unicode(site.name))))
 
@@ -79,7 +81,7 @@ class Crawler(object):
         try:
             while(True):
 
-                if (self.limit <= 0 or len(self.visited) > self.limit):
+                if (self.limit > 0 and self.visited_count > self.limit):
                     raise StopIteration('Limit reached: {:d}'.format(self.limit))
                 # if(self.pages_visited > self.probabilistic_n):
                 #     raise StopIteration
@@ -140,6 +142,9 @@ class Crawler(object):
 
                 # Update the Queue
                 self.to_visit.task_done()
+
+                # 
+                self.visited_count += 1
 
                 return article
         except StopIteration as e:
