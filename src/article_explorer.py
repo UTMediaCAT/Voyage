@@ -163,7 +163,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
         logging.info("populated {0} articles using newspaper".format(article_count))
     if(site.mode == 1 or site.mode == 2):
         crawlersource_articles = Crawler.Crawler(site)
-        logging.debug("expecting {0} from plan b crawler".format(crawlersource_articles.probabilistic_n))
+        logging.debug("Starting MediaCAT crawler with limit: {} from plan b crawler".format(crawlersource_articles.limit))
     article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles).__iter__()
     processed = 0
     filters = set(site.referringsitefilter_set.all())
