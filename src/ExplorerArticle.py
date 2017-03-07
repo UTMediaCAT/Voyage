@@ -9,6 +9,10 @@ import collections
 import urlnorm
 from urlparse import urlparse, urljoin, urlunparse
 
+# For absolute download timeout
+import eventlet
+eventlet.monkey_patch()
+
 Link = collections.namedtuple("Link", ["href", "text"])
 
 class ExplorerArticle(object):#derive from object for getters/setters
@@ -35,7 +39,8 @@ class ExplorerArticle(object):#derive from object for getters/setters
 
         try:
             html = None
-            response = requests.get(url=self.url, timeout=60)#TODO: add back get_request_kwargs functionality present in newspaper impl
+            with eventlet.Timeout(60):
+                response = requests.get(url=self.url, timeout=60)#TODO: add back get_request_kwargs functionality present in newspaper impl
             if(response.status_code >= 400):
                 logging.warn(u"encountered status code {0} while getting {1}".format(response.status_code, self.url))
                 return False
@@ -68,6 +73,9 @@ class ExplorerArticle(object):#derive from object for getters/setters
             self.is_downloaded = True
         except Exception as e:
             logging.warn('%s on %s' % (e, self.url))
+            return False
+        except eventlet.Timeout as t:
+            logging.warn('Timeout on %s' % (self.url))
             return False
         return True
 
