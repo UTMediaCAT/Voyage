@@ -11,7 +11,7 @@ from urlparse import urlparse, urljoin, urlunparse
 
 # For absolute download timeout
 import eventlet
-eventlet.monkey_patch()
+eventlet.monkey_patch(socket=True)
 
 Link = collections.namedtuple("Link", ["href", "text"])
 
