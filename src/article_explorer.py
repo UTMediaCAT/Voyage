@@ -100,7 +100,7 @@ def parse_articles(referring_sites, db_keywords, source_sites_and_aliases, twitt
 
         connection.close()
         # Initialize multiprocessing by having cpu*2 workers
-        pool = Pool(processes=cpu_count()*2, maxtasksperchild=1, initializer=init_worker)
+        pool = Pool(processes=len(referring_sites), maxtasksperchild=1, initializer=init_worker)
 
         # Use this instead of ^ when using multiprocessing.dummy
         # pool = Pool(processes=cpu_count()*4)
