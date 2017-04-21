@@ -1,3 +1,6 @@
+"""
+This module is not being used anymore because of inappropriate way of handleing cache.
+"""
 __author__ = 'wangx173'
 
 import analyzer
