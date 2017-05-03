@@ -34,8 +34,9 @@ class Crawler(object):
 
         self.visited_count = 0
 
-
-        self.to_visit = Queue('../tmpqueue/{}'.format(slugify(unicode(site.name))))
+        slugified_name = slugify(unicode(site.name))
+        self.to_visit = Queue('../tmpqueue/{}'.format(slugified_name),
+                   tempdir='../tmpqueue/tmp/')
 
         # Initial url
         self.to_visit.put(site.url)
@@ -172,3 +173,4 @@ class Crawler(object):
     #     if(self.cursor):
     #         self.cursor.close()
     #         self.cursor = None
+

@@ -39,8 +39,8 @@ class ExplorerArticle(object):#derive from object for getters/setters
 
         try:
             html = None
-            with eventlet.Timeout(60):
-                response = requests.get(url=self.url, timeout=60)#TODO: add back get_request_kwargs functionality present in newspaper impl
+            with eventlet.Timeout(15):
+                response = requests.get(url=self.url, timeout=15)#TODO: add back get_request_kwargs functionality present in newspaper impl
             if(response.status_code >= 400):
                 logging.warn(u"encountered status code {0} while getting {1}".format(response.status_code, self.url))
                 return False
