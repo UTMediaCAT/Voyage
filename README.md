@@ -10,10 +10,10 @@ Voyage currently has 2 components:
 
 ## Requirements
 Before installation, verify you meet the following requirements
-<!---
-##### [Python 2.7.10+](https://www.python.org/downloads/release/python-2710/)
-The required version should be installed on Debian Jessie (and up), as well as Ubuntu 16.04 LTS (and up). You can check your current version by `python --version`
--->
+
+##### [Python 2.7.9+](https://www.python.org/downloads/release/python-279/)
+The required version should be installed on Debian Jessie (and up), as well as Ubuntu 14.04 LTS (and up).
+You can check your current version by `python --version`
 
 ##### [Wget 1.14+](http://www.gnu.org/software/wget/)
 You can check your current version by `wget --version`
@@ -45,7 +45,7 @@ sudo -i
 ```
 apt-get update && apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev libjpeg-dev python3-pip phantomjs postgresql postgresql-contrib libpq-dev
 ```
-PhantomJS should be available on Ubuntu. If it's not available in your distribution, you may install it manually by downloading the [prebuilt version](http://phantomjs.org/download.html) and extracting the contents of bin `/usr/local/bin`.
+PhantomJS should be available on Ubuntu. If it's not available in your distribution, you may install it manually by downloading the [prebuilt version](http://phantomjs.org/download.html) and copying the executable in bin folder to your `/usr/bin`.
 
 * Clone the repo
 
