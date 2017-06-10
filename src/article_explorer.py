@@ -409,7 +409,7 @@ def url_in_filter(url, filters):
 
 
 def get_sources_sites(article, sites):
-    """ (str, list of str) -> list of [str, str]
+    """ (str, list of str) -> list of two lists of [str, str, str]
     Searches and returns links redirected to sites within the html
     links will be storing the whole url and the domain name used for searching.
     Returns empty list if none found
@@ -482,7 +482,7 @@ def get_keywords(article, keywords):
 
     # For each keyword, check if article's text contains it
     for key in keywords:
-        regex = re.compile('[^a-z]' + key + '[^a-z]', re.IGNORECASE)
+        regex = re.compile('(?:^|[^a-z])' + key + '(?:[^a-z]|$)', re.IGNORECASE)
         if regex.search(article.title) or regex.search(article.get_text(strip_html=True)):
             # If the article's text contains the key, append it to the list
             matched_keywords.append(key)
