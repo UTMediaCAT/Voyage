@@ -19,48 +19,13 @@ You can check your current version by `python --version`
 You can check your current version by `wget --version`
 
 ## Installation
-#### Option 1: Default Install
 * Clone the repo
 * Go to the main folder
-* Run DefaultInstall script
-```
-sudo ./DefaultInstall.sh
-```
-
-###### ValueError: A 0.7-series setuptools cannot be installed with distribute:
-If that occurs you'll need to remove setuptools from pythons distribution packages, and continue. This can be done by running the following:
-```
-rm -rf /usr/local/lib/python2.7/dist-packages/setuptools*
-sudo pip install setuptools
-sudo ./DefaultInstall.sh
-```
-
-#### Option 2: Custom Install
-You can modify the steps below based on your own development enviroment.
-* To swtich the root user:
-```
-sudo -i
-```
-* Install apt dependencies:
-```
-apt-get update && apt-get install -y python-pip python-dev libxml2-dev libxslt1-dev zlib1g-dev libjpeg-dev python3-pip phantomjs postgresql postgresql-contrib libpq-dev
-```
-PhantomJS should be available on Ubuntu. If it's not available in your distribution, you may install it manually by downloading the [prebuilt version](http://phantomjs.org/download.html) and copying the executable in bin folder to your `/usr/bin`.
-
-* Clone the repo
-
-* Install python dependencies:
-
-from the root of the repo:
-```
-pip install -r requirements.txt
-pip3 install wpull
-```
-
 * Run the install script:
 ```
 ./InstallScript.sh
 ```
+
 ## Set Up Database
 #### Log into admin account
 In order to use Postgres, we'll need to log into that account. You can do that by typing:
