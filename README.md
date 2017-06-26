@@ -23,7 +23,8 @@ You can check your current version by `wget --version`
 * Go to the main folder
 * Run the install script:
 ```
-./InstallScript.sh
+sudo -i
+sudo ./InstallScript.sh
 ```
 
 ## Set Up Database
