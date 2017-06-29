@@ -126,9 +126,9 @@ SUIT_CONFIG = {
 
         {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
 
-        {'label': 'Statistics', 'icon':'icon-signal', 'url': '/admin/statistics'},
+        {'label': 'Statistics', 'icon':'icon-signal', 'url': '/statistics/'},
 
-        {'label': 'Visualizations', 'icon':'icon-fullscreen', 'url':'/admin/visualizations'},
+        {'label': 'Visualizations', 'icon':'icon-fullscreen', 'url':'/visualizations/'},
 
         {'label': 'Authorization', 'icon':'icon-lock', 'models': ('auth.user', 'auth.group')},
     )
