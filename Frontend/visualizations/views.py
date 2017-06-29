@@ -6,148 +6,150 @@ from explorer.models import *
 import sys, os
 import json
 
-path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '../../', 'src'))
-sys.path.append(path)
-import visualizer
-
-def article_hypertree(request):
+def not_available(request):
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)
 
-    data = []
-    context = {'data': data}
-    return render(request, 'visualizations/article_hypertree.html', context)
+    return render(request, 'visualizations/notAvailable.html')
 
-def article_hypertree_js(request):
-    data = visualizer.article_hypertree()
+# def article_hypertree(request):
+#     if not request.user.is_authenticated():
+#         return redirect('/admin/login/?next=%s' % request.path)
 
-    data = json.dumps(data)
-    context = {'data': data}
-    return render(request, 'visualizations/article_hypertree_js.html', context)
+#     data = []
+#     context = {'data': data}
+#     return render(request, 'visualizations/article_hypertree.html', context)
 
-def article_spacetree(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
+# def article_hypertree_js(request):
+#     data = visualizer.article_hypertree()
 
-    data = []
-    context = {'data': data}
-    return render(request, 'visualizations/article_spacetree.html', context)
+#     data = json.dumps(data)
+#     context = {'data': data}
+#     return render(request, 'visualizations/article_hypertree_js.html', context)
 
-def article_spacetree_js(request):
-    if request.method == 'POST':
-        data, referringSites = visualizer.article_spacetree(request.POST.get('referringSite'))
-    else:
-        data, referringSites = visualizer.article_spacetree(None)
+# def article_spacetree(request):
+#     if not request.user.is_authenticated():
+#         return redirect('/admin/login/?next=%s' % request.path)
 
-    data = json.dumps(data)
+#     data = []
+#     context = {'data': data}
+#     return render(request, 'visualizations/article_spacetree.html', context)
 
-    context = {'data': data, 'referringSites': referringSites}
-    return render(request, 'visualizations/article_spacetree_js.html', context)
+# def article_spacetree_js(request):
+#     if request.method == 'POST':
+#         data, referringSites = visualizer.article_spacetree(request.POST.get('referringSite'))
+#     else:
+#         data, referringSites = visualizer.article_spacetree(None)
 
-def article_weightedtree(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
+#     data = json.dumps(data)
 
-    data = []
-    context = {'data': data}
-    return render(request, 'visualizations/article_weightedtree.html', context)
+#     context = {'data': data, 'referringSites': referringSites}
+#     return render(request, 'visualizations/article_spacetree_js.html', context)
 
-def article_weightedtree_js(request):
-    if request.method == 'POST':
-        data, referringSites = visualizer.article_weightedtree(request.POST.get('referringSite'))
-    else:
-        data, referringSites = visualizer.article_weightedtree(None)
-    data = json.dumps(data)
+# def article_weightedtree(request):
+#     if not request.user.is_authenticated():
+#         return redirect('/admin/login/?next=%s' % request.path)
 
-    context = {'data': data, 'referringSites': referringSites}
-    return render(request, 'visualizations/article_weightedtree_js.html', context)
+#     data = []
+#     context = {'data': data}
+#     return render(request, 'visualizations/article_weightedtree.html', context)
 
-def article_forcegraph(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
+# def article_weightedtree_js(request):
+#     if request.method == 'POST':
+#         data, referringSites = visualizer.article_weightedtree(request.POST.get('referringSite'))
+#     else:
+#         data, referringSites = visualizer.article_weightedtree(None)
+#     data = json.dumps(data)
 
-    data = []
-    context = {'data': data}
-    return render(request, 'visualizations/article_forcegraph.html', context)
+#     context = {'data': data, 'referringSites': referringSites}
+#     return render(request, 'visualizations/article_weightedtree_js.html', context)
 
-def article_forcegraph_js(request):
-    if request.method == 'POST':
-        data, referringSites = visualizer.article_forcegraph(request.POST.get('referringSite'))
-    else:
-        data, referringSites = visualizer.article_forcegraph(None)
-    data = json.dumps(data)
+# def article_forcegraph(request):
+#     if not request.user.is_authenticated():
+#         return redirect('/admin/login/?next=%s' % request.path)
 
-    context = {'data': data, 'referringSites': referringSites}
+#     data = []
+#     context = {'data': data}
+#     return render(request, 'visualizations/article_forcegraph.html', context)
 
-    return render(request, 'visualizations/article_forcegraph_js.html', context)
+# def article_forcegraph_js(request):
+#     if request.method == 'POST':
+#         data, referringSites = visualizer.article_forcegraph(request.POST.get('referringSite'))
+#     else:
+#         data, referringSites = visualizer.article_forcegraph(None)
+#     data = json.dumps(data)
 
-def tweet_hypertree(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
+#     context = {'data': data, 'referringSites': referringSites}
 
-    data = []
-    context = {'data': data}
-    return render(request, 'visualizations/tweet_hypertree.html', context)
+#     return render(request, 'visualizations/article_forcegraph_js.html', context)
 
-def tweet_hypertree_js(request):
-    data = visualizer.tweet_hypertree()
-    data = json.dumps(data)
-    context = {'data': data}
-    return render(request, 'visualizations/tweet_hypertree_js.html', context)
+# def tweet_hypertree(request):
+#     if not request.user.is_authenticated():
+#         return redirect('/admin/login/?next=%s' % request.path)
 
-def tweet_spacetree(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
+#     data = []
+#     context = {'data': data}
+#     return render(request, 'visualizations/tweet_hypertree.html', context)
 
-    data = []
-    context = {'data': data}
-    return render(request, 'visualizations/tweet_spacetree.html', context)
+# def tweet_hypertree_js(request):
+#     data = visualizer.tweet_hypertree()
+#     data = json.dumps(data)
+#     context = {'data': data}
+#     return render(request, 'visualizations/tweet_hypertree_js.html', context)
 
-def tweet_spacetree_js(request):
-    if request.method == 'POST':
-        data, taccounts = visualizer.tweet_spacetree(request.POST.get('taccount'))
-    else:
-        data, taccounts = visualizer.tweet_spacetree(None)
+# def tweet_spacetree(request):
+#     if not request.user.is_authenticated():
+#         return redirect('/admin/login/?next=%s' % request.path)
 
-    data = json.dumps(data)
+#     data = []
+#     context = {'data': data}
+#     return render(request, 'visualizations/tweet_spacetree.html', context)
 
-    context = {'data': data, 'taccounts': taccounts}
-    return render(request, 'visualizations/tweet_spacetree_js.html', context)
+# def tweet_spacetree_js(request):
+#     if request.method == 'POST':
+#         data, taccounts = visualizer.tweet_spacetree(request.POST.get('taccount'))
+#     else:
+#         data, taccounts = visualizer.tweet_spacetree(None)
 
-def tweet_weightedtree(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
+#     data = json.dumps(data)
 
-    data = []
-    context = {'data': data}
-    return render(request, 'visualizations/tweet_weightedtree.html', context)
+#     context = {'data': data, 'taccounts': taccounts}
+#     return render(request, 'visualizations/tweet_spacetree_js.html', context)
 
-def tweet_weightedtree_js(request):
-    if request.method == 'POST':
-        data, taccounts = visualizer.tweet_weightedtree(request.POST.get('taccount'))
-    else:
-        data, taccounts = visualizer.tweet_weightedtree(None)
+# def tweet_weightedtree(request):
+#     if not request.user.is_authenticated():
+#         return redirect('/admin/login/?next=%s' % request.path)
 
-    data = json.dumps(data)
+#     data = []
+#     context = {'data': data}
+#     return render(request, 'visualizations/tweet_weightedtree.html', context)
 
-    context = {'data': data, 'taccounts': taccounts}
-    return render(request, 'visualizations/tweet_weightedtree_js.html', context)
+# def tweet_weightedtree_js(request):
+#     if request.method == 'POST':
+#         data, taccounts = visualizer.tweet_weightedtree(request.POST.get('taccount'))
+#     else:
+#         data, taccounts = visualizer.tweet_weightedtree(None)
 
-def tweet_forcegraph(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
+#     data = json.dumps(data)
 
-    data = []
-    context = {'data': data}
-    return render(request, 'visualizations/tweet_forcegraph.html', context)
+#     context = {'data': data, 'taccounts': taccounts}
+#     return render(request, 'visualizations/tweet_weightedtree_js.html', context)
 
-def tweet_forcegraph_js(request):
-    if request.method == 'POST':
-        data, taccounts = visualizer.tweet_forcegraph(request.POST.get('taccount'))
-    else:
-        data, taccounts = visualizer.tweet_forcegraph(None)
+# def tweet_forcegraph(request):
+#     if not request.user.is_authenticated():
+#         return redirect('/admin/login/?next=%s' % request.path)
 
-    data = json.dumps(data)
+#     data = []
+#     context = {'data': data}
+#     return render(request, 'visualizations/tweet_forcegraph.html', context)
 
-    context = {'data': data, 'taccounts': taccounts}
-    return render(request, 'visualizations/tweet_forcegraph_js.html', context)
+# def tweet_forcegraph_js(request):
+#     if request.method == 'POST':
+#         data, taccounts = visualizer.tweet_forcegraph(request.POST.get('taccount'))
+#     else:
+#         data, taccounts = visualizer.tweet_forcegraph(None)
+
+#     data = json.dumps(data)
+
+#     context = {'data': data, 'taccounts': taccounts}
+#     return render(request, 'visualizations/tweet_forcegraph_js.html', context)
