@@ -119,28 +119,16 @@ SUIT_CONFIG = {
     'SEARCH_URL': '/admin/articles/article/',
 
     'MENU': (
-        {'label': 'Scope', 'icon':'icon-screenshot', 
+        {'label': 'Scope', 'icon':'icon-screenshot',
          'models': ('explorer.referringsite', 'explorer.referringtwitter', 'explorer.sourcesite', 'explorer.sourcetwitter', 'explorer.keyword')},
-        
+
         {'label': 'Data', 'icon':'icon-book', 'models': ('articles.article', 'tweets.tweet',  'articles.sourcesite' )},
 
         {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
 
-        {'label': 'Statistics', 'icon':'icon-signal', 'models': (
-            {'label': 'Articles', 'url': '/statistics/articles'},
-            {'label': 'Tweets', 'url': '/statistics/tweets'},
-        )},
+        {'label': 'Coming Soon - Statistics', 'icon':'icon-signal'},
 
-        {'label': 'Visualizations', 'icon':'icon-fullscreen', 'models': (
-            {'label': 'Article - Source Site', 'url': '/visualizations/article_hypertree'},
-            {'label': 'Article - Keyword', 'url': '/visualizations/article_spacetree'},
-            {'label': 'Article - Weighted', 'url': '/visualizations/article_weightedtree'},
-            {'label': 'Article - Movable', 'url': '/visualizations/article_forcegraph'},
-            {'label': 'Tweet - Source Site', 'url': '/visualizations/tweet_hypertree'},
-            {'label': 'Tweet - Keyword', 'url': '/visualizations/tweet_spacetree'},
-            {'label': 'Tweet - Weighted', 'url': '/visualizations/tweet_weightedtree'},
-            {'label': 'Tweet - Movable', 'url': '/visualizations/tweet_forcegraph'},
-        )},
+        {'label': 'Coming Soon - Visualization', 'icon':'icon-fullscreen'},
 
         {'label': 'Authorization', 'icon':'icon-lock', 'models': ('auth.user', 'auth.group')},
     )
