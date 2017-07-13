@@ -100,7 +100,7 @@ def parse_articles(referring_sites, db_keywords, source_sites_and_aliases, twitt
 
         connection.close()
         # Initialize multiprocessing by having cpu*2 workers
-        pool = Pool(processes=cpu_count()*2, maxtasksperchild=1, initializer=init_worker)
+        pool = Pool(processes=len(referring_sites), maxtasksperchild=1, initializer=init_worker)
 
         # Use this instead of ^ when using multiprocessing.dummy
         # pool = Pool(processes=cpu_count()*4)
@@ -162,10 +162,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
         article_count += newspaper_source.size()
         logging.info("populated {0} articles using newspaper".format(article_count))
     if(site.mode == 1 or site.mode == 2):
-        pass
-        # crawlersource_articles = Crawler.Crawler(site)
-        # article_count += crawlersource_articles.probabilistic_n
-        # logging.debug("expecting {0} from plan b crawler".format(crawlersource_articles.probabilistic_n))
+        crawlersource_articles = Crawler.Crawler(site)
+        logging.debug("Starting MediaCAT crawler with limit: {} from plan b crawler".format(crawlersource_articles.limit))
     article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles).__iter__()
     processed = 0
     filters = set(site.referringsitefilter_set.all())
