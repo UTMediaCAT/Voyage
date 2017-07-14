@@ -67,15 +67,3 @@
 .empty-form {
 	display: none;
 }
-
-.query-operator {
-	width: 175px;
-}
-
-.query-field {
-	width: 175px;
-}
-
-.query-value {
-	width: 175px;
-}

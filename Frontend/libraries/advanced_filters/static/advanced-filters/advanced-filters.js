@@ -19,7 +19,7 @@ var OperatorHandlers = function($) {
 		$to.attr("id", "id_form-" + form_num + "-value_to");
 		$to.attr("placeholder", gettext('End date'));
 		$to.addClass('query-dt-to');
-	
+
 		self.val_input.parent().prepend($to);
 		self.val_input.parent().prepend($from);
 		var val = self.val_input.val();
@@ -34,14 +34,19 @@ var OperatorHandlers = function($) {
 		}
 		self.val_input.css({display: 'none'});
 
+		$(".hasDatepicker").datepicker("destroy");
 		$from.addClass('vDateField');
 		$to.addClass('vDateField');
+		grappelli.initDateAndTimePicker();
 	};
 
 	self.remove_datepickers = function() {
 		self.val_input.css({display: 'block'});
 		if (self.val_input.parent().find('input.vDateField').length > 0) {
 			var datefields = self.val_input.parent().find('input.vDateField');
+			datefields.each(function() {
+				$(this).datepicker("destroy");
+			});
 			datefields.remove();
 		}
 	};
