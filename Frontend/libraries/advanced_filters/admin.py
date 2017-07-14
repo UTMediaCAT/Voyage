@@ -112,8 +112,7 @@ class AdvancedFilterAdmin(admin.ModelAdmin):
     form = AdvancedFilterForm
     extra = 0
 
-    list_display = ('title', 'created_by', )
-    readonly_fields = ('created_by', 'model', )
+    list_display = ('title')
 
     def has_add_permission(self, obj=None):
         return False

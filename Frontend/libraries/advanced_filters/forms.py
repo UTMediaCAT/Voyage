@@ -73,9 +73,9 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
     value = VaryingTypeCharField(required=True, widget=forms.TextInput(
         attrs={'class': 'query-value'}))
     value_from = forms.DateTimeField(widget=forms.HiddenInput(
-        attrs={'class': 'query-dt-from'}), required=False)
+        attrs={'type':'date', 'class': 'query-dt-from'}), required=False)
     value_to = forms.DateTimeField(widget=forms.HiddenInput(
-        attrs={'class': 'query-dt-to'}), required=False)
+        attrs={'type':'date', 'class': 'query-dt-to'}), required=False)
     negate = forms.BooleanField(initial=False, required=False)
 
     def _build_field_choices(self, fields):

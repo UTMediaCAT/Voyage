@@ -9,12 +9,13 @@ var OperatorHandlers = function($) {
 		var form_id = self.val_input.parents('tr').attr('id');
 		var form_num = parseInt(form_id.replace('form-', ''), 10);
 
-		var $from = $('<input type="text">');
+		var $from = $('<input type="date">');
 		$from.attr("name", "form-" + form_num + "-value_from");
 		$from.attr("id", "id_form-" + form_num + "-value_from");
 		$from.attr("placeholder", gettext('Start date'));
 		$from.addClass('query-dt-from');
-		var $to = $('<input type="text">');
+		
+		var $to = $('<input type="date">');
 		$to.attr("name", "form-" + form_num + "-value_to");
 		$to.attr("id", "id_form-" + form_num + "-value_to");
 		$to.attr("placeholder", gettext('End date'));
@@ -34,19 +35,14 @@ var OperatorHandlers = function($) {
 		}
 		self.val_input.css({display: 'none'});
 
-		$(".hasDatepicker").datepicker("destroy");
 		$from.addClass('vDateField');
 		$to.addClass('vDateField');
-		grappelli.initDateAndTimePicker();
 	};
 
 	self.remove_datepickers = function() {
 		self.val_input.css({display: 'block'});
 		if (self.val_input.parent().find('input.vDateField').length > 0) {
 			var datefields = self.val_input.parent().find('input.vDateField');
-			datefields.each(function() {
-				$(this).datepicker("destroy");
-			});
 			datefields.remove();
 		}
 	};
