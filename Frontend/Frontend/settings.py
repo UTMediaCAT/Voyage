@@ -126,21 +126,9 @@ SUIT_CONFIG = {
 
         {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
 
-        {'label': 'Statistics', 'icon':'icon-signal', 'models': (
-            {'label': 'Articles', 'url': '/statistics/articles'},
-            {'label': 'Tweets', 'url': '/statistics/tweets'},
-        )},
+        {'label': 'Statistics', 'icon':'icon-signal', 'url': '/statistics/'},
 
-        {'label': 'Visualizations', 'icon':'icon-fullscreen', 'models': (
-            {'label': 'Article - Source Site', 'url': '/visualizations/article_hypertree'},
-            {'label': 'Article - Keyword', 'url': '/visualizations/article_spacetree'},
-            {'label': 'Article - Weighted', 'url': '/visualizations/article_weightedtree'},
-            {'label': 'Article - Movable', 'url': '/visualizations/article_forcegraph'},
-            {'label': 'Tweet - Source Site', 'url': '/visualizations/tweet_hypertree'},
-            {'label': 'Tweet - Keyword', 'url': '/visualizations/tweet_spacetree'},
-            {'label': 'Tweet - Weighted', 'url': '/visualizations/tweet_weightedtree'},
-            {'label': 'Tweet - Movable', 'url': '/visualizations/tweet_forcegraph'},
-        )},
+        {'label': 'Visualizations', 'icon':'icon-fullscreen', 'url':'/visualizations/'},
 
         {'label': 'Authorization', 'icon':'icon-lock', 'models': ('auth.user', 'auth.group')},
     )

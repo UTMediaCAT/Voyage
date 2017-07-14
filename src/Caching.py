@@ -5,7 +5,6 @@ __author__ = 'wangx173'
 
 import analyzer
 import json
-import visualizer
 
 def byteify(input):
     if isinstance(input, dict):
