@@ -112,7 +112,7 @@ class AdvancedFilterAdmin(admin.ModelAdmin):
     form = AdvancedFilterForm
     extra = 0
 
-    list_display = ('title')
+    list_display = ('title',)
 
     def has_add_permission(self, obj=None):
         return False
