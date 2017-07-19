@@ -1,5 +1,4 @@
 {% extends "admin/base.html" %}
-{% load explorer_tags %}
 
 {% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
@@ -15,51 +14,6 @@
 {# Additional header content like notifications or language switcher #}
 {% block header_content %}
     {{ block.super }}
-    <div class="header-content" align="center">
-        <!-- First icon column -->
-        <div class="header-column icon">
-            <i class="icon-refresh"></i>
-        </div>
-
-        <form method="post" action="{{ request.get_full_path }}">
-            {% csrf_token %}
-            <input type="submit" value="Refresh">
-        </form>
-    </div>
-    <div class="header-content" align="center">
-        <!-- First icon column -->
-        <div class="header-column icon">
-            <i class="icon-globe"></i>
-        </div>
-
-        <div class="header-column" style="margin-right: 20px">
-            {% get_article_run_status %}
-        </div>
-
-        <form method="post" action="/explorer/">
-            {% csrf_token %}
-            <input type="submit" value="Run" name="acommand">
-            <input type="submit" value="Pause" name="acommand">
-            <input type="submit" value="{% stop_button_article_explorer %}" name="acommand">
-        </form>
-    </div>
-    <div class="header-content" align="center">
-        <!-- First icon column -->
-        <div class="header-column icon">
-            <i class="icon-plane"></i>
-        </div>
-
-        <div class="header-column" style="margin-right: 20px">
-            {% get_twitter_run_status %}
-        </div>
-
-        <form method="post" action="/explorer/">
-            {% csrf_token %}
-            <input type="submit" value="Run" name="tcommand">
-            <input type="submit" value="Pause" name="tcommand">
-            <input type="submit" value="{% stop_button_twitter_explorer %}" name="tcommand">
-        </form>
-    </div>
 {% endblock %}
 
 
