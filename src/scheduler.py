@@ -19,7 +19,6 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 django.setup()
 import schedule
 import time
-import Caching
 import subprocess
 
 
@@ -40,9 +39,6 @@ def  setup():
     '''
     Configure schedule
     '''
-    # cache article and tweet data in every 10mins
-    schedule.every(10).minutes.do(Caching.setArticleCachedData)
-    schedule.every(10).minutes.do(Caching.setTweetCachedData)
     # backup data base everyday
     schedule.every(1).days.do(backup_db_add)
     schedule.every(1).days.do(backup_db_remove)
