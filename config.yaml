@@ -18,7 +18,6 @@ storage:
     date_format: _%Y-%m-%dT%H:%M #leave _ at the start
     # "%Y-%m-%dT%H:%M"  - Universal date format for consistency
 communication:
-    comm_file: _comm.stream
     retry_count: 10
     retry_delta: 1
     sleep_time: 5

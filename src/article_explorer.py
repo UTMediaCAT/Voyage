@@ -114,8 +114,6 @@ def parse_articles(referring_sites, db_keywords, source_sites_and_aliases, twitt
         # Continue until all sites are done crawling
         while (not result.ready()):
             try:
-                # Check for any new command on communication stream
-                check_command()
                 time.sleep(5)
             except (KeyboardInterrupt, SystemExit) as e:
                 logging.warning("%s detected, exiting"%str(e))
@@ -206,7 +204,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                     continue
 
             logging.debug("Article Parsed")
-            
+
             logging.debug(u"Title: {0}".format(repr(article.title)))
             if not article.title:
                 logging.info("article missing title, skipping")
@@ -397,7 +395,7 @@ def hash_sha256(text):
 def url_in_filter(url, filters):
     """
     Checks if any of the filters matches the url.
-    Filters can be in regex search or normal string comparison.    
+    Filters can be in regex search or normal string comparison.
     """
     for filt in filters:
         if ((filt.regex and re.search(filt.pattern, url, re.IGNORECASE)) or
@@ -527,99 +525,6 @@ def explore():
     # Parse the articles in all sites
     parse_articles(referring_sites, keyword_list, source_sites_and_aliases, source_twitter_list)
 
-def comm_write(text):
-    """ (Str) -> None
-    Writes a command to the comm_file of article.
-    The file is used to communicate with the running explorer process,
-    to change the status safely.
-
-    Keyword arguments:
-    text         -- String of command
-    """
-    # Load the relevant configs
-    conf = common.get_config()['communication']
-
-    # Wait for retry_count * retry_delta seconds
-    for k in range(conf['retry_count']):
-        try:
-            comm = open('article' + conf['comm_file'], 'w')
-            comm.write(text)
-            comm.close()
-            return None
-        except (KeyboardInterrupt, SystemExit):
-            raise
-        except:
-            time.sleep(conf['retry_delta'])
-
-
-def comm_read():
-    """ (None) -> Str
-    Reads the current status or command listed on the comm_file with the
-    article, then returns the output.
-    """
-    # Load the relevant configs
-    conf = common.get_config()['communication']
-
-    # Wait for retry_count * retry_delta seconds
-    for k in range(conf['retry_count']):
-        try:
-            comm = open('article' + conf['comm_file'], 'r')
-            msg = comm.read()
-            comm.close()
-            return msg
-        except (KeyboardInterrupt, SystemExit):
-            raise
-        except:
-            time.sleep(conf['retry_delta'])
-
-
-def comm_init():
-    """ (None) -> None
-    Initialize The communication file
-    """
-    logging.debug("Initializing Communication Stream")
-    pid = os.getpid()
-    # Set the current status as Running
-    logging.debug("Comm Status: RR %s" % pid)
-    comm_write('RR %s' % pid)
-
-
-def check_command():
-    """ (None) -> None
-    Check the communication file for any commands given.
-    Execute according to the commands.
-    """
-    # Load the relevant configs
-    logging.debug("Checking for any new command on communication stream")
-    conf = common.get_config()['communication']
-    msg = comm_read()
-
-    # Let the output print back to normal for printing status
-    sys.stdout = sys.__stdout__
-    sys.stderr = sys.__stderr__
-
-    if msg[0] == 'W':
-        command = msg[1]
-        if command == 'S':
-            print('Stopping Explorer...')
-            logging.info("Stop command detected, Stopping.")
-            comm_write('SS %s' % os.getpid())
-            sys.exit(0)
-        elif command == 'P':
-            print('Pausing ...')
-            logging.info("Pause command detected, Pausing.")
-            comm_write('PP %s' % os.getpid())
-            while comm_read()[1] == 'P':
-                logging.info('Waiting %i seconds ...' % conf['sleep_time'])
-                print('Waiting %i seconds ...' % conf['sleep_time'])
-                time.sleep(conf['sleep_time'])
-                check_command()
-        elif command == 'R':
-            print('Resuming ...')
-            logging.info('Resuming.')
-            comm_write('RR %s' % os.getpid())
-
-
 def setup_logging(site_name="", increment=True):
     # Load the relevant configs
     config = common.get_config()
@@ -628,7 +533,7 @@ def setup_logging(site_name="", increment=True):
     current_time = datetime.datetime.now().strftime('%Y%m%d')
     log_dir = config['projectdir']+"/log"
     prefix = log_dir + "/" + site_name + "article_explorer-"
-    
+
     try:
         cycle_number = sorted(glob.glob(prefix + current_time + "*.log"))[-1][-7:-4]
         if increment:
@@ -666,13 +571,6 @@ if __name__ == '__main__':
     django.setup()
     logging.debug("Connected to django/database")
 
-    # Initialize Communication Stream
-
-    comm_init()
-
-    # Check for any new command on communication stream
-    check_command()
-
     start = timeit.default_timer()
 
     # The main function, to explore the articles
@@ -682,10 +580,9 @@ if __name__ == '__main__':
 
     sleep_time = max(config['min_iteration_time']-delta_time, 0)
     logging.warning("Sleeping for %is"%sleep_time)
+
     for i in range(int(sleep_time//5)):
-        time.sleep(5)
-        check_command()
-    check_command()
+            time.sleep(5)
 
     # Re run the program to avoid thread to increase
     logging.info("Starting new cycle")
