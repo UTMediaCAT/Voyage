@@ -6,6 +6,7 @@ import logging
 from ExplorerArticle import ExplorerArticle
 import urlnorm
 import psycopg2
+import os
 
 from pybloom_live import ScalableBloomFilter
 from pqueue import Queue
@@ -34,9 +35,16 @@ class Crawler(object):
 
         self.visited_count = 0
 
+        tmpqueuetmp_dir='../tmpqueue/tmp/'
+        if not os.path.exists(tmpqueuetmp_dir):
+            os.makedirs(tmpqueuetmp_dir)
+
         slugified_name = slugify(unicode(site.name))
-        self.to_visit = Queue('../tmpqueue/{}'.format(slugified_name),
-                   tempdir='../tmpqueue/tmp/')
+        tmpqueue_dir = '../tmpqueue/{}'.format(slugified_name)
+        if not os.path.exists(tmpqueue_dir):
+            os.makedirs(tmpqueue_dir)
+
+        self.to_visit = Queue(tmpqueue_dir, tempdir=tmpqueuetmp_dir)
 
         # Initial url
         self.to_visit.put(site.url)
