@@ -15,9 +15,11 @@ from explorer.models import (
 import sys, os, time, json
 from taggit.models import TaggedItem
 
-from django.core import serializers
+from django.core import serializers, management
+from StringIO import StringIO
 
 import newspaper
+import common
 
 def validate_site(site):
     try:
@@ -46,7 +48,7 @@ def command(request):
 def getJson(request):
     scope = {
         'name': 'mediacat-scope',
-        'version': '0.0.1',
+        'version': common.get_config()['database']['version'],
         'date': time.strftime("%c"),
     }
 
@@ -64,6 +66,15 @@ def getJson(request):
     scope['taggit'] = json.loads(json_serializer.serialize(TaggedItem.objects.all()))
 
     res = HttpResponse(json.dumps(scope, indent=2, sort_keys=True))
+    res['Content-Disposition'] = format('attachment; filename=scope-%s.json' 
+                                        % time.strftime("%Y%m%d-%H%M%S"))
+    return res
+
+def getDump(request):
+    version = common.get_config()['database']['version']
+    out = StringIO()
+    management.call_command('dumpdata', 'explorer', 'taggit', stdout=out)
+    res = HttpResponse(version + '\n' + out.getvalue())
     res['Content-Disposition'] = format('attachment; filename=scope-%s.json' 
                                         % time.strftime("%Y%m%d-%H%M%S"))
     return res

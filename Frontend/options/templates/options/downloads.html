@@ -4,12 +4,41 @@
 
 {% block content %}
   <div>
-    <script src="https://unpkg.com/react@15/dist/react.js"></script>
-    <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
-    <div id="root"></div>
+    <div class="download-container">
+      <h2>Scope</h2>
+      <div class="downloads">
+        <a class="btn btn-success" href="/explorer/getDump">Download JSON</a>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <button class="btn btn-info" type="submit">Upload JSON</button>
+          {% if scope_message %}
+            {{ scope_message }}
+          {% else %}
+            <input type="file" name="scopefile">
+          {% endif %}
+        </form>
+      </div>
+    </div>
+    <div class="download-container">
+      <h2>Articles</h2>
+      <div class="downloads">
+        <a class="btn btn-success" href="/articles/getJson">Download JSON</a>
+      </div>
+    </div>
+    <div class="download-container">
+      <h2>Tweets</h2>
+      <div class="downloads">
+        <a class="btn btn-success" href="/tweets/getJson">Download JSON</a>
+      </div>
+    </div>
     <style>
+
 body {
   background-color: #edeff1;
+}
+
+h2 {
+  margin: 5px;
 }
 
 .download-container {
@@ -17,505 +46,23 @@ body {
   width: 80%;
   margin: auto;
   flex-direction: column;
-  justify-content: flex-around;
   background-color: #f5f5f5;
   padding: 5px 20px 20px;
   margin-top: 20px;
   box-sizing: border-box;
   box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.07);
 }
-.download-container > div {
-  max-width: 500px;
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-around;
+.download-container .downloads a {
+  margin: 5px;
 }
-.download-container > div > a {
-  margin: 5px 0;
+.download-container .downloads button {
+  margin: 5px;
 }
-
-.uploader-container {
-  display: flex;
-  width: 80%;
-  margin: auto;
-  flex-direction: column;
-  justify-content: center;
-  background-color: #f5f5f5;
-  padding: 5px 20px 20px;
-  margin-top: 20px;
-  box-sizing: border-box;
-  box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.07);
-}
-.uploader-container .uploader {
-  display: flex;
-  align-items: center;
-}
-.uploader-container .uploader input {
-  width: 0.1px;
-  height: 0.1px;
-  opacity: 0;
-  overflow: hidden;
-  position: absolute;
-  z-index: -1;
-}
-.uploader-container .uploader label {
-  cursor: pointer;
-  padding: 6px 12px;
-  border-radius: 8px;
-  width: 100px;
-  font-size: 16px;
-  font-weight: 400;
-  text-align: center;
-  margin: 0;
-}
-.uploader-container .uploader .filename {
-  margin-left: 15px;
-  font-weight: bold;
-}
-.uploader-container .uploader .glyphicon {
-  margin-left: 5px;
-}
-.uploader-container .uploader .glyphicon.glyphicon-remove {
-  color: darkred;
-}
-.uploader-container .uploader .glyphicon.glyphicon-ok {
-  color: green;
-}
-
-.list-container {
-  display: flex;
-  width: 80%;
-  margin: auto;
-  flex-direction: column;
-  justify-content: center;
-  padding: 5px 0 20px;
-  margin-top: 20px;
-  border-radius: 5px;
-  box-sizing: border-box;
-}
-.list-container > h3 {
-  padding-left: 20px;
-  padding: 15px 0 15px 10px;
-  margin: 0 0 10px;
-  background-color: #f5f5f5;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
-  box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.07);
-}
-.list-container > div {
-  padding: 0 20px;
-  background-color: #f5f5f5;
-  margin-bottom: 10px;
-  box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.07);
-}
-.list-container > div > .title {
-  margin-bottom: 10px;
-  width: 100%;
-  text-align: center;
-}
-.list-container > div > div:not(.title) {
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.07);
-  border-radius: 4px;
-  background-color: #f6f7f8;
-  overflow: hidden;
-  margin-bottom: 20px;
-}
-.list-container > div > div:not(.title) > .fields {
-  border-bottom: 1px solid #ededed;
-}
-.list-container > div > div:not(.title) > .fields > div {
-  display: flex;
-  flex-flow: row nowrap;
-}
-.list-container > div > div:not(.title) > .fields > div > .title {
-  width: 20%;
-  max-width: 100px;
-  font-weight: bold;
-  background-color: white;
-  padding: 10px 0 10px 10px;
-  border-bottom: 1px solid #ededed;
-}
-.list-container > div > div:not(.title) > .fields > div > .field {
-  width: 100%;
-  padding: 10px 0 10px 10px;
-  border-left: 1px solid #ecedee;
-}
-.list-container > div > div:not(.title) > .children > div > .title {
-  font-weight: bold;
-  font-size: 1.5rem;
-  text-align: left;
-  padding: 10px 3% 5px;
-}
-.list-container > div > div:not(.title) > .children > div > div:not(.title) {
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.07);
-  background-color: #f6f7f8;
-  overflow: hidden;
-  width: 96%;
-  margin-left: 2%;
-}
-.list-container > div > div:not(.title) > .children > div > div:not(.title):nth-child(2) {
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-}
-.list-container > div > div:not(.title) > .children > div > div:not(.title):last-child {
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-  margin-bottom: 10px;
-}
-.list-container > div > div:not(.title) > .children > div > div:not(.title) > .fields {
-  display: flex;
-  flex-flow: row nowrap;
-}
-.list-container > div > div:not(.title) > .children > div > div:not(.title) > .fields > div {
-  display: flex;
-  flex-flow: column nowrap;
-  width: 100%;
-}
-.list-container > div > div:not(.title) > .children > div > div:not(.title) > .fields > div > .title {
-  font-weight: bold;
-  background-color: white;
-  padding: 10px;
-  border-bottom: 1px solid #ededed;
-  border-left: 1px solid #ecedee;
-}
-.list-container > div > div:not(.title) > .children > div > div:not(.title) > .fields > div > .field {
-  width: 100%;
-  padding: 10px 0 10px 10px;
-  border-left: 1px solid #ecedee;
-}
-.list-container > div > div:not(.title) > .children > div > div:not(.title):not(:nth-child(2)) .title {
-  display: none;
+.download-container .downloads input {
+  height: 19px;
+  line-height: 0px;
 }
 
     </style>
-    <script>
- "use strict";
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var JsonDownloader = function (_React$Component) {
-  _inherits(JsonDownloader, _React$Component);
-
-  function JsonDownloader() {
-    _classCallCheck(this, JsonDownloader);
-
-    return _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
-  }
-
-  JsonDownloader.prototype.render = function render() {
-    return React.createElement(
-      "div",
-      { className: "download-container" },
-      React.createElement(
-        "h2",
-        null,
-        "Download JSON"
-      ),
-      React.createElement(
-        "div",
-        { className: "downloads" },
-        React.createElement(
-          "a",
-          { className: "btn btn-success", href: "/explorer/getJson" },
-          " Download Scope"
-        ),
-        React.createElement(
-          "a",
-          { className: "btn btn-success", href: "/articles/getJson" },
-          " Download Articles"
-        ),
-        React.createElement(
-          "a",
-          { className: "btn btn-success", href: "/tweets/getJson" },
-          " Download Tweets"
-        )
-      )
-    );
-  };
-
-  return JsonDownloader;
-}(React.Component);
-
-var FileUploader = function (_React$Component2) {
-  _inherits(FileUploader, _React$Component2);
-
-  function FileUploader(props) {
-    _classCallCheck(this, FileUploader);
-
-    var _this2 = _possibleConstructorReturn(this, _React$Component2.call(this, props));
-
-    _this2.handleUpload = _this2.handleUpload.bind(_this2);
-
-    _this2.state = {
-      fileName: '',
-      error: false
-    };
-    return _this2;
-  }
-
-  FileUploader.prototype.handleUpload = function handleUpload(event) {
-    var _this3 = this;
-
-    var setData = this.props.setData;
-
-    event.preventDefault();
-    var reader = new FileReader();
-    var file = event.target.files[0];
-
-    reader.onloadend = function () {
-      _this3.setState({
-        fileName: file.name
-      });
-      var newData = {};
-      try {
-        newData = JSON.parse(reader.result);
-        if (newData.name !== 'mediacat-scope' || newData.version !== '0.0.1') throw 500;
-        _this3.setState({ error: false });
-      } catch (err) {
-        console.log('hello', err);
-        _this3.setState({ error: true });
-      }
-      setData(newData);
-      // this.props.setData(reader.result);
-      // console.log('result', file, reader.result);
-    };
-
-    reader.readAsText(file);
-  };
-
-  FileUploader.prototype.render = function render() {
-    var _state = this.state;
-    var fileName = _state.fileName;
-    var error = _state.error;
-
-    var icon = undefined;
-    if (fileName !== '') {
-      if (error) {
-        icon = React.createElement("span", { className: "glyphicon glyphicon-remove", "aria-hidden": "true", title: "Invalid file" });
-      } else {
-        icon = React.createElement("span", { className: "glyphicon glyphicon-ok", "aria-hidden": "true", title: "Valid file" });
-      }
-    }
-    return React.createElement(
-      "div",
-      { className: "uploader-container" },
-      React.createElement(
-        "h3",
-        null,
-        "Upload Scope"
-      ),
-      React.createElement(
-        "div",
-        { className: "uploader" },
-        React.createElement("input", { type: "file", name: "file", id: "file", onChange: this.handleUpload }),
-        React.createElement(
-          "label",
-          { htmlFor: "file", className: "btn-primary" },
-          "Browse"
-        ),
-        React.createElement(
-          "div",
-          { className: "filename" },
-          fileName
-        ),
-        icon
-      )
-    );
-  };
-
-  return FileUploader;
-}(React.Component);
-
-var layout = [{
-  title: 'Referring Sites',
-  key: 'referring_sites',
-  fields: [{
-    title: 'Name',
-    key: 'name'
-  }, {
-    title: 'URL',
-    key: 'url'
-  }, {
-    title: 'Mode',
-    key: 'mode'
-  }],
-  children: [{
-    title: 'CSS Selector',
-    key: 'referring_sites_css_selector',
-    match_field: 'site',
-    fields: [{
-      title: 'Field',
-      key: 'field'
-    }, {
-      title: 'Pattern',
-      key: 'pattern'
-    }, {
-      title: 'Regex',
-      key: 'regex'
-    }]
-  }, {
-    title: 'Filter',
-    key: 'referring_sites_filter',
-    match_field: 'site',
-    fields: [{
-      title: 'Pattern',
-      key: 'pattern'
-    }, {
-      title: 'Regex',
-      key: 'regex'
-    }]
-  }]
-}, {
-  title: 'Referring Twitter',
-  key: 'referring_twitter',
-  fields: [{
-    title: 'Name',
-    key: 'name'
-  }]
-}, {
-  title: 'Source Sites',
-  key: 'source_sites',
-  fields: [{
-    title: 'Name',
-    key: 'name'
-  }, {
-    title: 'URL',
-    key: 'url'
-  }],
-  children: [{
-    title: 'Aliases',
-    key: 'source_sites_alias',
-    match_field: 'primary',
-    fields: [{
-      title: 'Alias',
-      key: 'alias'
-    }]
-  }]
-}];
-
-var ListContainer = function (_React$Component3) {
-  _inherits(ListContainer, _React$Component3);
-
-  function ListContainer(props) {
-    _classCallCheck(this, ListContainer);
-
-    return _possibleConstructorReturn(this, _React$Component3.call(this, props));
-  }
-
-  ListContainer.prototype.render = function render() {
-    var data = this.props.data;
-
-    console.log('data', data);
-
-    var generate_table = function generate_table(objs, layout) {
-      if (objs.length === 0) return null;
-      console.log(objs);
-      return React.createElement(
-        "div",
-        { className: layout.key, key: layout.key },
-        React.createElement(
-          "h4",
-          { className: "title" },
-          layout.title
-        ),
-        objs.map(function (obj) {
-          return React.createElement(
-            "div",
-            { className: obj.pk, key: obj.pk },
-            React.createElement(
-              "div",
-              { className: "fields" },
-              layout.fields.map(function (field) {
-                return React.createElement(
-                  "div",
-                  { className: field.key, key: field.key },
-                  React.createElement(
-                    "div",
-                    { className: "title" },
-                    field.title
-                  ),
-                  React.createElement(
-                    "div",
-                    { className: "field" },
-                    obj.fields[field.key]
-                  )
-                );
-              })
-            ),
-            layout.children ? React.createElement(
-              "div",
-              { className: "children" },
-              layout.children.map(function (child) {
-                return generate_table(data[child.key].filter(function (c) {
-                  return c.fields[child.match_field] === obj.pk;
-                }), child);
-              })
-            ) : null
-          );
-        })
-      );
-    };
-    return React.createElement(
-      "div",
-      { className: "list-container" },
-      React.createElement(
-        "h3",
-        null,
-        "Result"
-      ),
-      layout.map(function (model) {
-        return generate_table(data[model.key] || [], model);
-      })
-    );
-  };
-
-  return ListContainer;
-}(React.Component);
-
-var AppContainer = function (_React$Component4) {
-  _inherits(AppContainer, _React$Component4);
-
-  function AppContainer(props) {
-    _classCallCheck(this, AppContainer);
-
-    var _this5 = _possibleConstructorReturn(this, _React$Component4.call(this, props));
-
-    _this5.setData = _this5.setData.bind(_this5);
-
-    _this5.state = {
-      data: {}
-    };
-    return _this5;
-  }
-
-  AppContainer.prototype.setData = function setData(data) {
-    this.setState({ data: data });
-  };
-
-  AppContainer.prototype.render = function render() {
-    var data = this.state.data;
-
-    return React.createElement(
-      "div",
-      null,
-      React.createElement(JsonDownloader, null),
-      React.createElement(FileUploader, {
-        setData: this.setData
-      }),
-      React.createElement(ListContainer, {
-        data: data
-      })
-    );
-  };
-
-  return AppContainer;
-}(React.Component);
-
-ReactDOM.render(React.createElement(AppContainer, null), document.getElementById('root'));
-    </script>
   </div>
 {% endblock %}
