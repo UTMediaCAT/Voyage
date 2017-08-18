@@ -31,7 +31,8 @@ pdf:
     dir: pdf
     article_subdir: article
     twitter_subdir: twitter
-
+database:
+    version: 0.0.1
 log:
     retention_days: 30
 crawler:
