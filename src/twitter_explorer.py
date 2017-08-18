@@ -228,20 +228,12 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
     start = time.time()
 
     for user in twitter_users:
-        # Check for any new command on communication stream
-        check_command()
         processed = 0
         tweets = get_tweets(user, tweet_number)
         tweet_followers = get_follower_count(user)
         tweet_count = len(tweets)
         for i in range(tweet_count):
             tweet = tweets[i]
-            try:
-                # Check for any new command on communication stream
-                check_command()
-            except (KeyboardInterrupt, SystemExit):
-                raise
-
 
             #setting correct data for each field
             tweet_id = tweet.id
@@ -392,68 +384,12 @@ def explore(tweet_number):
 
     parse_tweets(accounts_list, keyword_list, source_sites, tweet_number,source_twitter_list)
 
-
-def comm_write(text):
-    config = configuration()['communication']
-    for i in range(config['retry_count']):
-        try:
-            comm = open('twitter' + config['comm_file'], 'w')
-            comm.write(text)
-            comm.close()
-            return None
-        except:
-            time.sleep(config['retry_delta'])
-
-
-def comm_read():
-    config = configuration()['communication']
-    for i in range(config['retry_count']):
-        try:
-            comm = open('twitter' + config['comm_file'], 'r')
-            msg = comm.read()
-            comm.close()
-            return msg
-        except:
-            time.sleep(config['retry_delta'])
-
-
-def comm_init():
-    comm_write('RR %s' % os.getpid())
-
-
-def check_command():
-
-    config = configuration()['communication']
-    msg = comm_read()
-
-    if msg[0] == 'W':
-        command = msg[1]
-        if command == 'S':
-            print('Stopping Explorer...')
-            comm_write('SS %s' % os.getpid())
-            sys.exit(0)
-        elif command == 'P':
-            print('Pausing ...')
-            comm_write('PP %s' % os.getpid())
-            while comm_read()[1] == 'P':
-                print('Waiting %i seconds ...' % config['sleep_time'])
-                time.sleep(config['sleep_time'])
-            check_command()
-        elif command == 'R':
-            print('Resuming ...')
-            comm_write('RR %s' % os.getpid())
-
 if __name__ == '__main__':
-    # Initialize Communication Stream
-    comm_init()
     config = configuration()['twitter']
 
     fs = config['from_start']
 
     while True:
-        # Check for any new command on communication stream
-        check_command()
-
         start = timeit.default_timer()
 
         if fs:
@@ -464,9 +400,5 @@ if __name__ == '__main__':
 
         end = timeit.default_timer()
         delta_time = end - start
-    sleep_time = max(config['min_iteration_time'] - delta_time, 0)
-    for i in range(int(sleep_time // 5)):
-        time.sleep(5)
-        check_command()
 
-    check_command()
+    time.sleep(sleep_time)
