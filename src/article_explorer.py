@@ -113,11 +113,7 @@ def parse_articles(referring_sites, db_keywords, source_sites_and_aliases, twitt
 
         # Continue until all sites are done crawling
         while (not result.ready()):
-            try:
-                time.sleep(5)
-            except (KeyboardInterrupt, SystemExit) as e:
-                logging.warning("%s detected, exiting"%str(e))
-                sys.exit(0)
+            time.sleep(5)
 
         # Fail-safe to ensure the processes are done
         pool.close()
@@ -145,7 +141,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
     article_count = 0
     newspaper_articles = []
     crawlersource_articles = []
-    logging.info("Site: %s Type:%i"%(site.name, site.mode))
+    logging.info("Site: %s, Type: %i" % (site.name, site.mode))
     #0 = newspaper, 1 = crawler, 2 = both
 
     if(site.mode == 0 or site.mode == 2):
@@ -581,8 +577,7 @@ if __name__ == '__main__':
     sleep_time = max(config['min_iteration_time']-delta_time, 0)
     logging.warning("Sleeping for %is"%sleep_time)
 
-    for i in range(int(sleep_time//5)):
-            time.sleep(5)
+    time.sleep(sleep_time)
 
     # Re run the program to avoid thread to increase
     logging.info("Starting new cycle")

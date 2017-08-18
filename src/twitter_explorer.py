@@ -390,7 +390,6 @@ if __name__ == '__main__':
     fs = config['from_start']
 
     while True:
-
         start = timeit.default_timer()
 
         if fs:
@@ -401,6 +400,5 @@ if __name__ == '__main__':
 
         end = timeit.default_timer()
         delta_time = end - start
-    sleep_time = max(config['min_iteration_time'] - delta_time, 0)
-    for i in range(int(sleep_time // 5)):
-        time.sleep(5)
+
+    time.sleep(sleep_time)
