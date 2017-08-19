@@ -75,6 +75,7 @@ def getDump(request):
     out = StringIO()
     management.call_command('dumpdata', 'explorer', 'taggit', stdout=out)
     res = HttpResponse(version + '\n' + out.getvalue())
+    out.close()
     res['Content-Disposition'] = format('attachment; filename=scope-%s.json' 
                                         % time.strftime("%Y%m%d-%H%M%S"))
     return res

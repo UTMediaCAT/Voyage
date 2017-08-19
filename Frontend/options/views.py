@@ -27,6 +27,7 @@ def downloads(request):
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)
 
+    deleted = False
     context = {}
     if request.method == 'POST':
         try:
@@ -38,16 +39,34 @@ def downloads(request):
                     result = format("Database schema version mismatch (Need: %s, Given: %s)" %
                                     (db_version, version))
                 else:
+                    # Backup Current Scope in a variable
+                    out = StringIO()
+                    management.call_command('dumpdata', 'explorer', 'taggit', stdout=out)
+                    currentScope = out.getvalue()
+                    out.close()
+                    
+                    # Delete Current Scope
+                    deleteScope()
+                    deleted = True
+
+                    # Replace Scope
                     tf = tempfile.NamedTemporaryFile(suffix='.json')
                     tf.write(scopefile.read())
                     tf.seek(0)
                     out = StringIO()
-                    deleteScope()
                     management.call_command('loaddata', tf.name, stdout=out)
+                    out.close()
                     tf.close()
                     result = "Success"
             except:
                 result = "Failed"
+                if (deleted):
+                    # Put the Current Scope back into db
+                    tf = tempfile.NamedTemporaryFile(suffix='.json')
+                    tf.write(currentScope)
+                    tf.seek(0)
+                    management.call_command('loaddata', tf.name)
+                    tf.close()
             finally:
                 context['scope_message'] = result
         except:
