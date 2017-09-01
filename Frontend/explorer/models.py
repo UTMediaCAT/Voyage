@@ -45,6 +45,8 @@ class ReferringSite(models.Model):
                                       'Maximum 200 characters')
     # check = models.BooleanField(default=False, verbose_name="Test Newspaper RSS Scan",
     #                             help_text=mark_safe('Check to display the amount of articles found by Newspaper RSS Scan (Displays as error).<br>Uncheck to save without testing Newspaper.'))
+
+    is_shallow =  models.BooleanField(default=False, verbose_name="Shallow State", help_text=mark_safe('Use shallow crawler to search only until depth of 5'))
     tags = TaggableManager()
 
     crawl_choices = (

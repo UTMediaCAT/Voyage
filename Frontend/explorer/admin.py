@@ -95,7 +95,7 @@ class ReferringSiteAdmin(admin.ModelAdmin):
         (None,               {'fields': ['url', 'name', 'mode']})
         ]
     inlines += [ReferringSiteFilterInline, ReferringSiteCssSelectorInline]
-    list_display = ('name', 'url', 'article_count', 'latest_article', 'mode', 'get_tags')
+    list_display = ('name', 'url', 'article_count', 'latest_article', 'mode', 'is_shallow', 'get_tags')
     search_fields = ['name', 'url']
     ordering = ['name']
     actions_on_top = True
