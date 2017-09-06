@@ -47,7 +47,10 @@ class Crawler(object):
         self.to_visit = Queue(tmpqueue_dir, tempdir=tmpqueuetmp_dir)
 
         # Initial url
-        self.to_visit.put(site.url)
+        if (self.site.is_shallow == False):
+            self.to_visit.put(site.url)
+        else:
+            self.to_visit.put((site.url, 0))
 
         # Limit
         self.limit = common.get_config()["crawler"]["limit"]
@@ -60,7 +63,7 @@ class Crawler(object):
                                    database=common.get_config()["crawler"]["postgresql"]["name"],
                                    user=common.get_config()["crawler"]["postgresql"]["user"],
                                    password=common.get_config()["crawler"]["postgresql"]["password"])
-                                   
+
         self.cursor = self.db.cursor()
         self.already_added_urls = set()
         self.visited_table = "visited_" + str(site.id)
@@ -88,6 +91,7 @@ class Crawler(object):
 
         #standard non-recursive tree iteration
         try:
+            current_level = 0;
             while(True):
 
                 if (self.limit > 0 and self.visited_count > self.limit):
@@ -108,9 +112,16 @@ class Crawler(object):
                 #     continue
 
                 try:
-                    current_url = self.to_visit.get_nowait()
+                    if (self.site.is_shallow):
+                        current = self.to_visit.get_nowait()
+                        current_url = current[0]
+                        current_level = current[1]
+                    else:
+                        current_url = self.to_visit.get_nowait()
                 except Empty:
-                    raise StopIteration('to_visit is empty')
+                    #raise StopIteration('to_visit is empty')
+                    self.site.is_shallow = True; # On line 26 the site gets set TO DELETE
+
 
                 logging.info(u"visiting {0}".format(current_url))
                 #use newspaper to download and parse the article
@@ -118,6 +129,9 @@ class Crawler(object):
                 article.download()
 
 
+                if (self.site.is_shallow):
+                    if (current_level > 5): # CHANGE TO CONFIG FILE VALUE
+                        continue
                 # get urls from the article
                 for link in article.get_links():
                     url = urljoin(current_url, link.href, False)
@@ -143,11 +157,18 @@ class Crawler(object):
                         continue
 
                     # Append the url to to_visit queue
-                    self.to_visit.put(url)
-                    logging.info(u"added {0} to the to_visit".format(url))
+                    if (self.site.is_shallow):
+                        self.to_visit.put((url, current_level + 1))
+                        logging.info(u"added {0} to the to_visit as well as the level {1}".format(url, current_level + 1))
 
-                    # Append the url to visited to remove duplicates
-                    self.ignore_filter.add(url)
+                        # Append the url to visited to remove duplicates
+                        self.ignore_filter.add((url, current_level + 1))
+                    else:
+                        self.to_visit.put(url)
+                        logging.info(u"added {0} to the to_visit".format(url))
+
+                        # Append the url to visited to remove duplicates
+                        self.ignore_filter.add(url)
 
                 # Update the Queue
                 self.to_visit.task_done()
