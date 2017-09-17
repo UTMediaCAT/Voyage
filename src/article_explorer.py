@@ -158,15 +158,19 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
     if(site.mode == 1 or site.mode == 2):
         crawlersource_articles = Crawler.Crawler(site)
         logging.debug("Starting MediaCAT crawler with limit: {} from plan b crawler".format(crawlersource_articles.limit))
-    article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles).__iter__()
+    article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
     processed = 0
     filters = set(site.referringsitefilter_set.all())
     while True:
+        print("at begin loop")
         try:
             try:
                 article = article_iterator.next()
+                print("new article iteration " + article.url)
             except StopIteration:
-                break
+                article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
+                print("iteration Restart")
+                continue
             #have to put all the iteration stuff at the top because I used continue extensively in this loop
             processed += 1
 

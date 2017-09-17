@@ -50,6 +50,8 @@ class Crawler(object):
         if (self.site.is_shallow == False):
             self.to_visit.put(site.url)
         else:
+            logging.info("u wot")
+            print("u wot")
             self.to_visit.put((site.url, 0))
 
         # Limit
@@ -113,21 +115,28 @@ class Crawler(object):
 
                 try:
                     if (self.site.is_shallow):
+                        print("Shallow on")
                         current = self.to_visit.get_nowait()
+                        #print(":(" + current)
                         current_url = current[0]
                         current_level = current[1]
+                        print("Shallow on level" + current_level)
                     else:
                         current_url = self.to_visit.get_nowait()
                 except Empty:
                     #raise StopIteration('to_visit is empty')
                     self.site.is_shallow = True; # On line 26 the site gets set TO DELETE
+                    self.to_visit.put((self.site.url, str(0)))
+                    print("PUT THE SIUTE!!")
+                    raise StopIteration;
 
 
                 logging.info(u"visiting {0}".format(current_url))
                 #use newspaper to download and parse the article
                 article = ExplorerArticle(current_url)
+                logging.info("1")
                 article.download()
-
+                logging.info("2")
 
                 if (self.site.is_shallow):
                     if (current_level > 5): # CHANGE TO CONFIG FILE VALUE
@@ -159,10 +168,10 @@ class Crawler(object):
                     # Append the url to to_visit queue
                     if (self.site.is_shallow):
                         self.to_visit.put((url, current_level + 1))
-                        logging.info(u"added {0} to the to_visit as well as the level {1}".format(url, current_level + 1))
+                        logging.info(u"added {0} to the to_visit as well as the level {1}".format(url, str(int(current_level) + 1)))
 
                         # Append the url to visited to remove duplicates
-                        self.ignore_filter.add((url, current_level + 1))
+                        self.ignore_filter.add((url, str(int(current_level) + 1)))
                     else:
                         self.to_visit.put(url)
                         logging.info(u"added {0} to the to_visit".format(url))
