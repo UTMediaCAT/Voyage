@@ -120,13 +120,17 @@ class Crawler(object):
                         #print(":(" + current)
                         current_url = current[0]
                         current_level = current[1]
-                        print("Shallow on level" + current_level)
+                        print("Shallow on level" + current_level + current_url)
+                        logging.info("Shallow on level" + current_level + current_url)
                     else:
                         current_url = self.to_visit.get_nowait()
                 except Empty:
                     #raise StopIteration('to_visit is empty')
                     self.site.is_shallow = True; # On line 26 the site gets set TO DELETE
                     self.to_visit.put((self.site.url, str(0)))
+                    self.ignore_filter = ScalableBloomFilter(
+                    initial_capacity=10000000,
+                    error_rate=0.00001)
                     print("PUT THE SIUTE!!")
                     raise StopIteration;
 
@@ -139,35 +143,48 @@ class Crawler(object):
                 logging.info("2")
 
                 if (self.site.is_shallow):
-                    if (current_level > 5): # CHANGE TO CONFIG FILE VALUE
+                    if (int(current_level) > 7): # CHANGE TO CONFIG FILE VALUE
+                        logging.info("NANI " + current_level)
                         continue
+                        #pass
                 # get urls from the article
+                logging.info("3")
                 for link in article.get_links():
+                    logging.info("4")
                     url = urljoin(current_url, link.href, False)
+                    logging.info("5")
                     if self.url_in_filter(url, self.filters):
                         logging.info("skipping url \"{0}\" because it matches filter".format(url))
+                        logging.info("6")
                         continue
                     try:
                         parsed_url = urlparse(url)
+                        logging.info("7")
                         parsed_as_list = list(parsed_url)
+                        logging.info("8")
                         if(parsed_url.scheme != u"http" and parsed_url.scheme != u"https"):
+                            logging.info("9")
                             logging.info(u"skipping url with invalid scheme: {0}".format(url))
                             continue
                         parsed_as_list[5] = ''
                         url = urlunparse(urlnorm.norm_tuple(*parsed_as_list))
+                        logging.info("10")
                     except Exception as e:
                         logging.info(u"skipping malformed url {0}. Error: {1}".format(url, str(e)))
+                        logging.info("11")
                         continue
                     if(not parsed_url.netloc.endswith(self.domain)):
+                        logging.info("12")
                         continue
-
+                    logging.info("13")
                     # If the url have been added to ignore list, skip
                     if (url in self.ignore_filter):
+                        logging.info("14")
                         continue
 
                     # Append the url to to_visit queue
                     if (self.site.is_shallow):
-                        self.to_visit.put((url, current_level + 1))
+                        self.to_visit.put((url, str(int(current_level) + 1)))
                         logging.info(u"added {0} to the to_visit as well as the level {1}".format(url, str(int(current_level) + 1)))
 
                         # Append the url to visited to remove duplicates
