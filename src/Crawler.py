@@ -52,7 +52,7 @@ class Crawler(object):
         else:
             logging.info("u wot")
             print("u wot")
-            self.to_visit.put((site.url, 0))
+            self.to_visit.put((site.url, str(0)))
 
         # Limit
         self.limit = common.get_config()["crawler"]["limit"]
@@ -126,13 +126,14 @@ class Crawler(object):
                         current_url = self.to_visit.get_nowait()
                 except Empty:
                     #raise StopIteration('to_visit is empty')
-                    self.site.is_shallow = True; # On line 26 the site gets set TO DELETE
+                    self.site.is_shallow = True # On line 26 the site gets set TO DELETE
                     self.to_visit.put((self.site.url, str(0)))
                     self.ignore_filter = ScalableBloomFilter(
                     initial_capacity=10000000,
                     error_rate=0.00001)
-                    print("PUT THE SIUTE!!")
-                    raise StopIteration;
+                    logging.info("stopped iteration")
+                    logging.info(self.site.url)
+                    raise StopIteration
 
 
                 logging.info(u"visiting {0}".format(current_url))
@@ -143,7 +144,7 @@ class Crawler(object):
                 logging.info("2")
 
                 if (self.site.is_shallow):
-                    if (int(current_level) > 7): # CHANGE TO CONFIG FILE VALUE
+                    if (int(current_level) > 3): # CHANGE TO CONFIG FILE VALUE
                         logging.info("NANI " + current_level)
                         continue
                         #pass
