@@ -95,8 +95,7 @@ class Crawler(object):
         try:
             current_level = 0;
             while(True):
-
-                if (self.limit > 0 and self.visited_count > self.limit):
+                if (self.limit > 0 and self.visited_count > self.limit and (not(self.is_shallow))):
                     raise StopIteration('Limit reached: {:d}'.format(self.limit))
                 # if(self.pages_visited > self.probabilistic_n):
                 #     raise StopIteration
@@ -133,7 +132,7 @@ class Crawler(object):
                     error_rate=0.00001)
                     logging.info("stopped iteration")
                     logging.info(self.site.url)
-                    raise StopIteration
+                    raise ValueError
 
 
                 logging.info(u"visiting {0}".format(current_url))
@@ -204,6 +203,8 @@ class Crawler(object):
 
                 return article
         except StopIteration as e:
+            raise e
+        except ValueError as e:
             raise e
         except Exception as e:
             raise e

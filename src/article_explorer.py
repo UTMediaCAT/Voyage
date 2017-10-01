@@ -122,7 +122,7 @@ def parse_articles(referring_sites, db_keywords, source_sites_and_aliases, twitt
 
 
 def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accounts_explorer, site):
-    site.is_shallow = False
+    site.is_shallow = False;
     site.save()
     logging.info("Started multiprocessing of Site: %s", site.name)
     #Setup logging for this site
@@ -166,7 +166,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
         try:
             try:
                 article = article_iterator.next()
-            except StopIteration:
+            except ValueError:
                 article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
                 print("iteration Restart")
                 logging.info("iteration restart")
@@ -174,6 +174,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 site.save()
                 processed = 0
                 continue
+            except StopIteration:
+                break
             #have to put all the iteration stuff at the top because I used continue extensively in this loop
             processed += 1
 
