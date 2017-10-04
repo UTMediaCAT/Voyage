@@ -95,7 +95,7 @@ class Crawler(object):
         try:
             current_level = 0;
             while(True):
-                if (self.limit > 0 and self.visited_count > self.limit and (not(self.is_shallow))):
+                if (self.limit > 0 and self.visited_count > self.limit):
                     raise StopIteration('Limit reached: {:d}'.format(self.limit))
                 # if(self.pages_visited > self.probabilistic_n):
                 #     raise StopIteration
@@ -114,12 +114,12 @@ class Crawler(object):
 
                 try:
                     if (self.site.is_shallow):
-                        print("Shallow on")
+                        #print("Shallow on")
                         current = self.to_visit.get_nowait()
                         #print(":(" + current)
                         current_url = current[0]
                         current_level = current[1]
-                        print("Shallow on level" + current_level + current_url)
+                        #print("Shallow on level" + current_level + current_url)
                         logging.info("Shallow on level" + current_level + current_url)
                     else:
                         current_url = self.to_visit.get_nowait()
@@ -138,9 +138,9 @@ class Crawler(object):
                 logging.info(u"visiting {0}".format(current_url))
                 #use newspaper to download and parse the article
                 article = ExplorerArticle(current_url)
-                logging.info("1")
+                #logging.info("1")
                 article.download()
-                logging.info("2")
+                #logging.info("2")
 
                 if (self.site.is_shallow):
                     if (int(current_level) > 3): # CHANGE TO CONFIG FILE VALUE
@@ -148,35 +148,36 @@ class Crawler(object):
                         continue
                         #pass
                 # get urls from the article
-                logging.info("3")
+                #logging.info("3")
                 for link in article.get_links():
-                    logging.info("4")
+                    #logging.info("4")
                     url = urljoin(current_url, link.href, False)
-                    logging.info("5")
+                    #logging.info("5")
                     if self.url_in_filter(url, self.filters):
                         logging.info("skipping url \"{0}\" because it matches filter".format(url))
-                        logging.info("6")
+                        #logging.info("6")
                         continue
                     try:
                         parsed_url = urlparse(url)
-                        logging.info("7")
+                        #logging.info("7")
                         parsed_as_list = list(parsed_url)
-                        logging.info("8")
+
+                        #logging.info("8")
                         if(parsed_url.scheme != u"http" and parsed_url.scheme != u"https"):
-                            logging.info("9")
+                            #logging.info("9")
                             logging.info(u"skipping url with invalid scheme: {0}".format(url))
                             continue
                         parsed_as_list[5] = ''
                         url = urlunparse(urlnorm.norm_tuple(*parsed_as_list))
-                        logging.info("10")
+                        #logging.info("10")
                     except Exception as e:
                         logging.info(u"skipping malformed url {0}. Error: {1}".format(url, str(e)))
-                        logging.info("11")
+                        #logging.info("11")
                         continue
                     if(not parsed_url.netloc.endswith(self.domain)):
                         logging.info("12")
                         continue
-                    logging.info("13")
+                    #logging.info("13")
                     # If the url have been added to ignore list, skip
                     if (url in self.ignore_filter):
                         logging.info("14")

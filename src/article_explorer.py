@@ -122,8 +122,6 @@ def parse_articles(referring_sites, db_keywords, source_sites_and_aliases, twitt
 
 
 def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accounts_explorer, site):
-    site.is_shallow = False;
-    site.save()
     logging.info("Started multiprocessing of Site: %s", site.name)
     #Setup logging for this site
     setup_logging(site.name)
@@ -168,8 +166,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 article = article_iterator.next()
             except ValueError:
                 article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
-                print("iteration Restart")
-                logging.info("iteration restart")
+                logging.info("iteration restartqq")
                 site.is_shallow = True
                 site.save()
                 processed = 0
