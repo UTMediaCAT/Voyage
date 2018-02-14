@@ -128,7 +128,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
     #Remove the source site that matches site
     if site.url in source_sites_and_aliases:
-        logging.info("Removed Source Site (Referring Site is identical): " + site.url)
+        logging.info(u"Removed Source Site (Referring Site is identical): {0}".format(site.url))
         del source_sites_and_aliases[site.url]
 
     #Generate list of source sites
@@ -156,7 +156,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
         logging.info("populated {0} articles using newspaper".format(article_count))
     if(site.mode == 1 or site.mode == 2):
         crawlersource_articles = Crawler.Crawler(site)
-        logging.debug("Starting MediaCAT crawler with limit: {} from plan b crawler".format(crawlersource_articles.limit))
+        logging.info("Starting MediaCAT crawler with limit: {} from plan b crawler".format(crawlersource_articles.limit))
     article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
     processed = 0
     filters = set(site.referringsitefilter_set.all())
@@ -164,7 +164,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
         try:
             try:
                 article = article_iterator.next()
-            except ValueError:
+            except ZeroDivisionError:
                 article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
                 logging.info("iteration restartqq")
                 site.is_shallow = True
@@ -177,7 +177,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             processed += 1
 
             if url_in_filter(article.url, filters):
-                logging.info("Matches with filter, skipping the {0}".format(article.url))
+                logging.info(u"Matches with filter, skipping the {0}".format(article.url))
                 continue
 
             print(
@@ -387,6 +387,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
     setup_logging(increment=False)
     logging.info("Finished Site: %s"%site.name)
 
+    logging.info("truly finished")
 
 def hash_sha256(text):
     hash_text = hashlib.sha256()
@@ -532,7 +533,7 @@ def setup_logging(site_name="", increment=True):
     config = common.get_config()
 
     # Logging config
-    current_time = datetime.datetime.now().strftime('%Y%m%d')
+    current_time = timezone.now().strftime('%Y%m%d')
     log_dir = config['projectdir']+"/log"
     prefix = log_dir + "/" + site_name + "article_explorer-"
 
@@ -576,11 +577,16 @@ if __name__ == '__main__':
     start = timeit.default_timer()
 
     # The main function, to explore the articles
-    explore()
+    try:
+
+    	explore()
+    except Exception as e:
+    	logging.info(str(e))
+    	
     delta_time = timeit.default_timer() - start
     logging.info("Exploring Ended. Took %is"%delta_time)
 
-    sleep_time = max(config['min_iteration_time']-delta_time, 0)
+    sleep_time = 5000;
     logging.warning("Sleeping for %is"%sleep_time)
 
     time.sleep(sleep_time)

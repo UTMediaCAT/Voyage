@@ -7,8 +7,7 @@ from ExplorerArticle import ExplorerArticle
 import urlnorm
 import psycopg2
 import os
-import pickle
-
+import io
 from pybloom_live import ScalableBloomFilter
 from pqueue import Queue
 from Queue import Empty
@@ -30,7 +29,9 @@ class Crawler(object):
 
         # http://alexeyvishnevsky.com/2013/11/tips-on-optimizing-scrapy-for-a-high-performance/
         # fork of pybloom: https://github.com/joseph-fox/python-bloomfilter
-        
+        self.ignore_filter = ScalableBloomFilter(
+                initial_capacity=10000000,
+                error_rate=0.00001)
         ignore_filter_dir='../ignore_filter/'
         if not os.path.exists(ignore_filter_dir):
             logging.info("before dir creation")
@@ -41,16 +42,25 @@ class Crawler(object):
                 error_rate=0.00001)
             try:
             	logging.info("nani")
-            	f = open('../ignore_filter/ignore_filter_file', 'r+')
-            	f.write(self.ignore_filter_file)
+            	f = open('../ignore_filter/ignore_filter_file.txt', 'r+')
+            	f.write(self.ignore_filter)
             except IOError:
             	logging.info("NANI")
-            	f = open('../ignore_filter/ignore_filter_file', 'w+')
+            	f = open('../ignore_filter/ignore_filter_file.txt', 'w+')
             f.close()
         else:
             logging.info("dir exists")
-            ignore_filter_file = open('../ignore_filter/ignore_filter_file', 'r')
-            self.ignore_filter = pickle.load(ignore_filter_file) 
+            #ignore_filter_file = open('../ignore_filter/ignore_filter_file', 'r')
+            with open('../ignore_filter/ignore_filter_file.txt', 'r+', buffering=False) as ignore_filter_file:
+                logging.info("opened da file")
+                try:
+                    for line in ignore_filter_file:
+                        self.ignore_filter.add(line.decode('utf8').rstrip())
+                except Exception as e:
+                    logging.info("rip")
+                    print type(e)
+                    logging.info(str(e))
+           	logging.info("done reading")
             ignore_filter_file.close()
         self.visited_count = 0
 
@@ -109,7 +119,7 @@ class Crawler(object):
         '''
 
         #standard non-recursive tree iteration
-        with open('../ignore_filter/ignore_filter_file', 'r+') as ignore_filter_file:
+        with open('../ignore_filter/ignore_filter_file.txt', 'a') as ignore_filter_file:
             try:
                 current_level = 0;
                 while(True):
@@ -148,7 +158,8 @@ class Crawler(object):
                         self.ignore_filter = ScalableBloomFilter(
                         initial_capacity=10000000,
                         error_rate=0.00001)
-                        os.remove(ignore_filter_file)
+                        ignore_filter_file.close()
+                        os.remove('../ignore_filter/ignore_filter_file.txt')
                         logging.info("stopped iteration")
                         logging.info(u"{0}".format(self.site.url))
                         raise ZeroDivisionError
@@ -199,9 +210,10 @@ class Crawler(object):
                         if (url in self.ignore_filter):
                         	#logging.info("13")
                             continue
-                        if (u"subscribe" in url or "subscribe" in url):
+                        if (u"subscribe" in url or "subscribe" in url or u"print" in url or "print" in url or u"comment" in url or "comment" in url or "page" in url or u"page" in url):
                         	logging.info("s sub")
                         	continue
+
                         # Append the url to to_visit queue
                         if (self.site.is_shallow):
                             self.to_visit.put((url, str(int(current_level) + 1)))
@@ -209,15 +221,14 @@ class Crawler(object):
 
                             # Append the url to visited to remove duplicates
                             self.ignore_filter.add(url)
-                            pickle.dumps(self.ignore_filter, ignore_filter_file[2])
+                            ignore_filter_file.write(url.encode('utf8') + "\n")
                         else:
                             self.to_visit.put(url)
                             logging.info(u"added {0} to the to_visit".format(url))
 
                             # Append the url to visited to remove duplicates
                             self.ignore_filter.add(url)
-                            pickle.dumps(self.ignore_filter, ignore_filter_file[2])
-
+                            ignore_filter_file.write(url.encode('utf8') + "\n")
 
                     # Update the Queue
                     self.to_visit.task_done()
@@ -226,7 +237,7 @@ class Crawler(object):
 
                     return article
 
-                
+
             except StopIteration as e:
                 raise e
             except ValueError as e:
