@@ -8,10 +8,10 @@ twitter:
     from_start:  True
     min_iteration_time: 600
     wait_rate_seconds: 60
-    consumer_key: UITySH5N4iGOE3l6C0YgmwHVd
-    consumer_secret: H7lXeLBDQv3o7i4wISGJtukdAqC6X9Vr4EXTdaIAVVrN56Lwbh
-    access_token: 2825329492-TKU4s0Mky7vazr60WKHQV7R6sJT2wYE4ysR3Gm3
-    access_token_secret: I740fF6x6v0srzbY7LCAjNWXXOzZRMBFbkoiwZ5FgqC5s
+    consumer_key:
+    consumer_secret:
+    access_token:
+    access_token_secret:
 article:
     min_iteration_time: 3600
 storage:
