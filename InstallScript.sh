@@ -6,6 +6,8 @@ apt-get autoremove -y python-setuptools
 
 # Install python dependencies:
 pip install -U pip setuptools
+# Install nltk before installing the newspaper package in requirements to avoid error 
+pip install https://s3-us-west-2.amazonaws.com/jdimatteo-personal-public-readaccess/nltk-2.0.5-https-distribute.tar.gz
 pip install -r requirements.txt
 pip3 install wpull
 pip3 install html5lib==0.9999999

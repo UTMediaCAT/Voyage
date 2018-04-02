@@ -85,6 +85,9 @@ import random
 ''.join(random.SystemRandom().choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for _ in range(50))
 ```
 
+### Twitter Crawler
+Please configure the twitter credentials in config.yaml before using twitter crawler. You can get twitter access tokens from <https://apps.twitter.com/>.
+
 ## Usage: Web Server
 #### If it is your FIRST time to run the server:
 please make sure to apply migrations under [Frontend folder](https://github.com/UTMediaCAT/Voyage/tree/master/Frontend):

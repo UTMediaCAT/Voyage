@@ -15,6 +15,21 @@
 {# Additional header content like notifications or language switcher #}
 {% block header_content %}
     {{ block.super }}
+    <div class="header-content" align="center">
+        <div class="header-column icon">
+            <i class="icon-globe"></i>
+	</div>
+	<div class="header-column" style="margin-right:20px">
+	    Article explorer: {% get_article_run_status %}
+	</div>
+
+        <div class="header-column icon">
+            <i class="icon-globe"></i>
+        </div>
+	<div class="header-column" style="margin-right:20px">
+            Twitter explorer: {% get_twitter_run_status %}
+        </div>
+    </div>
 {% endblock %}
 
 
