@@ -166,7 +166,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 article = article_iterator.next()
             except ZeroDivisionError:
                 article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
-                logging.info("iteration restartqq")
                 site.is_shallow = True
                 site.save()
                 processed = 0
@@ -387,8 +386,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
     setup_logging(increment=False)
     logging.info("Finished Site: %s"%site.name)
 
-    logging.info("truly finished")
-
 def hash_sha256(text):
     hash_text = hashlib.sha256()
     hash_text.update(text.encode('utf-8'))
@@ -577,16 +574,13 @@ if __name__ == '__main__':
     start = timeit.default_timer()
 
     # The main function, to explore the articles
-    try:
+  	explore()
 
-    	explore()
-    except Exception as e:
-    	logging.info(str(e))
     	
     delta_time = timeit.default_timer() - start
     logging.info("Exploring Ended. Took %is"%delta_time)
 
-    sleep_time = 5000;
+    sleep_time = max(config['min_iteration_time']-delta_time, 0)
     logging.warning("Sleeping for %is"%sleep_time)
 
     time.sleep(sleep_time)
