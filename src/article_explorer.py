@@ -574,7 +574,7 @@ if __name__ == '__main__':
     start = timeit.default_timer()
 
     # The main function, to explore the articles
-  	explore()
+    explore()
 
     	
     delta_time = timeit.default_timer() - start
