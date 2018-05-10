@@ -142,7 +142,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
     crawlersource_articles = []
     logging.info("Site: %s, Type: %i" % (site.name, site.mode))
     #0 = newspaper, 1 = crawler, 2 = both
-
+    error_count = 0
     if(site.mode == 0 or site.mode == 2):
         logging.disable(logging.ERROR)
         newspaper_source = newspaper.build(site.url,
@@ -376,11 +376,15 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 # Add the article into queue
                 logging.info("Creating new WARC")
                 warc_creator.enqueue_article(url, text_hash)
+                error_count = 0
 
         except (KeyboardInterrupt, SystemExit):
             raise
         except Exception as e:
             logging.exception("Unhandled exception while crawling: " + str(e))
+            error_count+=1
+            if (error_count > 10):
+                break
 
     logging.info("Finished Site: %s"%site.name)
     setup_logging(increment=False)
