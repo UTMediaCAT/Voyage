@@ -61,7 +61,7 @@ class ReferringSite(models.Model):
                                             'MediaCAT Crawler - Slow but compatible with any sites.<br>' +
                                             'Both - Uses both Newspaper and MediaCAT CrawlerB for maximum results.'))
     class Meta:
-        verbose_name = 'Referring Site'
+        verbose_name = 'Referring Site TEST1'
 
     def __unicode__(self):
         return self.name

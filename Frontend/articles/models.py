@@ -79,11 +79,134 @@ class Author(models.Model):
     def __unicode__(self):
         return self.name
 
+class SourcedArticle(models.Model):
+    domain = URLProtocolField(max_length=2000, verbose_name="Sourced Article")
+    #domain = URLProtocolField(max_length=2000, verbose_name="Sourced Article")
+
+    domain = URLProtocolField(max_length=2000, verbose_name="Source URL")
+    version = models.ForeignKey(Version)#(VersionSourced)
+    #url = models.CharField(max_length=2000)
+    domain = URLProtocolField(max_length=2000, verbose_name="Source Site !!!!") # changes the column header
+    anchor_text = models.CharField(max_length=2000, verbose_name="Anchor Text", default=".")
+    matched = models.BooleanField(default=False)
+    local = models.BooleanField(default=True)
+    def __unicode__(self):
+        if len(self.title) >= 30:
+            return self.title[:27] + '...'
+        return self.title
+
+    @property
+    def url(self):
+        return self.url_set.first().name
+
+    @property
+    def title(self):
+        return self.version_set.last().title
+
+    @property
+    def text(self):
+        return self.version_set.last().text
+
+    @property
+    def text_hash(self):
+        return self.version_set.last().text_hash
+
+    @property
+    def language(self):
+        return self.version_set.last().language
+
+    @property
+    def date_added(self):
+        return self.version_set.last().date_added
+
+    @property
+    def date_last_seen(self):
+        return self.version_set.last().date_last_seen
+
+    @property
+    def date_published(self):
+        return self.version_set.last().date_published
+
+    @property
+    def found_by(self):
+        return self.version_set.last().found_by
+
+class VersionSourced(models.Model):
+    article = models.ForeignKey(SourcedArticle)
+    title = models.CharField(max_length=200, blank=True)
+    text = models.TextField(max_length=None, blank=True)
+    text_hash = models.CharField(max_length=100, blank=True, unique=True)
+    language = models.CharField(max_length=200, choices=LANGUAGES, blank=True)
+    date_added = models.DateTimeField('Date Added', blank=True, null=True)
+    date_last_seen = models.DateTimeField('Date Last Seen', blank=True, null=True)
+    date_published = models.DateTimeField('Date Published', blank=True, null=True)
+    found_by = models.CharField(max_length=100, blank=True)
+
+
+    def __unicode__(self):
+        return str(list(self.article.version_set.all()).index(self) + 1)
+
+class SourcedArticleAAA(models.Model):
+    domain = URLProtocolField(max_length=2000, verbose_name="Sourced Article")
+
+    domain = URLProtocolField(max_length=2000, verbose_name="Source URL")
+    version = models.ForeignKey(Version)
+    #url = models.CharField(max_length=2000, default=".", null=False)
+    domain = URLProtocolField(max_length=2000, verbose_name="Source Site !!!!") # changes the column header
+    anchor_text = models.CharField(max_length=2000, verbose_name="Anchor Text")
+    matched = models.BooleanField(default=False)
+    local = models.BooleanField(default=True)
+    def __unicode__(self):
+        return self.url
+    # def __unicode__(self):
+    #     if len(self.title) >= 30:
+    #         return self.title[:27] + '...'
+    #     return self.title
+
+    @property
+    def url(self):
+        return self.url_set.first().name
+
+    @property
+    def title(self):
+        return self.version_set.last().title
+
+    @property
+    def text(self):
+        return self.version_set.last().text
+
+    @property
+    def text_hash(self):
+        return self.version_set.last().text_hash
+
+    @property
+    def language(self):
+        return self.version_set.last().language
+
+    @property
+    def date_added(self):
+        return self.version_set.last().date_added
+
+    @property
+    def date_last_seen(self):
+        return self.version_set.last().date_last_seen
+
+    @property
+    def date_published(self):
+        return self.version_set.last().date_published
+
+    @property
+    def found_by(self):
+        return self.version_set.last().found_by
+
+    class Meta:
+        verbose_name = 'Sourced Article'
+
 
 class SourceSite(models.Model):
     version = models.ForeignKey(Version)
     url = models.CharField(max_length=2000)
-    domain = URLProtocolField(max_length=2000, verbose_name="Source Site")
+    domain = URLProtocolField(max_length=2000, verbose_name="Source Site !!!!") # changes the column header
     anchor_text = models.CharField(max_length=2000, verbose_name="Anchor Text")
     matched = models.BooleanField(default=False)
     local = models.BooleanField(default=True)

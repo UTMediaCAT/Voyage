@@ -46,6 +46,7 @@ from articles.models import Keyword as ArticleKeyword
 from articles.models import SourceSite as ArticleSourceSite
 from articles.models import SourceTwitter as ArticleSourceTwitter
 from articles.models import Version as ArticleVersion
+from articles.models import VersionSourced as SourceArticleVersion
 from articles.models import Url as ArticleUrl
 from explorer.models import*
 from explorer.models import SourceTwitter as ExplorerSourceTwitter
@@ -125,7 +126,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
     logging.info("Started multiprocessing of Site: %s", site.name)
     #Setup logging for this site
     setup_logging(site.name)
-
+    matched_article = None
+    found_article = False
     #Remove the source site that matches site
     if site.url in source_sites_and_aliases:
         logging.info(u"Removed Source Site (Referring Site is identical): {0}".format(site.url))
@@ -163,7 +165,14 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
     while True:
         try:
             try:
-                article = article_iterator.next()
+                if (found_article):
+                    #article = matched_article
+                    # article = ExplorerArticle(matched_article)
+                    # article.download()
+                    found_article = False
+                    pass
+                else:
+                    article = article_iterator.next()
             except ZeroDivisionError:
                 article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
                 site.is_shallow = True
@@ -235,6 +244,9 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 logging.debug("skipping article because it's not a match")
                 continue
             logging.info("match found")
+            
+            found_article = True
+
 
             #load selectors from db!
             #parameter is a namedtuple of "css" and "regex"
@@ -357,13 +369,70 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             name=account,
                             matched = False)
 
-                    for source in sources[0]:
+                    for source in sources[0]: # local ?
                         version.sourcesite_set.create(
                             url=source[0],
                             domain=source[1],
                             anchor_text=source[2],
                             matched=True,
                             local=(source[1] in site.url))
+
+                    for source in sources[0]: # local ?
+                        source_version = db_article.versionsourced_set.create(
+                            title=title,
+                            text=text,
+                            text_hash=text_hash,
+                            language=language,
+                            date_added=date_now,
+                            date_last_seen=date_now,
+                            date_published=pub_date)
+                        source_version.sourcedarticle_set.create(
+                            url=source[0],
+                            domain=source[1],
+                            anchor_text=source[2],
+                            matched=True,
+                            local=(source[1] in site.url))
+
+                        
+                        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n")
+                        logging.info("trried to add sourced")
+                        print(source[0] + "\n !!!!!!!!!!!!!!!!!!!!!!!\n")
+
+                        matched_article = ExplorerArticle(source[0])
+                        matched_article.download()
+
+                        css_title = set(site.referringsitecssselector_set.filter(field=0))
+                        title = matched_article.evaluate_css_selectors(css_title) or matched_article.title
+                        css_author = set(site.referringsitecssselector_set.filter(field=1))
+                        authors = matched_article.evaluate_css_selectors(css_author)
+                        if(authors):
+                            authors = [authors]
+                        else:
+                            authors = matched_article.authors
+                        pub_date = matched_article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=2))
+                        if(pub_date):
+                            pub_date = dateutil.parser.parse(pub_date)
+                        else:
+                            pub_date = get_pub_date(matched_article)
+                        mod_date = matched_article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=3))
+
+                        language = matched_article.language
+                        text = matched_article.get_text(strip_html=True)
+                        text_hash = hash_sha256(text)
+
+                        date_now=timezone.localtime(timezone.now())
+
+                        db_source_article = ArticleSource(domain=site.url)
+                        db_source_article.save()
+                        db_source_article.url_set.create(name=url)
+                        db_source_article.version_set.create(
+                            title=title,
+                            text=text,
+                            text_hash=text_hash,
+                            language=language,
+                            date_added=date_now,
+                            date_last_seen=date_now,
+                            date_published=pub_date)
 
                     for source in sources[1]:
                         version.sourcesite_set.create(
