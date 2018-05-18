@@ -231,7 +231,7 @@ class ReferringTwitterAdmin(admin.ModelAdmin):
     inlines = [TaggitTabularInline]
     list_filter = [TaggitListFilter]
     fieldsets = [
-        (None,               {'fields': ['name']})
+        (None,               {'fields': ['name', 'ignore_url']})
         ]
 
     list_display = ['name', 'tweet_count', 'latest_tweet', 'get_tags']

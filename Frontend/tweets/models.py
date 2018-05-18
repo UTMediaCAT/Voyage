@@ -5,7 +5,8 @@ from Frontend.fields import URLProtocolField
 
 class Tweet(models.Model):
     tweet_id = models.CharField(max_length=200)
-    text = models.CharField(max_length=200, default='')
+    # some tweet can be more than 400 characters long
+    text = models.CharField(max_length=450, default='')
     name = models.CharField(max_length=200)
     date_added = models.DateTimeField('Date Added', blank=True, null=True)
     date_published = models.DateTimeField('Date Published', blank=True, null=True)
