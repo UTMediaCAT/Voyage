@@ -189,22 +189,22 @@ def get_keywords(text, keywords):
     return matched_keywords
 
 
-# From twitter_explorer.py
-def get_sources_twitter(tweet_text, source_twitter):
-    """ (str, list of source twitter screen name)
+def get_source_twitter(tweet, source_twitter):
+    """ (Dict, list of source twitter screen name)
         - > [list of matched twitter, list of unmatched twitter]
     Search for mentioned twitter screen name in the tweet.
     """
     matched = []
     unmatched = []
-    # Twitter handle name specifications
-    accounts = re.findall('(?<=^|(?<=[^a-zA-Z0-9-_\.]))@([A-Za-z]+[A-Za-z0-9]+)', tweet_text)
+    # get a list of mentioned user screen names
+    mentioned_users = [str(mention['screen_name']) for mention in tweet['entities']['user_mentions']]
 
-    for account in set(accounts):
-        if account in source_twitter:
-            matched.append(account)
+    # check if mentioned user is in scope's Source Twitter Accounts 
+    for user in mentioned_users:
+        if user in source_twitter:
+            matched.append(user)
         else:
-            unmatched.append(account)
+            unmatched.append(user)
     return [matched,unmatched]
 
 
@@ -234,13 +234,13 @@ def process_tweet(tweet, user, keywords, source_sites, source_accounts):
     ddubug(3)
     tweet_store_date = timezone.localtime(timezone.now())
     tweet_keywords = get_keywords(tweet_text, keywords)
-    tweet_sources = get_source_sites(tweet[u'entities'][u'urls'], source_sites)
-    twitter_accounts = get_sources_twitter(tweet_text, source_accounts) 
+    tweet_sources = get_source_sites(tweet['entities']['urls'], source_sites)
+    twitter_accounts = get_source_twitter(tweet, source_accounts) 
     ddubug(4)
     print("Processing \t{}\t{}".format(user, tweet_id))
 
     # deal with tweets that are too long
-    if len(tweet_text) > 300:
+    if len(tweet_text) > 450:
         f = open("too_long_tweet.log", "a")
         f.write("Tweet id: {}, length: {}\n".format(tweet_id, len(tweet_text)))
         # f.write(tweet_text)
@@ -250,7 +250,7 @@ def process_tweet(tweet, user, keywords, source_sites, source_accounts):
         print("Tweet too long! {}".format(len(tweet_text)))
         print("\tTweet id: {}".format(tweet_id))
         try:
-            tweet_text = tweet[:300]
+            tweet_text = tweet[:450]
         except:
             return NO_MATCH
 
@@ -302,12 +302,6 @@ def process_tweet(tweet, user, keywords, source_sites, source_accounts):
         else:
             ddubug(9)
             tweet = existing_tweets[0]
-            # update tweet fields
-            tweet.text = tweet_text
-            tweet.tweet_id = tweet_id
-            tweet.name = user
-            tweet.date_published = tweet_date
-            tweet.save()
             ddubug(10)
             if not tweet.countlog_set.filter(retweet_count=retweet_count, favorite_count=favorite_count):
                 tweet.countlog_set.create(retweet_count=retweet_count, 
@@ -315,29 +309,68 @@ def process_tweet(tweet, user, keywords, source_sites, source_accounts):
 
             for key in tweet_keywords:
                 if not tweet.keyword_set.filter(name=key):
+                    print("!!!!!1{}".format(tweet.tweet_id))
+                    logging.error("!!!!!1{}".format(tweet.tweet_id))
                     tweet.keyword_set.create(name=key)
 
             for source in tweet_sources[0]:
                 if not tweet.sourcesite_set.filter(url=source[0]):
+                    print("!!!!!2{}".format(tweet.tweet_id))
+                    logging.error("!!!!!2{}".format(tweet.tweet_id))
                     tweet.sourcesite_set.create(
                         url=source[0], domain=source[1], matched=True)
 
             for source in tweet_sources[1]:
                 if not tweet.sourcesite_set.filter(url=source[0]):
-                    tweet.source_set.create(
+                    print("!!!!!3{}".format(tweet.tweet_id))
+                    logging.error("!!!!!3{}".format(tweet.tweet_id))
+                    tweet.sourcesite_set.create(
                         url=source[0], domain=source[1], matched=False)
 
             for account in twitter_accounts[0]:
                 if not tweet.sourcetwitter_set.filter(name=account):
+                    print("!!!!!4{}".format(tweet.tweet_id))
+                    logging.error("!!!!!4{}".format(tweet.tweet_id))
                     tweet.sourcetwitter_set.create(name=account, matched=True)
 
             for account in twitter_accounts[0]:
                 if not tweet.sourcetwitter_set.filter(name=account):
+                    print("!!!!!5{}".format(tweet.tweet_id))
+                    logging.error("!!!!!5{}".format(tweet.tweet_id))
                     tweet.sourcetwitter_set.create(name=account, matched=False)
             ddubug(11)
             return UPDATED
 
     return NO_MATCH
+
+
+def update_hashtag(tweet, hashtags):
+    hashtags_found = [t['text'] for t in tweet['entities']['hashtags']]
+    for ht in hashtags_found:
+        if ht in hashtags:
+            hashtags[ht] += 1
+        else:
+            hashtags[ht] = 1
+    return hashtags_found
+
+
+def update_mention(tweet, mentions):
+    """ (dict, dict) -> list
+    Return a list of mentioned twitter acccount in the given twitter object. 
+    Update the given count of mentioned twitter account in the given dictionary.  
+    """
+    mentioned_users = [str(mention['screen_name']) for mention in tweet['entities']['user_mentions']]
+    for user in mentioned_users:
+        if user in mentions:
+            mentions[user] += 1
+        else:
+            mentions[user] = 1
+    return mentioned_users
+
+
+def ignore_url(user, source_sites):
+    urls_to_ignore = [get_tld(str(url)) for url in ReferringTwitterIgnoreURL.objects.filter(user=user)]
+    return [url for url in source_sites if get_tld(url) not in urls_to_ignore]
 
 
 def parse_tweet(users, source_sites, keywords, source_accounts):
@@ -346,14 +379,16 @@ def parse_tweet(users, source_sites, keywords, source_accounts):
     """
     config = configuration()['storage']
     added, updated, no_match = 0, 0, 0
-    start = time.time()
+    # start = time.time()
 
     # Parse each user's timeline 
     for account in users:
         user = str(account.name)
+        hashtags = {}
+        mentions = {}
 
-        ignore_url = str(account.ignore_url)
-        temp_source_sites = [site for site in source_sites if get_tld(site) != get_tld(ignore_url)] if ignore_url else source_sites
+        # remove current user's ignored urls from source sites 
+        temp_source_sites = ignore_url(account, source_sites)
         processed = 0
         # get user info
         twarc_user = auth.user_lookup([user], "screen_name").next()
@@ -365,6 +400,16 @@ def parse_tweet(users, source_sites, keywords, source_accounts):
         for i in range(tweet_count):
             ddubug(2)
             tweet = tweets[i]
+            hashtag_list = update_hashtag(tweet, hashtags)
+            if hashtag_list:
+                logging.info("%s (Twitter|%s) %i/%i hashtags: %s          \r" %
+                             (str(timezone.localtime(timezone.now()))[:-13],
+                              user, i, tweet_count, ",".join(hashtag_list)))
+            mentioned_users = update_mention(tweet, mentions)
+            if mentioned_users:
+                logging.info("%s (Twitter|%s) %i/%i mentions: %s          \r" %
+                             (str(timezone.localtime(timezone.now()))[:-13],
+                              user, i, tweet_count, ",".join(mentioned_users)))
             process_result = process_tweet(tweet, user, keywords, temp_source_sites, source_accounts)
             if process_result == ADDED:
                 added += 1
@@ -374,9 +419,6 @@ def parse_tweet(users, source_sites, keywords, source_accounts):
                 no_match += 1
             processed += 1
 
-            # print("%s (Twitter|%s) %i/%i          \r" %
-            #                  (str(timezone.localtime(timezone.now()))[:-13],
-            #                   user, processed, tweet_count))
             logging.info("%s (Twitter|%s) %i/%i          \r" %
                              (str(timezone.localtime(timezone.now()))[:-13],
                               user, processed, tweet_count))
@@ -384,6 +426,21 @@ def parse_tweet(users, source_sites, keywords, source_accounts):
         print format("%s (Twitter|%s) %i/%i          " % (
             str(timezone.localtime(timezone.now()))[:-13], user, processed,
             tweet_count))
+
+        ReferringTwitterHashtag.objects.filter(user=account).delete()
+        for ht in hashtags:
+            print(u"{}: {}".format(ht, hashtags[ht]))
+            logging.info(u"{}: {}".format(ht, hashtags[ht]))
+            hashtag = ReferringTwitterHashtag(user=account, text=ht, count=hashtags[ht])
+            hashtag.save()
+
+        ReferringTwitterMention.objects.filter(user=account).delete()
+        for mentioned_user, count in mentions.items():
+            print(u"{}: {}".format(mentioned_user, count))
+            logging.info(u"{}: {}".format(mentioned_user, count))
+            new_mention = ReferringTwitterMention(user=account, screen_name=mentioned_user, count=count)
+            new_mention.save()
+
 
 
 def explore():
@@ -399,9 +456,8 @@ def explore():
 
     # Retrieve all referring twitter accounts (to be explored)
     # referring_accounts = ["mjplitnick"]
-    referring_accounts = ReferringTwitter.objects.filter(name__icontains="Now")
-    # for account in ReferringTwitter.objects.all():
-    #     referring_accounts.append(str(account.name))
+    # referring_accounts = ReferringTwitter.objects.filter(name__icontains="Luke")
+    referring_accounts = list(ReferringTwitter.objects.all())
 
     # Retrieve all source twitter accounts in the scope
     source_accounts = []
@@ -409,8 +465,6 @@ def explore():
         source_accounts.append(str(account.name))
 
     parse_tweet(referring_accounts, source_sites, keyword_list, source_accounts)
-
-
 
 
 def get_user_id(screen_name):
@@ -460,7 +514,9 @@ def streaming():
             continue
         if user.lower() in lower_case_users:
             tweet_id = get_twitter_id(tweet)
-            result = process_tweet(tweet, user, keyword_list, source_sites, source_accounts)
+            referring_twitter = ReferringTwitter.objects.filter(name__iexact=user)[0]
+            temp_source_sites = ignore_url(referring_twitter, source_sites)
+            result = process_tweet(tweet, user, keyword_list, temp_source_sites, source_accounts)
             if result == ADDED:
                 streaming_result = "added"
                 added += 1
@@ -481,6 +537,7 @@ def streaming():
                 count, user)
             print(status_report)
             logging.info(status_report)
+
 
 def setup_logging(name):
     """
@@ -541,7 +598,7 @@ if __name__ == '__main__':
                     # re-crawl timeline every week
                     # scope change will take effect in new crawling cycle
                     logging.info("Sleep until next cycle")
-                    setup_logging()
+                    setup_logging("timeline")
                     time.sleep(60)
     else:
         # will do both timeline and streaming if no arguments are given

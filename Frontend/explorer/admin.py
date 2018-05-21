@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import (GenericStackedInline, GenericTabularInline)
 from taggit.models import TaggedItem
-from explorer.models import ReferringSite, ReferringSiteFilter, ReferringSiteCssSelector, SourceSite, SourceSiteAlias, Keyword, ReferringTwitter, SourceTwitter, SourceTwitterAlias
+from explorer.models import ReferringSite, ReferringSiteFilter, ReferringSiteCssSelector, SourceSite, SourceSiteAlias, Keyword, ReferringTwitter, SourceTwitter, SourceTwitterAlias, ReferringTwitterIgnoreURL, ReferringTwitterHashtag
 from articles.models import Article
 from articles.models import SourceSite as ArticleSource
 from articles.models import Keyword as ArticleKeyword
@@ -227,11 +227,21 @@ class KeywordAdmin(admin.ModelAdmin):
     get_tags.short_description = "Tags"
 
 
+class ReferringTwitterIgnoreURLInline(admin.TabularInline):
+    model = ReferringTwitterIgnoreURL
+    extra = 0
+
+class ReferringTwitterHashtagInline(admin.TabularInline):
+    model = ReferringTwitterHashtag
+    extra = 0
+    ordering = ('-count',)
+
+
 class ReferringTwitterAdmin(admin.ModelAdmin):
-    inlines = [TaggitTabularInline]
+    inlines = [TaggitTabularInline, ReferringTwitterIgnoreURLInline, ReferringTwitterHashtagInline]
     list_filter = [TaggitListFilter]
     fieldsets = [
-        (None,               {'fields': ['name', 'ignore_url']})
+        (None,               {'fields': ['name']})
         ]
 
     list_display = ['name', 'tweet_count', 'latest_tweet', 'get_tags']
