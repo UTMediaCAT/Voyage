@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # Install apt dependencies
+apt-get install python
+pip install --upgrade pip==9.0.0
 apt-get update && apt-get install -y python-dev python-pip python3-pip python-numpy zlib1g-dev libxml2-dev libxslt-dev libjpeg-dev libpq-dev libfontconfig postgresql postgresql-contrib language-pack-en htop lsof
 apt-get autoremove -y python-setuptools
 
