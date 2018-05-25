@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import (GenericStackedInline, GenericTabularInline)
 from taggit.models import TaggedItem
-from explorer.models import ReferringSite, ReferringSiteFilter, ReferringSiteCssSelector, SourceSite, SourceSiteAlias, Keyword, ReferringTwitter, SourceTwitter, SourceTwitterAlias, ReferringTwitterIgnoreURL, ReferringTwitterHashtag
+from explorer.models import ReferringSite, ReferringSiteFilter, ReferringSiteCssSelector, SourceSite, SourceSiteAlias, Keyword, ReferringTwitter, SourceTwitter, SourceTwitterAlias, ReferringTwitterIgnoreURL, ReferringTwitterHashtag, ReferringTwitterMention
 from articles.models import Article
 from articles.models import SourceSite as ArticleSource
 from articles.models import Keyword as ArticleKeyword
@@ -12,6 +12,7 @@ from django.utils import timezone
 from django import forms
 import newspaper
 from django.utils.safestring import mark_safe
+from django.forms import BaseInlineFormSet
 
 # For url encoding of shortcut links
 import urllib
@@ -231,14 +232,44 @@ class ReferringTwitterIgnoreURLInline(admin.TabularInline):
     model = ReferringTwitterIgnoreURL
     extra = 0
 
+
+class LimitFormSet(BaseInlineFormSet):
+    def get_queryset(self):
+        qs = super(LimitFormSet, self).get_queryset()
+        return qs.order_by("-count")[:30]
+
+
 class ReferringTwitterHashtagInline(admin.TabularInline):
     model = ReferringTwitterHashtag
+    formset = LimitFormSet
+    verbose_name_plural  = "Top Hashtags"
+    readonly_fields = ('text', 'count')
     extra = 0
-    ordering = ('-count',)
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+    
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+class ReferringTwitterMentionInline(admin.TabularInline):
+    model = ReferringTwitterMention
+    formset = LimitFormSet
+    verbose_name_plural = "Top Mentions"
+    readonly_fields = ('screen_name', 'count')
+    extra = 0
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
 
 
 class ReferringTwitterAdmin(admin.ModelAdmin):
-    inlines = [TaggitTabularInline, ReferringTwitterIgnoreURLInline, ReferringTwitterHashtagInline]
+    inlines = [TaggitTabularInline, ReferringTwitterIgnoreURLInline, ReferringTwitterHashtagInline, ReferringTwitterMentionInline]
     list_filter = [TaggitListFilter]
     fieldsets = [
         (None,               {'fields': ['name']})
