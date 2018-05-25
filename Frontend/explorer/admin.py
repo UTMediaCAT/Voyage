@@ -236,7 +236,7 @@ class ReferringTwitterIgnoreURLInline(admin.TabularInline):
 class LimitFormSet(BaseInlineFormSet):
     def get_queryset(self):
         qs = super(LimitFormSet, self).get_queryset()
-        return qs.order_by("-count")[:30]
+        return qs.order_by("-count").distinct()[:30]
 
 
 class ReferringTwitterHashtagInline(admin.TabularInline):
