@@ -233,52 +233,33 @@ class ReferringTwitterIgnoreURLInline(admin.TabularInline):
     extra = 0
 
 
-class LimitFormSet(BaseInlineFormSet):
-    def get_queryset(self):
-        qs = super(LimitFormSet, self).get_queryset()
-        return qs.order_by("-count").distinct()[:30]
-
-
-class ReferringTwitterHashtagInline(admin.TabularInline):
-    model = ReferringTwitterHashtag
-    formset = LimitFormSet
-    verbose_name_plural  = "Top Hashtags"
-    readonly_fields = ('text', 'count')
-    extra = 0
-
-    def has_delete_permission(self, request, obj=None):
-        return False
-    
-    def has_add_permission(self, request, obj=None):
-        return False
-
-
-class ReferringTwitterMentionInline(admin.TabularInline):
-    model = ReferringTwitterMention
-    formset = LimitFormSet
-    verbose_name_plural = "Top Mentions"
-    readonly_fields = ('screen_name', 'count')
-    extra = 0
-
-    def has_delete_permission(self, request, obj=None):
-        return False
-
-    def has_add_permission(self, request, obj=None):
-        return False
-
-
-
 class ReferringTwitterAdmin(admin.ModelAdmin):
-    inlines = [TaggitTabularInline, ReferringTwitterIgnoreURLInline, ReferringTwitterHashtagInline, ReferringTwitterMentionInline]
+    inlines = [TaggitTabularInline, ReferringTwitterIgnoreURLInline]
     list_filter = [TaggitListFilter]
     fieldsets = [
-        (None,               {'fields': ['name']})
+        (None,               {'fields': ['name', 'top_hashtag', 'top_mention']})
         ]
+    readonly_fields = ('top_hashtag', 'top_mention')
 
     list_display = ['name', 'tweet_count', 'latest_tweet', 'get_tags']
     search_fields = ['name']
     actions_on_top = True
     list_per_page = 1000
+
+    def top_mention(self, obj):
+        result = ""
+        for q in ReferringTwitterMention.objects.filter(user=obj).order_by("-count", "screen_name")[:30]:
+            result += str(q) + "\t\t" + str(q.count) + "\n" 
+        return result
+
+    def top_hashtag(self, obj):
+        result = ""
+        for q in ReferringTwitterHashtag.objects.filter(user=obj).order_by("-count", "text")[:30]:
+            result += str(q) + "\t\t" + str(q.count) + "\n" 
+        return result
+
+    top_mention.short_description = "Top Mentions"
+    top_hashtag.short_description = "Top Hashtags"
 
     def tweet_count(self, obj):
         return '<a target="_blank" href="/admin/tweets/tweet/?q=&name=' + \
