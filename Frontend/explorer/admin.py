@@ -247,16 +247,16 @@ class ReferringTwitterAdmin(admin.ModelAdmin):
     list_per_page = 1000
 
     def top_mention(self, obj):
-        result = ""
+        result = "<table> <tr> <th> </th> <th> </th> </tr>"
         for q in ReferringTwitterMention.objects.filter(user=obj).order_by("-count", "screen_name")[:30]:
-            result += str(q) + "\t\t" + str(q.count) + "\n" 
-        return result
+            result += "<tr> <td> " + str(q) + "</td> <td>" + str(q.count) + "</td> </tr>" 
+        return result + "</table>"
 
     def top_hashtag(self, obj):
-        result = ""
+        result = "<table> <tr> <th> </th> <th> </th> </tr>"
         for q in ReferringTwitterHashtag.objects.filter(user=obj).order_by("-count", "text")[:30]:
-            result += str(q) + "\t\t" + str(q.count) + "\n" 
-        return result
+            result += "<tr> <td> {} </td> <td> {} </td> </tr>".format(str(q), str(q.count)) 
+        return result + "</table>"
 
     top_mention.short_description = "Top Mentions"
     top_hashtag.short_description = "Top Hashtags"
