@@ -87,6 +87,15 @@ class SourceSite(models.Model):
     anchor_text = models.CharField(max_length=2000, verbose_name="Anchor Text")
     matched = models.BooleanField(default=False)
     local = models.BooleanField(default=True)
+
+    text = models.TextField(max_length=None, blank=True, null=True)
+    text_hash = models.CharField(max_length=100, blank=True, unique=True, null=True)
+    language = models.CharField(max_length=200, choices=LANGUAGES, blank=True, null=True)
+    date_added = models.DateTimeField('Date Added', blank=True, null=True)
+    date_last_seen = models.DateTimeField('Date Last Seen', blank=True, null=True)
+    date_published = models.DateTimeField('Date Published', blank=True, null=True)
+    is_referring = models.NullBooleanField(default=None)
+
     def __unicode__(self):
         return self.url
 
