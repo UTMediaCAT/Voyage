@@ -160,6 +160,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
         logging.debug("Starting MediaCAT crawler with limit: {} from plan b crawler".format(crawlersource_articles.limit))
     article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles).__iter__()
     processed = 0
+    articles
     filters = set(site.referringsitefilter_set.all())
     while True:
         try:
@@ -218,6 +219,15 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             logging.debug(u"matched sources: {0}".format(repr(sources)))
             twitter_accounts = get_sources_twitter(article, twitter_accounts_explorer)
             logging.debug(u"matched twitter_accounts: {0}".format(repr(twitter_accounts[0])))
+            
+            # Add the version stuff here
+            # for source in sources[0]:
+            # source_article = ExplorerArticle(current_url)
+            # source_article.download()
+            #
+            #
+            #
+            
             if((not keywords) and (not twitter_accounts[0]) and (all(map(lambda x: x[1] in site.url, sources[0])))):#[] gets coverted to false
                 logging.debug("skipping article because it's not a match")
                 continue
@@ -257,6 +267,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             # Check if the entry already exists
             version_match = ArticleVersion.objects.filter(text_hash=text_hash)
             url_match = ArticleUrl.objects.filter(name=url)
+
+            # if a data article exists in the version table, and we try to add a data sourced article then set the is_source to true
 
             # 4 cases:
             # Version  Url      Outcome
@@ -353,20 +365,86 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             matched = False)
 
                     for source in sources[0]:
+                        source_article = ExplorerArticle(source[0])
+                        source_article.download()
+                        source_article.newspaper_parse()
+
+                        if(not article.is_downloaded):
+                            if(not article.download()):
+                                logging.warning("Sourced article skipped because download failed")
+                                continue
+                        url = article.canonical_url.strip()
+
+                        if (not article.is_parsed):
+                            if (not article.preliminary_parse()):
+                                logging.warning("Sourced article skipped because parse failed")
+                                continue
+
+                        logging.debug("Sourced Article Parsed")
+
+                        logging.debug(u"Title: {0}".format(repr(article.title)))
+                        if not article.title:
+                            logging.info("Sourced article missing title, skipping")
+                            continue
+
+                        if not article.text:
+                            logging.info("Sourced article missing text, skipping")
+                            continue
+
                         version.sourcesite_set.create(
                             url=source[0],
                             domain=source[1],
                             anchor_text=source[2],
                             matched=True,
-                            local=(source[1] in site.url))
+                            local=(source[1] in site.url),
+                            title=source_article.title,
+                            text=source_article.get_text(strip_html=True),
+                            text_hash=hash_sha256(source_article.get_text(strip_html=True)),
+                            language=source_article.language,
+                            date_added=date_now,
+                            date_last_seen=date_now,
+                            date_published=get_pub_date(article))
 
                     for source in sources[1]:
+                        source_article = ExplorerArticle(source[0])
+                        source_article.download()
+                        source_article.newspaper_parse()
+
+                        if(not article.is_downloaded):
+                            if(not article.download()):
+                                logging.warning("Sourced article skipped because download failed")
+                                continue
+                        url = article.canonical_url.strip()
+
+                        if (not article.is_parsed):
+                            if (not article.preliminary_parse()):
+                                logging.warning("Sourced article skipped because parse failed")
+                                continue
+
+                        logging.debug("Sourced Article Parsed")
+
+                        logging.debug(u"Title: {0}".format(repr(article.title)))
+                        if not article.title:
+                            logging.info("Sourced article missing title, skipping")
+                            continue
+
+                        if not article.text:
+                            logging.info("Sourced article missing text, skipping")
+                            continue
+                            
                         version.sourcesite_set.create(
                             url=source[0],
                             domain=source[1],
                             anchor_text=source[2],
                             matched=False,
-                            local=(source[1] in site.url))
+                            local=(source[1] in site.url),
+                            title=source_article.title,
+                            text=source_article.get_text(strip_html=True),
+                            text_hash=hash_sha256(source_article.get_text(strip_html=True)),
+                            language=source_article.language,
+                            date_added=date_now,
+                            date_last_seen=date_now,
+                            date_published=get_pub_date(article))
 
                 # Add the article into queue
                 logging.info("Creating new WARC")
