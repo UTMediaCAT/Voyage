@@ -18,6 +18,7 @@ class AuthorInline(NestedTabularInline):
 
 class SourceSiteInline(NestedTabularInline):
     model = SourceSite
+    fields  = ('url', 'domain', 'anchor_text', 'matched', 'local',)
     readonly_fields = ('url', 'domain', 'anchor_text', 'matched', 'local',)
     fk_name = 'version'
     extra = 0
@@ -291,8 +292,11 @@ admin.site.register(Article, ArticleAdmin)
 class SourceSiteAdmin(admin.ModelAdmin):
 
     fieldsets = [
-        (None,               {'fields': ['url', 'domain']})
+        ('Source Site', {
+            'fields': ['url', 'domain','title', 'text_hash', 'language', 'date_added', 'date_last_seen', 'date_published', 'is_referring'
+            ]})
         ]
+    readonly_fields = ('url', 'domain','title', 'text_hash', 'language', 'date_added', 'date_last_seen', 'date_published', 'is_referring',)
     list_display = (['get_url','domain' , 'get_matched_article','get_source_author', 'get_source_date_added',  'get_source_date_published', 'link_options' ] )
     search_fields = [ 'url', 'domain','version__text','version__title' ]
 

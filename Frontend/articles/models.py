@@ -88,6 +88,7 @@ class SourceSite(models.Model):
     matched = models.BooleanField(default=False)
     local = models.BooleanField(default=True)
 
+    title = models.CharField(max_length=200, blank=True, null=True)
     text = models.TextField(max_length=None, blank=True, null=True)
     text_hash = models.CharField(max_length=100, blank=True, unique=True, null=True)
     language = models.CharField(max_length=200, choices=LANGUAGES, blank=True, null=True)
