@@ -318,20 +318,86 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             matched = False)
 
                     for source in sources[0]:
+                        source_article = ExplorerArticle(source[0])
+                        source_article.download()
+                        source_article.newspaper_parse()
+
+                        if(not article.is_downloaded):
+                            if(not article.download()):
+                                logging.warning("Sourced article skipped because download failed")
+                                continue
+                        url = article.canonical_url.strip()
+
+                        if (not article.is_parsed):
+                            if (not article.preliminary_parse()):
+                                logging.warning("Sourced article skipped because parse failed")
+                                continue
+
+                        logging.debug("Sourced Article Parsed")
+
+                        logging.debug(u"Title: {0}".format(repr(article.title)))
+                        if not article.title:
+                            logging.info("Sourced article missing title, skipping")
+                            continue
+
+                        if not article.text:
+                            logging.info("Sourced article missing text, skipping")
+                            continue
+
                         version.sourcesite_set.create(
                             url=source[0],
                             domain=source[1],
                             anchor_text=source[2],
                             matched=True,
-                            local=(source[1] in site.url))
+                            local=(source[1] in site.url),
+                            title=source[0],
+                            text=source[0],
+                            text_hash=hash_sha256(source_article.get_text(strip_html=True)),
+                            language=source_article.language,
+                            date_added=date_now,
+                            date_last_seen=date_now,
+                            date_published=get_pub_date(article))
 
                     for source in sources[1]:
+                        source_article = ExplorerArticle(source[0])
+                        source_article.download()
+                        source_article.newspaper_parse()
+
+                        if(not article.is_downloaded):
+                            if(not article.download()):
+                                logging.warning("Sourced article skipped because download failed")
+                                continue
+                        url = article.canonical_url.strip()
+
+                        if (not article.is_parsed):
+                            if (not article.preliminary_parse()):
+                                logging.warning("Sourced article skipped because parse failed")
+                                continue
+
+                        logging.debug("Sourced Article Parsed")
+
+                        logging.debug(u"Title: {0}".format(repr(article.title)))
+                        if not article.title:
+                            logging.info("Sourced article missing title, skipping")
+                            continue
+
+                        if not article.text:
+                            logging.info("Sourced article missing text, skipping")
+                            continue
+                            
                         version.sourcesite_set.create(
                             url=source[0],
                             domain=source[1],
                             anchor_text=source[2],
                             matched=False,
-                            local=(source[1] in site.url))
+                            local=(source[1] in site.url),
+                            title=source[0],
+                            text=source[0],
+                            text_hash=hash_sha256(source_article.get_text(strip_html=True)),
+                            language=source_article.language,
+                            date_added=date_now,
+                            date_last_seen=date_now,
+                            date_published=get_pub_date(article))
                 else:
                     logging.info("Adding new Article to the DB")
                     # If the db_article is new to the database,
