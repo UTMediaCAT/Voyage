@@ -160,7 +160,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
         logging.debug("Starting MediaCAT crawler with limit: {} from plan b crawler".format(crawlersource_articles.limit))
     article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles).__iter__()
     processed = 0
-    articles
     filters = set(site.referringsitefilter_set.all())
     while True:
         try:
@@ -397,8 +396,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             anchor_text=source[2],
                             matched=True,
                             local=(source[1] in site.url),
-                            title=source_article.title,
-                            text=source_article.get_text(strip_html=True),
+                            title=source[0],
+                            text=source[0],
                             text_hash=hash_sha256(source_article.get_text(strip_html=True)),
                             language=source_article.language,
                             date_added=date_now,
@@ -438,8 +437,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             anchor_text=source[2],
                             matched=False,
                             local=(source[1] in site.url),
-                            title=source_article.title,
-                            text=source_article.get_text(strip_html=True),
+                            title=source[0],
+                            text=source[0],
                             text_hash=hash_sha256(source_article.get_text(strip_html=True)),
                             language=source_article.language,
                             date_added=date_now,
