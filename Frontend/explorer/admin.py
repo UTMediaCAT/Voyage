@@ -241,7 +241,7 @@ class ReferringTwitterAdmin(admin.ModelAdmin):
         ]
     readonly_fields = ('top_hashtag', 'top_mention')
 
-    list_display = ['name', 'tweet_count', 'latest_tweet', 'get_tags']
+    list_display = ['name', 'tweet_count', 'tweet_visited', 'latest_tweet', 'get_tags']
     search_fields = ['name']
     actions_on_top = True
     list_per_page = 1000
@@ -268,6 +268,10 @@ class ReferringTwitterAdmin(admin.ModelAdmin):
             '</a>'
     tweet_count.short_description = "Total Tweets Archived"
     tweet_count.allow_tags = True
+
+    def tweet_visited(self, obj):
+        return 0
+    tweet_visited.short_description = "Total Tweets Visited"
 
     def latest_tweet(self, obj):
         latest = Tweet.objects.filter(name__iexact=obj.name)
