@@ -169,7 +169,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 site.is_shallow = True
                 site.save()
                 processed = 0
-                continue
+                break
             except StopIteration:
                 break
             #have to put all the iteration stuff at the top because I used continue extensively in this loop
@@ -386,7 +386,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             if (error_count > 10):
                 break
 
-    logging.info("Finished Site: %s"%site.name)
+    logging.info("!!!!!!!!!!!!!Finished Site: %s"%site.name)
     setup_logging(increment=False)
     logging.info("Finished Site: %s"%site.name)
 
@@ -578,6 +578,7 @@ if __name__ == '__main__':
     start = timeit.default_timer()
 
     # The main function, to explore the articles
+    logging.info("explorer about to start")
     explore()
 
     	

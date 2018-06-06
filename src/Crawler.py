@@ -8,6 +8,7 @@ import urlnorm
 import psycopg2
 import os
 import io
+import sys
 from pybloom_live import ScalableBloomFilter
 from pqueue import Queue
 from Queue import Empty
@@ -154,6 +155,7 @@ class Crawler(object):
 
 
                     logging.info(u"visiting {0}".format(current_url))
+                    self.visited_count += 1
                     #use newspaper to download and parse the article
                     article = ExplorerArticle(current_url)
                     article.download()
@@ -205,7 +207,6 @@ class Crawler(object):
                     # Update the Queue
                     self.to_visit.task_done()
 
-                    self.visited_count += 1
 
                     return article
 
@@ -213,7 +214,7 @@ class Crawler(object):
             except StopIteration as e:
                 raise e
             except ValueError as e:
-                raise e
+                raise ValueError
             except Exception as e:
                 raise e
 
