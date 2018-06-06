@@ -285,6 +285,24 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
     link_options.short_description = "Options"
 
 
+def create_modeladmin(modeladmin, model, name = None):
+    class  Meta:
+        proxy = True
+        app_label = model._meta.app_label
+
+    attrs = {'__module__': '', 'Meta': Meta}
+
+    newmodel = type(name, (model,), attrs)
+
+    admin.site.register(newmodel, modeladmin)
+    return modeladmin
+
+class MyArticleAdmin(ArticleAdmin):
+    def get_queryset(self, request):
+        return self.model.objects.filter(domain = "http://breitbart.com/")
+
+create_modeladmin(MyArticleAdmin, name='my-articles', model=Article)
+
 admin.site.register(Article, ArticleAdmin)
 
 
