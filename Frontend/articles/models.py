@@ -48,6 +48,10 @@ class Article(models.Model):
     def found_by(self):
         return self.version_set.last().found_by
 
+    @property
+    def is_source(self):
+        return False
+
 
 class Url(models.Model):
     article = models.ForeignKey(Article)
@@ -70,7 +74,7 @@ class Version(models.Model):
 
 
     def __unicode__(self):
-        return str(list(self.article.version_set.all()).index(self) + 1)
+        return str(list(self.article.version_set.all()).index(self) + 1) + self.title
 
 class Author(models.Model):
     version = models.ForeignKey(Version)

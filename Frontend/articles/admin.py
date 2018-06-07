@@ -136,7 +136,7 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
 
     inlines = [VersionInline]
 
-    list_display = ('get_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_language', 'get_date_added', 'get_date_published', 'get_date_last_seen', 'link_options')
+    list_display = ('domain', 'get_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_language', 'get_date_added', 'get_date_published', 'get_date_last_seen', 'link_options')
     search_fields = ['version__text','version__title']
     advanced_filter_fields = (
         'domain',
@@ -285,10 +285,11 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
     link_options.short_description = "Options"
 
 
-def create_modeladmin(modeladmin, model, name = None):
+def create_modeladmin(modeladmin, model, name = None, menu_name = None):
     class  Meta:
         proxy = True
         app_label = model._meta.app_label
+        verbose_name = menu_name
 
     attrs = {'__module__': '', 'Meta': Meta}
 
@@ -297,11 +298,14 @@ def create_modeladmin(modeladmin, model, name = None):
     admin.site.register(newmodel, modeladmin)
     return modeladmin
 
-class MyArticleAdmin(ArticleAdmin):
+class MySourceSiteAdmin(ArticleAdmin):
+    
+    inlines = []
+    
     def get_queryset(self, request):
         return self.model.objects.filter(domain = "http://breitbart.com/")
 
-create_modeladmin(MyArticleAdmin, name='my-articles', model=Article)
+create_modeladmin(MySourceSiteAdmin, name='mysourcesite', model=Article, menu_name='My Source Site')
 
 admin.site.register(Article, ArticleAdmin)
 
