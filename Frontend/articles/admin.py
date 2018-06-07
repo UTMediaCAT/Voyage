@@ -136,7 +136,7 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
 
     inlines = [VersionInline]
 
-    list_display = ('domain', 'get_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_language', 'get_date_added', 'get_date_published', 'get_date_last_seen', 'link_options')
+    list_display = ('get_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_language', 'get_date_added', 'get_date_published', 'get_date_last_seen', 'link_options')
     search_fields = ['version__text','version__title']
     advanced_filter_fields = (
         'domain',

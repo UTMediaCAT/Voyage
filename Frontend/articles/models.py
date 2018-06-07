@@ -6,6 +6,9 @@ from django.conf.global_settings import LANGUAGES
 
 class Article(models.Model):
     domain = URLProtocolField(max_length=2000, verbose_name="Referring Site")
+    is_referring = models.NullBooleanField()
+    is_source = models.NullBooleanField()
+    referrals = models.ManyToManyField('self', related_name='sources', symmetrical=False)
 
     def __unicode__(self):
         if len(self.title) >= 30:
@@ -48,9 +51,6 @@ class Article(models.Model):
     def found_by(self):
         return self.version_set.last().found_by
 
-    @property
-    def is_source(self):
-        return False
 
 
 class Url(models.Model):
@@ -71,6 +71,12 @@ class Version(models.Model):
     date_last_seen = models.DateTimeField('Date Last Seen', blank=True, null=True)
     date_published = models.DateTimeField('Date Published', blank=True, null=True)
     found_by = models.CharField(max_length=100, blank=True)
+
+    source_url = models.CharField(max_length=2000, blank=True, null=True)
+    source_domain = URLProtocolField(max_length=2000, verbose_name="Source Site", blank=True, null=True)
+    source_anchor_text = models.CharField(max_length=2000, verbose_name="Anchor Text", blank=True, null=True)
+    source_matched = models.NullBooleanField(default=False)
+    source_local = models.NullBooleanField(default=True)
 
 
     def __unicode__(self):
