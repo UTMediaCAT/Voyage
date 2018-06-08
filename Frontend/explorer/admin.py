@@ -270,7 +270,7 @@ class ReferringTwitterAdmin(admin.ModelAdmin):
     tweet_count.allow_tags = True
 
     def tweet_visited(self, obj):
-        return 0
+        return obj.tweets_visited + obj.timeline_tweets
     tweet_visited.short_description = "Total Tweets Visited"
 
     def latest_tweet(self, obj):

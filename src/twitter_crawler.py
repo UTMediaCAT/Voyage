@@ -137,7 +137,6 @@ def get_source_sites(urls, sites):
             # with eventlet, the request will time out in 10s
             with eventlet.Timeout(10):
                 real_url = requests.get(url, timeout=10).url
-                print("\t" + real_url)
             domain = tld.get_tld(real_url)
         except:
             continue
@@ -238,7 +237,6 @@ def get_source_site_from_csv(tweet_text):
         urls = {str(url.replace(" ", "")) for url in re.findall("https?:\/\/.*html", tweet_text)}
         urls.update({str(url.replace(" ", "")[:-1]) for url in re.findall("https?:\/\/ ?\S*\"", tweet_text)})
         urls.update({str(url.replace(" ", "")) for url in re.findall("(https?:\/\/.*?)\n", tweet_text)})
-        print(urls)
     except:
         urls = set()
     return list(urls)
@@ -381,7 +379,6 @@ def process_history(screen_name):
     user = ReferringTwitter.objects.filter(name=screen_name)[0]
     # ignore URLs speficied for this user
     temp_source_sites = ignore_url(user, source_sites)
-    # user = ReferringTwitter.objects.filter(name__icontains="luke")[0]
     processed = 0
     csv_path = "{}/tweet_csv/{}.csv".format(log_dir, user)
     tweet_count = lines_of_file(csv_path) - 1
@@ -406,8 +403,11 @@ def process_history(screen_name):
             else:
                 no_match += 1
 
-            logging.info("History: %s (Twitter|%s) %i/%i          \r" %
-                             (str(timezone.localtime(timezone.now()))[:-13],
+            # update total tweets visited
+            user.tweets_visited = user.tweets_visited + 1
+            user.save()
+            logging.info("{} (History|{}) {}/{}          \r".format(
+                             str(timezone.localtime(timezone.now()))[:-13],
                               user.name, processed, tweet_count))
 
 
@@ -481,18 +481,22 @@ def parse_tweet(users, source_sites, keywords, source_accounts):
         followers_count = get_follower_count(twarc_user)
         tweet_count = len(tweets)   
 
+        # update timeline tweets count
+        account.timeline_tweets = tweet_count
+        account.save()
+
         for i in range(tweet_count):
             tweet = tweets[i]
             hashtag_list = update_hashtag(tweet, hashtags)
             if hashtag_list:
-                logging.info("%s (Twitter|%s) %i/%i hashtags: %s          \r" %
-                             (str(timezone.localtime(timezone.now()))[:-13],
-                              user, i, tweet_count, ",".join(hashtag_list)))
+                logging.info("{} (Timeline|{}) {}/{} hashtags: {}          \r".format(
+                         str(timezone.localtime(timezone.now()))[:-13],
+                          user, i, tweet_count, ",".join(hashtag_list).encode('utf-8')))
             mentioned_users = update_mention(tweet, mentions)
             if mentioned_users:
-                logging.info("%s (Twitter|%s) %i/%i mentions: %s          \r" %
-                             (str(timezone.localtime(timezone.now()))[:-13],
-                              user, i, tweet_count, ",".join(mentioned_users)))
+                logging.info("{} (Timeline|{}) {}/{} mentions: {}          \r".format(
+                             str(timezone.localtime(timezone.now()))[:-13],
+                              user, i, tweet_count, ",".join(mentioned_users).encode('utf-8')))
             process_result = process_tweet(build_Tweet_from_Twarc_tweet(tweet), keywords, temp_source_sites, source_accounts)
             if process_result == ADDED:
                 added += 1
@@ -502,11 +506,11 @@ def parse_tweet(users, source_sites, keywords, source_accounts):
                 no_match += 1
             processed += 1
 
-            logging.info("%s (Twitter|%s) %i/%i          \r" %
-                             (str(timezone.localtime(timezone.now()))[:-13],
+            logging.info("{} (Timeline|{}) {}/{}          \r".format(
+                             str(timezone.localtime(timezone.now()))[:-13],
                               user, processed, tweet_count))
 
-        print format("%s (Twitter|%s) %i/%i          " % (
+        print format("%s (Timeline|%s) %i/%i          " % (
             str(timezone.localtime(timezone.now()))[:-13], user, processed,
             tweet_count))
 
@@ -607,12 +611,13 @@ def streaming():
             status_report = "{} Streaming ({}): \t {}/{}\t\t -- {} added: {}, updated: {}, no_match: {}, total: {}".format(
                 str(timezone.localtime(timezone.now()))[:-13], 
                 streaming_result, user, tweet_id, user_tweets, added, updated, no_match, count)
-            print(status_report)
             logging.info(status_report)
+            # update total tweets visited
+            referring_twitter.tweets_visited = referring_twitter.tweets_visited + 1
+            referring_twitter.save()
         else:
-            status_report = "{} (Streaming|{}) User: {} not found".format(str(timezone.localtime(timezone.now()))[:-13], 
+            status_report = "{} (Streaming|{}) -- Screen name: {}, not a referring user".format(str(timezone.localtime(timezone.now()))[:-13], 
                 count, user)
-            print(status_report)
             logging.info(status_report)
 
 

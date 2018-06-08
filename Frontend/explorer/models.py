@@ -95,6 +95,8 @@ class ReferringSiteCssSelector(models.Model):
 class ReferringTwitter(models.Model):
     name = models.CharField(max_length=200, unique=True, validators=[validate_user],
                             help_text='Do not include "@". Maximum 15 characters (Ex. CNN)')
+    tweets_visited = models.PositiveIntegerField(default=0)
+    timeline_tweets = models.PositiveIntegerField(default=0)
     tags = TaggableManager()
 
     class Meta:
