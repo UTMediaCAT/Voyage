@@ -593,7 +593,7 @@ def streaming():
             tweet_id = get_twitter_id(tweet)
             referring_twitter = ReferringTwitter.objects.filter(name__iexact=user)[0]
             temp_source_sites = ignore_url(referring_twitter, source_sites)
-            result = process_tweet(build_Tweet_from_Twarc_tweet(tweet), user, keyword_list, temp_source_sites, source_accounts)
+            result = process_tweet(build_Tweet_from_Twarc_tweet(tweet), keyword_list, temp_source_sites, source_accounts)
             if result == ADDED:
                 streaming_result = "added"
                 added += 1
