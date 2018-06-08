@@ -10,7 +10,7 @@ def get_article_run_status():
 
 @register.simple_tag
 def get_twitter_run_status():
-    return is_process_running("twitter_explorer.py")
+    return is_process_running("twitter_crawler.py")
 
 
 def is_process_running(program_name):
