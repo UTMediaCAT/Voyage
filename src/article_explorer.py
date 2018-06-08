@@ -511,19 +511,19 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 else:
                     # If the db_article is new to the database,
                     # add it to the database
-                    if (version_match[0].article.is_source == True):
-                        db_article = version_match[0].article
+                    # if (version_match[0].article.is_source == True):
+                    #     db_article = version_match[0].article
 
-                        version = db_article.version_set.last()
-                        version.title=title
-                        version.text=text
-                        version.text_hash=text_hash
-                        version.language=language
-                        version.date_added=date_now
-                        version.date_last_seen=date_now
-                        version.date_published=pub_date
+                    #     version = db_article.version_set.last()
+                    #     version.title=title
+                    #     version.text=text
+                    #     version.text_hash=text_hash
+                    #     version.language=language
+                    #     version.date_added=date_now
+                    #     version.date_last_seen=date_now
+                    #     version.date_published=pub_date
                         
-                    else:
+                    if True:
                         logging.info("Adding new Article to the DB")
 
                         db_article = Article(domain=site.url)
@@ -641,6 +641,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             date_last_seen=date_now,
                             date_published=get_pub_date(source_article))
 
+                        source_version.save()
                         db_article.sources.add(db_source_article)
 
                     for source in sources[1]:
@@ -728,8 +729,9 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             date_last_seen=date_now,
                             date_published=get_pub_date(source_article))
 
+                        source_version.save()
                         db_article.sources.add(db_source_article)
-
+                        
                 # Add the article into queue
                 logging.info("Creating new WARC")
                 warc_creator.enqueue_article(url, text_hash)
