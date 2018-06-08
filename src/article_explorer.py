@@ -267,6 +267,9 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             version_match = ArticleVersion.objects.filter(text_hash=text_hash)
             url_match = ArticleUrl.objects.filter(name=url)
 
+            # if (version_match[0].article.is_source == True):
+            #     version_match[0].article.is_referring = True
+
             # if a data article exists in the version table, and we try to add a data sourced article then set the is_source to true
 
             # 4 cases:
@@ -275,7 +278,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             # match    unmatch  Add new Url to article
             # unmatch  match    Add new Version to artcile
             # unmatch  unmatch  Create new Article with respective Version and Url
-            if version_match:
+            if version_match and (version_match[0].article.is_referring == True):
                 version = version_match[0]
                 if url_match:
                     if version_match[0].article != url_match[0].article:
@@ -291,16 +294,31 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 version.save()
             else:
                 if url_match:
+
                     db_article = url_match[0].article
-                    logging.info(u"Adding new Version to Article {0}".format(db_article.id))
-                    version = db_article.version_set.create(
+
+                    if (db_article.is_source == True):
+                        version = db_article.version_set.last()
+                        version.title=title,
+                        version.text=text
+                        version.text_hash=text_hash
+                        version.language=language
+                        version.date_added=date_now
+                        version.date_last_seen=date_now
+                        version.date_published=pub_date
+                    else:
+                        logging.info(u"Adding new Version to Article {0}".format(db_article.id))
+
+                        version = db_article.version_set.create(
                         title=title,
                         text=text,
                         text_hash=text_hash,
                         language=language,
                         date_added=date_now,
                         date_last_seen=date_now,
-                        date_published=pub_date)
+                        date_published=pub_date) 
+                    db_article.is_referring = True
+                    
 
                     for key in keywords:
                         version.keyword_set.create(name=key)
@@ -321,79 +339,28 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         source_article = ExplorerArticle(source[0])
                         source_article.download()
 
-                        if(not source_article.is_downloaded):
-                            if(not source_article.download()):
-                                logging.warning("Sourced article skipped because download failed")
-                                version.sourcesite_set.create(
-                                    url=source[0],
-                                    domain=source[1],
-                                    anchor_text=source[2],
-                                    matched=True,
-                                    local=(source[1] in site.url))
-                                continue
-
-                        source_article.newspaper_parse()
-
-                        if (not source_article.is_parsed):
-                            if (not source_article.preliminary_parse()):
-                                logging.warning("Sourced article skipped because parse failed")
-                                version.sourcesite_set.create(
-                                    url=source[0],
-                                    domain=source[1],
-                                    anchor_text=source[2],
-                                    matched=True,
-                                    local=(source[1] in site.url))
-                                continue
-
-                        logging.debug("Sourced Article Parsed")
-
-                        if not source_article.title:
-                            logging.info("Sourced article missing title, skipping")
-                            version.sourcesite_set.create(
-                                url=source[0],
-                                domain=source[1],
-                                anchor_text=source[2],
-                                matched=True,
-                                local=(source[1] in site.url))
-                            continue
-
-                        if not source_article.text:
-                            logging.info("Sourced article missing text, skipping")
-                            version.sourcesite_set.create(
-                                url=source[0],
-                                domain=source[1],
-                                anchor_text=source[2],
-                                matched=True,
-                                local=(source[1] in site.url))
-                            continue
-
-                        version.sourcesite_set.create(
-                            url=source[0],
-                            domain=source[1],
-                            anchor_text=source[2],
-                            matched=True,
-                            local=(source[1] in site.url),
-                            title=source_article.title,
-                            text=source_article.get_text(strip_html=True),
-                            text_hash=hash_sha256(source_article.get_text(strip_html=True)),
-                            language=source_article.language,
-                            date_added=date_now,
-                            date_last_seen=date_now,
-                            date_published=get_pub_date(source_article))
-
-                    for source in sources[1]:
-                        source_article = ExplorerArticle(source[0])
-                        source_article.download()
+                        db_source_article = Article(domain=source[1])
+                        db_source_article.save()
+                        db_source_article.url_set.create(name=source[0])
+                        db_source_article.is_source = True
+                        #version = db_source_article.version_set.create(#)
+                        
 
                         if(not source_article.is_downloaded):
                             if(not source_article.download()):
                                 logging.warning("Sourced article skipped because download failed")
-                                version.sourcesite_set.create(
-                                    url=source[0],
-                                    domain=source[1],
-                                    anchor_text=source[2],
-                                    matched=False,
-                                    local=(source[1] in site.url))
+                                db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=True,
+                                    source_local=(source[1] in site.url)
+                                )
+                                # version.sourcesite_set.create(
+                                #     url=source[0],
+                                #     domain=source[1],
+                                #     anchor_text=source[2],
+                                #     matched=True,
+                                #     local=(source[1] in site.url))
                                 continue
                                 
                         source_article.newspaper_parse()
@@ -401,105 +368,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         if (not source_article.is_parsed):
                             if (not source_article.preliminary_parse()):
                                 logging.warning("Sourced article skipped because parse failed")
-                                version.sourcesite_set.create(
-                                    url=source[0],
-                                    domain=source[1],
-                                    anchor_text=source[2],
-                                    matched=False,
-                                    local=(source[1] in site.url))
-                                continue
-
-                        logging.debug("Sourced Article Parsed")
-                        if not source_article.title:
-                            logging.info("Sourced article missing title, skipping")
-                            version.sourcesite_set.create(
-                                url=source[0],
-                                domain=source[1],
-                                anchor_text=source[2],
-                                matched=False,
-                                local=(source[1] in site.url))
-                            continue
-
-                        if not source_article.text:
-                            logging.info("Sourced article missing text, skipping")
-                            version.sourcesite_set.create(
-                                url=source[0],
-                                domain=source[1],
-                                anchor_text=source[2],
-                                matched=False,
-                                local=(source[1] in site.url))
-                            continue
-
-                        version.sourcesite_set.create(
-                            url=source[0],
-                            domain=source[1],
-                            anchor_text=source[2],
-                            matched=False,
-                            local=(source[1] in site.url),
-                            title=source_article.title,
-                            text=source_article.get_text(strip_html=True),
-                            text_hash=hash_sha256(source_article.get_text(strip_html=True)),
-                            language=source_article.language,
-                            date_added=date_now,
-                            date_last_seen=date_now,
-                            date_published=get_pub_date(source_article))
-                else:
-                    logging.info("Adding new Article to the DB")
-                    # If the db_article is new to the database,
-                    # add it to the database
-                    db_article = Article(domain=site.url)
-                    db_article.save()
-                    db_article.url_set.create(name=url)
-                    version = db_article.version_set.create(
-                        title=title,
-                        text=text,
-                        text_hash=text_hash,
-                        language=language,
-                        date_added=date_now,
-                        date_last_seen=date_now,
-                        date_published=pub_date)
-
-                    for key in keywords:
-                        version.keyword_set.create(name=key)
-
-                    for author in authors:
-                        version.author_set.create(name=author)
-                    for account in twitter_accounts[0]:
-                        version.sourcetwitter_set.create(
-                            name=account,
-                            matched = True)
-
-                    for account in twitter_accounts[1]:
-                        version.sourcetwitter_set.create(
-                            name=account,
-                            matched = False)
-
-                    for source in sources[0]:
-                        source_article = ExplorerArticle(source[0])
-                        source_article.download()
-
-                        if(not source_article.is_downloaded):
-                            if(not source_article.download()):
-                                logging.warning("Sourced article skipped because download failed")
-                                version.sourcesite_set.create(
-                                    url=source[0],
-                                    domain=source[1],
-                                    anchor_text=source[2],
-                                    matched=True,
-                                    local=(source[1] in site.url))
-                                continue
-                                
-                        source_article.newspaper_parse()
-
-                        if (not source_article.is_parsed):
-                            if (not source_article.preliminary_parse()):
-                                logging.warning("Sourced article skipped because parse failed")
-                                version.sourcesite_set.create(
-                                    url=source[0],
-                                    domain=source[1],
-                                    anchor_text=source[2],
-                                    matched=True,
-                                    local=(source[1] in site.url))
+                                db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=True,
+                                    source_local=(source[1] in site.url))
                                 continue
 
                         logging.debug("Sourced Article Parsed")
@@ -507,30 +380,38 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         logging.debug(u"Title: {0}".format(repr(article.title)))
                         if not source_article.title:
                             logging.info("Sourced article missing title, skipping")
-                            version.sourcesite_set.create(
-                                url=source[0],
-                                domain=source[1],
-                                anchor_text=source[2],
-                                matched=True,
-                                local=(source[1] in site.url))
+                            db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=True,
+                                    source_local=(source[1] in site.url))
                             continue
 
                         if not source_article.text:
                             logging.info("Sourced article missing text, skipping")
-                            version.sourcesite_set.create(
-                                url=source[0],
-                                domain=source[1],
-                                anchor_text=source[2],
-                                matched=True,
-                                local=(source[1] in site.url))
+                            db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=True,
+                                    source_local=(source[1] in site.url))
                             continue
+                        
+                        css_source_author = set(site.referringsitecssselector_set.filter(field=1))
+                        source_authors = source_article.evaluate_css_selectors(css_source_author)
+                        if(source_authors):
+                            source_authors = [source_authors]
+                        else:
+                            source_authors = source_article.authors
 
-                        version.sourcesite_set.create(
-                            url=source[0],
-                            domain=source[1],
-                            anchor_text=source[2],
-                            matched=True,
-                            local=(source[1] in site.url),
+                        for author in source_authors:
+                            source_version.author_set.create(name=author)
+
+                        source_version = db_source_article.version_set.create(
+                            source_url=source[0],
+                            source_domain=source[1],
+                            source_anchor_text=source[2],
+                            source_matched=True,
+                            source_local=(source[1] in site.url),
                             title=source_article.title,
                             text=source_article.get_text(strip_html=True),
                             text_hash=hash_sha256(source_article.get_text(strip_html=True)),
@@ -539,19 +420,34 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             date_last_seen=date_now,
                             date_published=get_pub_date(source_article))
 
+                        db_article.sources.add(db_source_article)
+
                     for source in sources[1]:
                         source_article = ExplorerArticle(source[0])
                         source_article.download()
 
+                        db_source_article = Article(domain=source[1])
+                        db_source_article.save()
+                        db_source_article.url_set.create(name=source[0])
+                        db_source_article.is_source = True
+                        #version = db_source_article.version_set.create(#)
+                        
+
                         if(not source_article.is_downloaded):
                             if(not source_article.download()):
                                 logging.warning("Sourced article skipped because download failed")
-                                version.sourcesite_set.create(
-                                    url=source[0],
-                                    domain=source[1],
-                                    anchor_text=source[2],
-                                    matched=False,
-                                    local=(source[1] in site.url))
+                                db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=False,
+                                    source_local=(source[1] in site.url)
+                                )
+                                # version.sourcesite_set.create(
+                                #     url=source[0],
+                                #     domain=source[1],
+                                #     anchor_text=source[2],
+                                #     matched=True,
+                                #     local=(source[1] in site.url))
                                 continue
                                 
                         source_article.newspaper_parse()
@@ -559,42 +455,50 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         if (not source_article.is_parsed):
                             if (not source_article.preliminary_parse()):
                                 logging.warning("Sourced article skipped because parse failed")
-                                version.sourcesite_set.create(
-                                    url=source[0],
-                                    domain=source[1],
-                                    anchor_text=source[2],
-                                    matched=False,
-                                    local=(source[1] in site.url))
+                                db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=False,
+                                    source_local=(source[1] in site.url))
                                 continue
 
                         logging.debug("Sourced Article Parsed")
 
+                        logging.debug(u"Title: {0}".format(repr(article.title)))
                         if not source_article.title:
                             logging.info("Sourced article missing title, skipping")
-                            version.sourcesite_set.create(
-                                url=source[0],
-                                domain=source[1],
-                                anchor_text=source[2],
-                                matched=False,
-                                local=(source[1] in site.url))
+                            db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=False,
+                                    source_local=(source[1] in site.url))
                             continue
 
                         if not source_article.text:
                             logging.info("Sourced article missing text, skipping")
-                            version.sourcesite_set.create(
-                                url=source[0],
-                                domain=source[1],
-                                anchor_text=source[2],
-                                matched=False,
-                                local=(source[1] in site.url))
+                            db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=False,
+                                    source_local=(source[1] in site.url))
                             continue
+                        
+                        css_source_author = set(site.referringsitecssselector_set.filter(field=1))
+                        source_authors = source_article.evaluate_css_selectors(css_source_author)
+                        if(source_authors):
+                            source_authors = [source_authors]
+                        else:
+                            source_authors = source_article.authors
 
-                        version.sourcesite_set.create(
-                            url=source[0],
-                            domain=source[1],
-                            anchor_text=source[2],
-                            matched=False,
-                            local=(source[1] in site.url),
+                        for author in source_authors:
+                            source_version.author_set.create(name=author)
+
+                        source_version = db_source_article.version_set.create(
+                            source_url=source[0],
+                            source_domain=source[1],
+                            source_anchor_text=source[2],
+                            source_matched=False,
+                            source_local=(source[1] in site.url),
                             title=source_article.title,
                             text=source_article.get_text(strip_html=True),
                             text_hash=hash_sha256(source_article.get_text(strip_html=True)),
@@ -602,6 +506,229 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             date_added=date_now,
                             date_last_seen=date_now,
                             date_published=get_pub_date(source_article))
+
+                        db_article.sources.add(db_source_article)
+                else:
+                    # If the db_article is new to the database,
+                    # add it to the database
+                    if (version_match[0].article.is_source == True):
+                        db_article = version_match[0].article
+
+                        version = db_article.version_set.last()
+                        version.title=title
+                        version.text=text
+                        version.text_hash=text_hash
+                        version.language=language
+                        version.date_added=date_now
+                        version.date_last_seen=date_now
+                        version.date_published=pub_date
+                        
+                    else:
+                        logging.info("Adding new Article to the DB")
+
+                        db_article = Article(domain=site.url)
+                        db_article.save()
+                        db_article.url_set.create(name=url)
+
+                        version = db_article.version_set.create(
+                        title=title,
+                        text=text,
+                        text_hash=text_hash,
+                        language=language,
+                        date_added=date_now,
+                        date_last_seen=date_now,
+                        date_published=pub_date)
+                    
+                    db_article.is_referring = True
+
+                    for key in keywords:
+                        version.keyword_set.create(name=key)
+
+                    for author in authors:
+                        version.author_set.create(name=author)
+                    for account in twitter_accounts[0]:
+                        version.sourcetwitter_set.create(
+                            name=account,
+                            matched = True)
+
+                    for account in twitter_accounts[1]:
+                        version.sourcetwitter_set.create(
+                            name=account,
+                            matched = False)
+
+                    for source in sources[0]:
+                        source_article = ExplorerArticle(source[0])
+                        source_article.download()
+
+                        db_source_article = Article(domain=source[1])
+                        db_source_article.save()
+                        db_source_article.url_set.create(name=source[0])
+                        db_source_article.is_source = True
+                        #version = db_source_article.version_set.create(#)
+                        
+
+                        if(not source_article.is_downloaded):
+                            if(not source_article.download()):
+                                logging.warning("Sourced article skipped because download failed")
+                                db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=True,
+                                    source_local=(source[1] in site.url)
+                                )
+                                # version.sourcesite_set.create(
+                                #     url=source[0],
+                                #     domain=source[1],
+                                #     anchor_text=source[2],
+                                #     matched=True,
+                                #     local=(source[1] in site.url))
+                                continue
+                                
+                        source_article.newspaper_parse()
+
+                        if (not source_article.is_parsed):
+                            if (not source_article.preliminary_parse()):
+                                logging.warning("Sourced article skipped because parse failed")
+                                db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=True,
+                                    source_local=(source[1] in site.url))
+                                continue
+
+                        logging.debug("Sourced Article Parsed")
+
+                        logging.debug(u"Title: {0}".format(repr(article.title)))
+                        if not source_article.title:
+                            logging.info("Sourced article missing title, skipping")
+                            db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=True,
+                                    source_local=(source[1] in site.url))
+                            continue
+
+                        if not source_article.text:
+                            logging.info("Sourced article missing text, skipping")
+                            db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=True,
+                                    source_local=(source[1] in site.url))
+                            continue
+                        
+                        css_source_author = set(site.referringsitecssselector_set.filter(field=1))
+                        source_authors = source_article.evaluate_css_selectors(css_source_author)
+                        if(source_authors):
+                            source_authors = [source_authors]
+                        else:
+                            source_authors = source_article.authors
+
+                        for author in source_authors:
+                            source_version.author_set.create(name=author)
+
+                        source_version = db_source_article.version_set.create(
+                            source_url=source[0],
+                            source_domain=source[1],
+                            source_anchor_text=source[2],
+                            source_matched=True,
+                            source_local=(source[1] in site.url),
+                            title=source_article.title,
+                            text=source_article.get_text(strip_html=True),
+                            text_hash=hash_sha256(source_article.get_text(strip_html=True)),
+                            language=source_article.language,
+                            date_added=date_now,
+                            date_last_seen=date_now,
+                            date_published=get_pub_date(source_article))
+
+                        db_article.sources.add(db_source_article)
+
+                    for source in sources[1]:
+                        source_article = ExplorerArticle(source[0])
+                        source_article.download()
+
+                        db_source_article = Article(domain=source[1])
+                        db_source_article.save()
+                        db_source_article.url_set.create(name=source[0])
+                        db_source_article.is_source = True
+                        #version = db_source_article.version_set.create(#)
+                        
+
+                        if(not source_article.is_downloaded):
+                            if(not source_article.download()):
+                                logging.warning("Sourced article skipped because download failed")
+                                db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=False,
+                                    source_local=(source[1] in site.url)
+                                )
+                                # version.sourcesite_set.create(
+                                #     url=source[0],
+                                #     domain=source[1],
+                                #     anchor_text=source[2],
+                                #     matched=True,
+                                #     local=(source[1] in site.url))
+                                continue
+                                
+                        source_article.newspaper_parse()
+
+                        if (not source_article.is_parsed):
+                            if (not source_article.preliminary_parse()):
+                                logging.warning("Sourced article skipped because parse failed")
+                                db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=False,
+                                    source_local=(source[1] in site.url))
+                                continue
+
+                        logging.debug("Sourced Article Parsed")
+
+                        logging.debug(u"Title: {0}".format(repr(article.title)))
+                        if not source_article.title:
+                            logging.info("Sourced article missing title, skipping")
+                            db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=False,
+                                    source_local=(source[1] in site.url))
+                            continue
+
+                        if not source_article.text:
+                            logging.info("Sourced article missing text, skipping")
+                            db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=False,
+                                    source_local=(source[1] in site.url))
+                            continue
+                        
+                        css_source_author = set(site.referringsitecssselector_set.filter(field=1))
+                        source_authors = source_article.evaluate_css_selectors(css_source_author)
+                        if(source_authors):
+                            source_authors = [source_authors]
+                        else:
+                            source_authors = source_article.authors
+
+                        for author in source_authors:
+                            source_version.author_set.create(name=author)
+
+                        source_version = db_source_article.version_set.create(
+                            source_url=source[0],
+                            source_domain=source[1],
+                            source_anchor_text=source[2],
+                            source_matched=False,
+                            source_local=(source[1] in site.url),
+                            title=source_article.title,
+                            text=source_article.get_text(strip_html=True),
+                            text_hash=hash_sha256(source_article.get_text(strip_html=True)),
+                            language=source_article.language,
+                            date_added=date_now,
+                            date_last_seen=date_now,
+                            date_published=get_pub_date(source_article))
+
+                        db_article.sources.add(db_source_article)
 
                 # Add the article into queue
                 logging.info("Creating new WARC")
@@ -803,7 +930,6 @@ if __name__ == '__main__':
     logging.debug("Connected to django/database")
 
     start = timeit.default_timer()
-
     # The main function, to explore the articles
     explore()
     delta_time = timeit.default_timer() - start
