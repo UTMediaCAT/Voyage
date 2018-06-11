@@ -19,3 +19,5 @@ simplejson==3.6.5
 pybloom_live==2.2.0
 pqueue==0.1.6
 eventlet==0.20.1
+lxml==3.5.0
+pyquery==1.2.10

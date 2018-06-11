@@ -95,6 +95,8 @@ class ReferringSiteCssSelector(models.Model):
 class ReferringTwitter(models.Model):
     name = models.CharField(max_length=200, unique=True, validators=[validate_user],
                             help_text='Do not include "@". Maximum 15 characters (Ex. CNN)')
+    tweets_visited = models.PositiveIntegerField(default=0)
+    timeline_tweets = models.PositiveIntegerField(default=0)
     tags = TaggableManager()
 
     class Meta:
@@ -102,6 +104,45 @@ class ReferringTwitter(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class ReferringTwitterIgnoreURL(models.Model):
+    user = models.ForeignKey(ReferringTwitter) 
+    ignore_url = URLProtocolField(max_length=2000, unique=False, null=True, 
+                          help_text='Choose a simple URL to help for matching. Maximum 2000 characters (Ex. http://cnn.com)')
+
+    class Meta:
+        verbose_name = 'URL To Ignore'
+        verbose_name_plural = 'URLs To Ignore'
+
+    def __unicode__(self):
+        return self.ignore_url
+
+
+
+class ReferringTwitterHashtag(models.Model):
+    user = models.ForeignKey(ReferringTwitter)
+    text = models.CharField(max_length=200)
+    count = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        verbose_name = 'Hashtag'
+
+    def __unicode__(self):
+        return self.text
+
+
+class ReferringTwitterMention(models.Model):
+    user = models.ForeignKey(ReferringTwitter)
+    screen_name = models.CharField(max_length=200)
+    count = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        verbose_name = 'Mentioned User'
+
+    def __unicode__(self):
+        return self.screen_name
+
 
 
 class SourceTwitter(models.Model):

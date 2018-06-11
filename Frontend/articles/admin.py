@@ -10,7 +10,7 @@ import yaml, os
 import common
 import difflib
 
-class AuthorInline(NestedTabularInline):
+class AuthorInline(NestedStackedInline):
     model = Author
     fields = ['name']
     fk_name = 'version'

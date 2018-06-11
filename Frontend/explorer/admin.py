@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import (GenericStackedInline, GenericTabularInline)
 from taggit.models import TaggedItem
-from explorer.models import ReferringSite, ReferringSiteFilter, ReferringSiteCssSelector, SourceSite, SourceSiteAlias, Keyword, ReferringTwitter, SourceTwitter, SourceTwitterAlias
+from explorer.models import ReferringSite, ReferringSiteFilter, ReferringSiteCssSelector, SourceSite, SourceSiteAlias, Keyword, ReferringTwitter, SourceTwitter, SourceTwitterAlias, ReferringTwitterIgnoreURL, ReferringTwitterHashtag, ReferringTwitterMention
 from articles.models import Article
 from articles.models import SourceSite as ArticleSource
 from articles.models import Keyword as ArticleKeyword
@@ -12,6 +12,7 @@ from django.utils import timezone
 from django import forms
 import newspaper
 from django.utils.safestring import mark_safe
+from django.forms import BaseInlineFormSet
 
 # For url encoding of shortcut links
 import urllib
@@ -227,17 +228,38 @@ class KeywordAdmin(admin.ModelAdmin):
     get_tags.short_description = "Tags"
 
 
+class ReferringTwitterIgnoreURLInline(admin.TabularInline):
+    model = ReferringTwitterIgnoreURL
+    extra = 0
+
+
 class ReferringTwitterAdmin(admin.ModelAdmin):
-    inlines = [TaggitTabularInline]
+    inlines = [TaggitTabularInline, ReferringTwitterIgnoreURLInline]
     list_filter = [TaggitListFilter]
     fieldsets = [
-        (None,               {'fields': ['name']})
+        (None,               {'fields': ['name', 'top_hashtag', 'top_mention']})
         ]
+    readonly_fields = ('top_hashtag', 'top_mention')
 
-    list_display = ['name', 'tweet_count', 'latest_tweet', 'get_tags']
+    list_display = ['name', 'tweet_count', 'tweet_visited', 'latest_tweet', 'get_tags']
     search_fields = ['name']
     actions_on_top = True
     list_per_page = 1000
+
+    def top_mention(self, obj):
+        result = "<table> <tr> <th> </th> <th> </th> </tr>"
+        for q in ReferringTwitterMention.objects.filter(user=obj).order_by("-count", "screen_name")[:30]:
+            result += "<tr> <td> " + str(q) + "</td> <td>" + str(q.count) + "</td> </tr>" 
+        return result + "</table>"
+
+    def top_hashtag(self, obj):
+        result = "<table> <tr> <th> </th> <th> </th> </tr>"
+        for q in ReferringTwitterHashtag.objects.filter(user=obj).order_by("-count", "text")[:30]:
+            result += "<tr> <td> {} </td> <td> {} </td> </tr>".format(str(q), str(q.count)) 
+        return result + "</table>"
+
+    top_mention.short_description = "Top Mentions"
+    top_hashtag.short_description = "Top Hashtags"
 
     def tweet_count(self, obj):
         return '<a target="_blank" href="/admin/tweets/tweet/?q=&name=' + \
@@ -246,6 +268,10 @@ class ReferringTwitterAdmin(admin.ModelAdmin):
             '</a>'
     tweet_count.short_description = "Total Tweets Archived"
     tweet_count.allow_tags = True
+
+    def tweet_visited(self, obj):
+        return obj.tweets_visited + obj.timeline_tweets
+    tweet_visited.short_description = "Total Tweets Visited"
 
     def latest_tweet(self, obj):
         latest = Tweet.objects.filter(name__iexact=obj.name)
