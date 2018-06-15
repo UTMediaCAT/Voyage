@@ -278,34 +278,36 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             # match    unmatch  Add new Url to article
             # unmatch  match    Add new Version to artcile
             # unmatch  unmatch  Create new Article with respective Version and Url
-            if version_match and (version_match[0].article.is_referring == True):
-                version = version_match[0]
-                if url_match:
-                    if version_match[0].article != url_match[0].article:
-                        logging.warning(u"Version and Url matches are not pointing to same article! versionMatchId: {0} urlMatchId:{1}".format(version.id, url_match[0].id))
-                        continue
+            if version_match:
+                if (version_match[0].article.is_referring == True):
+                    version = version_match[0]
+                    if url_match:
+                        if version_match[0].article != url_match[0].article:
+                            logging.warning(u"Version and Url matches are not pointing to same article! versionMatchId: {0} urlMatchId:{1}".format(version.id, url_match[0].id))
+                            continue
+                        else:
+                            logging.info(u"Updating date last seen of {0}".format(version.article.id))
                     else:
-                        logging.info(u"Updating date last seen of {0}".format(version.article.id))
-                else:
-                    db_article = version.article
-                    logging.info(u"Adding new Url to Article {0}".format(db_article.id))
-                    db_article.url_set.create(name=url)
-                version.date_last_seen = date_now
-                version.save()
+                        db_article = version.article
+                        logging.info(u"Adding new Url to Article {0}".format(db_article.id))
+                        db_article.url_set.create(name=url)
+                    version.date_last_seen = date_now
+                    version.save()
             else:
                 if url_match:
-
+                    logging.info(u"AAAAAAAaoudsaosdiasd {0}".format(url))
                     db_article = url_match[0].article
 
                     if (db_article.is_source == True):
                         version = db_article.version_set.last()
-                        version.title=title,
+                        version.title=title
                         version.text=text
                         version.text_hash=text_hash
                         version.language=language
                         version.date_added=date_now
                         version.date_last_seen=date_now
                         version.date_published=pub_date
+                        version.save()
                     else:
                         logging.info(u"Adding new Version to Article {0}".format(db_article.id))
 
@@ -318,7 +320,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         date_last_seen=date_now,
                         date_published=pub_date) 
                     db_article.is_referring = True
-                    
+                    db_article.save()
+
 
                     for key in keywords:
                         version.keyword_set.create(name=key)
@@ -343,6 +346,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         db_source_article.save()
                         db_source_article.url_set.create(name=source[0])
                         db_source_article.is_source = True
+                        db_source_article.save()
+
                         #version = db_source_article.version_set.create(#)
                         
 
@@ -361,6 +366,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                 #     anchor_text=source[2],
                                 #     matched=True,
                                 #     local=(source[1] in site.url))
+                                db_source_article.save()
+                                db_article.sources.add(db_source_article)
+                                db_source_article.save()
+
+                                db_article.save()
                                 continue
                                 
                         source_article.newspaper_parse()
@@ -373,6 +383,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                     source_anchor_text=source[2],
                                     source_matched=True,
                                     source_local=(source[1] in site.url))
+                                db_source_article.save()
+                                db_article.sources.add(db_source_article)
+                                db_source_article.save()
+
+                                db_article.save()
                                 continue
 
                         logging.debug("Sourced Article Parsed")
@@ -385,6 +400,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                     source_anchor_text=source[2],
                                     source_matched=True,
                                     source_local=(source[1] in site.url))
+                            db_source_article.save()
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+
+                            db_article.save()
                             continue
 
                         if not source_article.text:
@@ -394,6 +414,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                     source_anchor_text=source[2],
                                     source_matched=True,
                                     source_local=(source[1] in site.url))
+                            db_source_article.save()
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+
+                            db_article.save()
                             continue
                         
                         css_source_author = set(site.referringsitecssselector_set.filter(field=1))
@@ -403,24 +428,45 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         else:
                             source_authors = source_article.authors
 
-                        for author in source_authors:
-                            source_version.author_set.create(name=author)
+                        
 
+
+                        thash = hash_sha256(source_article.get_text(strip_html=True))
+                        if (len(thash) == 0):
+                            logging.info("Invalid text hash, skip parsing")
+                            db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=True,
+                                    source_local=(source[1] in site.url))
+                            db_source_article.save()
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+
+                            db_article.save()
+                            continue
                         source_version = db_source_article.version_set.create(
                             source_url=source[0],
-                            source_domain=source[1],
+                            #source_domain=source[1],
                             source_anchor_text=source[2],
                             source_matched=True,
                             source_local=(source[1] in site.url),
                             title=source_article.title,
                             text=source_article.get_text(strip_html=True),
-                            text_hash=hash_sha256(source_article.get_text(strip_html=True)),
+                            text_hash=thash,
                             language=source_article.language,
                             date_added=date_now,
                             date_last_seen=date_now,
                             date_published=get_pub_date(source_article))
 
+                        for author in source_authors:
+                            source_version.author_set.create(name=author)
+                        db_source_article.save()
+
                         db_article.sources.add(db_source_article)
+                        db_source_article.save()
+
+                        db_article.save()
 
                     for source in sources[1]:
                         source_article = ExplorerArticle(source[0])
@@ -430,6 +476,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         db_source_article.save()
                         db_source_article.url_set.create(name=source[0])
                         db_source_article.is_source = True
+                        db_source_article.save()
+
                         #version = db_source_article.version_set.create(#)
                         
 
@@ -448,6 +496,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                 #     anchor_text=source[2],
                                 #     matched=True,
                                 #     local=(source[1] in site.url))
+                                db_source_article.save()
+                                db_article.sources.add(db_source_article)
+                                db_source_article.save()
+
+                                db_article.save()
                                 continue
                                 
                         source_article.newspaper_parse()
@@ -460,6 +513,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                     source_anchor_text=source[2],
                                     source_matched=False,
                                     source_local=(source[1] in site.url))
+                                db_source_article.save()
+                                db_article.sources.add(db_source_article)
+                                db_source_article.save()
+
+                                db_article.save()
                                 continue
 
                         logging.debug("Sourced Article Parsed")
@@ -472,6 +530,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                     source_anchor_text=source[2],
                                     source_matched=False,
                                     source_local=(source[1] in site.url))
+                            db_source_article.save()
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+
+                            db_article.save()
                             continue
 
                         if not source_article.text:
@@ -481,6 +544,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                     source_anchor_text=source[2],
                                     source_matched=False,
                                     source_local=(source[1] in site.url))
+                            db_source_article.save()
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+
+                            db_article.save()
                             continue
                         
                         css_source_author = set(site.referringsitecssselector_set.filter(field=1))
@@ -490,24 +558,43 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         else:
                             source_authors = source_article.authors
 
-                        for author in source_authors:
-                            source_version.author_set.create(name=author)
+                        thash = hash_sha256(source_article.get_text(strip_html=True))
+                        if (len(thash) == 0):
+                            logging.info("Invalid text hash, skip parsing")
+                            db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=True,
+                                    source_local=(source[1] in site.url))
+                            db_source_article.save()
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+
+                            db_article.save()
+                            continue
 
                         source_version = db_source_article.version_set.create(
                             source_url=source[0],
-                            source_domain=source[1],
+                            #source_domain=source[1],
                             source_anchor_text=source[2],
                             source_matched=False,
                             source_local=(source[1] in site.url),
                             title=source_article.title,
                             text=source_article.get_text(strip_html=True),
-                            text_hash=hash_sha256(source_article.get_text(strip_html=True)),
+                            text_hash=thash,
                             language=source_article.language,
                             date_added=date_now,
                             date_last_seen=date_now,
                             date_published=get_pub_date(source_article))
+                        
+                        for author in source_authors:
+                            source_version.author_set.create(name=author)
 
+                        db_source_article.save()
                         db_article.sources.add(db_source_article)
+                        db_source_article.save()
+
+                        db_article.save()
                 else:
                     # If the db_article is new to the database,
                     # add it to the database
@@ -523,24 +610,23 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                     #     version.date_last_seen=date_now
                     #     version.date_published=pub_date
                         
-                    if True:
-                        logging.info("Adding new Article to the DB")
+                    logging.info("Adding new Article to the DB")
 
-                        db_article = Article(domain=site.url)
-                        db_article.save()
-                        db_article.url_set.create(name=url)
+                    db_article = Article(domain=site.url)
+                    db_article.save()
+                    db_article.url_set.create(name=url)
 
-                        version = db_article.version_set.create(
-                        title=title,
-                        text=text,
-                        text_hash=text_hash,
-                        language=language,
-                        date_added=date_now,
-                        date_last_seen=date_now,
-                        date_published=pub_date)
+                    version = db_article.version_set.create(
+                    title=title,
+                    text=text,
+                    text_hash=text_hash,
+                    language=language,
+                    date_added=date_now,
+                    date_last_seen=date_now,
+                    date_published=pub_date)
                     
                     db_article.is_referring = True
-
+                    db_article.save()
                     for key in keywords:
                         version.keyword_set.create(name=key)
 
@@ -564,6 +650,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         db_source_article.save()
                         db_source_article.url_set.create(name=source[0])
                         db_source_article.is_source = True
+                        db_source_article.save()
+
                         #version = db_source_article.version_set.create(#)
                         
 
@@ -582,8 +670,14 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                 #     anchor_text=source[2],
                                 #     matched=True,
                                 #     local=(source[1] in site.url))
+                                db_source_article.save()
+                                db_article.sources.add(db_source_article)
+                                db_source_article.save()
+
+                                db_article.save()
                                 continue
-                                
+
+                        logging.info("download successful")
                         source_article.newspaper_parse()
 
                         if (not source_article.is_parsed):
@@ -594,11 +688,16 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                     source_anchor_text=source[2],
                                     source_matched=True,
                                     source_local=(source[1] in site.url))
+                                db_source_article.save()
+                                db_article.sources.add(db_source_article)
+                                db_source_article.save()
+
+                                db_article.save()
                                 continue
 
-                        logging.debug("Sourced Article Parsed")
+                        logging.logging("Sourced Article Parsed")
 
-                        logging.debug(u"Title: {0}".format(repr(article.title)))
+                        logging.logging(u"Title: {0}".format(repr(article.title)))
                         if not source_article.title:
                             logging.info("Sourced article missing title, skipping")
                             db_source_article.version_set.create(
@@ -606,6 +705,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                     source_anchor_text=source[2],
                                     source_matched=True,
                                     source_local=(source[1] in site.url))
+                            db_source_article.save()
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+
+                            db_article.save()
                             continue
 
                         if not source_article.text:
@@ -615,6 +719,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                     source_anchor_text=source[2],
                                     source_matched=True,
                                     source_local=(source[1] in site.url))
+                            db_source_article.save()
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+
+                            db_article.save()
                             continue
                         
                         css_source_author = set(site.referringsitecssselector_set.filter(field=1))
@@ -624,25 +733,45 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         else:
                             source_authors = source_article.authors
 
-                        for author in source_authors:
-                            source_version.author_set.create(name=author)
+                        thash = hash_sha256(source_article.get_text(strip_html=True))
+
+                        if (len(thash) == 0):
+                            logging.info("Invalid text hash, skip parsing")
+                            db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=True,
+                                    source_local=(source[1] in site.url))
+                            db_source_article.save()
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+
+                            db_article.save()
+                            continue
 
                         source_version = db_source_article.version_set.create(
                             source_url=source[0],
-                            source_domain=source[1],
                             source_anchor_text=source[2],
                             source_matched=True,
                             source_local=(source[1] in site.url),
                             title=source_article.title,
                             text=source_article.get_text(strip_html=True),
-                            text_hash=hash_sha256(source_article.get_text(strip_html=True)),
+                            text_hash=thash,
                             language=source_article.language,
                             date_added=date_now,
                             date_last_seen=date_now,
                             date_published=get_pub_date(source_article))
 
+                        for author in source_authors:
+                            source_version.author_set.create(name=author)
+
                         source_version.save()
+                        db_source_article.save()
+
                         db_article.sources.add(db_source_article)
+                        db_source_article.save()
+
+                        db_article.save()
 
                     for source in sources[1]:
                         source_article = ExplorerArticle(source[0])
@@ -652,6 +781,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         db_source_article.save()
                         db_source_article.url_set.create(name=source[0])
                         db_source_article.is_source = True
+                        db_source_article.save()
+
                         #version = db_source_article.version_set.create(#)
                         
 
@@ -670,6 +801,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                 #     anchor_text=source[2],
                                 #     matched=True,
                                 #     local=(source[1] in site.url))
+                                db_source_article.save()
+                                db_article.sources.add(db_source_article)
+                                db_source_article.save()
+
+                                db_article.save()
                                 continue
                                 
                         source_article.newspaper_parse()
@@ -682,6 +818,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                     source_anchor_text=source[2],
                                     source_matched=False,
                                     source_local=(source[1] in site.url))
+                                db_source_article.save()
+                                db_article.sources.add(db_source_article)
+                                db_source_article.save()
+
+                                db_article.save()
                                 continue
 
                         logging.debug("Sourced Article Parsed")
@@ -694,6 +835,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                     source_anchor_text=source[2],
                                     source_matched=False,
                                     source_local=(source[1] in site.url))
+                            db_source_article.save()
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+
+                            db_article.save()
                             continue
 
                         if not source_article.text:
@@ -703,6 +849,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                     source_anchor_text=source[2],
                                     source_matched=False,
                                     source_local=(source[1] in site.url))
+                            db_source_article.save()
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+
+                            db_article.save()
                             continue
                         
                         css_source_author = set(site.referringsitecssselector_set.filter(field=1))
@@ -712,26 +863,45 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         else:
                             source_authors = source_article.authors
 
-                        for author in source_authors:
-                            source_version.author_set.create(name=author)
+
+                        thash = hash_sha256(source_article.get_text(strip_html=True))
+                        if (len(thash) == 0):
+                            logging.info("Invalid text hash, skip parsing")
+                            db_source_article.version_set.create(
+                                    source_url=source[0],
+                                    source_anchor_text=source[2],
+                                    source_matched=True,
+                                    source_local=(source[1] in site.url))
+                            db_source_article.save()
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+
+                            db_article.save()
+                            continue
 
                         source_version = db_source_article.version_set.create(
                             source_url=source[0],
-                            source_domain=source[1],
                             source_anchor_text=source[2],
                             source_matched=False,
                             source_local=(source[1] in site.url),
                             title=source_article.title,
                             text=source_article.get_text(strip_html=True),
-                            text_hash=hash_sha256(source_article.get_text(strip_html=True)),
+                            text_hash=thash,
                             language=source_article.language,
                             date_added=date_now,
                             date_last_seen=date_now,
                             date_published=get_pub_date(source_article))
 
+                        for author in source_authors:
+                            source_version.author_set.create(name=author)
                         source_version.save()
+                        db_source_article.save()
+
                         db_article.sources.add(db_source_article)
-                        
+                        db_source_article.save()
+
+                        db_article.save()
+
                 # Add the article into queue
                 logging.info("Creating new WARC")
                 warc_creator.enqueue_article(url, text_hash)

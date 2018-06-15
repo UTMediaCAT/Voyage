@@ -21,6 +21,8 @@ class Article(models.Model):
 
     @property
     def title(self):
+        if (self.version_set.last() == None):
+            return "Version DNE"
         return self.version_set.last().title
 
     @property
@@ -73,7 +75,7 @@ class Version(models.Model):
     found_by = models.CharField(max_length=100, blank=True)
 
     source_url = models.CharField(max_length=2000, blank=True, null=True)
-    source_domain = URLProtocolField(max_length=2000, verbose_name="Source Site", blank=True, null=True)
+    #source_domain = URLProtocolField(max_length=2000, verbose_name="Source Site", blank=True, null=True)
     source_anchor_text = models.CharField(max_length=2000, verbose_name="Anchor Text", blank=True, null=True)
     source_matched = models.NullBooleanField(default=False)
     source_local = models.NullBooleanField(default=True)
