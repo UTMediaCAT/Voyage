@@ -339,11 +339,28 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             matched = False)
 
                     for source in sources[0]:
+                        if (ArticleUrl.objects.filter(name=source[0])):
+                            logging.info("TO BE REMOVED found duplicate url obj")
+                            continue
+
+                        source_version_match = ArticleVersion.objects.filter(text_hash=hash_sha256(source[0]))
+
+                        if (source_version_match):
+                            logging.info("TO BE REMOVED found duplicate text_hash obj")
+                            
+                            db_article.sources.add(source_version_match[0].article)
+                            source_version_match[0].article.save()
+
+                            db_article.save()
+                            
+                            continue
                         source_article = ExplorerArticle(source[0])
                         source_article.download()
+                        logging.info(u"!LLLLLLLLLLLLLLLLLLLLL  Looking at article url {0}".format(source[0]))
 
                         db_source_article = Article(domain=source[1])
                         db_source_article.save()
+
                         db_source_article.url_set.create(name=source[0])
                         db_source_article.is_source = True
                         db_source_article.save()
@@ -355,6 +372,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             if(not source_article.download()):
                                 logging.warning("Sourced article skipped because download failed")
                                 db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=True,
@@ -379,6 +398,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             if (not source_article.preliminary_parse()):
                                 logging.warning("Sourced article skipped because parse failed")
                                 db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=True,
@@ -396,6 +417,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         if not source_article.title:
                             logging.info("Sourced article missing title, skipping")
                             db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=True,
@@ -410,6 +433,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         if not source_article.text:
                             logging.info("Sourced article missing text, skipping")
                             db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=True,
@@ -435,6 +460,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         if (len(thash) == 0):
                             logging.info("Invalid text hash, skip parsing")
                             db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=True,
@@ -467,13 +494,34 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         db_source_article.save()
 
                         db_article.save()
+                        logging.info("CREATED VERSION PPPPPPPpppppppp")
+
 
                     for source in sources[1]:
+
+                        if (ArticleUrl.objects.filter(name=source[0])):
+                            logging.info("TO BE REMOVED found duplicate url obj")
+                            continue
+
+                        source_version_match = ArticleVersion.objects.filter(text_hash=hash_sha256(source[0]))
+
+                        if (source_version_match):
+                            logging.info("TO BE REMOVED found duplicate text_hash obj")
+                            
+                            db_article.sources.add(source_version_match[0].article)
+                            source_version_match[0].article.save()
+
+                            db_article.save()
+                            
+                            continue
+                        
                         source_article = ExplorerArticle(source[0])
                         source_article.download()
+                        logging.info(u"!YYYYYYYYYYYYYYYYYYYYYYY  Looking at article url {0}".format(source[0]))
 
                         db_source_article = Article(domain=source[1])
                         db_source_article.save()
+
                         db_source_article.url_set.create(name=source[0])
                         db_source_article.is_source = True
                         db_source_article.save()
@@ -485,6 +533,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             if(not source_article.download()):
                                 logging.warning("Sourced article skipped because download failed")
                                 db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=False,
@@ -509,6 +559,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             if (not source_article.preliminary_parse()):
                                 logging.warning("Sourced article skipped because parse failed")
                                 db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=False,
@@ -526,6 +578,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         if not source_article.title:
                             logging.info("Sourced article missing title, skipping")
                             db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=False,
@@ -540,6 +594,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         if not source_article.text:
                             logging.info("Sourced article missing text, skipping")
                             db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=False,
@@ -562,6 +618,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         if (len(thash) == 0):
                             logging.info("Invalid text hash, skip parsing")
                             db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=True,
@@ -595,6 +653,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         db_source_article.save()
 
                         db_article.save()
+                        logging.info("CREATED VERSION DDDdddddddddd")
+
                 else:
                     # If the db_article is new to the database,
                     # add it to the database
@@ -643,11 +703,29 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             matched = False)
 
                     for source in sources[0]:
+                        
+                        if (ArticleUrl.objects.filter(name=source[0])):
+                            logging.info("TO BE REMOVED found duplicate url obj")
+                            continue
+
+                        source_version_match = ArticleVersion.objects.filter(text_hash=hash_sha256(source[0]))
+
+                        if (source_version_match):
+                            logging.info("TO BE REMOVED found duplicate text_hash obj")
+                            
+                            db_article.sources.add(source_version_match[0].article)
+                            source_version_match[0].article.save()
+
+                            db_article.save()
+                            
+                            continue
+
                         source_article = ExplorerArticle(source[0])
                         source_article.download()
-
+                        logging.info(u"!ASDSDAQWDASDSAD  Looking at article url {0}".format(source[0]))
                         db_source_article = Article(domain=source[1])
                         db_source_article.save()
+
                         db_source_article.url_set.create(name=source[0])
                         db_source_article.is_source = True
                         db_source_article.save()
@@ -659,6 +737,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             if(not source_article.download()):
                                 logging.warning("Sourced article skipped because download failed")
                                 db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=True,
@@ -684,6 +764,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             if (not source_article.preliminary_parse()):
                                 logging.warning("Sourced article skipped because parse failed")
                                 db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=True,
@@ -695,12 +777,14 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                 db_article.save()
                                 continue
 
-                        logging.logging("Sourced Article Parsed")
+                        logging.info("Sourced Article Parsed")
 
-                        logging.logging(u"Title: {0}".format(repr(article.title)))
+                        logging.info(u"Title: {0}".format(repr(article.title)))
                         if not source_article.title:
                             logging.info("Sourced article missing title, skipping")
                             db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=True,
@@ -715,6 +799,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         if not source_article.text:
                             logging.info("Sourced article missing text, skipping")
                             db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=True,
@@ -738,6 +824,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         if (len(thash) == 0):
                             logging.info("Invalid text hash, skip parsing")
                             db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=True,
@@ -773,12 +861,33 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                         db_article.save()
 
+                        logging.info("CREATED VERSION qqqQQQQQQQQ")
+
                     for source in sources[1]:
+                        
+                        if (ArticleUrl.objects.filter(name=source[0])):
+                            logging.info("TO BE REMOVED found duplicate url obj")
+                            continue
+
+                        source_version_match = ArticleVersion.objects.filter(text_hash=hash_sha256(source[0]))
+
+                        if (source_version_match):
+                            logging.info("TO BE REMOVED found duplicate text_hash obj")
+                            
+                            db_article.sources.add(source_version_match[0].article)
+                            source_version_match[0].article.save()
+
+                            db_article.save()
+                            
+                            continue
+
                         source_article = ExplorerArticle(source[0])
                         source_article.download()
+                        logging.info(u"!ZZZZZZZZZZZZZZZZ  Looking at article url {0}".format(source[0]))
 
                         db_source_article = Article(domain=source[1])
                         db_source_article.save()
+
                         db_source_article.url_set.create(name=source[0])
                         db_source_article.is_source = True
                         db_source_article.save()
@@ -790,10 +899,12 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             if(not source_article.download()):
                                 logging.warning("Sourced article skipped because download failed")
                                 db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=False,
-                                    source_local=(source[1] in site.url)
+                                    source_local=(source[1] in site.url) # becauses hases must be unique so cant default to nothing
                                 )
                                 # version.sourcesite_set.create(
                                 #     url=source[0],
@@ -814,6 +925,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             if (not source_article.preliminary_parse()):
                                 logging.warning("Sourced article skipped because parse failed")
                                 db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=False,
@@ -831,6 +944,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         if not source_article.title:
                             logging.info("Sourced article missing title, skipping")
                             db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=False,
@@ -845,6 +960,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         if not source_article.text:
                             logging.info("Sourced article missing text, skipping")
                             db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=False,
@@ -868,6 +985,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         if (len(thash) == 0):
                             logging.info("Invalid text hash, skip parsing")
                             db_source_article.version_set.create(
+                                    text_hash=hash_sha256(source[0]),
+                                    title=source[0],
                                     source_url=source[0],
                                     source_anchor_text=source[2],
                                     source_matched=True,
@@ -901,6 +1020,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         db_source_article.save()
 
                         db_article.save()
+                        logging.info("CREATED VERSION tttttttttttTTTTTTTTTTTTT")
+
 
                 # Add the article into queue
                 logging.info("Creating new WARC")
