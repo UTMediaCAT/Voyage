@@ -122,14 +122,13 @@ def parse_articles(referring_sites, db_keywords, source_sites_and_aliases, twitt
 
 
 def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accounts_explorer, site):
-
     logging.info("Started multiprocessing of Site: %s", site.name)
     #Setup logging for this site
     setup_logging(site.name)
 
     #Remove the source site that matches site
     if site.url in source_sites_and_aliases:
-        logging.info("Removed Source Site (Referring Site is identical): " + site.url)
+        logging.info(u"Removed Source Site (Referring Site is identical): {0}".format(site.url))
         del source_sites_and_aliases[site.url]
 
     #Generate list of source sites
@@ -143,7 +142,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
     crawlersource_articles = []
     logging.info("Site: %s, Type: %i" % (site.name, site.mode))
     #0 = newspaper, 1 = crawler, 2 = both
-
+    error_count = 0
     if(site.mode == 0 or site.mode == 2):
         logging.disable(logging.ERROR)
         newspaper_source = newspaper.build(site.url,
@@ -157,21 +156,27 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
         logging.info("populated {0} articles using newspaper".format(article_count))
     if(site.mode == 1 or site.mode == 2):
         crawlersource_articles = Crawler.Crawler(site)
-        logging.debug("Starting MediaCAT crawler with limit: {} from plan b crawler".format(crawlersource_articles.limit))
-    article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles).__iter__()
+        logging.info("Starting MediaCAT crawler with limit: {} from plan b crawler".format(crawlersource_articles.limit))
+    article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
     processed = 0
     filters = set(site.referringsitefilter_set.all())
     while True:
         try:
             try:
                 article = article_iterator.next()
+            except ZeroDivisionError:
+                article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
+                site.is_shallow = True
+                site.save()
+                processed = 0
+                break
             except StopIteration:
                 break
-            #have to put all the iteration stuff at the top because I used continue extensively in this loop
+
             processed += 1
 
             if url_in_filter(article.url, filters):
-                logging.info("Matches with filter, skipping the {0}".format(article.url))
+                logging.info(u"Matches with filter, skipping the {0}".format(article.url))
                 continue
 
             print(
@@ -371,16 +376,20 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 # Add the article into queue
                 logging.info("Creating new WARC")
                 warc_creator.enqueue_article(url, text_hash)
+                error_count = 0
 
         except (KeyboardInterrupt, SystemExit):
             raise
         except Exception as e:
             logging.exception("Unhandled exception while crawling: " + str(e))
+            error_count+=1
 
-    logging.info("Finished Site: %s"%site.name)
+            # This loop is used to ensure looping error don't cause MediaCat to loop continuously on them
+            if (error_count > 10):
+                break
+
     setup_logging(increment=False)
     logging.info("Finished Site: %s"%site.name)
-
 
 def hash_sha256(text):
     hash_text = hashlib.sha256()
@@ -526,7 +535,7 @@ def setup_logging(site_name="", increment=True):
     config = common.get_config()
 
     # Logging config
-    current_time = datetime.datetime.now().strftime('%Y%m%d')
+    current_time = timezone.now().strftime('%Y%m%d')
     log_dir = config['projectdir']+"/log"
     prefix = log_dir + "/" + site_name + "article_explorer-"
 
@@ -570,7 +579,10 @@ if __name__ == '__main__':
     start = timeit.default_timer()
 
     # The main function, to explore the articles
+    logging.info("explorer about to start")
     explore()
+
+    	
     delta_time = timeit.default_timer() - start
     logging.info("Exploring Ended. Took %is"%delta_time)
 

@@ -31,8 +31,9 @@ pdf:
     article_subdir: article
     twitter_subdir: twitter
 database:
-    version: 0.0.1
+    version: 0.0.2
 log:
     retention_days: 30
 crawler:
     limit: 5000
+    level: 3
