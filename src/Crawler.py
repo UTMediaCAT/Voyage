@@ -77,6 +77,7 @@ class Crawler(object):
 
         # Limit
         self.limit = common.get_config()["crawler"]["limit"]
+        # Specifies how deep the shallow crawler should go; "1" is the lowest option for this
         self.level = common.get_config()["crawler"]["level"]
         """
         self.probabilistic_n = common.get_config()["crawler"]["n"]
@@ -115,7 +116,7 @@ class Crawler(object):
         #standard non-recursive tree iteration
         with open('../ignore_filter/' + self.site.name + '_ignore_file.txt', 'a') as ignore_filter_file:
             try:
-                current_level = 0;
+                current_level = 0
                 while(True):
                     if (self.limit > 0 and self.visited_count > self.limit):
                         raise StopIteration('Limit reached: {:d}'.format(self.limit))
@@ -160,7 +161,7 @@ class Crawler(object):
                     article = ExplorerArticle(current_url)
                     article.download()
                     if (self.site.is_shallow):
-                        if (int(current_level) > 3): # CHANGE TO CONFIG FILE VALUE
+                        if (int(current_level) > self.level):
                             continue
                     # get urls from the article
                     for link in article.get_links():
@@ -185,6 +186,7 @@ class Crawler(object):
                         # If the url have been added to ignore list, skip
                         if (url in self.ignore_filter):
                             continue
+                        # Ignores the subscribe links for many domains
                         if (u"subscribe" in url or "subscribe" in url and not(u"-subscribe" in url or "-subscribe" or u"subscribe-" in url or "subscribe-")):
                         	continue
 

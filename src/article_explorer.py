@@ -172,7 +172,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 break
             except StopIteration:
                 break
-            #have to put all the iteration stuff at the top because I used continue extensively in this loop
+
             processed += 1
 
             if url_in_filter(article.url, filters):
@@ -383,10 +383,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
         except Exception as e:
             logging.exception("Unhandled exception while crawling: " + str(e))
             error_count+=1
+
+            # This loop is used to ensure looping error don't cause MediaCat to loop continuously on them
             if (error_count > 10):
                 break
 
-    logging.info("!!!!!!!!!!!!!Finished Site: %s"%site.name)
     setup_logging(increment=False)
     logging.info("Finished Site: %s"%site.name)
 
