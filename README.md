@@ -55,7 +55,8 @@ In the Postgres prompt:
 postgres=# create database mediacat;
 postgres=# create database crawler;
 ```
- 
+You may exit out of postgres now
+
 #### To integrate this database with Django:
 Plase configure the databse setting in  `Frontend/Frontend/settings.py`. 
 For example:
@@ -145,6 +146,11 @@ Furthermore, users can have different _permissions_.
 Once your scope is ready, you may use the following explorers under [src](https://github.com/UTMediaCAT/Voyage/tree/master/src) folder to crawl news and Tweets:
 * __Article Explorer__ will explore through the _Referring Sites_ for articles
 * __Twitter Crawler__ will explore through _Referring Twitter Accounts's_ posts
+
+### Article Explorer
+The article explorer will explore each site under a given domain. After this crawler is finished crawling the entire domain the shallow crawler will activate. At this point, the article explorer will only go N `levels` down from the domain's homepage. A visual prompt indicating shallow crawling will be visible in the `Scope/Referring Sites` tab. The `level` value is set to a default of 3, but can be changed in the config.yaml file.
+
+__:bangbang: NOTE__: The article crawler can be quite taxing in terms of resources used. On initial tests with the shallow crawler it was found that the article crawler would freeze after a certain amount of time (freezing occured on a server instace with the follwing specs: 1 vCPU, and 2GB RAM with the crawler having 77 domains in its referring scope). Once we began testing using a more powerful server instance (10 vCPU, and 32 GB RAM) the freezing issues stopped. If you do run into freezing issues, the `article_explorer_run.sh` found under the `src/` folder contains some lines of code that will automatically restart the crawler after a certain period of time.
 
 ### Twitter Crawler 
 Twitter crawler has three modes of crawling: `timeline`, `streaming` and `history`, with `timeline` and `streaming` based on [twarc](https://github.com/DocNow/twarc) and `history` based on [GetOldTweets-python](https://github.com/Jefferson-Henrique/GetOldTweets-python). 
