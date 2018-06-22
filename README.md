@@ -144,25 +144,25 @@ Furthermore, users can have different _permissions_.
 ## Exploring
 Once your scope is ready, you may use the following explorers under [src](https://github.com/UTMediaCAT/Voyage/tree/master/src) folder to crawl news and Tweets:
 * __Article Explorer__ will explore through the _Referring Sites_ for articles
-* __Twitter Explorer__ will explore through _Referring Twitter Accounts's_ posts
+* __Twitter Crawler__ will explore through _Referring Twitter Accounts's_ posts
 
-### Twitter Explorer 
+### Twitter Crawler 
 Twitter crawler has three modes of crawling: `timeline`, `streaming` and `history`, with `timeline` and `streaming` based on [twarc](https://github.com/DocNow/twarc) and `history` based on [GetOldTweets-python](https://github.com/Jefferson-Henrique/GetOldTweets-python). 
 * `timeline` mode will crawl the timeline of _Referring Twitter Accounts_ with up to 3200 of a user's most recent Tweets (Twitter's API constraint).
 ```
-python twitter_explorer.py timeline
+python twitter_crawler.py timeline
 ```
 * `streaming` mode will crawl Tweets of _Referring Twitter Accounts_ on a real-time basis.
 ```
-python twitter_explorer.py streaming
+python twitter_crawler.py streaming
 ```
 * `history` mode will collect all Tweets posted by _Referring Twitter Accounts_.
 ```
-python twitter_explorer.py history
+python twitter_crawler.py history
 ```
-Running `Twitter Explorer` with no parameter will run all three modes together by default.
+Running `Twitter Crawler` with no parameter will run all three modes together by default.
 ```
-python twitter_explorer.py
+python twitter_crawler.py
 ```
 
 ___
