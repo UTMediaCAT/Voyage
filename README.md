@@ -166,7 +166,7 @@ python twitter_crawler.py streaming
 ```
 python twitter_crawler.py history
 ```
-Running `Twitter Crawler` with no parameter will run all three modes together by default.
+Running twitter crawler with no parameter will run all three modes together by default.
 ```
 python twitter_crawler.py
 ```
