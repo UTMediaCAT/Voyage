@@ -4,6 +4,10 @@ from Frontend.fields import URLProtocolField
 # Create your models here.
 
 class Tweet(models.Model):
+
+    class Meta:
+        verbose_name = "Referring Tweet"
+
     tweet_id = models.CharField(max_length=200)
     text = models.CharField(max_length=200, default='')
     name = models.CharField(max_length=200)

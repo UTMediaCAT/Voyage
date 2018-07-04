@@ -10,21 +10,21 @@ import yaml, os
 import common
 import difflib
 
-class AuthorInline(NestedTabularInline):
+class AuthorInline(NestedStackedInline):
     model = Author
     fields = ['name']
     fk_name = 'version'
     extra = 0
 
-class SourceSiteInline(NestedTabularInline):
-    model = SourceSite
-    fields  = ('url', 'domain', 'anchor_text', 'matched', 'local',)
-    readonly_fields = ('url', 'domain', 'anchor_text', 'matched', 'local',)
-    fk_name = 'version'
-    extra = 0
+# class SourceSiteInline(NestedTabularInline):
+#     model = SourceProxy
+#     fields  = ('url', 'domain', 'anchor_text', 'matched', 'local',)
+#     readonly_fields = ('url', 'domain', 'anchor_text', 'matched', 'local',)
+#     fk_name = 'version'
+#     extra = 0
 
-    def has_add_permission(self, request):
-        return False
+#     def has_add_permission(self, request):
+#         return False
 
 class KeywordInline(NestedTabularInline):
     model = Keyword
@@ -45,10 +45,17 @@ class SourceTwitterInline(NestedTabularInline):
         return False
 
 class VersionInline(NestedStackedInline):
+    fieldsets = (
+        (None, {
+            'fields': ('title', 'highlighted_text', 'text_hash', 'language', 'date_added', 'date_last_seen', 'date_published', 'found_by', 'download_options',)
+        }),
+        # ('Source URLs', {
+        #     'fields': ( 'source_url' , 'source_anchor_text', 'source_matched', 'source_local' )
+        # }),
+    )
     model = Version
-    fields = ('title', 'highlighted_text', 'text_hash', 'language', 'date_added', 'date_last_seen', 'date_published', 'found_by', 'download_options',)
     readonly_fields = ('highlighted_text', 'text_hash', 'date_added', 'date_last_seen', 'found_by', 'download_options',)
-    inlines = [AuthorInline, SourceSiteInline, KeywordInline, SourceTwitterInline]
+    inlines = [AuthorInline, KeywordInline, SourceTwitterInline]
     extra = 0
     
     def download_options(self, obj):
@@ -130,13 +137,17 @@ class VersionInline(NestedStackedInline):
     highlighted_text.short_description = 'Text'
 
 class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
+
+    def get_queryset(self, request):
+        return self.model.objects.filter(is_referring = True)
+    
     fieldsets = [
         ('Basic',               {'fields': ['id', 'domain', 'show_urls']})
         ]
 
     inlines = [VersionInline]
 
-    #list_display = ('get_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_language', 'get_date_added', 'get_date_published', 'get_date_last_seen', 'link_options')
+    list_display = ('get_url', 'title', 'get_authors', 'get_keywords', 'get_source_sites', 'get_language', 'get_date_added', 'get_date_published', 'get_date_last_seen', 'link_options')
     search_fields = ['version__text','version__title']
     advanced_filter_fields = (
         'domain',
@@ -187,12 +198,12 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
 
     def get_source_sites(self, obj):
         sources = ''
-        for src in obj.version_set.last().sourcesite_set.all():
-            if src.matched and not src.local:
-                if 'http://www.' in src.url:
-                    link = 'http://' + src.url[11:]
+        for src in obj.sources.all():
+            if src.version_set.last().source_matched and not src.version_set.last().source_local:
+                if 'http://www.' in src.version_set.last().source_url:
+                    link = 'http://' + src.version_set.last().source_url[11:]
                 else:
-                    link = src.url
+                    link = src.version_set.last().source_url
                 link_short = link[7:]
                 if len(link_short) > 30:
                     link_short = link_short[:30]+"..."
@@ -201,7 +212,7 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
                 sources += '<br>'
         return sources[:-4]
 
-    get_source_sites.short_description = 'Matched Source Sites'
+    get_source_sites.short_description = 'Sourced Articles'
     get_source_sites.admin_order_field = 'version__sourcesite__url'
     get_source_sites.allow_tags = True
 
@@ -298,14 +309,14 @@ def create_modeladmin(modeladmin, model, name = None, menu_name = None):
     admin.site.register(newmodel, modeladmin)
     return modeladmin
 
-class MySourceSiteAdmin(ArticleAdmin):
+class SourcedArticleAdmin(ArticleAdmin):
     
     inlines = []
     
     def get_queryset(self, request):
-        return self.model.objects.filter(domain = "http://breitbart.com/")
+        return self.model.objects.filter(is_source = True)
 
-create_modeladmin(MySourceSiteAdmin, name='mysourcesite', model=Article, menu_name='My Source Site')
+create_modeladmin(SourcedArticleAdmin, name='sourcedarticle', model=Article, menu_name='Sourced Article')
 
 admin.site.register(Article, ArticleAdmin)
 
@@ -315,10 +326,10 @@ class SourceSiteAdmin(admin.ModelAdmin):
 
     fieldsets = [
         ('Source Site', {
-            'fields': ['url', 'domain','title', 'text_hash', 'language', 'date_added', 'date_last_seen', 'date_published', 'is_referring'
+            'fields': ['url', 'domain','title', 'text_hash', 'language', 'date_added', 'date_last_seen', 'date_published',
             ]})
         ]
-    readonly_fields = ('url', 'domain','title', 'text_hash', 'language', 'date_added', 'date_last_seen', 'date_published', 'is_referring',)
+    readonly_fields = ('url', 'domain','title', 'text_hash', 'language', 'date_added', 'date_last_seen', 'date_published',)
     list_display = (['get_url','domain' , 'get_matched_article','get_source_author', 'get_source_date_added',  'get_source_date_published', 'link_options' ] )
     search_fields = [ 'url', 'domain','version__text','version__title' ]
 
