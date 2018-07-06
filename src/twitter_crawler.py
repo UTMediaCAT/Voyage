@@ -712,8 +712,8 @@ if __name__ == '__main__':
                         # re-crawl timeline every week
                         # scope change will take effect in new crawling cycle
                         logging.info("Sleep until next cycle")
+                        time.sleep(int(config['timeline_wait_days'])*24*60*60)
                         setup_logging("timeline")
-                        time.sleep(60*60*24)
     else:
         # will do both streaming, timeline and history crawling if no arguments are given
         subprocess.Popen(["python", "./twitter_crawler.py", "streaming"])
