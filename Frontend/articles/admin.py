@@ -16,15 +16,16 @@ class AuthorInline(NestedStackedInline):
     fk_name = 'version'
     extra = 0
 
-# class SourceSiteInline(NestedTabularInline):
-#     model = SourceProxy
-#     fields  = ('url', 'domain', 'anchor_text', 'matched', 'local',)
-#     readonly_fields = ('url', 'domain', 'anchor_text', 'matched', 'local',)
-#     fk_name = 'version'
-#     extra = 0
+class SourceSiteInline(NestedTabularInline):
+    model = SourceSite
+    fields  = ('url', 'domain', 'anchor_text', 'matched', 'local',)
+    readonly_fields = ('url', 'domain', 'anchor_text', 'matched', 'local',)
+    fk_name = 'version'
+    extra = 0
+    verbose_name_plural = "Source URLs"
 
-#     def has_add_permission(self, request):
-#         return False
+    def has_add_permission(self, request):
+        return False
 
 class KeywordInline(NestedTabularInline):
     model = Keyword
@@ -37,6 +38,8 @@ class KeywordInline(NestedTabularInline):
 
 class SourceTwitterInline(NestedTabularInline):
     model = SourceTwitter
+    verbose_name = "Source Tweet"
+    verbose_name_plural = "Source Tweets"
     readonly_fields = ('name', 'matched',)
     fk_name = 'version'
     extra = 0
@@ -55,7 +58,7 @@ class VersionInline(NestedStackedInline):
     )
     model = Version
     readonly_fields = ('highlighted_text', 'text_hash', 'date_added', 'date_last_seen', 'found_by', 'download_options',)
-    inlines = [AuthorInline, KeywordInline, SourceTwitterInline]
+    inlines = [AuthorInline, SourceSiteInline, KeywordInline, SourceTwitterInline]
     extra = 0
     
     def download_options(self, obj):
@@ -199,11 +202,11 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
     def get_source_sites(self, obj):
         sources = ''
         for src in obj.sources.all():
-            if src.version_set.last().source_matched and not src.version_set.last().source_local:
-                if 'http://www.' in src.version_set.last().source_url:
-                    link = 'http://' + src.version_set.last().source_url[11:]
+            if src.version_set.last().sourcesite_set.last().matched and not src.version_set.last().sourcesite_set.last().local:
+                if 'http://www.' in src.version_set.last().sourcesite_set.last().url:
+                    link = 'http://' + src.version_set.last().sourcesite_set.last().url[11:]
                 else:
-                    link = src.version_set.last().source_url
+                    link = src.version_set.last().sourcesite_set.last().url
                 link_short = link[7:]
                 if len(link_short) > 30:
                     link_short = link_short[:30]+"..."
@@ -326,17 +329,51 @@ class SourceSiteAdmin(admin.ModelAdmin):
 
     fieldsets = [
         ('Source Site', {
-            'fields': ['url', 'domain','title', 'text_hash', 'language', 'date_added', 'date_last_seen', 'date_published',
+            'fields': ['url', 'domain','title', 'text_hash', 'language', 'date_added', 'date_last_seen', 'date_published', 'text', 
             ]})
         ]
-    readonly_fields = ('url', 'domain','title', 'text_hash', 'language', 'date_added', 'date_last_seen', 'date_published',)
-    list_display = (['get_url','domain' , 'get_matched_article','get_source_author', 'get_source_date_added',  'get_source_date_published', 'link_options' ] )
+    readonly_fields = ('url', 'domain', 'title','text_hash', 'language', 'date_added', 'date_last_seen', 'date_published', 'text')
+    list_display = (['get_url','domain' , 'get_matched_article','get_source_author', 'get_referring_articles', 'get_source_date_added',  'get_source_date_published', 'link_options' ] )
     search_fields = [ 'url', 'domain','version__text','version__title' ]
 
     list_filter = ('domain', 'version__keyword__name', 'version__sourcetwitter__name', 'version__language')
     ordering = ['version__date_added']
     actions_on_top = True
     list_per_page = 20
+
+    def get_referring_articles(self, obj):
+        links = ''
+        for ref in obj.version.article.referrals.all():
+            links += format((
+            '<a href="/admin/articles/article/%s">%s</a><br />') %
+            (
+                str(ref.pk),
+                ref.title))
+        return links
+        # sources = ''
+        # for ref in obj.version.article.referrals.all():
+        #         if 'http://www.' in ref.url:
+        #             link = 'http://' + ref.url[11:]
+        #         else:
+        #             link = ref.url
+        #         link_short = link[7:]
+        #         if len(link_short) > 30:
+        #             link_short = link_short[:30]+"..."
+
+        #         referrals += format('<a href="%s" target="_blank">%s</a>' % (link, link_short))
+        #         referrals += '<br>'
+        # return referrals[:-4]
+        # return format((
+        #     '<a href="/admin/articles/article/%s">Details</a><br />' +\
+        #     '<div>Urls: %i<br />Versions: %i</div>') %
+        #     (
+        #         str(obj.pk),
+        #         obj.url_set.count(),
+        #         obj.version_set.count()))
+
+    get_referring_articles.short_description = 'Referring Articles'
+    get_referring_articles.admin_order_field = 'version__referringarticle__url'
+    get_referring_articles.allow_tags = True
 
     def get_url(self, obj):
         link = obj.url.lstrip("/")

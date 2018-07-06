@@ -144,7 +144,7 @@ class Author(models.Model):
 class SourceSite(models.Model):
 
     class Meta:
-        verbose_name = "Source Site"
+        verbose_name = "Sourced Article"
 
     version = models.ForeignKey(Version)
     url = models.CharField(max_length=2000)
