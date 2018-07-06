@@ -154,7 +154,7 @@ __:bangbang: NOTE__: The article crawler can be quite taxing in terms of resourc
 
 ### Twitter Crawler 
 Twitter crawler has three modes of crawling: `timeline`, `streaming` and `history`, with `timeline` and `streaming` based on [twarc](https://github.com/DocNow/twarc) and `history` based on [GetOldTweets-python](https://github.com/Jefferson-Henrique/GetOldTweets-python). 
-* `timeline` mode will crawl the timeline of _Referring Twitter Accounts_ with up to 3200 of a user's most recent Tweets (Twitter's API constraint).
+* `timeline` mode will crawl the timeline of _Referring Twitter Accounts_ with up to 3200 of a user's most recent Tweets (Twitter's API constraint). You can set the frequency of timeline re-crawling in [config.yaml](https://github.com/UTMediaCAT/Voyage/blob/master/config.yaml) (the default frequency is crawling timeline every 30 days).
 ```
 python twitter_crawler.py timeline
 ```
