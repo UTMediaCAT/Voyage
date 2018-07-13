@@ -492,6 +492,22 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         )
                         for author in source_authors:
                             source_version.author_set.create(name=author)
+                        
+                        keywords_sources = get_keywords(source_article, db_keywords)
+                        for key in keywords_sources:
+                            source_version.keyword_set.create(name=key)
+
+                        twitter_accounts_sources = get_sources_twitter(source_article, twitter_accounts_explorer)
+                        for account in twitter_accounts_sources[0]:
+                            source_version.sourcetwitter_set.create(
+                                name=account,
+                                matched = True)
+
+                        for account in twitter_accounts_sources[1]:
+                            source_version.sourcetwitter_set.create(
+                                name=account,
+                                matched = False)
+
                         db_source_article.save()
 
                         db_article.sources.add(db_source_article)
@@ -653,6 +669,21 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                         for author in source_authors:
                             source_version.author_set.create(name=author)
+
+                        keywords_sources = get_keywords(source_article, db_keywords)
+                        for key in keywords_sources:
+                            source_version.keyword_set.create(name=key)
+
+                        twitter_accounts_sources = get_sources_twitter(source_article, twitter_accounts_explorer)
+                        for account in twitter_accounts_sources[0]:
+                            source_version.sourcetwitter_set.create(
+                                name=account,
+                                matched = True)
+
+                        for account in twitter_accounts_sources[1]:
+                            source_version.sourcetwitter_set.create(
+                                name=account,
+                                matched = False)
 
                         db_source_article.save()
                         db_article.sources.add(db_source_article)
@@ -861,6 +892,21 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         for author in source_authors:
                             source_version.author_set.create(name=author)
 
+                        keywords_sources = get_keywords(source_article, db_keywords)
+                        for key in keywords_sources:
+                            source_version.keyword_set.create(name=key)
+
+                        twitter_accounts_sources = get_sources_twitter(source_article, twitter_accounts_explorer)
+                        for account in twitter_accounts_sources[0]:
+                            source_version.sourcetwitter_set.create(
+                                name=account,
+                                matched = True)
+
+                        for account in twitter_accounts_sources[1]:
+                            source_version.sourcetwitter_set.create(
+                                name=account,
+                                matched = False)
+
                         source_version.save()
                         db_source_article.save()
 
@@ -1008,6 +1054,22 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         )
                         for author in source_authors:
                             source_version.author_set.create(name=author)
+
+                        keywords_sources = get_keywords(source_article, db_keywords)
+                        for key in keywords_sources:
+                            source_version.keyword_set.create(name=key)
+
+                        twitter_accounts_sources = get_sources_twitter(source_article, twitter_accounts_explorer)
+                        for account in twitter_accounts_sources[0]:
+                            source_version.sourcetwitter_set.create(
+                                name=account,
+                                matched = True)
+
+                        for account in twitter_accounts_sources[1]:
+                            source_version.sourcetwitter_set.create(
+                                name=account,
+                                matched = False)
+
                         source_version.save()
                         db_source_article.save()
 
