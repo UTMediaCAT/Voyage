@@ -430,7 +430,7 @@ class SourcedArticleAdmin(ArticleAdmin):
 
     fieldsets = [
         ('Basic',               {'fields': ['id', 'domain', 'show_urls']}),
-        ('Referring Articles', {'fields': ['get_referring_articles']})
+        ('Referring Articles', {'fields': ['get_referrals_info']})
         ]
     
     list_display = ('get_url', 'title', 'get_authors', 'get_keywords', 'get_referring_articles', 'get_language', 'get_date_added', 'get_date_published', 'get_date_last_seen', 'link_options')
@@ -456,9 +456,48 @@ class SourcedArticleAdmin(ArticleAdmin):
         ('version__author__name', 'Author'),
     )
     list_filter = ('domain', 'version__keyword__name', 'version__sourcesite__domain', 'version__sourcetwitter__name', 'version__language')
-    readonly_fields = ('id', 'url', 'domain', 'title', 'language', 'found_by', 'date_added', 'date_last_seen', 'date_published', 'text', 'highlighted_text', 'show_urls', 'text_hash', 'get_referring_articles')
+    readonly_fields = ('id', 'url', 'domain', 'title', 'language', 'found_by', 'date_added', 'date_last_seen', 'date_published', 'text', 'highlighted_text', 'show_urls', 'text_hash', 'get_referrals_info')
     actions_on_top = True
     list_per_page = 20
+
+    def get_referrals_info(self, obj):
+        text = """<div style="min-width:624px;display:flex;">
+                    <div style="width:80%;display:flex;justify-content:center;align-items:center;">
+                        <label style="margin:0;padding-right:0;width: auto;font-weight: 500 !important;">URL</label>
+                    </div>
+                    <div style="width:20%;display:flex;align-items:center;justify-content:center;">
+                        <label style="margin:0;padding-right:0;width:auto;font-weight: 500 !important;">Article Link</label>
+                    </div>
+                </div>"""
+
+        
+
+        for ref in obj.referrals.all():
+            text += """<div style="min-width:624px;display:flex;border-top: 1px solid #cccccc;margin-top: 4px;padding-top: 4px;">
+                        <div style="width:80%;display:flex;justify-content:center;align-items:center;">"""
+            if 'http://www.' in ref.url_set.last().name:
+                link = 'http://' + ref.url_set.last().name[11:]
+            else:
+                link = ref.url_set.last().name
+            link_short = link[8:]
+            if len(link_short) > 80:
+                link_short = link_short[:80]+"..."
+
+            #text += format('<a href="%s" target="_blank" style="float:left;">%s</a>' % (link, link_short))
+            text += '<a href="'+link+'" target="_blank">'+link_short+'</a>'
+            text += """</div>
+                    <div style="width:20%;display:flex;align-items:center;justify-content:center;">
+                        <a href=\"/admin/articles/sourcedarticle/""" + str(ref.id)      + "\">"
+
+            text += """ID: """ + str(ref.id) + """ &#x2197;</a>
+                         </div>
+                     </div>"""
+        return text
+
+    get_referrals_info.short_description = 'Referrals Info'
+    get_referrals_info.admin_order_field = 'version__referrals__information'
+    get_referrals_info.allow_tags = True
+
 
     # override
     def link_options(self, obj):
