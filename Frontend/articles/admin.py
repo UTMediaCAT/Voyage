@@ -148,7 +148,7 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
         ('Basic',               {'fields': ('id', 'domain', 'show_urls')
         }
         ),
-        ('Source Articles', {'fields': ['get_source_url', 'get_source_matched', 'get_source_local', 'get_source_anchor_text']
+        ('Source Articles', {'fields': ['get_sources_info'] #('get_source_url', ('get_source_matched', 'get_source_local', 'get_source_anchor_text'))
         }
         )
         ]
@@ -172,7 +172,7 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
         ('version__author__name', 'Author'),
     )
     list_filter = ('domain', 'version__keyword__name', 'version__sourcesite__domain', 'version__sourcetwitter__name', 'version__language')
-    readonly_fields = ('id', 'url', 'domain', 'title', 'language', 'found_by', 'date_added', 'date_last_seen', 'date_published', 'text', 'highlighted_text', 'show_urls', 'text_hash', 'get_source_url', 'get_source_matched', 'get_source_local', 'get_source_anchor_text')
+    readonly_fields = ('id', 'url', 'domain', 'title', 'language', 'found_by', 'date_added', 'date_last_seen', 'date_published', 'text', 'highlighted_text', 'show_urls', 'text_hash', 'get_source_url', 'get_source_matched', 'get_source_local', 'get_source_anchor_text', 'get_sources_info')
     actions_on_top = True
     list_per_page = 20
 
@@ -261,11 +261,77 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
             sources += '<br>'
         return sources[:-4]
 
-    
+    def get_sources_info(self, obj):
+        text = """<div style="min-width:624px;display:flex;">
+                    <div style="width:32%;display:flex;justify-content:center;align-items:center;">
+                        <label style="margin:0;padding-right:0;width: auto;font-weight: 500 !important;">URL</label>
+                    </div>
+                    <div style="width:17%;display:flex;align-items:center;justify-content:center;">
+                        <label style="margin:0;padding-right:0;width:auto;font-weight: 500 !important;">Local</label>
+                    </div>
+                    <div style="width:17%;display:flex;align-items:center;justify-content:center;">
+                        <label style="margin:0;padding-right:0;width:auto;font-weight: 500 !important;">Matched</label>
+                    </div>
+                    <div style="width:17%;display:flex;align-items:center;justify-content:center;">
+                        <label style="margin:0;padding-right:0;width:auto;font-weight: 500 !important;">Anchor Text</label>
+                    </div>
+                    <div style="width:17%;display:flex;align-items:center;justify-content:center;">
+                        <label style="margin:0;padding-right:0;width:auto;font-weight: 500 !important;">Article Link</label>
+                    </div>
+                </div>"""
+
+        
+
+        for src in obj.sources.all():
+            text += """<div style="min-width:624px;display:flex;border-top: 1px solid #cccccc;margin-top: 4px;
+                        padding-top: 4px;">
+                        <div style="width:32%;display:flex;justify-content:center;align-items:center;">"""
+            if 'http://www.' in src.version_set.last().sourcesite_set.last().url:
+                link = 'http://' + src.version_set.last().sourcesite_set.last().url[11:]
+            else:
+                link = src.version_set.last().sourcesite_set.last().url
+            link_short = link[7:]
+            if len(link_short) > 30:
+                link_short = link_short[:30]+"..."
+
+            #text += format('<a href="%s" target="_blank" style="float:left;">%s</a>' % (link, link_short))
+            text += '<a href="'+link+'" target="_blank">'+link_short+'</a>'
+            text += """</div>
+                    <div style="width:17%;display:flex;align-items:center;justify-content:center;">"""
+            if (src.version_set.last().sourcesite_set.last().local):
+                text += '<img src="/static/admin/img/icon-yes.gif" alt="True">'
+            else:
+                text += '<img src="/static/admin/img/icon-no.gif" alt="False">'
+
+            text += """</div>
+                    <div style="width:17%;display:flex;align-items:center;justify-content:center;">"""
+
+            if (src.version_set.last().sourcesite_set.last().matched):
+                text += '<img src="/static/admin/img/icon-yes.gif" alt="True">'
+            else:
+                text += '<img src="/static/admin/img/icon-no.gif" alt="False">'
+            
+            text += """</label>
+                    </div>
+                    <div style="width:17%;display:flex;align-items:center;justify-content:center;text-align:center;">"""
+
+            text += '<p style="margin:0;padding:0;">' + src.version_set.last().sourcesite_set.last().anchor_text + '</p>'
+            text += """</div>
+                    <div style="width:17%;display:flex;align-items:center;justify-content:center;">
+                        <a>"""
+
+            text += """ID: 1234512 &#x2197;</a>
+                        </div>
+                    </div>"""
+        return text
 
     get_source_url.short_description = 'Sourced URL'
     get_source_url.admin_order_field = 'version__sourcesite__url'
     get_source_url.allow_tags = True
+
+    get_sources_info.short_description = 'Source Information'
+    get_sources_info.admin_order_field = 'version__sourcesite__information'
+    get_sources_info.allow_tags = True
 
   #   def get_source_twitters(self, obj):
   #       accounts = ''
