@@ -318,9 +318,9 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
             text += '<p style="margin:0;padding:0;">' + src.version_set.last().sourcesite_set.last().anchor_text + '</p>'
             text += """</div>
                     <div style="width:17%;display:flex;align-items:center;justify-content:center;">
-                        <a>"""
+                        <a href=\"http://167.99.177.157/admin/articles/sourcedarticle/""" + str(src.id)      + "\">"
 
-            text += """ID: 1234512 &#x2197;</a>
+            text += """ID: """ + str(src.id) + """ &#x2197;</a>
                         </div>
                     </div>"""
         return text
@@ -329,7 +329,7 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
     get_source_url.admin_order_field = 'version__sourcesite__url'
     get_source_url.allow_tags = True
 
-    get_sources_info.short_description = 'Source Information'
+    get_sources_info.short_description = 'Source Info'
     get_sources_info.admin_order_field = 'version__sourcesite__information'
     get_sources_info.allow_tags = True
 
