@@ -34,10 +34,9 @@ class TweetAdmin(AdminAdvancedFiltersMixin, admin.ModelAdmin):
 
     list_display = ('link_user', 'link_id', 'text', 'get_keywords', 'get_source_sites', 'get_source_twitters', 'date_published', 'date_added', 'link_options')
 
-    search_fields = ['tweet_id', 'text', 'user', 'keyword__name', 'sourcesite__url', 'sourcetwitter__name']
+    search_fields = ['tweet_id', 'text', 'keyword__name', 'sourcesite__url', 'sourcetwitter__name']
     advanced_filter_fields = (
         'text',
-        'user',
         ('keyword__name', 'Keyword'),
         ('sourcesite__domain', 'Source Site'),
         ('sourcetwitter__name', 'Source Twitter'),
