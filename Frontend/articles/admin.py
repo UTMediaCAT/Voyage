@@ -58,7 +58,7 @@ class VersionInline(NestedStackedInline):
     )
     model = Version
     readonly_fields = ('highlighted_text', 'text_hash', 'date_added', 'date_last_seen', 'found_by', 'download_options',)
-    inlines = [AuthorInline, KeywordInline, SourceTwitterInline]
+    inlines = [AuthorInline, KeywordInline]
     extra = 0
     
     def download_options(self, obj):
@@ -262,7 +262,7 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
         return sources[:-4]
 
     def get_sources_info(self, obj):
-        text = """<div style="min-width:624px;display:flex;">
+        text = """</span><div id="src-info" style="margin-top:-25px;"><div style="display:flex;">
                     <div style="width:32%;display:flex;justify-content:center;align-items:center;">
                         <label style="margin:0;padding-right:0;width: auto;font-weight: 500 !important;">URL</label>
                     </div>
@@ -283,7 +283,7 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
         
 
         for src in obj.sources.all():
-            text += """<div style="min-width:624px;display:flex;border-top: 1px solid #cccccc;margin-top: 4px;
+            text += """<div style="display:flex;border-top: 1px solid #cccccc;margin-top: 4px;
                         padding-top: 4px;">
                         <div style="width:32%;display:flex;justify-content:center;align-items:center;">"""
             if 'http://www.' in src.version_set.last().sourcesite_set.last().url:
@@ -313,16 +313,18 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
             
             text += """</label>
                     </div>
-                    <div style="width:17%;display:flex;align-items:center;justify-content:center;text-align:center;">"""
+                    <div style="width:17%;display:flex;align-items:center;justify-content:center;text-align:center;overflow-x:auto;">"""
 
             text += '<p style="margin:0;padding:0;">' + src.version_set.last().sourcesite_set.last().anchor_text + '</p>'
             text += """</div>
                     <div style="width:17%;display:flex;align-items:center;justify-content:center;">
-                        <a href=\"http://167.99.177.157/admin/articles/sourcedarticle/""" + str(src.id)      + "\">"
+                        <a href=\"/admin/articles/sourcedarticle/""" + str(src.id)      + "\">"
 
             text += """ID: """ + str(src.id) + """ &#x2197;</a>
                         </div>
                     </div>"""
+
+        text += """</div></span>"""
         return text
 
     get_source_url.short_description = 'Sourced URL'
@@ -461,9 +463,15 @@ class SourcedArticleAdmin(ArticleAdmin):
     list_per_page = 20
 
     def get_referrals_info(self, obj):
-        text = """<div style="min-width:624px;display:flex;">
-                    <div style="width:80%;display:flex;justify-content:center;align-items:center;">
+        text = """</span><div id="ref-info" style="margin-top:-25px;"><div style="display:flex;">
+                    <div style="width:40%;display:flex;justify-content:center;align-items:center;">
                         <label style="margin:0;padding-right:0;width: auto;font-weight: 500 !important;">URL</label>
+                    </div>
+                    <div style="width:20%;display:flex;align-items:center;justify-content:center;">
+                        <label style="margin:0;padding-right:0;width:auto;font-weight: 500 !important;">Local</label>
+                    </div>
+                    <div style="width:20%;display:flex;align-items:center;justify-content:center;">
+                        <label style="margin:0;padding-right:0;width:auto;font-weight: 500 !important;">Matched</label>
                     </div>
                     <div style="width:20%;display:flex;align-items:center;justify-content:center;">
                         <label style="margin:0;padding-right:0;width:auto;font-weight: 500 !important;">Article Link</label>
@@ -473,25 +481,74 @@ class SourcedArticleAdmin(ArticleAdmin):
         
 
         for ref in obj.referrals.all():
-            text += """<div style="min-width:624px;display:flex;border-top: 1px solid #cccccc;margin-top: 4px;padding-top: 4px;">
-                        <div style="width:80%;display:flex;justify-content:center;align-items:center;">"""
+            text += """<div style="display:flex;border-top: 1px solid #cccccc;margin-top: 4px;padding-top: 4px;">
+                        <div style="width:40%;display:flex;justify-content:center;align-items:center;">"""
             if 'http://www.' in ref.url_set.last().name:
                 link = 'http://' + ref.url_set.last().name[11:]
             else:
                 link = ref.url_set.last().name
             link_short = link[8:]
-            if len(link_short) > 80:
-                link_short = link_short[:80]+"..."
+            if len(link_short) > 40:
+                link_short = link_short[:40]+"..."
 
             #text += format('<a href="%s" target="_blank" style="float:left;">%s</a>' % (link, link_short))
             text += '<a href="'+link+'" target="_blank">'+link_short+'</a>'
-            text += """</div>
-                    <div style="width:20%;display:flex;align-items:center;justify-content:center;">
-                        <a href=\"/admin/articles/sourcedarticle/""" + str(ref.id)      + "\">"
+            text += """</div>"""
+            
+            for source in obj.version_set.last().sourcesite_set.all():
+                text += """<div>blah</div>""" 
 
-            text += """ID: """ + str(ref.id) + """ &#x2197;</a>
+                #text += "<div>THIS IS A TEST</div>"
+
+                # if 'http://www.' in source.referring_url:
+                #     check_url = source.referring_url[11:]
+                # elif 'https://www.' in source.referring_url:
+                #     check_url = source.referring_url[12:]
+                # elif 'http://' in source.referring_url:
+                #     check_url = source.referring_url[7:]
+                # elif 'https://' in source.referring_url:
+                #     check_url = source.referring_url[8:]
+                # else:
+                check_url = source.referring_url
+                #text += "<p>" + check_url + " *** " + ref.url + "</p>"
+
+                domain = check_url.replace("https://www", "").replace("http://wwww", "")
+                #text += "<p>" + domain + "</p>"
+                # text += "<p>" + source.referring_url + " *** " + ref.url + "</p>"
+
+                text += """<div>""" + source.referring_url + """</div>"""
+                text += """<div>""" + ref.url + """</div>"""
+                if source.referring_url in ref.url:
+                    if source.local:
+                        text += """<div style="width:20%;display:flex;align-items:center;justify-content:center;">
+                                <img src="/static/admin/img/icon-yes.gif" alt="True">
+                            </div>"""
+                    else:
+                        text += """<div style="width:20%;display:flex;align-items:center;justify-content:center;">
+                                <img src="/static/admin/img/icon-no.gif" alt="False">
+                            </div>"""
+                    
+                    if source.matched:
+                        text += """<div style="width:20%;display:flex;align-items:center;justify-content:center;">
+                                <img src="/static/admin/img/icon-yes.gif" alt="True">
+                            </div>"""
+                    else:
+                        text += """<div style="width:20%;display:flex;align-items:center;justify-content:center;">
+                                <img src="/static/admin/img/icon-no.gif" alt="False">
+                            </div>"""
+
+
+
+            text += """<div style="width:20%;display:flex;align-items:center;justify-content:center;">
+                        <a href=\"/admin/articles/article/""" + str(ref.id)      + "\">"
+
+            text += """ID: """ + str(ref.id) + """ &#x2197;
+                        </a>
                          </div>
                      </div>"""
+
+
+        text += """</div><span>"""
         return text
 
     get_referrals_info.short_description = 'Referrals Info'

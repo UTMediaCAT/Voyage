@@ -52,7 +52,9 @@ class ReferringSite(models.Model):
 	(1, 'MediaCAT Crawler'),
 	(2, 'Both')
     )
-    mode = models.PositiveSmallIntegerField(default=0,
+
+    # crawl_count = models.IntegerField(default=0)
+    mode = models.PositiveIntegerField(default=0,
 		        choices=crawl_choices,
 			verbose_name='Scanner',
                         help_text=mark_safe('RSS - Fast but may not work on some sites.<br>' + # Use Check Newspaper to determine the compatibility<br>' +
