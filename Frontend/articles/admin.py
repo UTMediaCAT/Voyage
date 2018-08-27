@@ -494,10 +494,10 @@ class SourcedArticleAdmin(ArticleAdmin):
             #text += format('<a href="%s" target="_blank" style="float:left;">%s</a>' % (link, link_short))
             text += '<a href="'+link+'" target="_blank">'+link_short+'</a>'
             text += """</div>"""
-            
+            count = 0
             for source in obj.version_set.last().sourcesite_set.all():
-                text += """<div>blah</div>""" 
-
+                #text += """<div>BLAH {count} </div>""".format(count=count) 
+                count = count + 1
                 #text += "<div>THIS IS A TEST</div>"
 
                 # if 'http://www.' in source.referring_url:
@@ -516,9 +516,11 @@ class SourcedArticleAdmin(ArticleAdmin):
                 #text += "<p>" + domain + "</p>"
                 # text += "<p>" + source.referring_url + " *** " + ref.url + "</p>"
 
-                text += """<div>""" + source.referring_url + """</div>"""
-                text += """<div>""" + ref.url + """</div>"""
+                # text += """<div>""" + source.referring_url + """</div>"""
+                # text += """<div>""" + ref.url + """</div>"""
                 if source.referring_url in ref.url:
+                    # text += """<div>""" + source.referring_url + """</div>"""
+                    # text += """<div>""" + ref.url + """</div>"""
                     if source.local:
                         text += """<div style="width:20%;display:flex;align-items:center;justify-content:center;">
                                 <img src="/static/admin/img/icon-yes.gif" alt="True">
@@ -536,6 +538,7 @@ class SourcedArticleAdmin(ArticleAdmin):
                         text += """<div style="width:20%;display:flex;align-items:center;justify-content:center;">
                                 <img src="/static/admin/img/icon-no.gif" alt="False">
                             </div>"""
+                    break
 
 
 

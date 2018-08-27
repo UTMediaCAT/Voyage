@@ -340,8 +340,9 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                     for source in sources[0]:
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
+                        sourcesite_url_match = True
                         if (source_url_match):
-                            sourcesite_url_match = source_article_url_match.version_set.last().sourcesite_set.filter(url=source[0])
+                            sourcesite_url_match = source_url_match[0].article.version_set.last().sourcesite_set.filter(url=source[0])
                         if (source_url_match and not sourcesite_url_match): # and source_url_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
                             logging.info("TO BE REMOVED found duplicate url obj")
 
@@ -552,8 +553,10 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                     for source in sources[1]:
 
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
+                        sourcesite_url_match = True
+
                         if (source_url_match):
-                            sourcesite_url_match = source_article_url_match.version_set.last().sourcesite_set.filter(url=source[0])
+                            sourcesite_url_match = source_url_match[0].article.version_set.last().sourcesite_set.filter(url=source[0])
                         if (source_url_match and not sourcesite_url_match): # and source_url_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
                             logging.info("TO BE REMOVED found duplicate url obj")
                             
@@ -807,8 +810,9 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                     for source in sources[0]:
                         
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
+                        sourcesite_url_match = True
                         if (source_url_match):
-                            sourcesite_url_match = source_article_url_match.version_set.last().sourcesite_set.filter(url=source[0])
+                            sourcesite_url_match = source_url_match[0].article.version_set.last().sourcesite_set.filter(url=source[0])
                         if (source_url_match and not sourcesite_url_match): # and source_url_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):          logging.info("TO BE REMOVED found duplicate url obj")
 
                             source_article_url_match = source_url_match[0].article
@@ -1014,9 +1018,9 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                     for source in sources[1]:
                         
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
-
+                        sourcesite_url_match = True
                         if (source_url_match):
-                            sourcesite_url_match = source_article_url_match.version_set.last().sourcesite_set.filter(url=source[0])
+                            sourcesite_url_match = source_url_match[0].article.version_set.last().sourcesite_set.filter(url=source[0])
                         if (source_url_match and not sourcesite_url_match): # and source_url_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
                             logging.info("TO BE REMOVED found duplicate url obj")
 
