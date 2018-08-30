@@ -5,4 +5,4 @@ cd $BASEDIR
 cd ../src
 
 
-nohup python warc_queue.py >/dev/null 2>&1 &
+nohup python3 warc_queue.py >/dev/null 2>&1 &
