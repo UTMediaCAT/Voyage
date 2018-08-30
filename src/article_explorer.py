@@ -46,6 +46,7 @@ from articles.models import Keyword as ArticleKeyword
 from articles.models import SourceSite as ArticleSourceSite
 from articles.models import SourceTwitter as ArticleSourceTwitter
 from articles.models import Version as ArticleVersion
+
 from articles.models import Url as ArticleUrl
 from explorer.models import*
 from explorer.models import SourceTwitter as ExplorerSourceTwitter
@@ -339,11 +340,17 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             matched = False)
 
                     for source in sources[0]:
+                        logging.info(u"!LLLLLLLLLLLLLLLLLLLLL  Looking at article url {0}".format(source[0]))
+
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
                         sourcesite_url_match = True
                         if (source_url_match):
+                            logging.info("Matched URL 1")
+
                             sourcesite_url_match = source_url_match[0].article.version_set.last().sourcesite_set.filter(url=source[0])
                         if (source_url_match and not sourcesite_url_match): # and source_url_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
+                            logging.info("Matched URL 1 Not Matched source site 1")
+
                             logging.info("TO BE REMOVED found duplicate url obj")
 
                             source_article_url_match = source_url_match[0].article
@@ -358,18 +365,20 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                 referring_url=url,
                             )
                             db_article.sources.add(source_article_url_match)
-                            source_article.save()
+                            source_article_url_match.save()
 
                             db_article.save()
 
                             continue
                         elif (source_url_match):
+                            logging.info("Matched URL 1 Matched Source site 1")
                             continue
-                        source_version_match = ArticleVersion.objects.filter(text_hash=hash_sha256(source[0]))
+                        # source_version_match = ArticleVersion.objects.filter(text_hash=hash_sha256(source[0]))
 
-                        if (source_version_match):# and source_version_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
-                            logging.info("TO BE REMOVED found duplicate text_hash obj")
-                            
+                        # if (source_version_match):# and source_version_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
+                        #     logging.info("TO BE REMOVED found duplicate text_hash obj")
+                        #     continue
+
                             # source_version_match[0].version_set.last().sourcesite_set.create(
                             #     url=source[0],
                             #     domain=source[1],
@@ -383,10 +392,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                             # db_article.save()
                             
-                            continue
                         source_article = ExplorerArticle(source[0])
                         source_article.download()
-                        logging.info(u"!LLLLLLLLLLLLLLLLLLLLL  Looking at article url {0}".format(source[0]))
 
                         
 
@@ -474,7 +481,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                 logging.info("version match AND url match DIODJQWPDJA")
 
                                 source_version_match[0].article.is_source = True
-                                source_version_match[0].article.save()                                
                                 
                                 source_version_match[0].article.version_set.last().sourcesite_set.create(
                                     url=source[0],
@@ -485,13 +491,21 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                     referring_url=url,
 
                                 )
+                                source_version_match[0].article.save()                                
 
                                 db_article.sources.add(source_version_match[0].article) # Makes a new version
                                 continue
                             else:
                                 logging.info("TO BE REMOVED found duplicate text_hash objasdasdasd")
                                 source_version_match[0].article.url_set.create(name=source[0])
-
+                                source_version_match[0].article.version_set.last().sourcesite_set.create(
+                                    url=source[0],
+                                    domain=source[1],
+                                    anchor_text=source[2],
+                                    matched=True,
+                                    local=(source[1] in site.url),
+                                    referring_url=url,
+                                )
                                 db_article.sources.add(source_version_match[0].article) # Makes a new version
                                 source_version_match[0].article.save()
 
@@ -551,13 +565,18 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
 
                     for source in sources[1]:
+                        logging.info(u"!YYYYYYYYYYYYYYYYYYYYYYY  Looking at article url {0}".format(source[0]))
 
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
                         sourcesite_url_match = True
 
                         if (source_url_match):
+                            logging.info("Matched URL 2")
+
                             sourcesite_url_match = source_url_match[0].article.version_set.last().sourcesite_set.filter(url=source[0])
                         if (source_url_match and not sourcesite_url_match): # and source_url_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
+                            logging.info("Matched URL 2 And not source site")
+
                             logging.info("TO BE REMOVED found duplicate url obj")
                             
                             
@@ -574,18 +593,20 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                 referring_url=url,
                             )
                             db_article.sources.add(source_article_url_match)
-                            source_article.save()
+                            source_article_url_match.save()
 
                             db_article.save()
 
                             continue
                         elif (source_url_match):
-                            continue
-                        source_version_match = ArticleVersion.objects.filter(text_hash=hash_sha256(source[0]))
+                            logging.info("Matched URL 2 Source site")
 
-                        if (source_version_match):#  and source_version_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
-                            logging.info("TO BE REMOVED found duplicate text_hash obj")
-                            
+                            continue
+                        # source_version_match = ArticleVersion.objects.filter(text_hash=hash_sha256(source[0]))
+
+                        # if (source_version_match):#  and source_version_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
+                        #     logging.info("TO BE REMOVED found duplicate text_hash obj")
+                        #     continue
                             # source_version_match[0].version_set.last().sourcesite_set.create(
                             #     url=source[0],
                             #     domain=source[1],
@@ -599,12 +620,9 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                             # db_article.save()
                             
-                            continue
-                        else:
-                            continue
+                            
                         source_article = ExplorerArticle(source[0])
                         source_article.download()
-                        logging.info(u"!YYYYYYYYYYYYYYYYYYYYYYY  Looking at article url {0}".format(source[0]))
 
                         
 
@@ -701,7 +719,14 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             else:
                                 logging.info("TO BE REMOVED found duplicate text_hash objasdasdasd")
                                 source_version_match[0].article.url_set.create(name=source[0])
-
+                                source_version_match[0].article.version_set.last().sourcesite_set.create(
+                                    url=source[0],
+                                    domain=source[1],
+                                    anchor_text=source[2],
+                                    matched=False,
+                                    local=(source[1] in site.url),
+                                    referring_url=url,
+                                )
                                 db_article.sources.add(source_version_match[0].article) # Makes a new version
                                 source_version_match[0].article.save()
 
@@ -780,6 +805,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                     db_article = Article(domain=site.url)
                     db_article.save()
                     db_article.url_set.create(name=url)
+                    logging.info("Adding new Article to the DB   123")
 
                     version = db_article.version_set.create(
                     title=title,
@@ -789,11 +815,13 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                     date_added=date_now,
                     date_last_seen=date_now,
                     date_published=pub_date)
-                    
+                    logging.info("Adding new Article to the DB   qqqq")
+
                     db_article.is_referring = True
                     db_article.save()
                     for key in keywords:
                         version.keyword_set.create(name=key)
+                    logging.info("Adding new Article to the DB    4")
 
                     for author in authors:
                         version.author_set.create(name=author)
@@ -801,19 +829,24 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         version.sourcetwitter_set.create(
                             name=account,
                             matched = True)
+                    logging.info("Adding new Article to the DB   5")
 
                     for account in twitter_accounts[1]:
                         version.sourcetwitter_set.create(
                             name=account,
                             matched = False)
+                    logging.info("Adding new Article to the DB   6")
 
                     for source in sources[0]:
-                        
+                        logging.info(u"!ASDSDAQWDASDSAD  Looking at article url {0}".format(source[0]))
+
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
                         sourcesite_url_match = True
                         if (source_url_match):
+                            logging.info("Matched URL 3")
                             sourcesite_url_match = source_url_match[0].article.version_set.last().sourcesite_set.filter(url=source[0])
                         if (source_url_match and not sourcesite_url_match): # and source_url_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):          logging.info("TO BE REMOVED found duplicate url obj")
+                            logging.info("Matched URL 3 and Not Source site 3")
 
                             source_article_url_match = source_url_match[0].article
                             #curr_last_source = source_article.version_set.last().sourcesite_set.last()
@@ -827,18 +860,21 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                 referring_url=url,
                             )
                             db_article.sources.add(source_article_url_match)
-                            source_article.save()
+                            source_article_url_match.save()
 
                             db_article.save()
 
                             continue
                         elif (source_url_match):
-                            continue
-                        source_version_match = ArticleVersion.objects.filter(text_hash=hash_sha256(source[0]))
+                            logging.info("Matched URL 3 and Source site 3")
 
-                        if (source_version_match): # and source_version_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
-                            logging.info("TO BE REMOVED found duplicate text_hash obj")
-                            
+                            continue
+                        # source_version_match = ArticleVersion.objects.filter(text_hash=hash_sha256(source[0]))
+
+                        # if (source_version_match): # and source_version_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
+                        #     logging.info("TO BE REMOVED found duplicate text_hash obj")
+                        #     continue
+
                             # source_version_match[0].version_set.last().sourcesite_set.create(
                             #     url=source[0],
                             #     domain=source[1],
@@ -852,11 +888,9 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                             # db_article.save()
                             
-                            continue
 
                         source_article = ExplorerArticle(source[0])
                         source_article.download()
-                        logging.info(u"!ASDSDAQWDASDSAD  Looking at article url {0}".format(source[0]))
                         
 
                         #version = db_source_article.version_set.create(#)
@@ -891,7 +925,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         logging.info(u"Title: {0}".format(repr(article.title)))
                         if not source_article.title:
                             
-                            db_source_article = add_source_article_failed(source[1],source[0], source[2], True, (source[1] in site.url))
+                            db_source_article = add_source_article_failed(source[1],source[0], source[2], True, (source[1] in site.url), site.url)
                             db_article.sources.add(db_source_article)
                             db_source_article.save()
                             db_article.save()
@@ -901,7 +935,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                         if not source_article.text:
                             logging.info("Sourced article missing text, skipping")
-                            db_source_article = add_source_article_failed(source[1],source[0], source[2], True, (source[1] in site.url))
+                            db_source_article = add_source_article_failed(source[1],source[0], source[2], True, (source[1] in site.url), site.url)
                             db_article.sources.add(db_source_article)
                             db_source_article.save()
                             db_article.save()
@@ -935,7 +969,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                         source_version_match = ArticleVersion.objects.filter(text_hash=thash)
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
-
                         if (source_version_match):
                             if (source_url_match):
                                 logging.info("version match AND url match wuerrhqwoueuqoiwue")
@@ -955,7 +988,14 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             else:
                                 logging.info("TO BE REMOVED found duplicate text_hash objasdasdasd")
                                 source_version_match[0].article.url_set.create(name=source[0])
-
+                                source_version_match[0].article.version_set.last().sourcesite_set.create(
+                                    url=source[0],
+                                    domain=source[1],
+                                    anchor_text=source[2],
+                                    matched=True,
+                                    local=(source[1] in site.url),
+                                    referring_url=url,
+                                )
                                 db_article.sources.add(source_version_match[0].article) # Makes a new version
                                 source_version_match[0].article.save()
 
@@ -1016,13 +1056,17 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         logging.info("CREATED VERSION qqqQQQQQQQQ")
 
                     for source in sources[1]:
-                        
+                        logging.info(u"!ZZZZZZZZZZZZZZZZ  Looking at article url {0}".format(source[0]))
+
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
                         sourcesite_url_match = True
                         if (source_url_match):
+                            logging.info("Matched URL 4")
+
                             sourcesite_url_match = source_url_match[0].article.version_set.last().sourcesite_set.filter(url=source[0])
                         if (source_url_match and not sourcesite_url_match): # and source_url_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
                             logging.info("TO BE REMOVED found duplicate url obj")
+                            logging.info("Matched URL 4 And not Source site 4")
 
                             source_article_url_match = source_url_match[0].article
                             #curr_last_source = source_article.version_set.last().sourcesite_set.last()
@@ -1036,18 +1080,43 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                 referring_url=url,
                             )
                             db_article.sources.add(source_article_url_match)
-                            source_article.save()
+                            source_article_url_match.save()
 
                             db_article.save()
 
                             continue
                         elif (source_url_match):
-                            continue                       
-                        source_version_match = ArticleVersion.objects.filter(text_hash=hash_sha256(source[0]))
+                            logging.info("Matched URL 4 and Source site 4")
 
-                        if (source_version_match):# and source_version_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
-                            logging.info("TO BE REMOVED found duplicate text_hash obj")
-                            
+                            continue                       
+                        # source_version_match = ArticleVersion.objects.filter(text_hash=hash_sha256(source[0]))
+                        # sourcesite_hash_match = ArticleSourceSite.objects.filter(text_hash=hash_sha256(source[0]))
+                        # if (source_version_match and not sourcesite_hash_match):# and source_version_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
+                        #     logging.info("TO BE REMOVED found duplicate text_hash obj")
+                        #     pass
+                        # else (sourcesite_hash_match):
+                        #     logging.info("TO BE REMOVED found duplicate url obj")
+                        #     logging.info("Matched Version Text Hash 4? And not Source site text Hash 4")
+                        #     #curr_last_source = source_article.version_set.last().sourcesite_set.last()
+
+                        #     source_article_url_match.version_set.last().sourcesite_set.create(
+                        #         url=source[0],
+                        #         domain=source[1],
+                        #         anchor_text=source[2],
+                        #         matched=False,
+                        #         local=(source[1] in site.url),
+                        #         referring_url=url,
+                        #     )
+                        #     db_article.sources.add(source_article_url_match)
+                        #     source_article_url_match.save()
+
+                        #     db_article.save()
+                        #     continue
+
+
+
+
+
                             # source_version_match[0].version_set.last().sourcesite_set.create(
                             #     url=source[0],
                             #     domain=source[1],
@@ -1061,11 +1130,9 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                             # db_article.save()
                             
-                            continue
 
                         source_article = ExplorerArticle(source[0])
                         source_article.download()
-                        logging.info(u"!ZZZZZZZZZZZZZZZZ  Looking at article url {0}".format(source[0]))
 
 
 
@@ -1074,7 +1141,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                         if(not source_article.is_downloaded):
                             if(not source_article.download()):
-                                db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url))
+                                db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url), site.url)
                                 db_article.sources.add(db_source_article)
                                 db_source_article.save()
                                 db_article.save()
@@ -1086,7 +1153,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         if (not source_article.is_parsed):
                             if (not source_article.preliminary_parse()):
 
-                                db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url))
+                                db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url), site.url)
                                 db_article.sources.add(db_source_article)
                                 db_source_article.save()
                                 db_article.save()
@@ -1098,7 +1165,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         logging.debug(u"Title: {0}".format(repr(article.title)))
                         if not source_article.title:
 
-                            db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url))
+                            db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url), site.url)
                             db_article.sources.add(db_source_article)
                             db_source_article.save()
                             db_article.save()
@@ -1107,7 +1174,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                         if not source_article.text:
 
-                            db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url))
+                            db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url), site.url)
                             db_article.sources.add(db_source_article)
                             db_source_article.save()
                             db_article.save()
@@ -1148,7 +1215,14 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             else:
                                 logging.info("TO BE REMOVED found duplicate text_hash objasdasdasd")
                                 source_version_match[0].article.url_set.create(name=source[0])
-
+                                source_version_match[0].article.version_set.last().sourcesite_set.create(
+                                    url=source[0],
+                                    domain=source[1],
+                                    anchor_text=source[2],
+                                    matched=False,
+                                    local=(source[1] in site.url),
+                                    referring_url=url,
+                                )
                                 db_article.sources.add(source_version_match[0].article) # Makes a new version
                                 source_version_match[0].article.save()
 
