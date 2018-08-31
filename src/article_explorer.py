@@ -824,7 +824,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                     logging.info("Adding new Article to the DB    4")
 
                     for author in authors:
-                        version.author_set.create(name=author)
+                        version.author_set.create(name=author[:199])
                     for account in twitter_accounts[0]:
                         version.sourcetwitter_set.create(
                             name=account,
@@ -987,7 +987,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                 continue
                             else:
                                 logging.info("TO BE REMOVED found duplicate text_hash objasdasdasd")
-                                source_version_match[0].article.url_set.create(name=source[0])
+                                # source_version_match[0].article.url_set.create(name=source[0])
                                 source_version_match[0].article.version_set.last().sourcesite_set.create(
                                     url=source[0],
                                     domain=source[1],

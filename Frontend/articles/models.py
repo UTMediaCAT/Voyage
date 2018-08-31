@@ -38,38 +38,56 @@ class Article(models.Model):
 
     @property
     def language(self):
+        if (self.version_set.last() == None):
+            return "FAILS"
         return self.version_set.last().language
 
     @property
     def date_added(self):
+        if (self.version_set.last() == None):
+            return "FAILS"
         return self.version_set.last().date_added
 
     @property
     def date_last_seen(self):
+        if (self.version_set.last() == None):
+            return "FAILS"
         return self.version_set.last().date_last_seen
 
     @property
     def date_published(self):
+        if (self.version_set.last() == None):
+            return "FAILS"
         return self.version_set.last().date_published
 
     @property
     def found_by(self):
+        if (self.version_set.last() == None):
+            return "FAILS"
         return self.version_set.last().found_by
 
     @property
     def source_url(self):
+        if (self.version_set.last() == None):
+            return "FAILS"
         return self.version_set.last().sourcesite_set.last().url
 
     @property
     def source_anchor_text(self):
+        if (self.version_set.last() == None):
+            return "FAILS"
         return self.version_set.last().sourcesite_set.last().anchor_text
 
     @property
     def source_matched(self):
+        if (self.version_set.last() == None):
+            return False
         return self.version_set.last().sourcesite_set.last().matched
 
     @property
     def source_local(self):
+        if (self.version_set.last() == None):
+            return False
         return self.version_set.last().sourcesite_set.last().local
 
 
@@ -85,14 +103,14 @@ class Url(models.Model):
 
 class Version(models.Model):
     article = models.ForeignKey(Article)
-    title = models.CharField(max_length=200, blank=True)
+    title = models.CharField(max_length=20000, blank=True)
     text = models.TextField(max_length=None, blank=True)
-    text_hash = models.CharField(max_length=100, blank=True, unique=True)
-    language = models.CharField(max_length=200, choices=LANGUAGES, blank=True)
+    text_hash = models.CharField(max_length=20000, blank=True, unique=True)
+    language = models.CharField(max_length=20000, choices=LANGUAGES, blank=True)
     date_added = models.DateTimeField('Date Added', blank=True, null=True)
     date_last_seen = models.DateTimeField('Date Last Seen', blank=True, null=True)
     date_published = models.DateTimeField('Date Published', blank=True, null=True)
-    found_by = models.CharField(max_length=100, blank=True)
+    found_by = models.CharField(max_length=20000, blank=True)
 
     # source_url = models.CharField(max_length=2000, blank=True, null=True)
     #source_domain = URLProtocolField(max_length=2000, verbose_name="Source Site", blank=True, null=True)
@@ -135,7 +153,7 @@ class Version(models.Model):
 
 class Author(models.Model):
     version = models.ForeignKey(Version)
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=20000)
 
     def __unicode__(self):
         return self.name
@@ -147,12 +165,12 @@ class SourceSite(models.Model):
         verbose_name = "Sourced Article"
 
     version = models.ForeignKey(Version)
-    url = models.CharField(max_length=2000)
-    domain = URLProtocolField(max_length=2000, verbose_name="Source Site")
-    anchor_text = models.CharField(max_length=2000, verbose_name="Anchor Text")
+    url = models.CharField(max_length=20000)
+    domain = URLProtocolField(max_length=20000, verbose_name="Source Site")
+    anchor_text = models.CharField(max_length=20000, verbose_name="Anchor Text")
     matched = models.BooleanField(default=False)
     local = models.BooleanField(default=True)
-    referring_url = models.CharField(max_length=2000)
+    referring_url = models.CharField(max_length=20000)
 
     @property
     def title(self):

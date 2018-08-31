@@ -190,6 +190,8 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
 
     def get_authors(self, obj):
         authors = ''
+        if (obj.version_set.last() == None):
+            return "FAILS"
         for ath in obj.version_set.last().author_set.all():
             authors += ath.name + ', '
         return authors[:-2]
@@ -198,6 +200,8 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
 
     def get_keywords(self, obj):
         keywords = ''
+        if (obj.version_set.last() == None):
+            return "FAILS"
         for key in obj.version_set.last().keyword_set.all():
             keywords += key.name + ',<br>'
         return keywords[:-5]
@@ -346,6 +350,8 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
   #   get_source_twitters.allow_tags = True
 
     def get_language(self, obj):
+        if (obj != None):
+            return "FAILS"
         return obj.language
 
     get_language.short_description = 'Language'
@@ -518,7 +524,7 @@ class SourcedArticleAdmin(ArticleAdmin):
 
                 # text += """<div>""" + source.referring_url + """</div>"""
                 # text += """<div>""" + ref.url + """</div>"""
-                if source.referring_url in ref.url:
+                if source.referring_url.lower() in ref.url.lower():
                     # text += """<div>""" + source.referring_url + """</div>"""
                     # text += """<div>""" + ref.url + """</div>"""
                     if source.local:
