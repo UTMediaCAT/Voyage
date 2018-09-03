@@ -1,4 +1,4 @@
-projectdir: /root/Voyage
+projectdir: /voyage_storage/Voyage
 server:
     ip_address: 0.0.0.0
     port: 80
@@ -7,11 +7,11 @@ twitter:
     iteration_tweet_count: 200
     from_start:  True
     min_iteration_time: 600
-    wait_rate_seconds: 60
-    consumer_key:
-    consumer_secret:
-    access_token:
-    access_token_secret:
+    timeline_wait_days: 30
+    consumer_key: 
+    consumer_secret: 
+    access_token: 
+    access_token_secret: 
 article:
     min_iteration_time: 3600
 storage:
@@ -31,8 +31,9 @@ pdf:
     article_subdir: article
     twitter_subdir: twitter
 database:
-    version: 0.0.1
+    version: 0.0.2
 log:
     retention_days: 30
 crawler:
     limit: 5000
+    level: 3

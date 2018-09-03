@@ -62,8 +62,8 @@ def stop_server(port):
     config = configuration()['server']
     os.chmod('./src/StopServer.sh', 0700)
     subprocess.call(['./src/StopServer.sh', format('%i' % port)])
-    os.chmod('./src/StopSchedule.sh', 0700)
-    subprocess.call(['./src/StopSchedule.sh'])
+    # os.chmod('./src/StopSchedule.sh', 0700)
+    # subprocess.call(['./src/StopSchedule.sh'])
 
 
 if __name__ == "__main__":

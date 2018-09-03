@@ -10,7 +10,7 @@ def get_article_run_status():
 
 @register.simple_tag
 def get_twitter_run_status():
-    return is_process_running("twitter_explorer.py")
+    return is_process_running("twitter_crawler.py")
 
 
 def is_process_running(program_name):
@@ -19,7 +19,7 @@ def is_process_running(program_name):
     ps_output = ps_process.communicate()[0]
 
     status = "OFF"
-    if ("python " + program_name) in ps_output:
+    if (("python " + program_name) in ps_output) or (("python ./" + program_name) in ps_output):
         status = "ON"
     return status
 

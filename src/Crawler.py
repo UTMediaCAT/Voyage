@@ -7,7 +7,8 @@ from ExplorerArticle import ExplorerArticle
 import urlnorm
 import psycopg2
 import os
-
+import io
+import sys
 from pybloom_live import ScalableBloomFilter
 from pqueue import Queue
 from Queue import Empty
@@ -26,13 +27,35 @@ class Crawler(object):
         self.site = site
         self.filters = site.referringsitefilter_set.all()
         self.domain = urlparse(site.url).netloc
-
         # http://alexeyvishnevsky.com/2013/11/tips-on-optimizing-scrapy-for-a-high-performance/
         # fork of pybloom: https://github.com/joseph-fox/python-bloomfilter
         self.ignore_filter = ScalableBloomFilter(
-            initial_capacity=10000000,
-            error_rate=0.00001)
+                initial_capacity=10000000,
+                error_rate=0.00001)
+        ignore_filter_dir='../ignore_filter/'
+        if not os.path.exists(ignore_filter_dir):
+            os.makedirs(ignore_filter_dir)
+            self.ignore_filter = ScalableBloomFilter(
+                initial_capacity=10000000,
+                error_rate=0.00001)
+            try:
+            	f = open('../ignore_filter/' + self.site.name + '_ignore_file.txt', 'r+')
+            	f.write(self.ignore_filter)
+            except IOError:
+            	f = open('../ignore_filter/' + self.site.name + '_ignore_file.txt', 'w+')
+            f.close()
+        else:
+            if (not(os.path.exists('../ignore_filter/' + self.site.name + '_ignore_file.txt'))):
+                f = open('../ignore_filter/' + self.site.name + '_ignore_file.txt', 'w+')
+                f.close()
 
+            with open('../ignore_filter/' + self.site.name + '_ignore_file.txt', 'r+', buffering=False) as ignore_filter_file:
+                try:
+                    for line in ignore_filter_file:
+                        self.ignore_filter.add(line.decode('utf8').rstrip())
+                except Exception as e:
+                    logging.info(str(e))
+            ignore_filter_file.close()
         self.visited_count = 0
 
         tmpqueuetmp_dir='../tmpqueue/tmp/'
@@ -47,11 +70,15 @@ class Crawler(object):
         self.to_visit = Queue(tmpqueue_dir, tempdir=tmpqueuetmp_dir)
 
         # Initial url
-        self.to_visit.put(site.url)
+        if (self.site.is_shallow == False):
+            self.to_visit.put(site.url)
+        else:
+            self.to_visit.put((site.url, str(0)))
 
         # Limit
         self.limit = common.get_config()["crawler"]["limit"]
-
+        # Specifies how deep the shallow crawler should go; "1" is the lowest option for this
+        self.level = common.get_config()["crawler"]["level"]
         """
         self.probabilistic_n = common.get_config()["crawler"]["n"]
         self.probabilistic_k = common.get_config()["crawler"]["k"]
@@ -60,7 +87,7 @@ class Crawler(object):
                                    database=common.get_config()["crawler"]["postgresql"]["name"],
                                    user=common.get_config()["crawler"]["postgresql"]["user"],
                                    password=common.get_config()["crawler"]["postgresql"]["password"])
-                                   
+
         self.cursor = self.db.cursor()
         self.already_added_urls = set()
         self.visited_table = "visited_" + str(site.id)
@@ -87,78 +114,111 @@ class Crawler(object):
         '''
 
         #standard non-recursive tree iteration
-        try:
-            while(True):
+        with open('../ignore_filter/' + self.site.name + '_ignore_file.txt', 'a') as ignore_filter_file:
+            try:
+                current_level = 0
+                while(True):
+                    if (self.limit > 0 and self.visited_count > self.limit):
+                        raise StopIteration('Limit reached: {:d}'.format(self.limit))
+                    # if(self.pages_visited > self.probabilistic_n):
+                    #     raise StopIteration
+                    # self.cursor.execute("SELECT * FROM " + self.tovisit_table + " ORDER BY id LIMIT 1")
+                    # row = self.cursor.fetchone()
+                    # if(row):
+                    #     row_id = row[0]
+                    #     current_url = row[1]
+                    #     self.cursor.execute("DELETE FROM " + self.tovisit_table + " WHERE id=%s", (row_id,))
+                    # else:
+                    #     raise StopIteration
 
-                if (self.limit > 0 and self.visited_count > self.limit):
-                    raise StopIteration('Limit reached: {:d}'.format(self.limit))
-                # if(self.pages_visited > self.probabilistic_n):
-                #     raise StopIteration
-                # self.cursor.execute("SELECT * FROM " + self.tovisit_table + " ORDER BY id LIMIT 1")
-                # row = self.cursor.fetchone()
-                # if(row):
-                #     row_id = row[0]
-                #     current_url = row[1]
-                #     self.cursor.execute("DELETE FROM " + self.tovisit_table + " WHERE id=%s", (row_id,))
-                # else:
-                #     raise StopIteration
-
-                # if(self._should_skip()):
-                #     logging.info(u"skipping {0} randomly".format(current_url))
-                #     continue
-
-                try:
-                    current_url = self.to_visit.get_nowait()
-                except Empty:
-                    raise StopIteration('to_visit is empty')
-
-                logging.info(u"visiting {0}".format(current_url))
-                #use newspaper to download and parse the article
-                article = ExplorerArticle(current_url)
-                article.download()
-
-
-                # get urls from the article
-                for link in article.get_links():
-                    url = urljoin(current_url, link.href, False)
-                    if self.url_in_filter(url, self.filters):
-                        logging.info("skipping url \"{0}\" because it matches filter".format(url))
-                        continue
+                    # if(self._should_skip()):
+                    #     logging.info(u"skipping {0} randomly".format(current_url))
+                    #     continue
                     try:
-                        parsed_url = urlparse(url)
-                        parsed_as_list = list(parsed_url)
-                        if(parsed_url.scheme != u"http" and parsed_url.scheme != u"https"):
-                            logging.info(u"skipping url with invalid scheme: {0}".format(url))
+                        if (self.site.is_shallow):
+                            current = self.to_visit.get_nowait()
+                            current_url = current[0]
+                            current_level = current[1]
+                            logging.info(u"Shallow on level {0} {1}".format(current_level, current_url))
+                        else:
+                            current_url = self.to_visit.get_nowait()
+                    except Empty:
+                        self.site.is_shallow = True # On line 26 the site gets set TO DELETE
+                        self.to_visit.put((self.site.url, str(0)))
+                        self.ignore_filter = ScalableBloomFilter(
+                        initial_capacity=10000000,
+                        error_rate=0.00001)
+                        ignore_filter_file.close()
+                        os.remove('../ignore_filter/' + self.site.name + '_ignore_file.txt')
+                        logging.info("stopped iteration")
+                        logging.info(u"{0}".format(self.site.url))
+                        raise ZeroDivisionError
+
+
+                    logging.info(u"visiting {0}".format(current_url))
+                    self.visited_count += 1
+                    #use newspaper to download and parse the article
+                    article = ExplorerArticle(current_url)
+                    article.download()
+                    if (self.site.is_shallow):
+                        if (int(current_level) > self.level):
                             continue
-                        parsed_as_list[5] = ''
-                        url = urlunparse(urlnorm.norm_tuple(*parsed_as_list))
-                    except Exception as e:
-                        logging.info(u"skipping malformed url {0}. Error: {1}".format(url, str(e)))
-                        continue
-                    if(not parsed_url.netloc.endswith(self.domain)):
-                        continue
+                    # get urls from the article
+                    for link in article.get_links():
+                        url = urljoin(current_url, link.href, False)
+                        if self.url_in_filter(url, self.filters):
+                            logging.info(u"skipping url \"{0}\" because it matches filter".format(url))
+                            continue
+                        try:
+                            parsed_url = urlparse(url)
+                            parsed_as_list = list(parsed_url)
 
-                    # If the url have been added to ignore list, skip
-                    if (url in self.ignore_filter):
-                        continue
+                            if(parsed_url.scheme != u"http" and parsed_url.scheme != u"https"):
+                                logging.info(u"skipping url with invalid scheme: {0}".format(url))
+                                continue
+                            parsed_as_list[5] = ''
+                            url = urlunparse(urlnorm.norm_tuple(*parsed_as_list))
+                        except Exception as e:
+                            logging.info(u"skipping malformed url {0}. Error: {1}".format(url, str(e)))
+                            continue
+                        if(not parsed_url.netloc.endswith(self.domain)):
+                            continue
+                        # If the url have been added to ignore list, skip
+                        if (url in self.ignore_filter):
+                            continue
+                        # Ignores the subscribe links for many domains
+                        if (u"subscribe" in url or "subscribe" in url and not(u"-subscribe" in url or "-subscribe" or u"subscribe-" in url or "subscribe-")):
+                        	continue
 
-                    # Append the url to to_visit queue
-                    self.to_visit.put(url)
-                    logging.info(u"added {0} to the to_visit".format(url))
+                        # Append the url to to_visit queue
+                        if (self.site.is_shallow):
+                            self.to_visit.put((url, str(int(current_level) + 1)))
+                            logging.info(u"added {0} to the to_visit as well as the level {1}".format(url, str(int(current_level) + 1)))
 
-                    # Append the url to visited to remove duplicates
-                    self.ignore_filter.add(url)
+                            # Append the url to visited to remove duplicates
+                            self.ignore_filter.add(url)
+                            ignore_filter_file.write(url.encode('utf8') + "\n")
+                        else:
+                            self.to_visit.put(url)
+                            logging.info(u"added {0} to the to_visit".format(url))
 
-                # Update the Queue
-                self.to_visit.task_done()
+                            # Append the url to visited to remove duplicates
+                            self.ignore_filter.add(url)
+                            ignore_filter_file.write(url.encode('utf8') + "\n")
 
-                self.visited_count += 1
+                    # Update the Queue
+                    self.to_visit.task_done()
 
-                return article
-        except StopIteration as e:
-            raise e
-        except Exception as e:
-            raise e
+
+                    return article
+
+
+            except StopIteration as e:
+                raise e
+            except ValueError as e:
+                raise ValueError
+            except Exception as e:
+                raise e
 
     def url_in_filter(self, url, filters):
         """
