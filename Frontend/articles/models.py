@@ -39,43 +39,43 @@ class Article(models.Model):
     @property
     def language(self):
         if (self.version_set.last() == None):
-            return "FAILS"
+            return "(None)"
         return self.version_set.last().language
 
     @property
     def date_added(self):
         if (self.version_set.last() == None):
-            return "FAILS"
+            return "(None)"
         return self.version_set.last().date_added
 
     @property
     def date_last_seen(self):
         if (self.version_set.last() == None):
-            return "FAILS"
+            return "(None)"
         return self.version_set.last().date_last_seen
 
     @property
     def date_published(self):
         if (self.version_set.last() == None):
-            return "FAILS"
+            return "(None)"
         return self.version_set.last().date_published
 
     @property
     def found_by(self):
         if (self.version_set.last() == None):
-            return "FAILS"
+            return "(None)"
         return self.version_set.last().found_by
 
     @property
     def source_url(self):
         if (self.version_set.last() == None):
-            return "FAILS"
+            return "(None)"
         return self.version_set.last().sourcesite_set.last().url
 
     @property
     def source_anchor_text(self):
         if (self.version_set.last() == None):
-            return "FAILS"
+            return "(None)"
         return self.version_set.last().sourcesite_set.last().anchor_text
 
     @property
@@ -170,7 +170,7 @@ class SourceSite(models.Model):
     anchor_text = models.CharField(max_length=20000, verbose_name="Anchor Text")
     matched = models.BooleanField(default=False)
     local = models.BooleanField(default=True)
-    referring_url = models.CharField(max_length=20000)
+    referring_url = models.CharField(max_length=20000, default="")
 
     @property
     def title(self):

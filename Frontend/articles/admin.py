@@ -191,7 +191,7 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
     def get_authors(self, obj):
         authors = ''
         if (obj.version_set.last() == None):
-            return "FAILS"
+            return "(None)"
         for ath in obj.version_set.last().author_set.all():
             authors += ath.name + ', '
         return authors[:-2]
@@ -201,7 +201,7 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
     def get_keywords(self, obj):
         keywords = ''
         if (obj.version_set.last() == None):
-            return "FAILS"
+            return "(None)"
         for key in obj.version_set.last().keyword_set.all():
             keywords += key.name + ',<br>'
         return keywords[:-5]
@@ -351,7 +351,7 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
 
     def get_language(self, obj):
         if (obj != None):
-            return "FAILS"
+            return "(None)"
         return obj.language
 
     get_language.short_description = 'Language'
