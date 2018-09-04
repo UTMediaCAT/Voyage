@@ -46,6 +46,7 @@ from articles.models import Keyword as ArticleKeyword
 from articles.models import SourceSite as ArticleSourceSite
 from articles.models import SourceTwitter as ArticleSourceTwitter
 from articles.models import Version as ArticleVersion
+
 from articles.models import Url as ArticleUrl
 from explorer.models import*
 from explorer.models import SourceTwitter as ExplorerSourceTwitter
@@ -223,6 +224,15 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             logging.debug(u"matched sources: {0}".format(repr(sources)))
             twitter_accounts = get_sources_twitter(article, twitter_accounts_explorer)
             logging.debug(u"matched twitter_accounts: {0}".format(repr(twitter_accounts[0])))
+            
+            # Add the version stuff here
+            # for source in sources[0]:
+            # source_article = ExplorerArticle(current_url)
+            # source_article.download()
+            #
+            #
+            #
+            
             if((not keywords) and (not twitter_accounts[0]) and (all(map(lambda x: x[1] in site.url, sources[0])))):#[] gets coverted to false
                 logging.debug("skipping article because it's not a match")
                 continue
@@ -263,6 +273,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             version_match = ArticleVersion.objects.filter(text_hash=text_hash)
             url_match = ArticleUrl.objects.filter(name=url)
 
+            # if (version_match[0].article.is_source == True):
+            #     version_match[0].article.is_referring = True
+
+            # if a data article exists in the version table, and we try to add a data sourced article then set the is_source to true
+
             # 4 cases:
             # Version  Url      Outcome
             # match    match    Update date_last_seen
@@ -270,31 +285,49 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             # unmatch  match    Add new Version to artcile
             # unmatch  unmatch  Create new Article with respective Version and Url
             if version_match:
-                version = version_match[0]
-                if url_match:
-                    if version_match[0].article != url_match[0].article:
-                        logging.warning(u"Version and Url matches are not pointing to same article! versionMatchId: {0} urlMatchId:{1}".format(version.id, url_match[0].id))
-                        continue
+                if (version_match[0].article.is_referring == True):
+                    version = version_match[0]
+                    if url_match:
+                        if version_match[0].article != url_match[0].article:
+                            logging.warning(u"Version and Url matches are not pointing to same article! versionMatchId: {0} urlMatchId:{1}".format(version.id, url_match[0].id))
+                            continue
+                        else:
+                            logging.info(u"Updating date last seen of {0}".format(version.article.id))
                     else:
-                        logging.info(u"Updating date last seen of {0}".format(version.article.id))
-                else:
-                    db_article = version.article
-                    logging.info(u"Adding new Url to Article {0}".format(db_article.id))
-                    db_article.url_set.create(name=url)
-                version.date_last_seen = date_now
-                version.save()
+                        db_article = version.article
+                        logging.info(u"Adding new Url to Article {0}".format(db_article.id))
+                        db_article.url_set.create(name=url)
+                    version.date_last_seen = date_now
+                    version.save()
             else:
                 if url_match:
+                    logging.info(u"AAAAAAAaoudsaosdiasd {0}".format(url))
                     db_article = url_match[0].article
-                    logging.info(u"Adding new Version to Article {0}".format(db_article.id))
-                    version = db_article.version_set.create(
+
+                    if (db_article.is_source == True):
+                        version = db_article.version_set.last()
+                        version.title=title
+                        version.text=text
+                        version.text_hash=text_hash
+                        version.language=language
+                        version.date_added=date_now
+                        version.date_last_seen=date_now
+                        version.date_published=pub_date
+                        version.save()
+                    else:
+                        logging.info(u"Adding new Version to Article {0}".format(db_article.id))
+
+                        version = db_article.version_set.create(
                         title=title,
                         text=text,
                         text_hash=text_hash,
                         language=language,
                         date_added=date_now,
                         date_last_seen=date_now,
-                        date_published=pub_date)
+                        date_published=pub_date) 
+                    db_article.is_referring = True
+                    db_article.save()
+
 
                     for key in keywords:
                         version.keyword_set.create(name=key)
@@ -312,66 +345,948 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             matched = False)
 
                     for source in sources[0]:
-                        version.sourcesite_set.create(
+                        logging.info(u"!LLLLLLLLLLLLLLLLLLLLL  Looking at article url {0}".format(source[0]))
+
+                        source_url_match = ArticleUrl.objects.filter(name=source[0])
+                        sourcesite_url_match = True
+                        if (source_url_match):
+                            logging.info("Matched URL 1")
+
+                            sourcesite_url_match = source_url_match[0].article.version_set.last().sourcesite_set.filter(url=source[0])
+                        if (source_url_match and not sourcesite_url_match): # and source_url_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
+                            logging.info("Matched URL 1 Not Matched source site 1")
+
+                            logging.info("TO BE REMOVED found duplicate url obj")
+
+                            source_article_url_match = source_url_match[0].article
+                            #curr_last_source = source_article.version_set.last().sourcesite_set.last()
+
+                            source_article_url_match.version_set.last().sourcesite_set.create(
+                                url=source[0],
+                                domain=source[1],
+                                anchor_text=source[2],
+                                matched=True,
+                                local=(source[1] in site.url),
+                                referring_url=url,
+                            )
+                            db_article.sources.add(source_article_url_match)
+                            source_article_url_match.save()
+
+                            db_article.save()
+
+                            continue
+                        elif (source_url_match):
+                            logging.info("Matched URL 1 Matched Source site 1")
+                            continue
+                        # source_version_match = ArticleVersion.objects.filter(text_hash=hash_sha256(source[0]))
+
+                        # if (source_version_match):# and source_version_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
+                        #     logging.info("TO BE REMOVED found duplicate text_hash obj")
+                        #     continue
+
+                            # source_version_match[0].version_set.last().sourcesite_set.create(
+                            #     url=source[0],
+                            #     domain=source[1],
+                            #     anchor_text=source[2],
+                            #     matched=True,
+                            #     local=(source[1] in site.url),
+                            #     referring_url=url,
+                            # )
+                            # db_article.sources.add(source_version_match[0].article)
+                            # source_version_match[0].article.save()
+
+                            # db_article.save()
+                            
+                        source_article = ExplorerArticle(source[0])
+                        source_article.download()
+
+                        
+
+                        #version = db_source_article.version_set.create(#)
+                        
+
+                        if(not source_article.is_downloaded):
+                            if(not source_article.download()):
+                                
+                                db_source_article = add_source_article_failed(source[1],source[0], source[2], True, (source[1] in site.url), site.url)
+                                db_article.sources.add(db_source_article)
+                                db_source_article.save()
+                                db_article.save()
+                                
+                                continue
+                                
+                        source_article.newspaper_parse()
+
+                        if (not source_article.is_parsed):
+                            if (not source_article.preliminary_parse()):
+                                
+                                db_source_article = add_source_article_failed(source[1],source[0], source[2], True, (source[1] in site.url), site.url)
+                                db_article.sources.add(db_source_article)
+                                db_source_article.save()
+                                db_article.save()
+                                logging.warning("Sourced article skipped because parse failed")
+
+                                continue
+
+                        logging.debug("Sourced Article Parsed")
+
+                        logging.debug(u"Title: {0}".format(repr(article.title)))
+                        if not source_article.title:
+                            logging.info("Sourced article missing title, skipping")
+                            
+                            db_source_article = add_source_article_failed(source[1],source[0], source[2], True, (source[1] in site.url), site.url)
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+                            db_article.save()
+                            
+                            continue                            
+                            
+
+                        if not source_article.text:
+                            logging.info("Sourced article missing text, skipping")
+                            db_source_article = add_source_article_failed(source[1],source[0], source[2], True, (source[1] in site.url), site.url)
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+                            db_article.save()
+                            
+                            continue
+                        
+                        css_source_author = set(site.referringsitecssselector_set.filter(field=1))
+                        source_authors = source_article.evaluate_css_selectors(css_source_author)
+                        if(source_authors):
+                            source_authors = [source_authors]
+                        else:
+                            source_authors = source_article.authors
+
+                        
+
+
+                        thash = hash_sha256(source_article.get_text(strip_html=True))
+                        # if (len(thash) == 0):
+                        #     logging.info("Invalid text hash, skip parsing")
+                        #     db_source_article.version_set.create(
+                        #             text_hash=hash_sha256(source[0]),
+                        #             title=source[0],
+                        #             source_url=source[0],
+                        #             source_anchor_text=source[2],
+                        #             source_matched=True,
+                        #             source_local=(source[1] in site.url))
+                        #     db_source_article.save()
+                        #     db_article.sources.add(db_source_article)
+                        #     db_source_article.save()
+
+                        #     db_article.save()
+                        #     continue
+
+                        source_version_match = ArticleVersion.objects.filter(text_hash=thash)
+                        source_url_match = ArticleUrl.objects.filter(name=source[0])
+
+                        if (source_version_match):
+                            if (source_url_match):
+                                logging.info("version match AND url match DIODJQWPDJA")
+
+                                source_version_match[0].article.is_source = True
+                                
+                                source_version_match[0].article.version_set.last().sourcesite_set.create(
+                                    url=source[0],
+                                    domain=source[1],
+                                    anchor_text=source[2],
+                                    matched=True,
+                                    local=(source[1] in site.url),
+                                    referring_url=url,
+
+                                )
+                                source_version_match[0].article.save()                                
+
+                                db_article.sources.add(source_version_match[0].article) # Makes a new version
+                                continue
+                            else:
+                                logging.info("TO BE REMOVED found duplicate text_hash objasdasdasd")
+                                source_version_match[0].article.url_set.create(name=source[0])
+                                source_version_match[0].article.version_set.last().sourcesite_set.create(
+                                    url=source[0],
+                                    domain=source[1],
+                                    anchor_text=source[2],
+                                    matched=True,
+                                    local=(source[1] in site.url),
+                                    referring_url=url,
+                                )
+                                db_article.sources.add(source_version_match[0].article) # Makes a new version
+                                source_version_match[0].article.save()
+
+                                db_article.save()
+                                
+                                continue
+
+                        db_source_article = Article(domain=source[1])
+                        db_source_article.save()
+
+                        db_source_article.url_set.create(name=source[0])
+                        db_source_article.is_source = True
+                        db_source_article.save()
+
+                        source_version = db_source_article.version_set.create(
+                            title=source_article.title,
+                            text=source_article.get_text(strip_html=True),
+                            text_hash=thash,
+                            language=source_article.language,
+                            date_added=date_now,
+                            date_last_seen=date_now,
+                            date_published=get_pub_date(source_article))
+
+                        source_version.sourcesite_set.create(
                             url=source[0],
                             domain=source[1],
                             anchor_text=source[2],
                             matched=True,
-                            local=(source[1] in site.url))
+                            local=(source[1] in site.url),
+                            referring_url=url,
+                        )
+                        for author in source_authors:
+                            source_version.author_set.create(name=author)
+                        
+                        keywords_sources = get_keywords(source_article, db_keywords)
+                        for key in keywords_sources:
+                            source_version.keyword_set.create(name=key)
+
+                        twitter_accounts_sources = get_sources_twitter(source_article, twitter_accounts_explorer)
+                        for account in twitter_accounts_sources[0]:
+                            source_version.sourcetwitter_set.create(
+                                name=account,
+                                matched = True)
+
+                        for account in twitter_accounts_sources[1]:
+                            source_version.sourcetwitter_set.create(
+                                name=account,
+                                matched = False)
+
+                        db_source_article.save()
+
+                        db_article.sources.add(db_source_article)
+                        db_source_article.save()
+
+                        db_article.save()
+                        logging.info("CREATED VERSION PPPPPPPpppppppp")
+
 
                     for source in sources[1]:
-                        version.sourcesite_set.create(
+                        logging.info(u"!YYYYYYYYYYYYYYYYYYYYYYY  Looking at article url {0}".format(source[0]))
+
+                        source_url_match = ArticleUrl.objects.filter(name=source[0])
+                        sourcesite_url_match = True
+
+                        if (source_url_match):
+                            logging.info("Matched URL 2")
+
+                            sourcesite_url_match = source_url_match[0].article.version_set.last().sourcesite_set.filter(url=source[0])
+                        if (source_url_match and not sourcesite_url_match): # and source_url_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
+                            logging.info("Matched URL 2 And not source site")
+
+                            logging.info("TO BE REMOVED found duplicate url obj")
+                            
+                            
+                            source_article_url_match = source_url_match[0].article
+
+                            #curr_last_source = source_article.version_set.last().sourcesite_set.last()
+
+                            source_article_url_match.version_set.last().sourcesite_set.create(
+                                url=source[0],
+                                domain=source[1],
+                                anchor_text=source[2],
+                                matched=False,
+                                local=(source[1] in site.url),
+                                referring_url=url,
+                            )
+                            db_article.sources.add(source_article_url_match)
+                            source_article_url_match.save()
+
+                            db_article.save()
+
+                            continue
+                        elif (source_url_match):
+                            logging.info("Matched URL 2 Source site")
+
+                            continue
+                        # source_version_match = ArticleVersion.objects.filter(text_hash=hash_sha256(source[0]))
+
+                        # if (source_version_match):#  and source_version_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
+                        #     logging.info("TO BE REMOVED found duplicate text_hash obj")
+                        #     continue
+                            # source_version_match[0].version_set.last().sourcesite_set.create(
+                            #     url=source[0],
+                            #     domain=source[1],
+                            #     anchor_text=source[2],
+                            #     matched=False,
+                            #     local=(source[1] in site.url),
+                            #     referring_url=url,
+                            # )
+                            # db_article.sources.add(source_version_match[0].article)
+                            # source_version_match[0].article.save()
+
+                            # db_article.save()
+                            
+                            
+                        source_article = ExplorerArticle(source[0])
+                        source_article.download()
+
+                        
+
+                        #version = db_source_article.version_set.create(#)
+                        
+
+                        if(not source_article.is_downloaded):
+                            if(not source_article.download()):
+
+                                db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url), site.url)
+                                db_article.sources.add(db_source_article)
+                                db_source_article.save()
+                                db_article.save()
+                                
+                                continue
+                                
+                        source_article.newspaper_parse()
+
+                        if (not source_article.is_parsed):
+                            if (not source_article.preliminary_parse()):
+                                
+                                db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url), site.url)
+                                db_article.sources.add(db_source_article)
+                                db_source_article.save()
+                                db_article.save()
+                                
+                                continue
+                                
+                        logging.debug("Sourced Article Parsed")
+
+                        logging.debug(u"Title: {0}".format(repr(article.title)))
+                        if not source_article.title:
+
+                            db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url), site.url)
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+                            db_article.save()
+                            
+                            continue
+
+                        if not source_article.text:
+                            logging.info("Sourced article missing text, skipping")
+                            
+                            db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url), site.url)
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+                            db_article.save()
+                            
+                            continue
+                        
+                        css_source_author = set(site.referringsitecssselector_set.filter(field=1))
+                        source_authors = source_article.evaluate_css_selectors(css_source_author)
+                        if(source_authors):
+                            source_authors = [source_authors]
+                        else:
+                            source_authors = source_article.authors
+
+                        thash = hash_sha256(source_article.get_text(strip_html=True))
+                        # if (len(thash) == 0):
+                        #     logging.info("Invalid text hash, skip parsing")
+                        #     db_source_article.version_set.create(
+                        #             text_hash=hash_sha256(source[0]),
+                        #             title=source[0],
+                        #             source_url=source[0],
+                        #             source_anchor_text=source[2],
+                        #             source_matched=True,
+                        #             source_local=(source[1] in site.url))
+                        #     db_source_article.save()
+                        #     db_article.sources.add(db_source_article)
+                        #     db_source_article.save()
+
+                        #     db_article.save()
+                        #     continue
+
+                        source_version_match = ArticleVersion.objects.filter(text_hash=thash)
+                        source_url_match = ArticleUrl.objects.filter(name=source[0])
+
+                        if (source_version_match):
+                            if (source_url_match):
+                                logging.info("version match AND url match ofkdaikawdoijoqwpid")
+                                source_version_match[0].article.is_source = True
+                                source_version_match[0].article.save()
+                                
+                                source_version_match[0].article.version_set.last().sourcesite_set.create(
+                                    url=source[0],
+                                    domain=source[1],
+                                    anchor_text=source[2],
+                                    matched=False,
+                                    local=(source[1] in site.url),
+                                    referring_url=url,
+                                )
+                                db_article.sources.add(source_version_match[0].article) # Makes a new version
+                                continue
+                            else:
+                                logging.info("TO BE REMOVED found duplicate text_hash objasdasdasd")
+                                source_version_match[0].article.url_set.create(name=source[0])
+                                source_version_match[0].article.version_set.last().sourcesite_set.create(
+                                    url=source[0],
+                                    domain=source[1],
+                                    anchor_text=source[2],
+                                    matched=False,
+                                    local=(source[1] in site.url),
+                                    referring_url=url,
+                                )
+                                db_article.sources.add(source_version_match[0].article) # Makes a new version
+                                source_version_match[0].article.save()
+
+                                db_article.save()
+                                
+                                continue
+
+                        db_source_article = Article(domain=source[1])
+                        db_source_article.save()
+
+                        db_source_article.url_set.create(name=source[0])
+                        db_source_article.is_source = True
+                        db_source_article.save()
+
+                        source_version = db_source_article.version_set.create(
+
+                            title=source_article.title,
+                            text=source_article.get_text(strip_html=True),
+                            text_hash=thash,
+                            language=source_article.language,
+                            date_added=date_now,
+                            date_last_seen=date_now,
+                            date_published=get_pub_date(source_article))
+                        
+                        source_version.sourcesite_set(
                             url=source[0],
                             domain=source[1],
                             anchor_text=source[2],
                             matched=False,
-                            local=(source[1] in site.url))
+                            local=(source[1] in site.url),
+                            referring_url=url,
+                        )
+
+                        for author in source_authors:
+                            source_version.author_set.create(name=author)
+
+                        keywords_sources = get_keywords(source_article, db_keywords)
+                        for key in keywords_sources:
+                            source_version.keyword_set.create(name=key)
+
+                        twitter_accounts_sources = get_sources_twitter(source_article, twitter_accounts_explorer)
+                        for account in twitter_accounts_sources[0]:
+                            source_version.sourcetwitter_set.create(
+                                name=account,
+                                matched = True)
+
+                        for account in twitter_accounts_sources[1]:
+                            source_version.sourcetwitter_set.create(
+                                name=account,
+                                matched = False)
+
+                        db_source_article.save()
+                        db_article.sources.add(db_source_article)
+                        db_source_article.save()
+
+                        db_article.save()
+                        logging.info("CREATED VERSION DDDdddddddddd")
+
                 else:
-                    logging.info("Adding new Article to the DB")
                     # If the db_article is new to the database,
                     # add it to the database
+                    # if (version_match[0].article.is_source == True):
+                    #     db_article = version_match[0].article
+
+                    #     version = db_article.version_set.last()
+                    #     version.title=title
+                    #     version.text=text
+                    #     version.text_hash=text_hash
+                    #     version.language=language
+                    #     version.date_added=date_now
+                    #     version.date_last_seen=date_now
+                    #     version.date_published=pub_date
+                        
+                    logging.info("Adding new Article to the DB")
+
                     db_article = Article(domain=site.url)
                     db_article.save()
                     db_article.url_set.create(name=url)
-                    version = db_article.version_set.create(
-                        title=title,
-                        text=text,
-                        text_hash=text_hash,
-                        language=language,
-                        date_added=date_now,
-                        date_last_seen=date_now,
-                        date_published=pub_date)
+                    logging.info("Adding new Article to the DB   123")
 
+                    version = db_article.version_set.create(
+                    title=title,
+                    text=text,
+                    text_hash=text_hash,
+                    language=language,
+                    date_added=date_now,
+                    date_last_seen=date_now,
+                    date_published=pub_date)
+                    logging.info("Adding new Article to the DB   qqqq")
+
+                    db_article.is_referring = True
+                    db_article.save()
                     for key in keywords:
                         version.keyword_set.create(name=key)
+                    logging.info("Adding new Article to the DB    4")
 
                     for author in authors:
-                        version.author_set.create(name=author)
+                        version.author_set.create(name=author[:199])
                     for account in twitter_accounts[0]:
                         version.sourcetwitter_set.create(
                             name=account,
                             matched = True)
+                    logging.info("Adding new Article to the DB   5")
 
                     for account in twitter_accounts[1]:
                         version.sourcetwitter_set.create(
                             name=account,
                             matched = False)
+                    logging.info("Adding new Article to the DB   6")
 
                     for source in sources[0]:
-                        version.sourcesite_set.create(
+                        logging.info(u"!ASDSDAQWDASDSAD  Looking at article url {0}".format(source[0]))
+
+                        source_url_match = ArticleUrl.objects.filter(name=source[0])
+                        sourcesite_url_match = True
+                        if (source_url_match):
+                            logging.info("Matched URL 3")
+                            sourcesite_url_match = source_url_match[0].article.version_set.last().sourcesite_set.filter(url=source[0])
+                        if (source_url_match and not sourcesite_url_match): # and source_url_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):          logging.info("TO BE REMOVED found duplicate url obj")
+                            logging.info("Matched URL 3 and Not Source site 3")
+
+                            source_article_url_match = source_url_match[0].article
+                            #curr_last_source = source_article.version_set.last().sourcesite_set.last()
+
+                            source_article_url_match.version_set.last().sourcesite_set.create(
+                                url=source[0],
+                                domain=source[1],
+                                anchor_text=source[2],
+                                matched=True,
+                                local=(source[1] in site.url),
+                                referring_url=url,
+                            )
+                            db_article.sources.add(source_article_url_match)
+                            source_article_url_match.save()
+
+                            db_article.save()
+
+                            continue
+                        elif (source_url_match):
+                            logging.info("Matched URL 3 and Source site 3")
+
+                            continue
+                        # source_version_match = ArticleVersion.objects.filter(text_hash=hash_sha256(source[0]))
+
+                        # if (source_version_match): # and source_version_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
+                        #     logging.info("TO BE REMOVED found duplicate text_hash obj")
+                        #     continue
+
+                            # source_version_match[0].version_set.last().sourcesite_set.create(
+                            #     url=source[0],
+                            #     domain=source[1],
+                            #     anchor_text=source[2],
+                            #     matched=True,
+                            #     local=(source[1] in site.url),
+                            #     referring_url=url,
+                            # )
+                            # db_article.sources.add(source_version_match[0].article)
+                            # source_version_match[0].article.save()
+
+                            # db_article.save()
+                            
+
+                        source_article = ExplorerArticle(source[0])
+                        source_article.download()
+                        
+
+                        #version = db_source_article.version_set.create(#)
+                        
+
+                        if(not source_article.is_downloaded):
+                            if(not source_article.download()):
+                                
+                                db_source_article = add_source_article_failed(source[1],source[0], source[2], True, (source[1] in site.url), site.url)
+                                db_article.sources.add(db_source_article)
+                                db_source_article.save()
+                                db_article.save()
+                                logging.warning("Sourced article skipped because download failed")
+                                
+                                continue
+
+                        logging.info("download successful")
+                        source_article.newspaper_parse()
+
+                        if (not source_article.is_parsed):
+                            if (not source_article.preliminary_parse()):
+                                
+                                db_source_article = add_source_article_failed(source[1],source[0], source[2], True, (source[1] in site.url), site.url)
+                                db_article.sources.add(db_source_article)
+                                db_source_article.save()
+                                db_article.save()
+
+                                continue
+
+                        logging.info("Sourced Article Parsed")
+
+                        logging.info(u"Title: {0}".format(repr(article.title)))
+                        if not source_article.title:
+                            
+                            db_source_article = add_source_article_failed(source[1],source[0], source[2], True, (source[1] in site.url), site.url)
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+                            db_article.save()
+                            logging.info("Sourced article missing title, skipping")
+
+                            continue
+
+                        if not source_article.text:
+                            logging.info("Sourced article missing text, skipping")
+                            db_source_article = add_source_article_failed(source[1],source[0], source[2], True, (source[1] in site.url), site.url)
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+                            db_article.save()
+
+                            continue
+                        
+                        css_source_author = set(site.referringsitecssselector_set.filter(field=1))
+                        source_authors = source_article.evaluate_css_selectors(css_source_author)
+                        if(source_authors):
+                            source_authors = [source_authors]
+                        else:
+                            source_authors = source_article.authors
+
+                        thash = hash_sha256(source_article.get_text(strip_html=True))
+
+                        # if (len(thash) == 0):
+                        #     logging.info("Invalid text hash, skip parsing")
+                        #     db_source_article.version_set.create(
+                        #             text_hash=hash_sha256(source[0]),
+                        #             title=source[0],
+                        #             source_url=source[0],
+                        #             source_anchor_text=source[2],
+                        #             source_matched=True,
+                        #             source_local=(source[1] in site.url))
+                        #     db_source_article.save()
+                        #     db_article.sources.add(db_source_article)
+                        #     db_source_article.save()
+
+                        #     db_article.save()
+                        #     continue
+
+                        source_version_match = ArticleVersion.objects.filter(text_hash=thash)
+                        source_url_match = ArticleUrl.objects.filter(name=source[0])
+                        if (source_version_match):
+                            if (source_url_match):
+                                logging.info("version match AND url match wuerrhqwoueuqoiwue")
+                                source_version_match[0].article.is_source = True
+                                source_version_match[0].article.save()
+                                
+                                source_version_match[0].article.version_set.last().sourcesite_set.create(
+                                    url=source[0],
+                                    domain=source[1],
+                                    anchor_text=source[2],
+                                    matched=True,
+                                    local=(source[1] in site.url),
+                                    referring_url=url,
+                                )
+                                db_article.sources.add(source_version_match[0].article) # Makes a new version
+                                continue
+                            else:
+                                logging.info("TO BE REMOVED found duplicate text_hash objasdasdasd")
+                                # source_version_match[0].article.url_set.create(name=source[0])
+                                source_version_match[0].article.version_set.last().sourcesite_set.create(
+                                    url=source[0],
+                                    domain=source[1],
+                                    anchor_text=source[2],
+                                    matched=True,
+                                    local=(source[1] in site.url),
+                                    referring_url=url,
+                                )
+                                db_article.sources.add(source_version_match[0].article) # Makes a new version
+                                source_version_match[0].article.save()
+
+                                db_article.save()
+                                
+                                continue
+
+                        db_source_article = Article(domain=source[1])
+                        db_source_article.save()
+
+                        db_source_article.url_set.create(name=source[0])
+                        db_source_article.is_source = True
+                        db_source_article.save()
+                        source_version = db_source_article.version_set.create(
+                            title=source_article.title,
+                            text=source_article.get_text(strip_html=True),
+                            text_hash=thash,
+                            language=source_article.language,
+                            date_added=date_now,
+                            date_last_seen=date_now,
+                            date_published=get_pub_date(source_article))
+
+                        source_version.sourcesite_set.create(
                             url=source[0],
                             domain=source[1],
                             anchor_text=source[2],
                             matched=True,
-                            local=(source[1] in site.url))
+                            local=(source[1] in site.url),
+                            referring_url=url,
+                        )
+
+                        for author in source_authors:
+                            source_version.author_set.create(name=author)
+
+                        keywords_sources = get_keywords(source_article, db_keywords)
+                        for key in keywords_sources:
+                            source_version.keyword_set.create(name=key)
+
+                        twitter_accounts_sources = get_sources_twitter(source_article, twitter_accounts_explorer)
+                        for account in twitter_accounts_sources[0]:
+                            source_version.sourcetwitter_set.create(
+                                name=account,
+                                matched = True)
+
+                        for account in twitter_accounts_sources[1]:
+                            source_version.sourcetwitter_set.create(
+                                name=account,
+                                matched = False)
+
+                        source_version.save()
+                        db_source_article.save()
+
+                        db_article.sources.add(db_source_article)
+                        db_source_article.save()
+
+                        db_article.save()
+
+                        logging.info("CREATED VERSION qqqQQQQQQQQ")
 
                     for source in sources[1]:
-                        version.sourcesite_set.create(
+                        logging.info(u"!ZZZZZZZZZZZZZZZZ  Looking at article url {0}".format(source[0]))
+
+                        source_url_match = ArticleUrl.objects.filter(name=source[0])
+                        sourcesite_url_match = True
+                        if (source_url_match):
+                            logging.info("Matched URL 4")
+
+                            sourcesite_url_match = source_url_match[0].article.version_set.last().sourcesite_set.filter(url=source[0])
+                        if (source_url_match and not sourcesite_url_match): # and source_url_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
+                            logging.info("TO BE REMOVED found duplicate url obj")
+                            logging.info("Matched URL 4 And not Source site 4")
+
+                            source_article_url_match = source_url_match[0].article
+                            #curr_last_source = source_article.version_set.last().sourcesite_set.last()
+
+                            source_article_url_match.version_set.last().sourcesite_set.create(
+                                url=source[0],
+                                domain=source[1],
+                                anchor_text=source[2],
+                                matched=False,
+                                local=(source[1] in site.url),
+                                referring_url=url,
+                            )
+                            db_article.sources.add(source_article_url_match)
+                            source_article_url_match.save()
+
+                            db_article.save()
+
+                            continue
+                        elif (source_url_match):
+                            logging.info("Matched URL 4 and Source site 4")
+
+                            continue                       
+                        # source_version_match = ArticleVersion.objects.filter(text_hash=hash_sha256(source[0]))
+                        # sourcesite_hash_match = ArticleSourceSite.objects.filter(text_hash=hash_sha256(source[0]))
+                        # if (source_version_match and not sourcesite_hash_match):# and source_version_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
+                        #     logging.info("TO BE REMOVED found duplicate text_hash obj")
+                        #     pass
+                        # else (sourcesite_hash_match):
+                        #     logging.info("TO BE REMOVED found duplicate url obj")
+                        #     logging.info("Matched Version Text Hash 4? And not Source site text Hash 4")
+                        #     #curr_last_source = source_article.version_set.last().sourcesite_set.last()
+
+                        #     source_article_url_match.version_set.last().sourcesite_set.create(
+                        #         url=source[0],
+                        #         domain=source[1],
+                        #         anchor_text=source[2],
+                        #         matched=False,
+                        #         local=(source[1] in site.url),
+                        #         referring_url=url,
+                        #     )
+                        #     db_article.sources.add(source_article_url_match)
+                        #     source_article_url_match.save()
+
+                        #     db_article.save()
+                        #     continue
+
+
+
+
+
+                            # source_version_match[0].version_set.last().sourcesite_set.create(
+                            #     url=source[0],
+                            #     domain=source[1],
+                            #     anchor_text=source[2],
+                            #     matched=False,
+                            #     local=(source[1] in site.url),
+                            #     referring_url=url,
+                            # )
+                            # db_article.sources.add(source_version_match[0].article)
+                            # source_version_match[0].article.save()
+
+                            # db_article.save()
+                            
+
+                        source_article = ExplorerArticle(source[0])
+                        source_article.download()
+
+
+
+                        #version = db_source_article.version_set.create(#)
+                        
+
+                        if(not source_article.is_downloaded):
+                            if(not source_article.download()):
+                                db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url), site.url)
+                                db_article.sources.add(db_source_article)
+                                db_source_article.save()
+                                db_article.save()
+
+                                continue
+                                
+                        source_article.newspaper_parse()
+
+                        if (not source_article.is_parsed):
+                            if (not source_article.preliminary_parse()):
+
+                                db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url), site.url)
+                                db_article.sources.add(db_source_article)
+                                db_source_article.save()
+                                db_article.save()
+
+                                continue
+
+                        logging.debug("Sourced Article Parsed")
+
+                        logging.debug(u"Title: {0}".format(repr(article.title)))
+                        if not source_article.title:
+
+                            db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url), site.url)
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+                            db_article.save()
+
+                            continue
+
+                        if not source_article.text:
+
+                            db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url), site.url)
+                            db_article.sources.add(db_source_article)
+                            db_source_article.save()
+                            db_article.save()
+
+                            continue
+                        
+                        css_source_author = set(site.referringsitecssselector_set.filter(field=1))
+                        source_authors = source_article.evaluate_css_selectors(css_source_author)
+                        if(source_authors):
+                            source_authors = [source_authors]
+                        else:
+                            source_authors = source_article.authors
+
+                        thash = hash_sha256(source_article.get_text(strip_html=True))
+
+                        source_version_match = ArticleVersion.objects.filter(text_hash=thash)
+                        source_url_match = ArticleUrl.objects.filter(name=source[0])
+
+                        if (source_version_match):
+                            if (source_url_match):
+                                logging.info("version match AND url match DIODJQWPDJA")
+                                source_version_match[0].article.is_source = True
+                                source_version_match[0].article.save()                                
+                                
+
+                                source_version_match[0].article.version_set.last().sourcesite_set.create(
+                                    url=source[0],
+                                    domain=source[1],
+                                    anchor_text=source[2],
+                                    matched=False,
+                                    local=(source[1] in site.url),
+                                    referring_url=url,
+                                )
+                                db_article.sources.add(source_version_match[0].article) # Makes a new version
+                                db_article.save()
+
+                                continue
+                            else:
+                                logging.info("TO BE REMOVED found duplicate text_hash objasdasdasd")
+                                source_version_match[0].article.url_set.create(name=source[0])
+                                source_version_match[0].article.version_set.last().sourcesite_set.create(
+                                    url=source[0],
+                                    domain=source[1],
+                                    anchor_text=source[2],
+                                    matched=False,
+                                    local=(source[1] in site.url),
+                                    referring_url=url,
+                                )
+                                db_article.sources.add(source_version_match[0].article) # Makes a new version
+                                source_version_match[0].article.save()
+
+                                db_article.save()
+                                
+                                continue
+
+                        db_source_article = Article(domain=source[1])
+                        db_source_article.save()
+
+                        db_source_article.url_set.create(name=source[0])
+                        db_source_article.is_source = True
+                        db_source_article.save()
+
+                        source_version = db_source_article.version_set.create(
+                            
+                            title=source_article.title,
+                            text=source_article.get_text(strip_html=True),
+                            text_hash=thash,
+                            language=source_article.language,
+                            date_added=date_now,
+                            date_last_seen=date_now,
+                            date_published=get_pub_date(source_article))
+
+                        source_version.sourcesite_set.create(
                             url=source[0],
                             domain=source[1],
                             anchor_text=source[2],
                             matched=False,
-                            local=(source[1] in site.url))
+                            local=(source[1] in site.url),
+                            referring_url=url,
+                        )
+                        for author in source_authors:
+                            source_version.author_set.create(name=author)
+
+                        keywords_sources = get_keywords(source_article, db_keywords)
+                        for key in keywords_sources:
+                            source_version.keyword_set.create(name=key)
+
+                        twitter_accounts_sources = get_sources_twitter(source_article, twitter_accounts_explorer)
+                        for account in twitter_accounts_sources[0]:
+                            source_version.sourcetwitter_set.create(
+                                name=account,
+                                matched = True)
+
+                        for account in twitter_accounts_sources[1]:
+                            source_version.sourcetwitter_set.create(
+                                name=account,
+                                matched = False)
+
+                        source_version.save()
+                        db_source_article.save()
+
+                        db_article.sources.add(db_source_article)
+                        db_source_article.save()
+
+                        db_article.save()
+                        logging.info("CREATED VERSION tttttttttttTTTTTTTTTTTTT")
+
 
                 # Add the article into queue
                 logging.info("Creating new WARC")
@@ -390,6 +1305,29 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
     setup_logging(increment=False)
     logging.info("Finished Site: %s"%site.name)
+
+def add_source_article_failed(domain, title, anchor_text, matched, local, site):
+    db_source_article = Article(domain=domain)
+    db_source_article.save()
+
+    db_source_article.url_set.create(name=title)
+    db_source_article.is_source = True
+    logging.warning("Sourced article skipped because download failed")
+    db_source_article.version_set.create(
+        text_hash=hash_sha256(title),
+        title=title,
+    ).sourcesite_set.create(
+        url=title,
+        domain=domain,
+        anchor_text=anchor_text,
+        matched=matched,
+        local=local,
+        referring_url=site
+    )
+
+    db_source_article.save()
+
+    return db_source_article
 
 def hash_sha256(text):
     hash_text = hashlib.sha256()
@@ -577,7 +1515,6 @@ if __name__ == '__main__':
     logging.debug("Connected to django/database")
 
     start = timeit.default_timer()
-
     # The main function, to explore the articles
     logging.info("explorer about to start")
     explore()
