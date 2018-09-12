@@ -4,7 +4,7 @@ from django.core import management
 from subprocess import Popen
 import sys, os
 import tempfile
-from StringIO import StringIO
+from io import StringIO
 import common
 
 from explorer.models import (
