@@ -14,7 +14,7 @@ import newspaper
 from django.utils.safestring import mark_safe
 
 # For url encoding of shortcut links
-import urllib.request, urllib.parse, urllib.error
+import urllib
 
 class TaggitListFilter(admin.SimpleListFilter):
     """
@@ -106,7 +106,7 @@ class ReferringSiteAdmin(admin.ModelAdmin):
     def article_count(self, obj):
         url = obj.url
         return '<a target="_blank" href="/admin/articles/article/?q=&domain=' + \
-            str(urllib.parse.quote_plus(url)) + '">' + \
+            str(urllib.quote_plus(url)) + '">' + \
             str(Article.objects.filter(domain=obj.url).count()) +\
             '</a>'
 
@@ -157,12 +157,12 @@ class SourceSiteAdmin(admin.ModelAdmin):
         url = obj.url[:-1] if obj.url[-1] == '/' else obj.url
         article_cites_count = Article.objects.filter(version__sourcesite__domain=url).distinct().count()
         article_tag = '<a target="_blank" href="/admin/articles/article/?q=&version__sourcesite__domain=' + \
-            str(urllib.parse.quote_plus(url)) + '">' + \
+            str(urllib.quote_plus(url)) + '">' + \
             str(article_cites_count) + \
             '</a>'
         tweet_cites_count = Tweet.objects.filter(sourcesite__domain=url).distinct().count()
         tweet_tag = '<a target="_blank" href="/admin/tweets/tweet/?q=&sourcesite__domain=' + \
-            str(urllib.parse.quote_plus(url)) + '">' + \
+            str(urllib.quote_plus(url)) + '">' + \
             str(tweet_cites_count) + \
             '</a>'
         total_cites_count = article_cites_count + tweet_cites_count
@@ -204,12 +204,12 @@ class KeywordAdmin(admin.ModelAdmin):
     def total_match_count(self, obj):
         article_match_count = Article.objects.filter(version__keyword__name=obj.name).distinct().count()
         article_tag = '<a target="_blank" href="/admin/articles/article/?q=&version__keyword__name=' + \
-            str(urllib.parse.quote_plus(obj.name)) + '">' + \
+            str(urllib.quote_plus(obj.name)) + '">' + \
             str(article_match_count) + \
             '</a>'
         tweet_match_count = Tweet.objects.filter(keyword__name=obj.name).distinct().count()
         tweet_tag = '<a target="_blank" href="/admin/tweets/tweet/?q=&keyword__name=' + \
-            str(urllib.parse.quote_plus(obj.name)) + '">' + \
+            str(urllib.quote_plus(obj.name)) + '">' + \
             str(tweet_match_count) + \
             '</a>'
         total_match_count = article_match_count + tweet_match_count
@@ -241,7 +241,7 @@ class ReferringTwitterAdmin(admin.ModelAdmin):
 
     def tweet_count(self, obj):
         return '<a target="_blank" href="/admin/tweets/tweet/?q=&name=' + \
-            str(urllib.parse.quote_plus(obj.name)) + '">' + \
+            str(urllib.quote_plus(obj.name)) + '">' + \
             str(Tweet.objects.filter(name__iexact=obj.name).count()) +\
             '</a>'
     tweet_count.short_description = "Total Tweets Archived"
@@ -289,12 +289,12 @@ class SourceTwitterAdmin(admin.ModelAdmin):
     def total_mention_count(self, obj):
         article_match_count = Article.objects.filter(version__sourcetwitter__name=obj.name).distinct().count()
         article_tag = '<a target="_blank" href="/admin/articles/article/?q=&version__sourcetwitter__name=' + \
-            str(urllib.parse.quote_plus(obj.name)) + '">' + \
+            str(urllib.quote_plus(obj.name)) + '">' + \
             str(article_match_count) + \
             '</a>'
         tweet_match_count = Tweet.objects.filter(sourcetwitter__name=obj.name).distinct().count()
         tweet_tag = '<a target="_blank" href="/admin/tweets/tweet/?q=&sourcetwitter__name=' + \
-            str(urllib.parse.quote_plus(obj.name)) + '">' + \
+            str(urllib.quote_plus(obj.name)) + '">' + \
             str(tweet_match_count) + \
             '</a>'
         total_match_count = article_match_count + tweet_match_count

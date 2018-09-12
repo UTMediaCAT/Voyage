@@ -74,7 +74,7 @@ class NestedModelAdmin(admin.ModelAdmin):
                 InlineFormSet = nested_inline.get_formset(request, form.instance)
                 prefix = "%s-%s" % (form.prefix, InlineFormSet.get_default_prefix())
 
-                if request.method == 'POST' and any(s.startswith(prefix) for s in list(request.POST.keys())):
+                if request.method == 'POST' and any(s.startswith(prefix) for s in request.POST.keys()):
                     nested_formset = InlineFormSet(request.POST, request.FILES,
                         instance=form.instance,
                         prefix=prefix, queryset=nested_inline.get_queryset(request))
@@ -140,7 +140,7 @@ class NestedModelAdmin(admin.ModelAdmin):
 
                     #TODO - find out why this breaks when extra = 1 and just adding new item with no sub items
                     if (not hasattr(form, 'cleaned_data') or not form.cleaned_data) and self.formset_has_nested_data(form.nested_formsets):
-                        form._errors["__all__"] = form.error_class(["Parent object must be created when creating nested inlines."])
+                        form._errors["__all__"] = form.error_class([u"Parent object must be created when creating nested inlines."])
                         return False
         return True
 
@@ -196,7 +196,7 @@ class NestedModelAdmin(admin.ModelAdmin):
         else:
             # Prepare the dict of initial data from the request.
             # We have to special-case M2Ms as a list of comma-separated PKs.
-            initial = dict(list(request.GET.items()))
+            initial = dict(request.GET.items())
             for k in initial:
                 try:
                     f = opts.get_field(k)

@@ -4,7 +4,6 @@ import logging
 import operator
 
 from django import forms
-from functools import reduce
 
 try:
     from django.apps import apps
@@ -84,7 +83,7 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
         Iterate over passed model fields tuple and update initial choices.
         """
         return tuple(sorted(
-            [(fquery, capfirst(fname)) for fquery, fname in list(fields.items())],
+            [(fquery, capfirst(fname)) for fquery, fname in fields.items()],
             key=lambda f: f[1].lower())
         ) + self.FIELD_CHOICES
 
@@ -118,7 +117,7 @@ class AdvancedFilterQueryForm(CleanWhiteSpacesMixin, forms.Form):
         if len(parts) < 2:
             field = parts[0]
         else:
-            if parts[-1] in list(dict(AdvancedFilterQueryForm.OPERATORS).keys()):
+            if parts[-1] in dict(AdvancedFilterQueryForm.OPERATORS).keys():
                 field = '__'.join(parts[:-1])
                 operator = parts[-1]
             else:
