@@ -11,10 +11,10 @@ from explorer.models import *
 from ExplorerArticle import ExplorerArticle
 
 if __name__ == "__main__":
-    id = input("site id: ")
+    id = eval(input("site id: "))
     django.setup()
     site = ReferringSite.objects.get(pk=id)
-    url = input("url: ")
+    url = eval(input("url: "))
     article = ExplorerArticle(url)
     article.download()
     article.preliminary_parse()
@@ -22,14 +22,14 @@ if __name__ == "__main__":
 
     fields = {}
     for css in site.referringsitecssselector_set.all():
-        if not (css.field_choice in fields.keys()):
+        if not (css.field_choice in list(fields.keys())):
             fields[css.field_choice] = []
 
         fields[css.field_choice].append({'pattern': css.pattern, 'regex': css.regex})
-    if(not len(fields.keys())):
-        print "no fields"
+    if(not len(list(fields.keys()))):
+        print("no fields")
 
-    for key, value in fields.iteritems():
-        print "field \"{0}\"".format(key)
-        print article.evaluate_css_selectors(value)
-        print
+    for key, value in fields.items():
+        print("field \"{0}\"".format(key))
+        print(article.evaluate_css_selectors(value))
+        print()

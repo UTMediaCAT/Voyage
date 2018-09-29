@@ -77,8 +77,8 @@ def wait_and_resume():
     """
     wait_rate = configuration()["twitter"]['wait_rate_seconds']
     print('Twitter Rate Limit Reached, Attempting to Continue.')
-    print('Resuming in ' + str(int(wait_rate / 60)) + ' minute(s) and '
-          + str(wait_rate % 60) + ' second(s).')
+    print(('Resuming in ' + str(int(wait_rate / 60)) + ' minute(s) and '
+          + str(wait_rate % 60) + ' second(s).'))
     time.sleep(wait_rate)
 
 
@@ -107,8 +107,8 @@ def get_tweets(screen_name, amount):
         amount = min(3190, user.statuses_count)
 
     # Basically acts as an iterator
-    items = tweepy.Cursor(api.user_timeline, id=screen_name,
-                          count=200, include_rts=True).items()
+    items = list(tweepy.Cursor(api.user_timeline, id=screen_name,
+                          count=200, include_rts=True).items())
 
     count = 0
     while count != amount:
@@ -328,13 +328,13 @@ def parse_tweets(twitter_users, keywords, source_sites, tweet_number, source_twi
             else:
                 no_match += 1
             processed += 1
-            print("%s (Twitter|%s) %i/%i          \r" %
+            print(("%s (Twitter|%s) %i/%i          \r" %
                              (str(timezone.localtime(timezone.now()))[:-13],
-                              user, processed, tweet_count))
+                              user, processed, tweet_count)))
             tweets[i] = None
-        print format("%s (Twitter|%s) %i/%i          " % (
+        print(format("%s (Twitter|%s) %i/%i          " % (
             str(timezone.localtime(timezone.now()))[:-13], user, processed,
-            tweet_count))
+            tweet_count)))
 
 
 def explore(tweet_number):

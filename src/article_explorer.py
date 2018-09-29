@@ -134,10 +134,10 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
         del source_sites_and_aliases[site.url]
 
     #Generate list of source sites
-    source_sites = source_sites_and_aliases.keys()
+    source_sites = list(source_sites_and_aliases.keys())
 
     #Add aliases to keywords (TODO: track alias seperately)
-    db_keywords = sum(source_sites_and_aliases.values(), [])
+    db_keywords = sum(list(source_sites_and_aliases.values()), [])
 
     article_count = 0
     newspaper_articles = []
@@ -165,7 +165,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
     while True:
         try:
             try:
-                article = article_iterator.next()
+                article = next(article_iterator)
             except StopIteration:
                 break
             #have to put all the iteration stuff at the top because I used continue extensively in this loop
@@ -175,10 +175,10 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 logging.info("Matches with filter, skipping the {0}".format(article.url))
                 continue
 
-            print(
+            print((
                 "%s (Article|%s) %i/%i          \r" %
                 (str(timezone.localtime(timezone.now()))[:-13],
-                 site.name, processed, article_count))
+                 site.name, processed, article_count)))
             logging.info("Processing %s"%article.url)
 
             url = article.url
@@ -193,7 +193,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 if(not article.download()):
                     logging.warning("article skipped because download failed")
                     continue
-            url = article.canonical_url.strip()
+            url = article.canonical_url
 
             if (not article.is_parsed):
                 if (not article.preliminary_parse()):
@@ -202,7 +202,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
             logging.debug("Article Parsed")
 
-            logging.debug(u"Title: {0}".format(repr(article.title)))
+            logging.debug("Title: {0}".format(repr(article.title)))
             if not article.title:
                 logging.info("article missing title, skipping")
                 continue
@@ -213,12 +213,12 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
             # Regex the keyword from the article's text
             keywords = get_keywords(article, db_keywords)
-            logging.debug(u"matched keywords: {0}".format(repr(keywords)))
+            logging.debug("matched keywords: {0}".format(repr(keywords)))
             # Regex the links within article's html
             sources = get_sources_sites(article, source_sites)
-            logging.debug(u"matched sources: {0}".format(repr(sources)))
+            logging.debug("matched sources: {0}".format(repr(sources)))
             twitter_accounts = get_sources_twitter(article, twitter_accounts_explorer)
-            logging.debug(u"matched twitter_accounts: {0}".format(repr(twitter_accounts[0])))
+            logging.debug("matched twitter_accounts: {0}".format(repr(twitter_accounts[0])))
             
             # Add the version stuff here
             # for source in sources[0]:
@@ -228,7 +228,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             #
             #
             
-            if((not keywords) and (not twitter_accounts[0]) and (all(map(lambda x: x[1] in site.url, sources[0])))):#[] gets coverted to false
+            if((not keywords) and (not twitter_accounts[0]) and (all([x[1] in site.url for x in sources[0]]))):#[] gets coverted to false
                 logging.debug("skipping article because it's not a match")
                 continue
 
@@ -236,7 +236,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             # Rerun the get_keywords with text parsed by newspaper.
             keywords = get_keywords(article, db_keywords)
 
-            if((not keywords) and (not twitter_accounts[0]) and (all(map(lambda x: x[1] in site.url, sources[0])))):#[] gets coverted to false
+            if((not keywords) and (not twitter_accounts[0]) and (all([x[1] in site.url for x in sources[0]]))):#[] gets coverted to false
                 logging.debug("skipping article because it's not a match")
                 continue
             logging.info("match found")
@@ -284,19 +284,19 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                     version = version_match[0]
                     if url_match:
                         if version_match[0].article != url_match[0].article:
-                            logging.warning(u"Version and Url matches are not pointing to same article! versionMatchId: {0} urlMatchId:{1}".format(version.id, url_match[0].id))
+                            logging.warning("Version and Url matches are not pointing to same article! versionMatchId: {0} urlMatchId:{1}".format(version.id, url_match[0].id))
                             continue
                         else:
-                            logging.info(u"Updating date last seen of {0}".format(version.article.id))
+                            logging.info("Updating date last seen of {0}".format(version.article.id))
                     else:
                         db_article = version.article
-                        logging.info(u"Adding new Url to Article {0}".format(db_article.id))
+                        logging.info("Adding new Url to Article {0}".format(db_article.id))
                         db_article.url_set.create(name=url)
                     version.date_last_seen = date_now
                     version.save()
             else:
                 if url_match:
-                    logging.info(u"AAAAAAAaoudsaosdiasd {0}".format(url))
+                    logging.info("AAAAAAAaoudsaosdiasd {0}".format(url))
                     db_article = url_match[0].article
 
                     if (db_article.is_source == True):
@@ -310,7 +310,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         version.date_published=pub_date
                         version.save()
                     else:
-                        logging.info(u"Adding new Version to Article {0}".format(db_article.id))
+                        logging.info("Adding new Version to Article {0}".format(db_article.id))
 
                         version = db_article.version_set.create(
                         title=title,
@@ -340,7 +340,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             matched = False)
 
                     for source in sources[0]:
-                        logging.info(u"!LLLLLLLLLLLLLLLLLLLLL  Looking at article url {0}".format(source[0]))
+                        logging.info("!LLLLLLLLLLLLLLLLLLLLL  Looking at article url {0}".format(source[0]))
 
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
                         sourcesite_url_match = True
@@ -425,7 +425,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                         logging.debug("Sourced Article Parsed")
 
-                        logging.debug(u"Title: {0}".format(repr(article.title)))
+                        logging.debug("Title: {0}".format(repr(article.title)))
                         if not source_article.title:
                             logging.info("Sourced article missing title, skipping")
                             
@@ -565,7 +565,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
 
                     for source in sources[1]:
-                        logging.info(u"!YYYYYYYYYYYYYYYYYYYYYYY  Looking at article url {0}".format(source[0]))
+                        logging.info("!YYYYYYYYYYYYYYYYYYYYYYY  Looking at article url {0}".format(source[0]))
 
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
                         sourcesite_url_match = True
@@ -653,7 +653,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                 
                         logging.debug("Sourced Article Parsed")
 
-                        logging.debug(u"Title: {0}".format(repr(article.title)))
+                        logging.debug("Title: {0}".format(repr(article.title)))
                         if not source_article.title:
 
                             db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url), site.url)
@@ -838,7 +838,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                     logging.info("Adding new Article to the DB   6")
 
                     for source in sources[0]:
-                        logging.info(u"!ASDSDAQWDASDSAD  Looking at article url {0}".format(source[0]))
+                        logging.info("!ASDSDAQWDASDSAD  Looking at article url {0}".format(source[0]))
 
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
                         sourcesite_url_match = True
@@ -922,7 +922,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                         logging.info("Sourced Article Parsed")
 
-                        logging.info(u"Title: {0}".format(repr(article.title)))
+                        logging.info("Title: {0}".format(repr(article.title)))
                         if not source_article.title:
                             
                             db_source_article = add_source_article_failed(source[1],source[0], source[2], True, (source[1] in site.url), site.url)
@@ -1056,7 +1056,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         logging.info("CREATED VERSION qqqQQQQQQQQ")
 
                     for source in sources[1]:
-                        logging.info(u"!ZZZZZZZZZZZZZZZZ  Looking at article url {0}".format(source[0]))
+                        logging.info("!ZZZZZZZZZZZZZZZZ  Looking at article url {0}".format(source[0]))
 
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
                         sourcesite_url_match = True
@@ -1162,7 +1162,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                         logging.debug("Sourced Article Parsed")
 
-                        logging.debug(u"Title: {0}".format(repr(article.title)))
+                        logging.debug("Title: {0}".format(repr(article.title)))
                         if not source_article.title:
 
                             db_source_article = add_source_article_failed(source[1],source[0], source[2], False, (source[1] in site.url), site.url)
@@ -1517,5 +1517,5 @@ if __name__ == '__main__':
 
     # Re run the program to avoid thread to increase
     logging.info("Starting new cycle")
-    os.chmod('article_explorer_run.sh', 0700)
+    os.chmod('article_explorer_run.sh', 0o700)
     os.execl('article_explorer_run.sh', '')

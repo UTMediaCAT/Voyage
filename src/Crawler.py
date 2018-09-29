@@ -1,16 +1,18 @@
-from urlparse import urlparse, urljoin, urlunparse
+from urllib.parse import urlparse, urljoin, urlunparse
 import random
 import common
 import re
 import logging
 from ExplorerArticle import ExplorerArticle
-import urlnorm
+#import urlnorm
+#from url_normalize import url_normalize
+import urltools
 import psycopg2
 import os
 
 from pybloom_live import ScalableBloomFilter
 from pqueue import Queue
-from Queue import Empty
+from queue import Empty
 from django.utils.text import slugify
 
 '''
@@ -39,7 +41,7 @@ class Crawler(object):
         if not os.path.exists(tmpqueuetmp_dir):
             os.makedirs(tmpqueuetmp_dir)
 
-        slugified_name = slugify(unicode(site.name))
+        slugified_name = slugify(str(site.name))
         tmpqueue_dir = '../tmpqueue/{}'.format(slugified_name)
         if not os.path.exists(tmpqueue_dir):
             os.makedirs(tmpqueue_dir)
@@ -80,7 +82,7 @@ class Crawler(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         '''
         (Crawler) -> newspaper.Article
         returns the next article in the sequence
@@ -112,7 +114,7 @@ class Crawler(object):
                 except Empty:
                     raise StopIteration('to_visit is empty')
 
-                logging.info(u"visiting {0}".format(current_url))
+                logging.info("visiting {0}".format(current_url))
                 #use newspaper to download and parse the article
                 article = ExplorerArticle(current_url)
                 article.download()
@@ -127,13 +129,13 @@ class Crawler(object):
                     try:
                         parsed_url = urlparse(url)
                         parsed_as_list = list(parsed_url)
-                        if(parsed_url.scheme != u"http" and parsed_url.scheme != u"https"):
-                            logging.info(u"skipping url with invalid scheme: {0}".format(url))
+                        if(parsed_url.scheme != "http" and parsed_url.scheme != "https"):
+                            logging.info("skipping url with invalid scheme: {0}".format(url))
                             continue
                         parsed_as_list[5] = ''
-                        url = urlunparse(urlnorm.norm_tuple(*parsed_as_list))
+                        url = parsed_url#urlunparse(''.join(parsed_as_list))
                     except Exception as e:
-                        logging.info(u"skipping malformed url {0}. Error: {1}".format(url, str(e)))
+                        logging.info("skipping malformed url {0}. Error: {1}".format(url, str(e)))
                         continue
                     if(not parsed_url.netloc.endswith(self.domain)):
                         continue
@@ -144,7 +146,7 @@ class Crawler(object):
 
                     # Append the url to to_visit queue
                     self.to_visit.put(url)
-                    logging.info(u"added {0} to the to_visit".format(url))
+                    logging.info("added {0} to the to_visit".format(url))
 
                     # Append the url to visited to remove duplicates
                     self.ignore_filter.add(url)
