@@ -55,7 +55,7 @@ class ExplorerArticle(object):#derive from object for getters/setters
                 parsed_url = urlparse(response.url)
                 parsed_as_list = list(parsed_url)
                 parsed_as_list[5] = ''
-                self.canonical_url = parsed_url#urlunparse(''.join(parsed_as_list))
+                self.canonical_url = parsed_url.geturl()#urlunparse(''.join(parsed_as_list))
             except Exception as e:
                 logging.info("skipping malformed url {0}. Error: {1}".format(response.url, str(e)))
                 return False
