@@ -137,7 +137,7 @@ class VersionInline(NestedStackedInline):
             pattern = re.compile('([^a-z]' + key.name + '[^a-z])', re.IGNORECASE)
             result = pattern.subn(tag_front+key.name+tag_end, text)
             text = result[0]
-        return '<div style="font-size: 1.2em">' + text + '</div>'
+        return format_html('<div style="font-size: 1.2em">' + text + '</div>')
 
     highlighted_text.short_description = 'Text'
 
@@ -383,7 +383,7 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
             pattern = re.compile('([^a-z]' + key.name + '[^a-z])', re.IGNORECASE)
             result = pattern.subn(tag_front+key.name+tag_end, text)
             text = result[0]
-        return text
+        return format_html(text)
 
     highlighted_text.short_description = 'Highlighted Text'
     highlighted_text.allow_tags = True

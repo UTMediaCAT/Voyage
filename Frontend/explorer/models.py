@@ -102,7 +102,7 @@ class ReferringTwitter(models.Model):
     class Meta:
         verbose_name = 'Referring Twitter Account'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -114,7 +114,7 @@ class SourceTwitter(models.Model):
     class Meta:
         verbose_name = 'Source Twitter Account'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -127,7 +127,7 @@ class SourceTwitterAlias(models.Model):
         verbose_name = "Alias"
         verbose_name_plural = "Aliases"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.alias
 
 
@@ -141,7 +141,7 @@ class SourceSite(models.Model):
     class Meta:
         verbose_name = 'Source Site'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -154,7 +154,7 @@ class SourceSiteAlias(models.Model):
         verbose_name = "Alias"
         verbose_name_plural = "Aliases"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.alias
 
 
@@ -163,5 +163,5 @@ class Keyword(models.Model):
                             help_text='Case insensitive. Maximum 200 characters (Ex. Canada)')
     tags = TaggableManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
