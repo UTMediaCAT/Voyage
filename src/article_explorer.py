@@ -69,7 +69,7 @@ import datetime
 # Custom ExlporerArticle object based on newspaper's Article
 from ExplorerArticle import ExplorerArticle
 # For multiprocessing
-from multiprocessing import Pool, cpu_count
+from multiprocessing import Pool, cpu_count, Process
 from functools import partial
 import signal
 from django.db import connection
@@ -110,8 +110,23 @@ def parse_articles(referring_sites, db_keywords, source_sites_and_aliases, twitt
         pass_database = partial(parse_articles_per_site, db_keywords, source_sites_and_aliases, twitter_accounts_explorer)
 
         # Start the multiprocessing
-        result = pool.map_async(pass_database, referring_sites)
+        # result = pool.map_async(pass_database, referring_sites)
+        threads = {}
+        for s in referring_sites:
+            site = str(s)
+            threads[site] = Process(target=pass_database, args=([s]))
+            threads[site].start() 
+        
+        while True:
+            for s in referring_sites:
+                site = str(s)
 
+                if (not threads[site].is_alive()):
+                    
+                    threads[site].join(10000)
+                    threads[site] = Process(target=pass_database, args=([s]))
+                    threads[site].start() 
+        
         # Continue until all sites are done crawling
         while (not result.ready()):
             time.sleep(5)
@@ -1302,6 +1317,13 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             # This loop is used to ensure looping error don't cause MediaCat to loop continuously on them
             if (error_count > 10):
                 break
+
+    config = common.get_config()['article']
+
+    sleep_time = max(config['min_iteration_time']-delta_time, 0)
+    logging.warning("Sleeping for %is"%sleep_time)
+
+    time.sleep(sleep_time)
 
     setup_logging(increment=False)
     logging.info("Finished Site: %s"%site.name)
