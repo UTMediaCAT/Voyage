@@ -14,7 +14,7 @@ class Tweet(models.Model):
     date_added = models.DateTimeField('Date Added', blank=True, null=True)
     date_published = models.DateTimeField('Date Published', blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.tweet_id
 
 
@@ -24,7 +24,7 @@ class SourceSite(models.Model):
     domain = URLProtocolField(max_length=2000, verbose_name="Source Site")
     matched = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.url
 
 class SourceTwitter(models.Model):
@@ -32,7 +32,7 @@ class SourceTwitter(models.Model):
     name = models.CharField(max_length=200)
     matched = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 class CountLog(models.Model):
@@ -41,12 +41,12 @@ class CountLog(models.Model):
     favorite_count = models.PositiveIntegerField(default=0)
     date = models.DateTimeField('Date Added', blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.date.strftime('%Y-%m-%d')
 
 class Keyword(models.Model):
     tweet = models.ForeignKey(Tweet)
     name = models.CharField(max_length=200)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name

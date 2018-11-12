@@ -102,6 +102,7 @@ def get_tweets(screen_name, amount):
         try:
             user = api.get_user(screen_name)
         except:
+            print('COULD NOT GET USER')
             wait_and_resume()
     if amount > 3190 or amount > user.statuses_count:
         amount = min(3190, user.statuses_count)
@@ -114,11 +115,15 @@ def get_tweets(screen_name, amount):
     while count != amount:
         try:
             # Get's next tweet and appends to holder
-            item = next(items)
+            
+            item = items[count]
+            print("next item")
             count += 1
             tweet_holder.append(item)
+            print("tweet holder append")
         except:
             # If error occurs (timeout)
+            print('error occured iterating tweets')
             wait_and_resume()
             continue
     return tweet_holder
@@ -137,6 +142,7 @@ def get_follower_count(screen_name):
             user = api.get_user(screen_name)
             return user.followers_count
         except:
+            print("couldn't get follower count")
             wait_and_resume()
 
 
@@ -150,10 +156,11 @@ def get_keywords(text, keywords):
     keywords        -- List of keywords to look for
     """
     matched_keywords = []
-
+    print(type(text))
     # Searches if keyword is in tweet regardless of casing
     for key in keywords:
-        if re.search('[^a-z]' + key + '[^a-z]', text.encode('utf8'), re.IGNORECASE):
+        print(type(key))
+        if re.search('[^a-z]' + key + '[^a-z]', text, re.IGNORECASE):
             matched_keywords.append(key)
 
     return matched_keywords
