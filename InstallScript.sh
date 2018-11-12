@@ -9,11 +9,11 @@ apt-get autoremove -y python-setuptools
 curl https://raw.githubusercontent.com/codelucas/newspaper/master/download_corpora.py | python3
 
 # Install python dependencies:
-pip install --upgrade pip==9.0.0
-pip install setuptools
+# pip install --upgrade pip==9.0.0
+# pip install setuptools
 # Install nltk before installing the newspaper package in requirements to avoid error 
-pip install https://s3-us-west-2.amazonaws.com/jdimatteo-personal-public-readaccess/nltk-2.0.5-https-distribute.tar.gz
-pip install -r requirements.txt
+# pip install https://s3-us-west-2.amazonaws.com/jdimatteo-personal-public-readaccess/nltk-2.0.5-https-distribute.tar.gz
+pip3 install -r requirements.txt
 pip3 install wpull
 pip3 install html5lib==0.9999999
 pip3 install psutil

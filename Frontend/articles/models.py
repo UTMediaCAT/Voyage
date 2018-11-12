@@ -152,7 +152,7 @@ class SourceSite(models.Model):
     anchor_text = models.CharField(max_length=2000, verbose_name="Anchor Text")
     matched = models.BooleanField(default=False)
     local = models.BooleanField(default=True)
-    referring_url = models.CharField(max_length=2000)
+    referring_url = models.CharField(max_length=2000, default="")
 
     @property
     def title(self):
