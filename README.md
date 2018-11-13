@@ -152,6 +152,23 @@ The article explorer will explore each site under a given domain. After this cra
 
 __:bangbang: NOTE__: The article crawler can be quite taxing in terms of resources used. On initial tests with the shallow crawler it was found that the article crawler would freeze after a certain amount of time (freezing occured on a server instace with the follwing specs: 1 vCPU, and 2GB RAM with the crawler having 77 domains in its referring scope). Once we began testing using a more powerful server instance (10 vCPU, and 32 GB RAM) the freezing issues stopped. If you do run into freezing issues, the `article_explorer_run.sh` found under the `src/` folder contains some lines of code that will automatically restart the crawler after a certain period of time.
 
+#### Running the Explorer
+
+To run the crawler you must first run the `warc_queue.py` so that the warc files will be created as the crawler runs. Note: We create a screen so that the warc queue can operate in the background.
+
+```
+screen -S warc
+python src/warc_queue.py
+```
+
+(Ctrl+A followed by Ctrl+D to get back to the original screen)
+After this, you must run the actual crawler. 
+
+```
+screen -S article
+python src/article_explorer.py
+```
+
 ### Twitter Crawler 
 Twitter crawler has three modes of crawling: `timeline`, `streaming` and `history`, with `timeline` and `streaming` based on [twarc](https://github.com/DocNow/twarc) and `history` based on [GetOldTweets-python](https://github.com/Jefferson-Henrique/GetOldTweets-python). 
 * `timeline` mode will crawl the timeline of _Referring Twitter Accounts_ with up to 3200 of a user's most recent Tweets (Twitter's API constraint). You can set the frequency of timeline re-crawling in [config.yaml](https://github.com/UTMediaCAT/Voyage/blob/master/config.yaml) (the default frequency is crawling timeline every 30 days).
