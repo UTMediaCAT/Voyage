@@ -6,8 +6,10 @@ import re
 import lxml.html
 from bs4 import UnicodeDammit
 import collections
-import urlnorm
-from urlparse import urlparse, urljoin, urlunparse
+#import urlnorm
+#from url_normalize import url_normalize
+import urltools
+from urllib.parse import urlparse, urljoin, urlunparse
 
 # For absolute download timeout
 import eventlet
@@ -42,20 +44,20 @@ class ExplorerArticle(object):#derive from object for getters/setters
             with eventlet.Timeout(15):
                 response = requests.get(url=self.url, timeout=15)#TODO: add back get_request_kwargs functionality present in newspaper impl
             if(response.status_code >= 400):
-                logging.warn(u"encountered status code {0} while getting {1}".format(response.status_code, self.url))
+                logging.warn("encountered status code {0} while getting {1}".format(response.status_code, self.url))
                 return False
 
             if(not re.search("(text/html|application/xhtml\+xml) *(; .*)?", response.headers["content-type"])):
-                logging.debug(u"not a html: {0}".format(response.headers["content-type"]))
+                logging.debug("not a html: {0}".format(response.headers["content-type"]))
                 return False
 
             try:
                 parsed_url = urlparse(response.url)
                 parsed_as_list = list(parsed_url)
                 parsed_as_list[5] = ''
-                self.canonical_url = urlunparse(urlnorm.norm_tuple(*parsed_as_list))
+                self.canonical_url = parsed_url.geturl()#urlunparse(''.join(parsed_as_list))
             except Exception as e:
-                logging.info(u"skipping malformed url {0}. Error: {1}".format(response.url, str(e)))
+                logging.info("skipping malformed url {0}. Error: {1}".format(response.url, str(e)))
                 return False
 
             if response.encoding != FAIL_ENCODING:
@@ -86,8 +88,8 @@ class ExplorerArticle(object):#derive from object for getters/setters
             d = Document(self.html)
             self._readability_title = d.short_title()
             self._readability_text = d.summary()
-            logging.debug(u"readability title: {0}".format(repr(self._readability_title)))
-            logging.debug(u"readability text: {0}".format(repr(self._readability_text)))
+            logging.debug("readability title: {0}".format(repr(self._readability_title)))
+            logging.debug("readability text: {0}".format(repr(self._readability_text)))
             if(self._readability_title and self._readability_text):
                 self.is_parsed = True
                 return True
@@ -97,8 +99,8 @@ class ExplorerArticle(object):#derive from object for getters/setters
 
         logging.debug("falling back to newspaper parse")
         self.newspaper_article.parse()
-        logging.debug(u"newspaper title: {0}".format(repr(self._newspaper_title)))
-        logging.debug(u"newspaper text: {0}".format(repr(self._newspaper_text)))
+        logging.debug("newspaper title: {0}".format(repr(self._newspaper_title)))
+        logging.debug("newspaper text: {0}".format(repr(self._newspaper_text)))
         self.is_parsed = True
         return True
 

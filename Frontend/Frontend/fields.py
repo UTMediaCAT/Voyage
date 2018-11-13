@@ -1,3 +1,4 @@
+import sys
 from django import forms
 from django.db import models
 from django.core import validators
@@ -33,8 +34,15 @@ class URLProtocolField(models.CharField):
         if value == None:
             value = ""
 
-        value = super(URLProtocolField, self).to_python(value.lower())
+        if (type(value) is str):
+            value = super(URLProtocolField, self).to_python(value.lower())
+        else:
+            value = super(URLProtocolField, self).to_python(value.geturl().lower())
+
+
         if value:
+            if (type(value) is not str):
+                value = value.geturl()
             url_fields = split_url(value)
             if not url_fields[0]:
                 # If no URL scheme given, assume http://

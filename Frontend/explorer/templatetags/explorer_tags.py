@@ -19,7 +19,10 @@ def is_process_running(program_name):
     ps_output = ps_process.communicate()[0]
 
     status = "OFF"
-    if (("python " + program_name) in ps_output) or (("python ./" + program_name) in ps_output):
+
+    a = "python " + program_name
+    conv_bytes = bytes(a, "ascii")
+    if (conv_bytes) in ps_output:
         status = "ON"
     return status
 

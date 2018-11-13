@@ -2,6 +2,7 @@ from django.contrib import admin
 from libraries.nested_inline.admin import NestedStackedInline, NestedTabularInline, NestedModelAdmin
 from libraries.advanced_filters.admin import AdminAdvancedFiltersMixin
 from articles.models import Article, Version, Author, SourceSite, Keyword, SourceTwitter
+from django.utils.html import format_html
 
 import re
 # Register your models here.
@@ -9,6 +10,7 @@ import re
 import yaml, os
 import common
 import difflib
+
 
 class AuthorInline(NestedStackedInline):
     model = Author
@@ -87,7 +89,7 @@ class VersionInline(NestedStackedInline):
         #         '' if img_available else 'disabled', obj.text_hash,
         #     ))
 
-        return format((
+        return format_html((
             """
             <div class="btn-group"> \
                 <a class="btn btn-success %s" %s>Download Warc</a> \
@@ -100,7 +102,7 @@ class VersionInline(NestedStackedInline):
                 '' if pdf_available else 'disabled', 'href="/articles/pdf/' + obj.text_hash + '"' if pdf_available else '',
                 '' if img_available else 'disabled', 'href="/articles/img/' + obj.text_hash + '"' if img_available else '',
             ))
-    download_options.short_description = "Donwload Options"
+    download_options.short_description = "Download Options"
 
     def has_add_permission(self, request):
             return False
@@ -135,7 +137,7 @@ class VersionInline(NestedStackedInline):
             pattern = re.compile('([^a-z]' + key.name + '[^a-z])', re.IGNORECASE)
             result = pattern.subn(tag_front+key.name+tag_end, text)
             text = result[0]
-        return '<div style="font-size: 1.2em">' + text + '</div>'
+        return format_html('<div style="font-size: 1.2em">' + text + '</div>')
 
     highlighted_text.short_description = 'Text'
 
@@ -387,7 +389,7 @@ class ArticleAdmin(AdminAdvancedFiltersMixin, NestedModelAdmin):
             pattern = re.compile('([^a-z]' + key.name + '[^a-z])', re.IGNORECASE)
             result = pattern.subn(tag_front+key.name+tag_end, text)
             text = result[0]
-        return text
+        return format_html(text)
 
     highlighted_text.short_description = 'Highlighted Text'
     highlighted_text.allow_tags = True

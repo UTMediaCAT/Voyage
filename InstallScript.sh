@@ -2,19 +2,23 @@
 
 # Install apt dependencies
 apt-get install python
-apt-get update && apt-get install -y python-dev python-pip python3-pip python-numpy zlib1g-dev libxml2-dev libxslt-dev libjpeg-dev libpq-dev libfontconfig postgresql postgresql-contrib language-pack-en htop lsof
+apt-get install python3
+apt-get update && apt-get install -y python-dev python-pip python3-pip python-numpy zlib1g-dev libxml2-dev libxslt-dev libjpeg-dev libpng12-dev libpq-dev libfontconfig postgresql postgresql-contrib language-pack-en htop lsof
 apt-get autoremove -y python-setuptools
 
+curl https://raw.githubusercontent.com/codelucas/newspaper/master/download_corpora.py | python3
+
 # Install python dependencies:
-pip install --upgrade pip==9.0.0
-pip install setuptools
-# Install nltk before installing the newspaper package in requirements to avoid error
-pip install https://s3-us-west-2.amazonaws.com/jdimatteo-personal-public-readaccess/nltk-2.0.5-https-distribute.tar.gz
-pip install -r requirements.txt
+# pip install --upgrade pip==9.0.0
+# pip install setuptools
+# Install nltk before installing the newspaper package in requirements to avoid error 
+# pip install https://s3-us-west-2.amazonaws.com/jdimatteo-personal-public-readaccess/nltk-2.0.5-https-distribute.tar.gz
+pip3 install -r requirements.txt
 pip3 install wpull
 pip3 install tornado==4.5.3
 pip3 install html5lib==0.9999999
 pip3 install psutil
+pip3 install newspaper3k
 
 # Install twitter crawler dependency
 pip install twarc

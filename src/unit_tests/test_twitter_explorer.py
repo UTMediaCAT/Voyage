@@ -45,45 +45,45 @@ class TestTwitterExplorer(unittest.TestCase):
         #test account only has 5 tweets
         eleven_requested_tweets = te.get_tweets(self.test_account, 11)
         
-        self.assertEquals(len(three_tweets), 3,
+        self.assertEqual(len(three_tweets), 3,
                           'request for 3 tweets did not return 3 tweets')
-        self.assertEquals(len(five_tweets), 5,
+        self.assertEqual(len(five_tweets), 5,
                           'request for 5 tweets did not return 5 tweets')
-        self.assertEquals(len(eleven_requested_tweets), 8,
+        self.assertEqual(len(eleven_requested_tweets), 8,
                           'request for an amount of tweets over ' +
                           'the accounts tweet number failed')
 
-        self.assertEquals(three_tweets[0].text, 'testacme4',
+        self.assertEqual(three_tweets[0].text, 'testacme4',
                           'request for 3 tweets returned invalid tweet')
-        self.assertEquals(three_tweets[1].text, 'testacme3',
+        self.assertEqual(three_tweets[1].text, 'testacme3',
                           'request for 3 tweets returned invalid tweet')
-        self.assertEquals(three_tweets[2].text, 'testacme2',
+        self.assertEqual(three_tweets[2].text, 'testacme2',
                           'request for 3 tweets returned invalid tweet')
         
-        self.assertEquals(five_tweets[0].text, 'testacme4',
+        self.assertEqual(five_tweets[0].text, 'testacme4',
                           'request for 5 tweets returned invalid tweet')
-        self.assertEquals(five_tweets[1].text, 'testacme3',
+        self.assertEqual(five_tweets[1].text, 'testacme3',
                           'request for 5 tweets returned invalid tweet')
-        self.assertEquals(five_tweets[2].text, 'testacme2',
+        self.assertEqual(five_tweets[2].text, 'testacme2',
                           'request for 5 tweets returned invalid tweet')
-        self.assertEquals(five_tweets[3].text, 'testacme1',
+        self.assertEqual(five_tweets[3].text, 'testacme1',
                           'request for 5 tweets returned invalid tweet')
-        self.assertEquals(five_tweets[4].text, 'testacme0',
+        self.assertEqual(five_tweets[4].text, 'testacme0',
                           'request for 5 tweets returned invalid tweet')
 
-        self.assertEquals(five_tweets[0].id, 531976729007771648,
+        self.assertEqual(five_tweets[0].id, 531976729007771648,
                           'tweet did no have correct id')
-        self.assertEquals(five_tweets[1].id, 531976714730364929,
+        self.assertEqual(five_tweets[1].id, 531976714730364929,
                           'tweet did not have correct id')
-        self.assertEquals(five_tweets[2].id, 531976696397070336,
+        self.assertEqual(five_tweets[2].id, 531976696397070336,
                           'tweet did not have correct id')
-        self.assertEquals(five_tweets[3].id, 531976682128031744,
+        self.assertEqual(five_tweets[3].id, 531976682128031744,
                           'tweet did not have correct id')
-        self.assertEquals(five_tweets[4].id, 531976660015652864,
+        self.assertEqual(five_tweets[4].id, 531976660015652864,
                           'tweet did not have correct id')
 
         for tweet in five_tweets:
-            self.assertEquals(tweet.user.screen_name, 'acmeteam4',
+            self.assertEqual(tweet.user.screen_name, 'acmeteam4',
                           'tweet was not taken from the correct user')
 
         for tweet in five_tweets:
@@ -101,7 +101,7 @@ class TestTwitterExplorer(unittest.TestCase):
                               "get_follower_count is not returning an int")
         self.assertIsInstance(apple_followers, int,
                               "get_follower_count is not returning an int")
-        self.assertNotEquals(acme_followers, apple_followers,
+        self.assertNotEqual(acme_followers, apple_followers,
                              "get_follower_count is returning same result for @acmeteam4 and @apple" +
                              "which is most likely incorrect.")
 
@@ -125,7 +125,7 @@ class TestTwitterExplorer(unittest.TestCase):
                     531976682128031744: ['test']}
 
 
-        self.assertEquals(holder, expected,
+        self.assertEqual(holder, expected,
                           'Not returning correct list of keywords for each test tweet.')
 
         holder = {}
@@ -142,7 +142,7 @@ class TestTwitterExplorer(unittest.TestCase):
                     531976627870527488: [],
                     531975600152805376: []}
         
-        self.assertEquals(holder, expected,
+        self.assertEqual(holder, expected,
                           'Not returning empty list when no keywords are selected.')
 
     def testGetSources(self):
@@ -159,16 +159,16 @@ class TestTwitterExplorer(unittest.TestCase):
                               'Not returning list of matched sources')
         for element in [531976729007771648, 531976714730364929, 531976660015652864,
                         531976696397070336, 531976682128031744]:
-            self.assertEquals(holder[element],[],
+            self.assertEqual(holder[element],[],
                               'Not returning correct list of sources for each test tweet.')
 
         #can't test exact site as using url lib will change them if they generate
         #for example each google search url will be different
-        self.assertEquals(len(holder[531976454138241024]), 2,
+        self.assertEqual(len(holder[531976454138241024]), 2,
                           'Not returning correct amount of sources for test tweet')
-        self.assertEquals(len(holder[531976627870527488]), 2,
+        self.assertEqual(len(holder[531976627870527488]), 2,
                           'Not returning correct amount of sources for test tweet')
-        self.assertEquals(len(holder[531975600152805376]), 3,
+        self.assertEqual(len(holder[531975600152805376]), 3,
                           'Not returning correct amount of sources for test tweet')
 
         holder = {}
@@ -185,7 +185,7 @@ class TestTwitterExplorer(unittest.TestCase):
                     531976627870527488: [],
                     531975600152805376: []}
         
-        self.assertEquals(holder, expected,
+        self.assertEqual(holder, expected,
                           'Not returning empty list when no sources are selected.')
 
     def testStressGetTweets(self):
@@ -200,7 +200,7 @@ class TestTwitterExplorer(unittest.TestCase):
             i +=1#        for tweets in holder:
             count += 1
 
-        self.assertEquals(count, 3000, 'getting amount of tweets over rate limit failed')
+        self.assertEqual(count, 3000, 'getting amount of tweets over rate limit failed')
 
 if __name__ == '__main__':
     unittest.main()
