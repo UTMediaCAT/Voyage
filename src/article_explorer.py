@@ -1320,8 +1320,12 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
     config = common.get_config()['article']
     delta_time = timeit.default_timer() - start
+    logging.warning("Delta time is %i"%delta_time)
+    logging.warning("Start time is %i"%start)
 
-    sleep_time = max(config['min_iteration_time']-delta_time, 0)
+    #sleep_time = max(config['min_iteration_time']-delta_time, 0)
+    sleep_time = config['min_iteration_time']
+
     logging.warning("Sleeping for %is"%sleep_time)
 
     time.sleep(sleep_time)
