@@ -19,7 +19,7 @@ pip3 install tornado==4.5.3
 pip3 install html5lib==0.9999999
 pip3 install psutil
 pip3 install newspaper3k
-
+pip3 install twarc
 # Install twitter crawler dependency
 pip install twarc
 
