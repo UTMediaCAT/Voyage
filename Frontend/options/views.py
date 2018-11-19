@@ -35,7 +35,7 @@ def downloads(request):
             try:
                 version = scopefile.readline().strip()
                 db_version = common.get_config()['database']['version']
-                if (version.count(".") == 2 and version != db_version):
+                if (str(version.count(bytes('.'.encode('utf-8')))) == 2 and version != db_version):
                     result = format("Database schema version mismatch (Need: %s, Given: %s)" %
                                     (db_version, version))
                 else:
@@ -51,7 +51,7 @@ def downloads(request):
 
                     # Replace Scope
                     tf = tempfile.NamedTemporaryFile(suffix='.json')
-                    tf.write(scopefile.read())
+                    tf.write(bytes(scopefile.read()))
                     tf.seek(0)
                     out = StringIO()
                     management.call_command('loaddata', tf.name, stdout=out)
