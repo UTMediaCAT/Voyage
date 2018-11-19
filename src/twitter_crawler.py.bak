@@ -232,7 +232,7 @@ def get_source_site_from_csv(tweet_text):
     """
     Return urls in given tweet text crawled by GetOldTweets-python
     """
-    tweet_text = tweet_text.replace(r"\u2026", "\n")
+    tweet_text = tweet_text.replace(ur"\u2026", "\n")
     try: 
         urls = {str(url.replace(" ", "")) for url in re.findall("https?:\/\/.*html", tweet_text)}
         urls.update({str(url.replace(" ", "")[:-1]) for url in re.findall("https?:\/\/ ?\S*\"", tweet_text)})
@@ -316,7 +316,7 @@ def process_tweet(tweet, keywords, source_sites, source_accounts):
                 # adjustable, give time for warc creation and avoids using too many resources
                 time.sleep(3)
             except:
-                print(("Warc error at {}.{}".format(user, tweet_id)))
+                print("Warc error at {}.{}".format(user, tweet_id))
                 logging.error("Warc error at {}.{}".format(user, tweet_id))
 
             return ADDED
@@ -384,7 +384,7 @@ def process_history(screen_name):
     tweet_count = lines_of_file(csv_path) - 1
     with open(csv_path, "r") as tweet_csv:
         for tweet in tweet_csv:
-            print(("processing {}".format(tweet)))
+            print("processing {}".format(tweet))
             tweet = tweet.decode('utf-8').strip()
             if processed == 0:
                 # skip first line of csv file
@@ -476,7 +476,7 @@ def parse_tweet(users, source_sites, keywords, source_accounts):
         temp_source_sites = ignore_url(account, source_sites)
         processed = 0
         # get user info
-        twarc_user = next(auth.user_lookup([user], "screen_name"))
+        twarc_user = auth.user_lookup([user], "screen_name").next()
         tweets = get_tweets(user)
         followers_count = get_follower_count(twarc_user)
         tweet_count = len(tweets)   
@@ -510,21 +510,21 @@ def parse_tweet(users, source_sites, keywords, source_accounts):
                              str(timezone.localtime(timezone.now()))[:-13],
                               user, processed, tweet_count))
 
-        print(format("%s (Timeline|%s) %i/%i          " % (
+        print format("%s (Timeline|%s) %i/%i          " % (
             str(timezone.localtime(timezone.now()))[:-13], user, processed,
-            tweet_count)))
+            tweet_count))
 
         ReferringTwitterHashtag.objects.filter(user=account).delete()
         for ht in hashtags:
-            print(("{}: {}".format(ht, hashtags[ht])))
-            logging.info("{}: {}".format(ht, hashtags[ht]))
+            print(u"{}: {}".format(ht, hashtags[ht]))
+            logging.info(u"{}: {}".format(ht, hashtags[ht]))
             hashtag = ReferringTwitterHashtag(user=account, text=ht, count=hashtags[ht])
             hashtag.save()
 
         ReferringTwitterMention.objects.filter(user=account).delete()
-        for mentioned_user, count in list(mentions.items()):
-            print(("{}: {}".format(mentioned_user, count)))
-            logging.info("{}: {}".format(mentioned_user, count))
+        for mentioned_user, count in mentions.items():
+            print(u"{}: {}".format(mentioned_user, count))
+            logging.info(u"{}: {}".format(mentioned_user, count))
             new_mention = ReferringTwitterMention(user=account, screen_name=mentioned_user, count=count)
             new_mention.save()
 
@@ -538,7 +538,7 @@ def get_history_csv(user):
     exporter_path = "GetOldTweets-python/Exporter.py"
     output_path = "{}/tweet_csv/{}.csv".format(log_dir, user)
     log_path = "{}/get_history_{}.log".format(log_dir, user)
-    print(("Getting tweet history of {}".format(user)))
+    print("Getting tweet history of {}".format(user))
     with open(log_path, "w") as outfile:
         subprocess.call(["python", exporter_path, "--username", "\"{}\"".format(user),
             "--output", output_path], stdout=outfile)
@@ -591,7 +591,7 @@ def streaming():
             user = get_tweet_user(tweet)
         except:
             logging.debug("Cannot get user from tweet {}\n".format(tweet))
-            print(("Cannot get user from tweet {}\n".format(tweet)))
+            print("Cannot get user from tweet {}\n".format(tweet))
             continue
         if user.lower() in lowercase_users:
             tweet_id = get_twitter_id(tweet)
@@ -656,7 +656,7 @@ def setup_logging(name):
     # set cycle number, starting from 0
     try:
         cycle_number = sorted(glob.glob(prefix + current_time + "*.log"))[-1][-7:-4]
-        print(("Found cycle number {}".format(cycle_number)))
+        print("Found cycle number {}".format(cycle_number))
         cycle_number = str(int(cycle_number) + 1)
     except (KeyboardInterrupt, SystemExit):
         print("error")
@@ -687,7 +687,7 @@ if __name__ == '__main__':
     config = configuration()['twitter']
     if len(sys.argv) > 1:
         if sys.argv[1] not in ("streaming", "timeline", "history"):
-            print(("Invalid arguments {}".format(" ".join(sys.argv[1:]))))
+            print("Invalid arguments {}".format(" ".join(sys.argv[1:])))
         else:
             auth = authorize()
             if sys.argv[1] == "history":

@@ -16,7 +16,7 @@ import sys, os, time, json
 from taggit.models import TaggedItem
 
 from django.core import serializers, management
-from StringIO import StringIO
+from io import StringIO
 
 import newspaper
 import common

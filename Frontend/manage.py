@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import os
 import sys
 
@@ -6,7 +6,7 @@ if __name__ == "__main__":
     # To force local copy of Django
     if os.name != 'nt':
     	sys.path.insert(0, os.path.join(os.environ['HOME'], '.local/lib/python2.7/site-packages'))
-        sys.path.append("../src")
+    	sys.path.append("../src")
 
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "Frontend.settings")
 

@@ -6,18 +6,19 @@ apt-get update && apt-get install -y python-dev python-pip python3-pip python-nu
 apt-get autoremove -y python-setuptools
 
 # Install python dependencies:
-pip install --upgrade pip==9.0.0
-pip install setuptools
+# pip install --upgrade pip==9.0.0
+pip3 install setuptools
 # Install nltk before installing the newspaper package in requirements to avoid error
-pip install https://s3-us-west-2.amazonaws.com/jdimatteo-personal-public-readaccess/nltk-2.0.5-https-distribute.tar.gz
-pip install -r requirements.txt
+# pip install https://s3-us-west-2.amazonaws.com/jdimatteo-personal-public-readaccess/nltk-2.0.5-https-distribute.tar.gz
+pip3 install -r requirements.txt
 pip3 install wpull
 pip3 install tornado==4.5.3
 pip3 install html5lib==0.9999999
 pip3 install psutil
+pip3 install urltools
 
 # Install twitter crawler dependency
-pip install twarc
+pip3 install twarc
 
 # Install phantomjs
 wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2

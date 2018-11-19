@@ -27,13 +27,13 @@ def articles_keywords_pie_chart():
     #loop trough the keywords
     for ele in keywords:
         #if the keyword hasn't been found yet,then add it to dict with count 1.
-        if not ele.name in list(data_dict.keys()):
+        if not ele.name in data_dict.keys():
             data_dict[ele.name] = 1
         else:
         #if it has been found, then add 1 to the count of the keywords.
             data_dict[ele.name] += 1
     #sort keywords by the number of count for each keyword
-    sorted_data = sorted(list(data_dict.items()), key=operator.itemgetter(1), reverse=True)
+    sorted_data = sorted(data_dict.items(), key=operator.itemgetter(1), reverse=True)
     sorted_data_dict = dict(sorted_data)
     
     #get top 10 keywrods based on the frequency of their occurrence
@@ -46,7 +46,7 @@ def articles_keywords_pie_chart():
     #convert the dict to a list of list
     data = []
 
-    for ele in list(sorted_data_dict.keys()):
+    for ele in sorted_data_dict.keys():
         new=[]
         new.append(ele.encode("utf-8"))
         new.append(sorted_data_dict[ele])
@@ -65,13 +65,13 @@ def tweets_keywords_pie_chart():
     #loop trough the keywords   
     for ele in keywords:
         #if the keyword hasn't been found yet,then add it to dict with count 1.
-        if not ele.name in list(data_dict.keys()):
+        if not ele.name in data_dict.keys():
             data_dict[ele.name] = 1
         else:
         #if it has been found, then add 1 to the count of the keywords.
             data_dict[ele.name] += 1
     #sort keywords by the number of count for each keyword
-    sorted_data = sorted(list(data_dict.items()), key=operator.itemgetter(1), reverse=True)
+    sorted_data = sorted(data_dict.items(), key=operator.itemgetter(1), reverse=True)
 
     sorted_data_dict = dict(sorted_data)
     #get top 10 keywrods based on the frequency of their occurrence
@@ -84,7 +84,7 @@ def tweets_keywords_pie_chart():
     #convert the dict to a list of list
     data = []
 
-    for ele in list(sorted_data_dict.keys()):
+    for ele in sorted_data_dict.keys():
         new=[]
         new.append(ele.encode("utf-8"))
         new.append(sorted_data_dict[ele])

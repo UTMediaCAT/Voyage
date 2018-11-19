@@ -52,7 +52,7 @@ if __name__ == "__main__":
             line = article_queue.pop(0)
             url = line[0]
             warc_file_name = line[1].strip()
-            print('processing: ' + url + ' : ' + warc_file_name)
+            print 'processing: ' + url + ' : ' + warc_file_name
             article_processes.append(warc_creator.create_article_warc(url, warc_file_name))
 
             # set time out for pdf generator

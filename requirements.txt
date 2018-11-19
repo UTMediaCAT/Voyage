@@ -1,8 +1,8 @@
-Django==1.7.1
+Django==1.8
 psycopg2
-newspaper
+newspaper3k
 requests
-tweepy==2.3.0
+tweepy
 python-dateutil==2.4.0
 tld==0.7.2
 pyyaml==3.11

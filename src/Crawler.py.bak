@@ -1,4 +1,4 @@
-from urllib.parse import urlparse, urljoin, urlunparse
+from urlparse import urlparse, urljoin, urlunparse
 import random
 import common
 import re
@@ -11,7 +11,7 @@ import io
 import sys
 from pybloom_live import ScalableBloomFilter
 from pqueue import Queue
-from queue import Empty
+from Queue import Empty
 from django.utils.text import slugify
 
 '''
@@ -62,7 +62,7 @@ class Crawler(object):
         if not os.path.exists(tmpqueuetmp_dir):
             os.makedirs(tmpqueuetmp_dir)
 
-        slugified_name = slugify(str(site.name))
+        slugified_name = slugify(unicode(site.name))
         tmpqueue_dir = '../tmpqueue/{}'.format(slugified_name)
         if not os.path.exists(tmpqueue_dir):
             os.makedirs(tmpqueue_dir)
@@ -107,7 +107,7 @@ class Crawler(object):
     def __iter__(self):
         return self
 
-    def __next__(self):
+    def next(self):
         '''
         (Crawler) -> newspaper.Article
         returns the next article in the sequence
@@ -139,7 +139,7 @@ class Crawler(object):
                             current = self.to_visit.get_nowait()
                             current_url = current[0]
                             current_level = current[1]
-                            logging.info("Shallow on level {0} {1}".format(current_level, current_url))
+                            logging.info(u"Shallow on level {0} {1}".format(current_level, current_url))
                         else:
                             current_url = self.to_visit.get_nowait()
                     except Empty:
@@ -151,11 +151,11 @@ class Crawler(object):
                         ignore_filter_file.close()
                         os.remove('../ignore_filter/' + self.site.name + '_ignore_file.txt')
                         logging.info("stopped iteration")
-                        logging.info("{0}".format(self.site.url))
+                        logging.info(u"{0}".format(self.site.url))
                         raise ZeroDivisionError
 
 
-                    logging.info("visiting {0}".format(current_url))
+                    logging.info(u"visiting {0}".format(current_url))
                     self.visited_count += 1
                     #use newspaper to download and parse the article
                     article = ExplorerArticle(current_url)
@@ -167,19 +167,19 @@ class Crawler(object):
                     for link in article.get_links():
                         url = urljoin(current_url, link.href, False)
                         if self.url_in_filter(url, self.filters):
-                            logging.info("skipping url \"{0}\" because it matches filter".format(url))
+                            logging.info(u"skipping url \"{0}\" because it matches filter".format(url))
                             continue
                         try:
                             parsed_url = urlparse(url)
                             parsed_as_list = list(parsed_url)
 
-                            if(parsed_url.scheme != "http" and parsed_url.scheme != "https"):
-                                logging.info("skipping url with invalid scheme: {0}".format(url))
+                            if(parsed_url.scheme != u"http" and parsed_url.scheme != u"https"):
+                                logging.info(u"skipping url with invalid scheme: {0}".format(url))
                                 continue
                             parsed_as_list[5] = ''
                             url = urlunparse(urlnorm.norm_tuple(*parsed_as_list))
                         except Exception as e:
-                            logging.info("skipping malformed url {0}. Error: {1}".format(url, str(e)))
+                            logging.info(u"skipping malformed url {0}. Error: {1}".format(url, str(e)))
                             continue
                         if(not parsed_url.netloc.endswith(self.domain)):
                             continue
@@ -187,20 +187,20 @@ class Crawler(object):
                         if (url in self.ignore_filter):
                             continue
                         # Ignores the subscribe links for many domains
-                        if ("subscribe" in url or "subscribe" in url and not("-subscribe" in url or "-subscribe" or "subscribe-" in url or "subscribe-")):
+                        if (u"subscribe" in url or "subscribe" in url and not(u"-subscribe" in url or "-subscribe" or u"subscribe-" in url or "subscribe-")):
                         	continue
 
                         # Append the url to to_visit queue
                         if (self.site.is_shallow):
                             self.to_visit.put((url, str(int(current_level) + 1)))
-                            logging.info("added {0} to the to_visit as well as the level {1}".format(url, str(int(current_level) + 1)))
+                            logging.info(u"added {0} to the to_visit as well as the level {1}".format(url, str(int(current_level) + 1)))
 
                             # Append the url to visited to remove duplicates
                             self.ignore_filter.add(url)
                             ignore_filter_file.write(url.encode('utf8') + "\n")
                         else:
                             self.to_visit.put(url)
-                            logging.info("added {0} to the to_visit".format(url))
+                            logging.info(u"added {0} to the to_visit".format(url))
 
                             # Append the url to visited to remove duplicates
                             self.ignore_filter.add(url)

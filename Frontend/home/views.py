@@ -18,7 +18,7 @@ def index(request):
 		content["statistics"] = "active"
 		content[request.path[1:]] = "active"
 
-	elif (request.path in visualizations_dict.keys()):
+	elif (request.path in list(visualizations_dict.keys())):
 		content["visualizations"] = "active"
 		content[request.path[1:]] = "active"
 		content["result"] = visualizations_dict[request.path]
