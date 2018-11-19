@@ -6,7 +6,8 @@ import re
 import lxml.html
 from bs4 import UnicodeDammit
 import collections
-import urlnorm
+#import urlnorm
+import urltools
 from urllib.parse import urlparse, urljoin, urlunparse
 
 # For absolute download timeout
@@ -53,7 +54,7 @@ class ExplorerArticle(object):#derive from object for getters/setters
                 parsed_url = urlparse(response.url)
                 parsed_as_list = list(parsed_url)
                 parsed_as_list[5] = ''
-                self.canonical_url = urlunparse(urlnorm.norm_tuple(*parsed_as_list))
+                self.canonical_url = parsed_url.geturl()
             except Exception as e:
                 logging.info("skipping malformed url {0}. Error: {1}".format(response.url, str(e)))
                 return False

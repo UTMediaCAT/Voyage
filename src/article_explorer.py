@@ -156,15 +156,23 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
         article_count += newspaper_source.size()
         logging.info("populated {0} articles using newspaper".format(article_count))
     if(site.mode == 1 or site.mode == 2):
+        logging.info("1")
         crawlersource_articles = Crawler.Crawler(site)
         logging.info("Starting MediaCAT crawler with limit: {} from plan b crawler".format(crawlersource_articles.limit))
+    logging.info("2")
+
     article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
     processed = 0
+    logging.info("3")
+
     filters = set(site.referringsitefilter_set.all())
     while True:
         try:
             try:
-                article = next(article_iterator)
+                logging.info("4")
+                article = next(article_iterator) 
+                logging.info("5")
+
             except ZeroDivisionError:
                 article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
                 site.is_shallow = True
@@ -172,9 +180,12 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 processed = 0
                 break
             except StopIteration:
+                logging.info("6")
+
                 break
 
             processed += 1
+            logging.info("7")
 
             if url_in_filter(article.url, filters):
                 logging.info("Matches with filter, skipping the {0}".format(article.url))
@@ -185,6 +196,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 (str(timezone.localtime(timezone.now()))[:-13],
                  site.name, processed, article_count)))
             logging.info("Processing %s"%article.url)
+            logging.info("8")
 
             url = article.url
             if 'http://www.' in url:

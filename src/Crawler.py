@@ -4,7 +4,8 @@ import common
 import re
 import logging
 from ExplorerArticle import ExplorerArticle
-import urlnorm
+#import urlnorm
+import urltools
 import psycopg2
 import os
 import io
@@ -13,6 +14,7 @@ from pybloom_live import ScalableBloomFilter
 from pqueue import Queue
 from queue import Empty
 from django.utils.text import slugify
+import time
 
 '''
 An iterator class for iterating over articles in a given site
@@ -29,44 +31,59 @@ class Crawler(object):
         self.domain = urlparse(site.url).netloc
         # http://alexeyvishnevsky.com/2013/11/tips-on-optimizing-scrapy-for-a-high-performance/
         # fork of pybloom: https://github.com/joseph-fox/python-bloomfilter
+        logging.info("c1")
         self.ignore_filter = ScalableBloomFilter(
                 initial_capacity=10000000,
                 error_rate=0.00001)
         ignore_filter_dir='../ignore_filter/'
+        logging.info("c2")
         if not os.path.exists(ignore_filter_dir):
             os.makedirs(ignore_filter_dir)
+            logging.info("c3")
             self.ignore_filter = ScalableBloomFilter(
                 initial_capacity=10000000,
                 error_rate=0.00001)
+            logging.info("c4")
             try:
-            	f = open('../ignore_filter/' + self.site.name + '_ignore_file.txt', 'r+')
-            	f.write(self.ignore_filter)
+                logging.info("c5")
+
+                f = open('../ignore_filter/' + self.site.name + '_ignore_file.txt', 'r+')
+                f.write(self.ignore_filter)
             except IOError:
-            	f = open('../ignore_filter/' + self.site.name + '_ignore_file.txt', 'w+')
+                logging.info("c6")
+                f = open('../ignore_filter/' + self.site.name + '_ignore_file.txt', 'w+')
+                logging.info("c7")
             f.close()
         else:
+            logging.info("c8")
             if (not(os.path.exists('../ignore_filter/' + self.site.name + '_ignore_file.txt'))):
                 f = open('../ignore_filter/' + self.site.name + '_ignore_file.txt', 'w+')
                 f.close()
+                logging.info("c9")
 
-            with open('../ignore_filter/' + self.site.name + '_ignore_file.txt', 'r+', buffering=False) as ignore_filter_file:
+            logging.info("cWITH")
+            time.sleep(2)
+            with open('../ignore_filter/' + self.site.name + '_ignore_file.txt', 'r+', buffering=4096) as ignore_filter_file:
+                logging.info("cWITH2")
                 try:
+                    logging.info("c10")
                     for line in ignore_filter_file:
                         self.ignore_filter.add(line.decode('utf8').rstrip())
                 except Exception as e:
                     logging.info(str(e))
             ignore_filter_file.close()
+        logging.info("c11")
         self.visited_count = 0
 
         tmpqueuetmp_dir='../tmpqueue/tmp/'
         if not os.path.exists(tmpqueuetmp_dir):
             os.makedirs(tmpqueuetmp_dir)
-
+            logging.info("c12")
         slugified_name = slugify(str(site.name))
         tmpqueue_dir = '../tmpqueue/{}'.format(slugified_name)
         if not os.path.exists(tmpqueue_dir):
             os.makedirs(tmpqueue_dir)
-
+        logging.info("c13")
         self.to_visit = Queue(tmpqueue_dir, tempdir=tmpqueuetmp_dir)
 
         # Initial url
@@ -74,11 +91,12 @@ class Crawler(object):
             self.to_visit.put(site.url)
         else:
             self.to_visit.put((site.url, str(0)))
-
+        logging.info("c14")
         # Limit
         self.limit = common.get_config()["crawler"]["limit"]
         # Specifies how deep the shallow crawler should go; "1" is the lowest option for this
         self.level = common.get_config()["crawler"]["level"]
+        logging.info("c15")
         """
         self.probabilistic_n = common.get_config()["crawler"]["n"]
         self.probabilistic_k = common.get_config()["crawler"]["k"]
