@@ -234,9 +234,9 @@ def get_source_site_from_csv(tweet_text):
     """
     tweet_text = tweet_text.replace(r"\u2026", "\n")
     try: 
-        urls = {str(url.replace(" ", "")) for url in re.findall("https?:\/\/.*html", tweet_text)}
-        urls.update({str(url.replace(" ", "")[:-1]) for url in re.findall("https?:\/\/ ?\S*\"", tweet_text)})
-        urls.update({str(url.replace(" ", "")) for url in re.findall("(https?:\/\/.*?)\n", tweet_text)})
+        urls = {str(url.replace(" ", "")) for url in re.findall("https?:\/\/.*html", tweet_text.decode())}
+        urls.update({str(url.replace(" ", "")[:-1]) for url in re.findall("https?:\/\/ ?\S*\"", tweet_text.decode())})
+        urls.update({str(url.replace(" ", "")) for url in re.findall("(https?:\/\/.*?)\n", tweet_text.decode())})
     except:
         urls = set()
     return list(urls)
@@ -540,7 +540,7 @@ def get_history_csv(user):
     log_path = "{}/get_history_{}.log".format(log_dir, user)
     print(("Getting tweet history of {}".format(user)))
     with open(log_path, "w") as outfile:
-        subprocess.call(["python", exporter_path, "--username", "\"{}\"".format(user),
+        subprocess.call(["python3", exporter_path, "--username", "\"{}\"".format(user),
             "--output", output_path], stdout=outfile)
 
 
@@ -630,7 +630,7 @@ def history():
 
     # crawls history of all users
     for user in users:
-        processes.append(subprocess.Popen(["python", "./twitter_crawler.py", "history", user]))
+        processes.append(subprocess.Popen(["python3", "./twitter_crawler.py", "history", user]))
 
     # wait for all crawling to finish to start processing
     # so that history crawling does not take too much resource
@@ -716,7 +716,7 @@ if __name__ == '__main__':
                         setup_logging("timeline")
     else:
         # will do both streaming, timeline and history crawling if no arguments are given
-        subprocess.Popen(["python", "./twitter_crawler.py", "streaming"])
-        subprocess.Popen(["python", "./twitter_crawler.py", "timeline"])
-        subprocess.call(["python", "./twitter_crawler.py", "history"])
+        subprocess.Popen(["python3", "./twitter_crawler.py", "streaming"])
+        subprocess.Popen(["python3", "./twitter_crawler.py", "timeline"])
+        subprocess.call(["python3", "./twitter_crawler.py", "history"])
 
