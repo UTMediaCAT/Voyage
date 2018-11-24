@@ -160,6 +160,11 @@ class Crawler(object):
                             logging.info("Shallow on level {0} {1}".format(current_level, current_url))
                         else:
                             current_url = self.to_visit.get_nowait()
+                            if (isinstance(current_url, tuple)):
+                                self.site.is_shallow = True
+                                current_url = current[0]
+                                current_level = current[1]
+                                logging.info(u"Shallow on level {0} {1}".format(current_level, current_url))
                     except Empty:
                         self.site.is_shallow = True # On line 26 the site gets set TO DELETE
                         self.to_visit.put((self.site.url, str(0)))
