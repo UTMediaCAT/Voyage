@@ -136,7 +136,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
     source_sites = list(source_sites_and_aliases.keys())
 
     #Add aliases to keywords (TODO: track alias seperately)
-    db_keywords = sum(list(source_sites_and_aliases.values()), [])
+    db_keywords = sum(list(source_sites_and_aliases.values()), list(ExplorerKeyword.objects.values_list('name', flat=True)))
 
     article_count = 0
     newspaper_articles = []
