@@ -13,7 +13,7 @@ class Article(models.Model):
     class Meta:
         verbose_name = "Referring Article"
 
-    def __unicode__(self):
+    def __str__(self):
         if len(self.title) >= 30:
             return self.title[:27] + '...'
         return self.title
@@ -97,7 +97,7 @@ class Url(models.Model):
     article = models.ForeignKey(Article)
     name = URLProtocolField(max_length=2000, verbose_name="URL", unique=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -119,7 +119,7 @@ class Version(models.Model):
     # source_local = models.NullBooleanField(default=True)
 
 
-    def __unicode__(self):
+    def __str__(self):
         return str(list(self.article.version_set.all()).index(self) + 1) + self.title
 
 # class SourceProxy(models.Model):
@@ -155,7 +155,7 @@ class Author(models.Model):
     version = models.ForeignKey(Version)
     name = models.CharField(max_length=20000)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -211,7 +211,7 @@ class SourceSite(models.Model):
     # date_published = models.DateTimeField('Date Published', blank=True, null=True)
     # is_referring = models.NullBooleanField(default=None)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.url
 
 
@@ -220,7 +220,7 @@ class SourceTwitter(models.Model):
     name = models.CharField(max_length=200)
     matched = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -228,5 +228,5 @@ class Keyword(models.Model):
     version = models.ForeignKey(Version)
     name = models.CharField(max_length=200)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
