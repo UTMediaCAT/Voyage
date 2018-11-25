@@ -185,7 +185,7 @@ def get_keywords(text, keywords):
     # Searches if keyword is in tweet regardless of casing
     for key in keywords:
         try:
-            if re.search('[^a-z]' + key + '[^a-z]', text.encode('utf8'), re.IGNORECASE):
+            if re.search('[^a-z]' + key + '[^a-z]', text, re.IGNORECASE):
                 matched_keywords.append(key)
         except Exception as e:
             print(e)
@@ -234,9 +234,9 @@ def get_source_site_from_csv(tweet_text):
     """
     tweet_text = tweet_text.replace(r"\u2026", "\n")
     try: 
-        urls = {str(url.replace(" ", "")) for url in re.findall("https?:\/\/.*html", tweet_text.decode())}
-        urls.update({str(url.replace(" ", "")[:-1]) for url in re.findall("https?:\/\/ ?\S*\"", tweet_text.decode())})
-        urls.update({str(url.replace(" ", "")) for url in re.findall("(https?:\/\/.*?)\n", tweet_text.decode())})
+        urls = {str(url.replace(" ", "")) for url in re.findall("https?:\/\/.*html", tweet_text)}
+        urls.update({str(url.replace(" ", "")[:-1]) for url in re.findall("https?:\/\/ ?\S*\"", tweet_text)})
+        urls.update({str(url.replace(" ", "")) for url in re.findall("(https?:\/\/.*?)\n", tweet_text)})
     except:
         urls = set()
     return list(urls)
@@ -272,12 +272,11 @@ def process_tweet(tweet, keywords, source_sites, source_accounts):
     Checks if the given tweet match the scope.
     """
     user, tweet_text, tweet_id, tweet_date = tweet.user, tweet.text, tweet.tweet_id, tweet.date
-    tweet_store_date = timezone.localtime(timezone.now())    
+    tweet_store_date = timezone.localtime(timezone.now()) 
     tweet_keywords = get_keywords(tweet_text, keywords)
     tweet_sources = get_source_sites(tweet.urls, source_sites)
     twitter_accounts = get_source_twitter(tweet.mentions, source_accounts)
     retweet_count, favorite_count = tweet.retweet_count, tweet.favorite_count
-
     if len(tweet_text) > 450:
         try:
             tweet_text = tweet_text[:450]
@@ -299,7 +298,6 @@ def process_tweet(tweet, keywords, source_sites, source_accounts):
             tweet.countlog_set.create(retweet_count = retweet_count,
                                     favorite_count = favorite_count,
                                     date =tweet_store_date)
-
             for account in twitter_accounts[0]:
                 tweet.sourcetwitter_set.create(name=account, matched=True)
             for account in twitter_accounts[1]:
@@ -318,7 +316,6 @@ def process_tweet(tweet, keywords, source_sites, source_accounts):
             except:
                 print(("Warc error at {}.{}".format(user, tweet_id)))
                 logging.error("Warc error at {}.{}".format(user, tweet_id))
-
             return ADDED
 
         else:
@@ -497,6 +494,7 @@ def parse_tweet(users, source_sites, keywords, source_accounts):
                 logging.info("{} (Timeline|{}) {}/{} mentions: {}          \r".format(
                              str(timezone.localtime(timezone.now()))[:-13],
                               user, i, tweet_count, ",".join(mentioned_users).encode('utf-8')))
+
             process_result = process_tweet(build_Tweet_from_Twarc_tweet(tweet), keywords, temp_source_sites, source_accounts)
             if process_result == ADDED:
                 added += 1
@@ -513,6 +511,7 @@ def parse_tweet(users, source_sites, keywords, source_accounts):
         print(format("%s (Timeline|%s) %i/%i          " % (
             str(timezone.localtime(timezone.now()))[:-13], user, processed,
             tweet_count)))
+
 
         ReferringTwitterHashtag.objects.filter(user=account).delete()
         for ht in hashtags:
