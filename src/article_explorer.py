@@ -190,6 +190,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 site.is_shallow = True
                 site.save()
                 processed = 0
+                logging.info("sHALLOW activated")
+
                 break
             except StopIteration:
                 logging.info("6")

@@ -2,6 +2,7 @@ import subprocess
 import yaml
 import logging
 import common
+import time
 
 
 
@@ -10,8 +11,10 @@ def create_warc(url, file_name, directory):
     creates a warc file from url and places it in dest
     """
     logging.info("creating warc \"{0}\" as \"{1}\" in \"{2}\"".format(url, file_name, directory))
-    subprocess.call(["mkdir", "-p", directory], cwd="..", close_fds=True)
-    return subprocess.Popen(["wpull", "--user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36", "--no-robots", "--no-check-certificate", "--no-cookies", "--random-wait", "--phantomjs", "--no-phantomjs-snapshot", "--phantomjs-max-time", "150", "--no-warc-keep-log", "--quiet","--delete-after","--warc-file", file_name,  url], cwd="../"+directory, close_fds=True)
+    subprocess.call(["mkdir", "-p", directory], cwd="..", close_fds=True)   # "--reject-regex", ".*(api\.[A-Za-z0-9]*\.com).*, ",
+    print("THE URL IS :  {0} \n".format(url))
+    time.sleep(2)
+    return subprocess.Popen(["wpull", "--user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2227.0 Safari/537.36", "--no-robots", "--no-check-certificate", "--no-cookies", "--waitretry", "2" ,"--random-wait", "--phantomjs", "--no-phantomjs-snapshot", "--phantomjs-max-time", "150", "--no-warc-keep-log", "--quiet","--delete-after","--warc-file", file_name,  url], cwd="../"+directory, close_fds=True)
 
 def create_pdf(url, file_name, directory):
     """
@@ -19,7 +22,7 @@ def create_pdf(url, file_name, directory):
     """
     logging.info("creating pdf \"{0}\" as \"{1}\" in \"{2}\"".format(url, file_name, directory))
     subprocess.call(["mkdir", "-p", directory], cwd="..", close_fds=True)
-
+#https://forward.com/fast-forward/416924/breitbart-news-columnist-caroline-glick-joins-new-right-wing-party-in/
     # create png and img file
     return subprocess.Popen(["phantomjs", "../../src/rasterize.js", url,  file_name], cwd="../"+directory, close_fds=True)
 

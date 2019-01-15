@@ -161,10 +161,12 @@ class Crawler(object):
                         else:
                             current_url = self.to_visit.get_nowait()
                             if (isinstance(current_url, tuple)):
-                                self.site.is_shallow = True
-                                current_url = current[0]
-                                current_level = current[1]
-                                logging.info(u"Shallow on level {0} {1}".format(current_level, current_url))
+                                logging.info("TUPLE {0}", current_url)
+                                # current = self.to_visit.get_nowait()
+                                # self.site.is_shallow = True
+                                # current_url = current[0]
+                                # current_level = current[1]
+                                # logging.info(u"Shallow on level {0} {1}".format(current_level, current_url))
                     except Empty:
                         self.site.is_shallow = True # On line 26 the site gets set TO DELETE
                         self.to_visit.put((self.site.url, str(0)))
@@ -173,7 +175,7 @@ class Crawler(object):
                         error_rate=0.00001)
                         ignore_filter_file.close()
                         os.remove('../ignore_filter/' + self.site.name + '_ignore_file.txt')
-                        logging.info("stopped iteration")
+                        logging.info("stopped iteration CRAWLLER")
                         logging.info("{0}".format(self.site.url))
                         raise ZeroDivisionError
 
@@ -185,9 +187,15 @@ class Crawler(object):
                     article.download()
                     if (self.site.is_shallow):
                         if (int(current_level) > self.level):
+                            logging.info("WAT 1")
                             continue
                     # get urls from the article
+                    logging.info("WAT 12")
+
+                    logging.info(article.get_links())
                     for link in article.get_links():
+                        logging.info("WAT 2   {0}".format(link))
+
                         url = urljoin(current_url, link.href, False)
                         if self.url_in_filter(url, self.filters):
                             logging.info("skipping url \"{0}\" because it matches filter".format(url))
@@ -200,7 +208,7 @@ class Crawler(object):
                                 logging.info("skipping url with invalid scheme: {0}".format(url))
                                 continue
                             parsed_as_list[5] = ''
-                            url = urlunparse(urlnorm.norm_tuple(*parsed_as_list))
+                            url = parsed_url.geturl()
                         except Exception as e:
                             logging.info("skipping malformed url {0}. Error: {1}".format(url, str(e)))
                             continue
@@ -209,29 +217,37 @@ class Crawler(object):
                         # If the url have been added to ignore list, skip
                         if (url in self.ignore_filter):
                             continue
+                        logging.info("WAT 3")
+
                         # Ignores the subscribe links for many domains
                         if ("subscribe" in url or "subscribe" in url and not("-subscribe" in url or "-subscribe" or "subscribe-" in url or "subscribe-")):
                         	continue
+                        logging.info("WAT 4")
 
                         # Append the url to to_visit queue
                         if (self.site.is_shallow):
+                            logging.info("WAT 5")
+
                             self.to_visit.put((url, str(int(current_level) + 1)))
                             logging.info("added {0} to the to_visit as well as the level {1}".format(url, str(int(current_level) + 1)))
 
                             # Append the url to visited to remove duplicates
                             self.ignore_filter.add(url)
-                            ignore_filter_file.write(url.encode('utf8') + "\n")
+                            ignore_filter_file.write(url + "\n")
+                            logging.info("WAT 6")
+
                         else:
                             self.to_visit.put(url)
                             logging.info("added {0} to the to_visit".format(url))
 
                             # Append the url to visited to remove duplicates
                             self.ignore_filter.add(url)
-                            ignore_filter_file.write(url.encode('utf8') + "\n")
+                            ignore_filter_file.write(url + "\n")
 
                     # Update the Queue
                     self.to_visit.task_done()
 
+                    logging.info("WAT 7")
 
                     return article
 
