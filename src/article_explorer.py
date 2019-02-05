@@ -179,6 +179,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
     filters = set(site.referringsitefilter_set.all())
     while True:
+        time.sleep(5)
         try:
             try:
                 logging.info("4")
@@ -371,6 +372,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             matched = False)
 
                     for source in sources[0]:
+                        time.sleep(2)
+
                         logging.info("!LLLLLLLLLLLLLLLLLLLLL  Looking at article url {0}".format(source[0]))
 
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
@@ -596,6 +599,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
 
                     for source in sources[1]:
+                        time.sleep(2)
+
                         logging.info("!YYYYYYYYYYYYYYYYYYYYYYY  Looking at article url {0}".format(source[0]))
 
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
@@ -869,6 +874,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                     logging.info("Adding new Article to the DB   6")
 
                     for source in sources[0]:
+                        time.sleep(2)
+
                         logging.info("!ASDSDAQWDASDSAD  Looking at article url {0}".format(source[0]))
 
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
@@ -1087,6 +1094,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         logging.info("CREATED VERSION qqqQQQQQQQQ")
 
                     for source in sources[1]:
+                        time.sleep(2)
                         logging.info("!ZZZZZZZZZZZZZZZZ  Looking at article url {0}".format(source[0]))
 
                         source_url_match = ArticleUrl.objects.filter(name=source[0])

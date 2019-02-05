@@ -13,7 +13,6 @@ import os
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..',
 #                                              'Frontend')))
 # os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
-# django.setup()
 
 import time
 import common
@@ -22,15 +21,14 @@ import warc_creator
 if __name__ == "__main__":
 
     # number of phantomjs process can be run at a time
-    max_phantoms = common.get_config()["warc"]["max_phantoms"]
+    max_phantoms = 4#common.get_config()["warc"]["max_phantoms"]
     # amount of time between 2 iterations (secs)
-    wait_time = 10
+    wait_time = 5
     article_queue = []
     article_processes = []
 
     # The process keeps running in the background
     while (True):
-        time.sleep(0.5)
         while (len(article_processes) >= max_phantoms):
             time.sleep(0.5)
             article_processes[:] = [p for p in article_processes if p.poll() is None]
@@ -45,19 +43,15 @@ if __name__ == "__main__":
         # read the file and get all the urls
         article_file = open(article_file_name, "r+")
         for line in article_file:
-            time.sleep(0.5)
 
             if (len(line.split(' ')) == 2 and not line.split(' ') in article_queue):
                 article_queue.append(line.split(' '))
 
-        time.sleep(0.5)
         article_file.seek(0)
         article_file.truncate()
         article_file.close()
-        time.sleep(1)
 
         if (len(article_queue) > 0):
-            time.sleep(0.5)
 
             # get first element in the queue
             line = article_queue.pop(0)
@@ -70,10 +64,8 @@ if __name__ == "__main__":
             p = warc_creator.create_article_pdf(url, warc_file_name)
             # wait for 200 seconds, if timeout, kill the process
             num_polls = 0
-            time.sleep(0.5)
 
             while p.poll() is None:
-                time.sleep(0.5)
 
                 # Waiting for the process to finish.
                 time.sleep(0.1)  # Avoid being a CPU busy loop.
@@ -90,13 +82,11 @@ if __name__ == "__main__":
                     break
 
             article_processes.append(p)
-        time.sleep(0.5)
         temp = []
         # article_processes[:] = [p for p in article_processes if p.poll() is None]
         for p in article_processes:
             if p.poll() is None:
                 temp.append(p)
-            time.sleep(0.5)
         article_processes = temp
 
 		# wait wait_time before next iteration
