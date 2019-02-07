@@ -15,7 +15,7 @@ import os
 # os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 
 import time
-import common
+# import common
 import warc_creator
 
 if __name__ == "__main__":

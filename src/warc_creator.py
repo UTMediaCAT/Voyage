@@ -1,7 +1,7 @@
 import subprocess
-import yaml
+#import yaml
 import logging
-import common
+#import common
 import time
 
 
@@ -45,8 +45,8 @@ def create_article_warc(url, file_name):
     ARTICLE_WARC_DIR/http:__www.facebook.com.warc.gz
     """
 
-    config = common.get_config()["warc"]
-    return create_warc(url, file_name, config['dir'] + "/" + config['article_subdir'])
+    #config = common.get_config()["warc"]
+    return create_warc(url, file_name, "warc" + "/" + "article")
 
 
 def create_twitter_warc(url):
@@ -58,8 +58,8 @@ def create_twitter_warc(url):
     TWITTER_WARC_DIR/https:__twitter.com_LeagueOfLegends
     """
     file_name = url.replace("/", "_")
-    config = common.get_config()["warc"]
-    return create_warc(url, file_name, config['dir'] + "/" + config['twitter_subdir'])
+    #config = common.get_config()["warc"]
+    return create_warc(url, file_name, "warc" + "/" + "twitter")
 
 
 def create_article_pdf(url, file_name):
@@ -70,5 +70,5 @@ def create_article_pdf(url, file_name):
     it should have a .pdf file under
     ARTICLE_WARC_DIR/http:__www.facebook.com.pdf
     """
-    config = common.get_config()["pdf"]
-    return create_pdf(url, file_name, config['dir'] + "/" + config['article_subdir'])
+    #config = common.get_config()["pdf"]
+    return create_pdf(url, file_name, "warc" + "/" + "article")
