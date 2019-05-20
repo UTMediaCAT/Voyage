@@ -9,4 +9,4 @@ import analyzer
 import Caching
 
 def comming_soon_statistics(request):
-    return render(request, 'statistics/statistics_comming.html')
+    return render(request, 'statistics/statistics_coming.html')
