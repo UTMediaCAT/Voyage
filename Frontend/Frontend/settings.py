@@ -126,10 +126,7 @@ SUIT_CONFIG = {
 
         {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
 
-        {'label': 'Statistics', 'icon':'icon-signal', 'models': (
-            {'label': 'Articles', 'url': '/statistics/articles'},
-            {'label': 'Tweets', 'url': '/statistics/tweets'},
-        )},
+        {'label': 'Comming Soon: Statistics', 'icon':'icon-signal', 'url': '/statistics/'},
 
         {'label': 'Visualizations', 'icon':'icon-fullscreen', 'models': (
             {'label': 'Article - Source Site', 'url': '/visualizations/article_hypertree'},
