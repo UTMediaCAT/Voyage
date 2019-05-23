@@ -127,11 +127,11 @@ SUIT_CONFIG = {
         {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
 
         {'label': 'Statistics', 'icon':'icon-signal', 'models': (
-            {'label': 'Coming Soon', 'url': '/statistics/coming_soon'},
+            {'label': 'Coming Soon', 'url': '/statistics/'},
         )},
 
         {'label': 'Visualizations', 'icon':'icon-fullscreen', 'models': (
-            {'label': 'Coming Soon', 'url': '/visualizations/coming_soon'},
+            {'label': 'Coming Soon', 'url': '/visualizations/'},
         )},
 
         {'label': 'Authorization', 'icon':'icon-lock', 'models': ('auth.user', 'auth.group')},
