@@ -31,59 +31,59 @@ class Crawler(object):
         self.domain = urlparse(site.url).netloc
         # http://alexeyvishnevsky.com/2013/11/tips-on-optimizing-scrapy-for-a-high-performance/
         # fork of pybloom: https://github.com/joseph-fox/python-bloomfilter
-        logging.info("c1")
+        # logging.info("c1")
         self.ignore_filter = ScalableBloomFilter(
                 initial_capacity=10000000,
                 error_rate=0.00001)
         ignore_filter_dir='../ignore_filter/'
-        logging.info("c2")
+        # logging.info("c2")
         if not os.path.exists(ignore_filter_dir):
             os.makedirs(ignore_filter_dir)
-            logging.info("c3")
+            # logging.info("c3")
             self.ignore_filter = ScalableBloomFilter(
                 initial_capacity=10000000,
                 error_rate=0.00001)
-            logging.info("c4")
+            # logging.info("c4")
             try:
-                logging.info("c5")
+                # logging.info("c5")
 
                 f = open('../ignore_filter/' + self.site.name + '_ignore_file.txt', 'r+')
                 f.write(self.ignore_filter)
             except IOError:
-                logging.info("c6")
+                # logging.info("c6")
                 f = open('../ignore_filter/' + self.site.name + '_ignore_file.txt', 'w+')
-                logging.info("c7")
+                # logging.info("c7")
             f.close()
         else:
-            logging.info("c8")
+            # logging.info("c8")
             if (not(os.path.exists('../ignore_filter/' + self.site.name + '_ignore_file.txt'))):
                 f = open('../ignore_filter/' + self.site.name + '_ignore_file.txt', 'w+')
                 f.close()
-                logging.info("c9")
+                # logging.info("c9")
 
-            logging.info("cWITH")
+            # logging.info("cWITH")
             time.sleep(2)
             with open('../ignore_filter/' + self.site.name + '_ignore_file.txt', 'r+', buffering=4096) as ignore_filter_file:
-                logging.info("cWITH2")
+                # logging.info("cWITH2")
                 try:
-                    logging.info("c10")
+                    # logging.info("c10")
                     for line in ignore_filter_file:
                         self.ignore_filter.add(line.decode('utf8').rstrip())
                 except Exception as e:
                     logging.info(str(e))
             ignore_filter_file.close()
-        logging.info("c11")
+        # logging.info("c11")
         self.visited_count = 0
 
         tmpqueuetmp_dir='../tmpqueue/tmp/'
         if not os.path.exists(tmpqueuetmp_dir):
             os.makedirs(tmpqueuetmp_dir)
-            logging.info("c12")
+            # logging.info("c12")
         slugified_name = slugify(str(site.name))
         tmpqueue_dir = '../tmpqueue/{}'.format(slugified_name)
         if not os.path.exists(tmpqueue_dir):
             os.makedirs(tmpqueue_dir)
-        logging.info("c13")
+        # logging.info("c13")
         self.to_visit = Queue(tmpqueue_dir, tempdir=tmpqueuetmp_dir)
 
         # Initial url
@@ -91,12 +91,12 @@ class Crawler(object):
             self.to_visit.put(site.url)
         else:
             self.to_visit.put((site.url, str(0)))
-        logging.info("c14")
+        # logging.info("c14")
         # Limit
         self.limit = common.get_config()["crawler"]["limit"]
         # Specifies how deep the shallow crawler should go; "1" is the lowest option for this
         self.level = common.get_config()["crawler"]["level"]
-        logging.info("c15")
+        # logging.info("c15")
         """
         self.probabilistic_n = common.get_config()["crawler"]["n"]
         self.probabilistic_k = common.get_config()["crawler"]["k"]
@@ -160,8 +160,8 @@ class Crawler(object):
                             logging.info("Shallow on level {0} {1}".format(current_level, current_url))
                         else:
                             current_url = self.to_visit.get_nowait()
-                            if (isinstance(current_url, tuple)):
-                                logging.info("TUPLE {0}", current_url)
+                            # if (isinstance(current_url, tuple)):
+                                # logging.info("TUPLE {0}", current_url)
                                 # current = self.to_visit.get_nowait()
                                 # self.site.is_shallow = True
                                 # current_url = current[0]
@@ -175,8 +175,8 @@ class Crawler(object):
                         error_rate=0.00001)
                         ignore_filter_file.close()
                         os.remove('../ignore_filter/' + self.site.name + '_ignore_file.txt')
-                        logging.info("stopped iteration CRAWLLER")
-                        logging.info("{0}".format(self.site.url))
+                        # logging.info("stopped iteration CRAWLLER")
+                        # logging.info("{0}".format(self.site.url))
                         raise ZeroDivisionError
 
 
@@ -187,14 +187,14 @@ class Crawler(object):
                     article.download()
                     if (self.site.is_shallow):
                         if (int(current_level) > self.level):
-                            logging.info("WAT 1")
+                            # logging.info("WAT 1")
                             continue
                     # get urls from the article
-                    logging.info("WAT 12")
+                    # logging.info("WAT 12")
 
                     logging.info(article.get_links())
                     for link in article.get_links():
-                        logging.info("WAT 2   {0}".format(link))
+                        # logging.info("WAT 2   {0}".format(link))
 
                         url = urljoin(current_url, link.href, False)
                         if self.url_in_filter(url, self.filters):
@@ -217,16 +217,16 @@ class Crawler(object):
                         # If the url have been added to ignore list, skip
                         if (url in self.ignore_filter):
                             continue
-                        logging.info("WAT 3")
+                        # logging.info("WAT 3")
 
                         # Ignores the subscribe links for many domains
                         if ("subscribe" in url or "subscribe" in url and not("-subscribe" in url or "-subscribe" or "subscribe-" in url or "subscribe-")):
                         	continue
-                        logging.info("WAT 4")
+                        # logging.info("WAT 4")
 
                         # Append the url to to_visit queue
                         if (self.site.is_shallow):
-                            logging.info("WAT 5")
+                            # logging.info("WAT 5")
 
                             self.to_visit.put((url, str(int(current_level) + 1)))
                             logging.info("added {0} to the to_visit as well as the level {1}".format(url, str(int(current_level) + 1)))
@@ -234,7 +234,7 @@ class Crawler(object):
                             # Append the url to visited to remove duplicates
                             self.ignore_filter.add(url)
                             ignore_filter_file.write(url + "\n")
-                            logging.info("WAT 6")
+                            # logging.info("WAT 6")
 
                         else:
                             self.to_visit.put(url)
@@ -247,7 +247,7 @@ class Crawler(object):
                     # Update the Queue
                     self.to_visit.task_done()
 
-                    logging.info("WAT 7")
+                    # logging.info("WAT 7")
 
                     return article
 
