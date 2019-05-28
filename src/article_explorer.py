@@ -602,6 +602,10 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
 
                     for source in sources[1]:
+                        # if source is in actual source_sites list
+                        if (source not in source_sites):
+                            continue
+
                         time.sleep(2)
 
                         # logging.info("!YYYYYYYYYYYYYYYYYYYYYYY  Looking at article url {0}".format(source[0]))
@@ -1097,6 +1101,10 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         # logging.info("CREATED VERSION qqqQQQQQQQQ")
 
                     for source in sources[1]:
+                        # if source is in actual source_sites list
+                        if (source not in source_sites):
+                            continue
+                        
                         time.sleep(2)
                         # logging.info("!ZZZZZZZZZZZZZZZZ  Looking at article url {0}".format(source[0]))
 
