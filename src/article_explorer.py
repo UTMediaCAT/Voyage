@@ -142,7 +142,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
     #Setup logging for this site
     setup_logging(site.name)
 
-    #Remove the source site that matches site
+    #Remove the source site that matches site (referring site)
     if site.url in source_sites_and_aliases:
         logging.info("Removed Source Site (Referring Site is identical): {0}".format(site.url))
         del source_sites_and_aliases[site.url]
@@ -173,7 +173,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
     if(site.mode == 1 or site.mode == 2):
         # logging.info("1")
         crawlersource_articles = Crawler.Crawler(site)
-        logging.info("Starting MediaCAT crawler with limit: {} from plan b crawler".format(crawlersource_articles.limit))
+        logging.info("Starting MediaCAT crawler with limit: {0} from plan b crawler".format(crawlersource_articles.limit))
     # logging.info("2")
 
     article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
@@ -252,6 +252,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             # Regex the links within article's html
             sources = get_sources_sites(article, source_sites)
             logging.debug("matched sources: {0}".format(repr(sources)))
+            logging.info("matched sources: {0}".format(repr(sources)))
             twitter_accounts = get_sources_twitter(article, twitter_accounts_explorer)
             logging.debug("matched twitter_accounts: {0}".format(repr(twitter_accounts[0])))
             
@@ -312,7 +313,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             # Version  Url      Outcome
             # match    match    Update date_last_seen
             # match    unmatch  Add new Url to article
-            # unmatch  match    Add new Version to artcile
+            # unmatch  match    Add new Version to article
             # unmatch  unmatch  Create new Article with respective Version and Url
             if version_match:
                 if (version_match[0].article.is_referring == True):
@@ -374,16 +375,19 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             name=account,
                             matched = False)
 
+                    ## for all matched source sites found in article with the source link (in scope)
                     for source in sources[0]:
                         time.sleep(2)
 
                         # logging.info("!LLLLLLLLLLLLLLLLLLLLL  Looking at article url {0}".format(source[0]))
 
+                        ## this is the curr article url obj, set if it's == this curr source url href
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
                         sourcesite_url_match = True
                         if (source_url_match):
                             # logging.info("Matched URL 1")
-
+                            ## this article url is exist in the source sites list from scope, see if the
+                            ## sourcesite_url match the.....
                             sourcesite_url_match = source_url_match[0].article.version_set.last().sourcesite_set.filter(url=source[0])
                         if (source_url_match and not sourcesite_url_match): # and source_url_match[0].article.version_set.last().sourcesite_set.last().referring_url != url):
                             # logging.info("Matched URL 1 Not Matched source site 1")
