@@ -613,10 +613,10 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                     logging.info("source: {0}, source_site: {1}".format(source, source_sites))
                     for source in sources[1]:
                         # if source is in actual source_sites list
-                        if (check_source(source, source_sites) == False):
-                            logging.info("check_source return false")
+                        if (check_source_domain(source, source_sites) == False):
+                            logging.info("check_source_domain return false")
                             continue    
-                        logging.info("check_source return true")
+                        logging.info("check_source_domain return true")
                         logging.info("this unmatched source is in source_site ...")
                         time.sleep(2)
 
@@ -1117,10 +1117,10 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                     
                     for source in sources[1]:
                         # if source is in actual source_sites list
-                        if (check_source(source, source_sites) == False):
-                            logging.info("check_source return false")
+                        if (check_source_domain(source, source_sites) == False):
+                            logging.info("check_source_domain return false")
                             continue
-                        logging.info("check_source return true")
+                        logging.info("check_source_domain return true")
                         time.sleep(2)
                         # logging.info("!ZZZZZZZZZZZZZZZZ  Looking at article url {0}".format(source[0]))
 
@@ -1574,24 +1574,14 @@ def setup_logging(site_name="", increment=True):
     # Finish logging config
 
 '''
-    check_source: given an article full url, check if its domain belongs to one of the source sites
+    check_source_domain: given an article full url, check if its domain belongs to one of the source sites
     param: source - this current article full url
     param: source_sites - all source sites url
     return True if the source domain is belong to source_sites url
 '''
-def check_source(source, source_sites) :
-    modified_source = source[0]
-    url = ""
-    if ('http://' in modified_source):
-        url = modified_source[7:]
-        count = url.find('/')
-        url = modified_source[:count+8]
-    elif 'https://' in modified_source:
-        url = modified_source[8:]
-        count = url.find('/')
-        url = modified_source[:count+9]      
-    if (url == ""):
-        url = modified_source
+def check_source_domain(source, source_sites) :
+    modified_source = source[1]
+    
     if (url not in source_sites):
         return False
     return True
