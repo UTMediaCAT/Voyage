@@ -1106,7 +1106,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                     # For all sourced articles that were filtered based on
                     # the source sites.
-                    for source in sources[1]:
+                    for source in filtered_sources:
                         time.sleep(2)
                         # logging.info("!ZZZZZZZZZZZZZZZZ  Looking at article url {0}".format(source[0]))
 
