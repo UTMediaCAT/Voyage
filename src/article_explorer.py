@@ -1373,9 +1373,18 @@ def filter_source_sites(source_list, source_site_list):
     :return:
     """
     filtered_list = []
-    for site in source_list:
+    http_lengths = {'http://': 8, 'https://': 9}
+    for site_to_check in source_list:
+        # Only the domain url of the site is to be checked.
+        site = site_to_check[0]
+        # Remove all prefixes and suffixes of the website's url to be able to only compare the domain.
+        for key in http_lengths.keys():
+            if key in site:
+                site = site.replace(key, '')
+                site = site[:site.find('/') + http_lengths[key]]
+        # Do the check.
         if site in source_site_list:
-            filtered_list.append(site)
+            filtered_list.append(site_to_check)
     return filtered_list
 
 
