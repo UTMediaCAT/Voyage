@@ -119,7 +119,7 @@ def parse_articles(referring_sites, db_keywords, source_sites_and_aliases, twitt
             threads[site] = Process(target=pass_database, args=([s]))
             threads[site].start()
 
-        sleeo_time = config['min_iteration_time']
+        sleep_time = config['min_iteration_time']
         logging.warning("Sleeping for %is"%sleep_time)
        
         while True:
@@ -609,7 +609,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                     # For all sourced articles that were filtered based on
                     # the source sites.
                     for source in filtered_sources:
-                        source_sites
                         time.sleep(2)
 
                         # logging.info("!YYYYYYYYYYYYYYYYYYYYYYY  Looking at article url {0}".format(source[0]))
