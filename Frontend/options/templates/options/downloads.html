@@ -17,6 +17,15 @@
             <input type="file" name="scopefile">
           {% endif %}
         </form>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <button class="btn btn-info" type="submit">Upload Excel</button>
+          {% if scope_message_excel %}
+            {{ scope_message_excel }}
+          {% else %}
+            <input type="file" name="scopefileExcel">
+          {% endif %}
+        </form>
       </div>
     </div>
     <div class="download-container">

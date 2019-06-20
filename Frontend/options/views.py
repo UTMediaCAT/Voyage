@@ -74,6 +74,59 @@ def downloads(request):
     
     return render(request, 'options/downloads.html', context)
 
+
+def downloadsExcel(request):
+    if not request.user.is_authenticated():
+        return redirect('/admin/login/?next=%s' % request.path)
+
+    deleted = False
+    context = {}
+    if request.method == 'POST':
+        try:   # upload excel scope file
+            scopefile = request.FILES['scopefileExcel']
+            try:
+                version = scopefile.readline().strip()
+                db_version = common.get_config()['database']['version']
+                if (str(version.count(bytes('.'.encode('utf-8')))) == 2 and version != db_version):
+                    result = format("Database schema version mismatch (Need: %s, Given: %s)" %
+                                    (db_version, version))
+                else:
+                    # Backup Current Scope in a variable
+                    out = StringIO()
+                    management.call_command('dumpdata', 'explorer', 'taggit', stdout=out)
+                    currentScope = out.getvalue()
+                    out.close()
+                    
+                    # Delete Current Scope
+                    # deleteScope()
+                    # deleted = True
+
+                    # Replace Scope
+                    tf = tempfile.NamedTemporaryFile(suffix='.json')
+                    tf.write(bytes(scopefile.read()))
+                    tf.seek(0)
+                    out = StringIO()
+                    management.call_command('loaddata', tf.name, stdout=out)
+                    out.close()
+                    tf.close()
+                    result = "Success"
+            except:
+                result = "Failed"
+                if (deleted):
+                    # Put the Current Scope back into db
+                    tf = tempfile.NamedTemporaryFile(suffix='.json')
+                    tf.write(currentScope)
+                    tf.seek(0)
+                    management.call_command('loaddata', tf.name)
+                    tf.close()
+            finally:
+                context['scope_message_excel'] = result
+        except:
+            pass
+    
+    return render(request, 'options/downloads.html', context)
+
+
 def deleteScope():
     ReferringSite.objects.all().delete()
     ReferringSiteFilter.objects.all().delete()
