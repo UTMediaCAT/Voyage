@@ -254,7 +254,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             logging.debug("matched keywords: {0}".format(repr(keywords)))
             # Regex the links within article's html
             sources = get_sources_sites(article, source_sites)
-            filtered_sources = filter_source_sites(sources[1], source_sites)
+            filtered_sources_a = filter_source_sites(sources[0], source_sites)
+            filtered_sources_b = filter_source_sites(sources[1], source_sites)
             logging.debug("matched sources: {0}".format(repr(sources)))
             twitter_accounts = get_sources_twitter(article, twitter_accounts_explorer)
             logging.debug("matched twitter_accounts: {0}".format(repr(twitter_accounts[0])))
@@ -380,7 +381,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             name=account,
                             matched = False)
 
-                    for source in sources[0]:
+                    for source in filtered_sources_a:
                         time.sleep(2)
 
                         # logging.info("!LLLLLLLLLLLLLLLLLLLLL  Looking at article url {0}".format(source[0]))
@@ -608,7 +609,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                     # For all sourced articles that were filtered based on
                     # the source sites.
-                    for source in filtered_sources:
+                    for source in filtered_sources_b:
                         time.sleep(2)
 
                         # logging.info("!YYYYYYYYYYYYYYYYYYYYYYY  Looking at article url {0}".format(source[0]))
@@ -883,7 +884,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             matched = False)
                     # logging.info("Adding new Article to the DB   6")
 
-                    for source in sources[0]:
+                    for source in filtered_sources_a:
                         time.sleep(2)
 
                         # logging.info("!ASDSDAQWDASDSAD  Looking at article url {0}".format(source[0]))
@@ -1105,7 +1106,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                     # For all sourced articles that were filtered based on
                     # the source sites.
-                    for source in filtered_sources:
+                    for source in filtered_sources_b:
                         time.sleep(2)
                         # logging.info("!ZZZZZZZZZZZZZZZZ  Looking at article url {0}".format(source[0]))
 
@@ -1371,19 +1372,32 @@ def filter_source_sites(source_list, source_site_list):
     :param source_site_list: The list of the actual sourced articles we want.
     :return:
     """
+    logging.ingo("CHECKING AGAINST SOURCE SITES - RR")
     filtered_list = []
-    http_lengths = {'http://': 8, 'https://': 9}
     for site_to_check in source_list:
         # Only the domain url of the site is to be checked.
-        site = site_to_check[0]
-        # Remove all prefixes and suffixes of the website's url to be able to only compare the domain.
-        for key in http_lengths.keys():
-            if key in site:
-                site = site.replace(key, '')
-                site = site[:site.find('/') + http_lengths[key]]
-        # Do the check.
-        if site in source_site_list:
+        site = site_to_check[0] + '/'
+        logging.info(site)
+        # Check this website against all the source sites.
+        found = False
+        counter = 0
+        while not found and counter < source_site_list.length:
+            logging.info("Checking against - " + source_site_list[counter])
+            if site in source_site_list[counter]:
+                logging.info("PRESENT")
+                if source_site_list[counter].element(site) is 0:
+                    found = True
+                    logging.info("FOUND")
+                elif source_site_list[counter].element(site) > 0 and \
+                    not source_site_list[counter][source_site_list[counter].element(site)].isalpha():
+                    found = True
+                    logging.info("FOUND")
+            else:
+                counter += 1
+        if found:
             filtered_list.append(site_to_check)
+        else:
+            logging.info("NOT FOUND")
     return filtered_list
 
 
