@@ -21,3 +21,4 @@ pqueue==0.1.6
 eventlet==0.20.1
 lxml==3.6.0
 pyquery==1.2.10
+openpyxl==2.5.6
