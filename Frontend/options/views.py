@@ -74,6 +74,11 @@ def downloads(request):
     
     return render(request, 'options/downloads.html', context)
 
+def downloadPage(request):
+    if not request.user.is_authenticated():
+        return redirect('/admin/login/?next=%s' % request.path)
+
+    return render(request, 'options/downloads.html')
 
 def downloadsExcel(request):
     if not request.user.is_authenticated():
@@ -109,9 +114,9 @@ def downloadsExcel(request):
                     management.call_command('loaddata', tf.name, stdout=out)
                     out.close()
                     tf.close()
-                    result = "Success"
+                    result = "Success123"
             except:
-                result = "Failed"
+                result = "Failed123"
                 if (deleted):
                     # Put the Current Scope back into db
                     tf = tempfile.NamedTemporaryFile(suffix='.json')

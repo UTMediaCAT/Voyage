@@ -8,7 +8,7 @@
       <h2>Scope</h2>
       <div class="downloads">
         <a class="btn btn-success" href="/explorer/getDump">Download JSON</a>
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" action="/options/downloads/json">
           {% csrf_token %}
           <button class="btn btn-info" type="submit">Upload JSON</button>
           {% if scope_message %}
@@ -17,7 +17,7 @@
             <input type="file" name="scopefile">
           {% endif %}
         </form>
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" action="/options/downloads/excel">
           {% csrf_token %}
           <button class="btn btn-info" type="submit">Upload Excel</button>
           {% if scope_message_excel %}
