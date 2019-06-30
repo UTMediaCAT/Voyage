@@ -68,7 +68,7 @@ def downloads(request):
                     management.call_command('loaddata', tf.name)
                     tf.close()
             finally:
-                context['scope_message'] = result
+                context['scope_message'] = result.POST
         except:
             pass
     
@@ -89,6 +89,7 @@ def downloadsExcel(request):
     if request.method == 'POST':
         try:   # upload excel scope file
             scopefile = request.FILES['scopefileExcel']
+            selected_type = request.POST['uploadType']
             try:
                 version = scopefile.readline().strip()
                 db_version = common.get_config()['database']['version']
@@ -96,32 +97,48 @@ def downloadsExcel(request):
                     result = format("Database schema version mismatch (Need: %s, Given: %s)" %
                                     (db_version, version))
                 else:
+                    # convert excel to json
+                    # call function to get json file
+
                     # Backup Current Scope in a variable
                     out = StringIO()
                     management.call_command('dumpdata', 'explorer', 'taggit', stdout=out)
                     currentScope = out.getvalue()
                     out.close()
                     
-                    # Delete Current Scope
-                    # deleteScope()
-                    # deleted = True
+                    if (selected_type == "replace"):
+                        # Delete Current Scope
+                        deleteScope()
+                        deleted = True
 
-                    # Replace Scope
-                    tf = tempfile.NamedTemporaryFile(suffix='.json')
-                    tf.write(bytes(scopefile.read()))
-                    tf.seek(0)
-                    out = StringIO()
-                    management.call_command('loaddata', tf.name, stdout=out)
-                    out.close()
-                    tf.close()
-                    result = "Success123"
+                        # Replace Scope
+                        tf = tempfile.NamedTemporaryFile(suffix='.json')
+                        tf.write(bytes(scopefile.read()))
+                        tf.seek(0)
+                        out = StringIO()
+                        management.call_command('loaddata', tf.name, stdout=out)
+                        out.close()
+                        tf.close()
+                        result = "Successfully replaced"
+                    elif (selected_type == "append"):
+                        # Append Scope
+                        tf = tempfile.NamedTemporaryFile(suffix='.json')
+                        tf.write(bytes(scopefile.read()))
+                        tf.seek(0)
+                        out = StringIO()
+                        management.call_command('loaddata', tf.name, stdout=out)
+                        out.close()
+                        tf.close()
+                        result = "Successfully appended"
             except:
-                result = "Failed123"
+                result = "Failed"
                 if (deleted):
                     # Put the Current Scope back into db
                     tf = tempfile.NamedTemporaryFile(suffix='.json')
                     tf.write(currentScope)
                     tf.seek(0)
+                    # TODO: check if there's any duplicated sites?
+                    # update or ignore?
                     management.call_command('loaddata', tf.name)
                     tf.close()
             finally:

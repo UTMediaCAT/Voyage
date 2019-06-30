@@ -24,6 +24,8 @@
             {{ scope_message_excel }}
           {% else %}
             <input type="file" name="scopefileExcel">
+            <input type="radio" name="uploadType" value="replace" checked> replace
+            <input type="radio" name="uploadType" value="append"> append
           {% endif %}
         </form>
       </div>
