@@ -24,6 +24,12 @@ from taggit.models import (
     TaggedItem
 )
 
+def downloadPage(request):
+    if not request.user.is_authenticated():
+        return redirect('/admin/login/?next=%s' % request.path)
+
+    return render(request, 'options/downloads.html')
+
 def downloads(request):
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)
@@ -68,12 +74,6 @@ def downloads(request):
             pass
     
     return render(request, 'options/downloads.html', context)
-
-def downloadPage(request):
-    if not request.user.is_authenticated():
-        return redirect('/admin/login/?next=%s' % request.path)
-
-    return render(request, 'options/downloads.html')
 
 def downloadsExcel(request):
     if not request.user.is_authenticated():
@@ -155,11 +155,11 @@ def deleteScope():
 def restoreLastScope(deleted, currentScope):
     if (deleted):
         # Put the Current Scope back into db
-        tf2 = tempfile.NamedTemporaryFile('w+t', suffix='.json')
+        tf = tempfile.NamedTemporaryFile('w+t', suffix='.json')
         try:
-            with open(tf2.name, 'w') as fd:
+            with open(tf.name, 'w') as fd:
                 fd.write(currentScope)
                 fd.seek(0)
-                management.call_command('loaddata', tf2.name)
+                management.call_command('loaddata', tf.name)
         finally:
-            tf2.close()
+            tf.close()

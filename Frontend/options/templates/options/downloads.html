@@ -19,13 +19,19 @@
         </form>
         <form method="post" enctype="multipart/form-data" action="/options/downloads/excel">
           {% csrf_token %}
-          <button class="btn btn-info" type="submit">Upload Excel</button>
           {% if scope_message_excel %}
             {{ scope_message_excel }}
           {% else %}
-            <input type="file" name="scopefileExcel">
-            <input type="radio" name="uploadType" value="replace" checked> replace
-            <input type="radio" name="uploadType" value="append"> append
+            <div class="form-group">
+              <input type="file" name="scopefileExcel" class="file-selection-btn">
+              <div class="radio-group">
+                <input type="radio" name="uploadType" class="radio-btn" value="replace" id="r1" checked>
+                <label for="r1">Replace</label>
+                <input type="radio" name="uploadType" class="radio-btn" value="append" id="r2">
+                <label for="r2">Append</label>
+              </div>
+            </div>
+            <button class="btn btn-info" type="submit">Upload Excel</button>
           {% endif %}
         </form>
       </div>
@@ -74,6 +80,30 @@ h2 {
   line-height: 0px;
 }
 
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.file-selection-btn {
+  margin: 10px;
+  padding-top: 5%;
+  border-top: black 1px solid;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: row;
+  margin-left: 10px;
+  width: inherit;
+  justify-content: flex-start;
+}
+
+.radio-group label {
+  margin-right: 5%;
+  margin-left: 2%;
+  margin-top: 1%;
+}
     </style>
   </div>
 {% endblock %}
