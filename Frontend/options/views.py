@@ -24,6 +24,9 @@ from taggit.models import (
     TaggedItem
 )
 
+ALLOWED_EXTENSIONS_JSON = set(['json'])
+ALLOWED_EXTENSIONS_EXCEL = set(['xlsx'])
+
 def downloadPage(request):
     if not request.user.is_authenticated():
         return redirect('/admin/login/?next=%s' % request.path)
@@ -91,7 +94,10 @@ def downloadsExcel(request):
                 if (str(version.count(bytes('.'.encode('utf-8')))) == 2 and version != db_version):
                     result = format("Database schema version mismatch (Need: %s, Given: %s)" %
                                     (db_version, version))
-                else:
+                else:                    
+                    # if (allowed_file(scopefile, ALLOWED_EXTENSIONS_EXCEL) == False):
+                    #     raise ValueError('Wrong file type')
+
                     # convert excel to json
                     # call function to get json file
 
@@ -100,7 +106,6 @@ def downloadsExcel(request):
                     management.call_command('dumpdata', 'explorer', 'taggit', stdout=out)
                     currentScope = out.getvalue()
                     out.close()
-                    result = currentScope
                     if (selected_type == "replace"):
                         # Delete Current Scope
                         deleteScope()
@@ -115,18 +120,19 @@ def downloadsExcel(request):
                         out.close()
                         tf.close()
                         result = "Successfully replaced"
+                      
                     elif (selected_type == "append"):
                         # Append Scope
                         tf = tempfile.NamedTemporaryFile(suffix='.json')
                         tf.write(bytes(scopefile.read()))
                         tf.seek(0)
                         out = StringIO()
-                        # TODO: check if there's any duplicated sites?
-                        # update or ignore?
                         management.call_command('loaddata', tf.name, stdout=out)
                         out.close()
                         tf.close()
                         result = "Successfully appended"
+            # except ValueError as e:
+            #     result = "Wrong file type"
             except:
                 result = "Failed"
                 restoreLastScope(deleted, currentScope)
@@ -163,3 +169,6 @@ def restoreLastScope(deleted, currentScope):
                 management.call_command('loaddata', tf.name)
         finally:
             tf.close()
+
+def allowed_file(filename, allowlist):
+    return filename.split('.', 1)[1].lower() in allowlist
