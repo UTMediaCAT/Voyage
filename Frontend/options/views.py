@@ -6,6 +6,7 @@ import sys, os
 import tempfile
 from io import StringIO
 import common
+import json
 
 from explorer.models import (
     ReferringSite,
@@ -60,15 +61,9 @@ def downloads(request):
                     result = "Success"
             except:
                 result = "Failed"
-                if (deleted):
-                    # Put the Current Scope back into db
-                    tf = tempfile.NamedTemporaryFile(suffix='.json')
-                    tf.write(currentScope)
-                    tf.seek(0)
-                    management.call_command('loaddata', tf.name)
-                    tf.close()
+                restoreLastScope(deleted, currentScope)
             finally:
-                context['scope_message'] = result.POST
+                context['scope_message'] = result
         except:
             pass
     
@@ -105,7 +100,7 @@ def downloadsExcel(request):
                     management.call_command('dumpdata', 'explorer', 'taggit', stdout=out)
                     currentScope = out.getvalue()
                     out.close()
-                    
+                    result = currentScope
                     if (selected_type == "replace"):
                         # Delete Current Scope
                         deleteScope()
@@ -126,21 +121,16 @@ def downloadsExcel(request):
                         tf.write(bytes(scopefile.read()))
                         tf.seek(0)
                         out = StringIO()
+                        # TODO: check if there's any duplicated sites?
+                        # update or ignore?
                         management.call_command('loaddata', tf.name, stdout=out)
                         out.close()
                         tf.close()
                         result = "Successfully appended"
             except:
                 result = "Failed"
-                if (deleted):
-                    # Put the Current Scope back into db
-                    tf = tempfile.NamedTemporaryFile(suffix='.json')
-                    tf.write(currentScope)
-                    tf.seek(0)
-                    # TODO: check if there's any duplicated sites?
-                    # update or ignore?
-                    management.call_command('loaddata', tf.name)
-                    tf.close()
+                restoreLastScope(deleted, currentScope)
+                
             finally:
                 context['scope_message_excel'] = result
         except:
@@ -161,3 +151,15 @@ def deleteScope():
     Keyword.objects.all().delete()
     Tag.objects.all().delete()
     TaggedItem.objects.all().delete()
+
+def restoreLastScope(deleted, currentScope):
+    if (deleted):
+        # Put the Current Scope back into db
+        tf2 = tempfile.NamedTemporaryFile('w+t', suffix='.json')
+        try:
+            with open(tf2.name, 'w') as fd:
+                fd.write(currentScope)
+                fd.seek(0)
+                management.call_command('loaddata', tf2.name)
+        finally:
+            tf2.close()
