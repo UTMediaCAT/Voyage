@@ -199,6 +199,8 @@ def downloadsExcel(request):
 
     return render(request, 'options/downloads.html', context)
 
+def uploadExcelTwitter(request):
+    return render(request, 'options/downloads.html')
 
 def deleteScope():
     ReferringSite.objects.all().delete()
