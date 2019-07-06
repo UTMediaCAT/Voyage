@@ -89,59 +89,114 @@ def downloadsExcel(request):
             scopefile = request.FILES['scopefileExcel']
             selected_type = request.POST['uploadType']
             try:
-                version = scopefile.readline().strip()
-                db_version = common.get_config()['database']['version']
-                if (str(version.count(bytes('.'.encode('utf-8')))) == 2 and version != db_version):
-                    result = format("Database schema version mismatch (Need: %s, Given: %s)" %
-                                    (db_version, version))
-                else:                    
-                    # if (allowed_file(scopefile, ALLOWED_EXTENSIONS_EXCEL) == False):
-                    #     raise ValueError('Wrong file type')
+                # if (allowed_file(scopefile, ALLOWED_EXTENSIONS_EXCEL) == False):
+                #     raise ValueError('Wrong file type')
 
-                    # convert excel to json
-                    # call function to get json file
+                # convert excel to json
+                # call function to get json file
+                # scopefile = convertFile(scopefile)
 
-                    # Backup Current Scope in a variable
-                    out = StringIO()
-                    management.call_command('dumpdata', 'explorer', 'taggit', stdout=out)
-                    currentScope = out.getvalue()
-                    out.close()
-                    if (selected_type == "replace"):
-                        # Delete Current Scope
-                        deleteScope()
-                        deleted = True
+                # Backup Current Scope in a variable
+                out = StringIO()
+                management.call_command('dumpdata', 'explorer', 'taggit', stdout=out)
+                currentScope = out.getvalue()
+                out.close()
 
-                        # Replace Scope
-                        tf = tempfile.NamedTemporaryFile(suffix='.json')
-                        tf.write(bytes(scopefile.read()))
-                        tf.seek(0)
-                        out = StringIO()
-                        management.call_command('loaddata', tf.name, stdout=out)
-                        out.close()
-                        tf.close()
-                        result = "Successfully replaced"
-                      
-                    elif (selected_type == "append"):
-                        # Append Scope
-                        tf = tempfile.NamedTemporaryFile(suffix='.json')
-                        tf.write(bytes(scopefile.read()))
-                        tf.seek(0)
-                        out = StringIO()
-                        management.call_command('loaddata', tf.name, stdout=out)
-                        out.close()
-                        tf.close()
-                        result = "Successfully appended"
+                # read json file one by one
+                jsonstr = scopefile.read().decode("utf-8")
+                jsonDict = json.loads(jsonstr)
+                result = ""
+                skipped = []
+                i = 0
+                temp = []
+
+                if (selected_type == "replace"):
+                    # Delete Current Scope
+                    deleteScope()
+                    deleted = True
+
+                    # get info to insert to scope
+                    for obj in jsonDict:
+                        i = i + 1
+                        website = obj["website"]
+                        sitename = obj["outlet name"]
+                        site_type = obj["site_type"]
+                        default_scan = 2 # both scanning method
+
+                        # skip insert a record if exception happened when inserting
+                        try:
+                            # add if complete information
+                            if (site_type == "sourcesite"):
+                                # add to source
+                                s = SourceSite(url=website, name=sitename)
+                                s.save()
+
+                            elif (site_type == "referringsite"):
+                                # add to referring
+                                r = ReferringSite(url=website, name=sitename, mode=default_scan, is_shallow=False)
+                                r.save()
+                            else:
+                                raise Exception()
+                        except:
+                            skipped.append(i)
+
+                    result = "Successfully replaced"
+                    if (len(skipped) > 0):
+                        result += ", with skipped record of line "
+                        result += str(skipped)
+
+                elif (selected_type == "append"):
+                    skippedException = []
+                    # get info to insert to scope
+                    for obj in jsonDict:
+                        i = i + 1
+                        website = obj["website"]
+                        sitename = obj["outlet name"]
+                        site_type = obj["site_type"]
+                        default_scan = 2 # both scan
+                        try:
+                            # add if complete information and no duplicate
+                            if (site_type == "sourcesite"):
+                                # check if there is the same existed source site & referring site
+                                try:
+                                    SourceSite.objects.get(url=website)
+                                    skipped.append(i)
+                                except SourceSite.DoesNotExist:
+                                    # add if does not exist
+                                    s = SourceSite(url=website, name=sitename)
+                                    s.save()
+                            elif (site_type == "referringsite"):
+                                try:
+                                    ReferringSite.objects.get(url=website)
+                                    skipped.append(i)
+                                except ReferringSite.DoesNotExist:
+                                    # add if does not exist
+                                    r = ReferringSite(url=website, name=sitename, mode=default_scan, is_shallow=False)
+                                    r.save()
+                            else:
+                                raise Exception()
+                        except:
+                            skippedException.append(i)
+
+                    result = "Successfully appened"
+                    if (len(skipped) > 0):
+                        result += ", with duplicated skipped website of line "
+                        result += str(skipped)
+                    if (len(skippedException) > 0):
+                        result += " , with error occurred skipped website of line "
+                        result += str(skippedException)
+
             # except ValueError as e:
             #     result = "Wrong file type"
             except:
                 result = "Failed"
                 restoreLastScope(deleted, currentScope)
-                
+
             finally:
                 context['scope_message_excel'] = result
         except:
             pass
-    
+
     return render(request, 'options/downloads.html', context)
 
 
