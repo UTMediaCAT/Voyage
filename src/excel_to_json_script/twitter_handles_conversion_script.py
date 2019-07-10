@@ -1,6 +1,6 @@
 # Filename: twitter_handles_conversion_script.py
 # Author: Raiyan Rahman
-# Date: June 26th, 2019
+# Date: July 10th, 2019
 # Description: This is a conversion script that converts an excel file to a
 # JSON file containing the names, position, twitter handle in the first,
 # second, and third column respectively. The file may also contain an optional
