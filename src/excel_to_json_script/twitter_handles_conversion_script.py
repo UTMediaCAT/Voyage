@@ -25,7 +25,7 @@ def convert_to_json(filename: str) -> None:
         1: 'Name',
         2: 'Position',
         3: 'Twitter Handle',
-        4: 'Authenticated/Blue',
+        4: 'Authenticated',
         5: 'Notes'
     }
     # Open the excel file.
@@ -83,6 +83,8 @@ def get_sheet_data(sheet, headers: dict) -> dict:
                 headers[optional_header] = sheet.\
                     cell(row=1, column=optional_header).value
                 max_column = optional_header
+            else:
+                max_column = optional_header
     # If there weren't headers present, use default ones in the headers dict.
     # Parse the first row to find the number of columns.
     else:
@@ -114,8 +116,16 @@ def get_sheet_data(sheet, headers: dict) -> dict:
             row_data = {}
             for i in range(1, max_column + 1):
                 if sheet.cell(row=row_counter, column=i).value is not None:
-                    row_data[headers[i]] = \
-                        sheet.cell(row=row_counter, column=i).value.strip()
+                    # Convert Yes/No to bool.
+                    if i is 4:
+                        val = sheet.cell(row=row_counter, column=i)\
+                            .value.strip()
+                        val = val.lower()[0]
+                        val = True if val == 'y' else False
+                        row_data[headers[i]] = val
+                    else:
+                        row_data[headers[i]] = sheet\
+                            .cell(row=row_counter, column=i).value.strip()
             # Add the row data and increment the row counter.
             sheet_data.append(row_data)
             row_counter += 1
