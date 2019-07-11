@@ -126,7 +126,6 @@ def downloadsExcel(request):
                                     i = i + 1
                                     website = eachobj["Website"]
                                     sitename = eachobj["Outlet Name"]
-                                    default_scan = 2 # both scanning method
                                     # newstype = obj["Type"]
 
                                     try:
@@ -162,37 +161,49 @@ def downloadsExcel(request):
                 elif (selected_type == "append"):
                     skippedException = []
                     # get info to insert to scope
-                    for obj in jsonDict:
-                        i = i + 1
-                        website = obj["website"]
-                        sitename = obj["outlet name"]
-                        site_type = obj["site_type"]
-                        default_scan = 2 # both scan
-                        try:
-                            # add if complete information and no duplicate
-                            if (site_type == "sourcesite"):
-                                # check if there is the same existed source site & referring site
-                                try:
-                                    SourceSite.objects.get(url=website)
-                                    skipped.append(i)
-                                except SourceSite.DoesNotExist:
-                                    # add if does not exist
-                                    s = SourceSite(url=website, name=sitename)
-                                    s.save()
-                            elif (site_type == "referringsite"):
-                                try:
-                                    ReferringSite.objects.get(url=website)
-                                    skipped.append(i)
-                                except ReferringSite.DoesNotExist:
-                                    # add if does not exist
-                                    r = ReferringSite(url=website, name=sitename, mode=default_scan, is_shallow=False)
-                                    r.save()
-                            else:
-                                raise Exception()
-                        except:
-                            skippedException.append(i)
+                    for type in jsonDict.keys():
+                        if "source" in type.lower():
+                            # for every obj, add into source site db
+                            src = jsonDict[type]
+                            for subobj in src.keys():
+                                obj = src[subobj]
+                                for eachobj in obj:
+                                    i = i + 1
+                                    website = eachobj["Website"]
+                                    sitename = eachobj["Outlet Name"]
+                                    try:
+                                        try:
+                                            SourceSite.objects.get(url=website)
+                                            skipped.append(i)
+                                        except SourceSite.DoesNotExist:
+                                            # add if does not exist
+                                            s = SourceSite(url=website, name=sitename)
+                                        s.save()
+                                    except:
+                                        skippedException.append(i)
 
-                    result = "Successfully appened"
+                        elif "referring" in type.lower():
+                            # for every obj, add into referring site db
+                            src = jsonDict[type]
+                            for subobj in src.keys():
+                                obj = src[subobj]
+                                for eachobj in obj:
+                                    i = i + 1
+                                    website = eachobj["Website"]
+                                    sitename = eachobj["Outlet Name"]
+                                    default_scan = 2 # both scan
+                                    try:
+                                        try:
+                                            ReferringSite.objects.get(url=website)
+                                            skipped.append(i)
+                                        except ReferringSite.DoesNotExist:
+                                            # add if does not exist
+                                            r = ReferringSite(url=website, name=sitename, mode=default_scan, is_shallow=False)
+                                            r.save()
+                                    except:
+                                        skippedException.append(i)
+
+                    result = "Successfully appended"
                     if (len(skipped) > 0):
                         result += ", with duplicated skipped website of line "
                         result += str(skipped)
@@ -202,8 +213,9 @@ def downloadsExcel(request):
 
             # except ValueError as e:
             #     result = "Wrong file type"
-            except:
-                result = "Failed"
+            except Exception as e:
+                result = "Failed "
+                result += str(e)
                 restoreLastScope(deleted, currentScope)
 
             finally:
