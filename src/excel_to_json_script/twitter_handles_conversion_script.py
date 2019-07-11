@@ -10,7 +10,7 @@ import json
 from openpyxl import load_workbook
 
 
-def convert_to_json(filename: str) -> None:
+def convert_twitter_handles_to_json(filename: str) -> None:
     """
     Create a JSON file containing the converted data from the given excel
     file.
@@ -31,7 +31,7 @@ def convert_to_json(filename: str) -> None:
     # Open the excel file.
     wb = load_workbook(filename)
     # Create a dictionary and store the data for each sheet in it.
-    excel_data = get_excel_data(wb, headers)
+    excel_data = get_twitter_excel_data(wb, headers)
     # Create the JSON and save it.
     dump_data = json.dumps(excel_data)
     outfile = open('twitter_handles.json', 'a')
@@ -40,7 +40,7 @@ def convert_to_json(filename: str) -> None:
     return
 
 
-def get_excel_data(wb, headers: dict) -> dict:
+def get_twitter_excel_data(wb, headers: dict) -> dict:
     """
     Return the parsed excel data from the given workbook with respect to the
     given dictionary of headers.
@@ -54,18 +54,18 @@ def get_excel_data(wb, headers: dict) -> dict:
     sheet_names = wb.sheetnames
     # Loop through the sheets and get sheet data to parsed data.
     for sheet in sheet_names:
-        parsed_data[sheet] = get_sheet_data(wb[sheet], headers)
+        parsed_data[sheet] = get_twitter_sheet_data(wb[sheet], headers)
     # Return the data.
     return parsed_data
 
 
-def get_sheet_data(sheet, headers: dict) -> dict:
+def get_twitter_sheet_data(sheet, headers: dict) -> list:
     """
     Return the parsed data for a single excel sheet with respect to the given
     dictionary of headers.
     :param sheet: The worksheet.
     :param headers: The dictionary of headers.
-    :return: The dictionary containing the parsed sheet data.
+    :return: The list containing the parsed sheet data.
     """
     sheet_data = []
     max_column = 3
@@ -135,4 +135,4 @@ def get_sheet_data(sheet, headers: dict) -> dict:
 
 if __name__ == '__main__':
     file_name = input('Enter filename of Excel File: ')
-    convert_to_json(filename=file_name)
+    convert_twitter_handles_to_json(filename=file_name)
