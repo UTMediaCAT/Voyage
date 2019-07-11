@@ -178,7 +178,7 @@ def downloadsExcel(request):
                                         except SourceSite.DoesNotExist:
                                             # add if does not exist
                                             s = SourceSite(url=website, name=sitename)
-                                        s.save()
+                                            s.save()
                                     except:
                                         skippedException.append(i)
 
