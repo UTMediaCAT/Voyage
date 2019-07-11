@@ -56,7 +56,7 @@ def downloads(request):
                     out.close()
                     
                     # Delete Current Scope
-                    deleteScope()
+                    deleteAllScope()
                     deleted = True
 
                     # Replace Scope
@@ -98,7 +98,7 @@ def downloadsExcel(request):
 
                 # Backup Current Scope in a variable
                 out = StringIO()
-                management.call_command('dumpdata', 'explorer', 'taggit', stdout=out)
+                management.call_command('dumpdata', 'explorer', 'taggit', stdout=out)       # ????????????????????
                 currentScope = out.getvalue()
                 out.close()
 
@@ -112,13 +112,148 @@ def downloadsExcel(request):
 
                 if (selected_type == "replace"):
                     # Delete Current Scope
-                    deleteScope()
+                    deleteScopeSite()           # ????????????????????????????????????
+                    deleted = True
+
+                    # check if it's in source
+                    for type in jsonDict.keys():
+                        if "source" in type.lower():
+                            # for every obj, add into source site db
+                            src = jsonDict[type]
+                            for subobj in src.keys():
+                                obj = src[subobj]
+                                for eachobj in obj:
+                                    i = i + 1
+                                    website = eachobj["Website"]
+                                    sitename = eachobj["Outlet Name"]
+                                    default_scan = 2 # both scanning method
+                                    # newstype = obj["Type"]
+
+                                    try:
+                                        # add to source
+                                        s = SourceSite(url=website, name=sitename)
+                                        s.save()
+                                    except:
+                                        skipped.append(i)
+                            
+                        elif "referring" in type.lower():
+                            # for every obj, add into referring site db
+                            src = jsonDict[type]
+                            for subobj in src.keys():
+                                obj = src[subobj]
+                                for eachobj in obj:
+                                    i = i + 1
+                                    website = eachobj["Website"]
+                                    sitename = eachobj["Outlet Name"]
+                                    default_scan = 2
+
+                                    try:
+                                        # add to referring
+                                        r = ReferringSite(url=website, name=sitename, mode=default_scan, is_shallow=False)
+                                        r.save()
+                                    except:
+                                        skipped.append(i)
+
+                    result = "Successfully replaced"
+                    if (len(skipped) > 0):
+                        result += ", with skipped record of line "
+                        result += str(skipped)
+
+                elif (selected_type == "append"):
+                    skippedException = []
+                    # get info to insert to scope
+                    for obj in jsonDict:
+                        i = i + 1
+                        website = obj["website"]
+                        sitename = obj["outlet name"]
+                        site_type = obj["site_type"]
+                        default_scan = 2 # both scan
+                        try:
+                            # add if complete information and no duplicate
+                            if (site_type == "sourcesite"):
+                                # check if there is the same existed source site & referring site
+                                try:
+                                    SourceSite.objects.get(url=website)
+                                    skipped.append(i)
+                                except SourceSite.DoesNotExist:
+                                    # add if does not exist
+                                    s = SourceSite(url=website, name=sitename)
+                                    s.save()
+                            elif (site_type == "referringsite"):
+                                try:
+                                    ReferringSite.objects.get(url=website)
+                                    skipped.append(i)
+                                except ReferringSite.DoesNotExist:
+                                    # add if does not exist
+                                    r = ReferringSite(url=website, name=sitename, mode=default_scan, is_shallow=False)
+                                    r.save()
+                            else:
+                                raise Exception()
+                        except:
+                            skippedException.append(i)
+
+                    result = "Successfully appened"
+                    if (len(skipped) > 0):
+                        result += ", with duplicated skipped website of line "
+                        result += str(skipped)
+                    if (len(skippedException) > 0):
+                        result += " , with error occurred skipped website of line "
+                        result += str(skippedException)
+
+            # except ValueError as e:
+            #     result = "Wrong file type"
+            except:
+                result = "Failed"
+                restoreLastScope(deleted, currentScope)
+
+            finally:
+                context['scope_message_excel'] = result
+        except:
+            pass
+
+    return render(request, 'options/downloads.html', context)
+
+def uploadExcelTwitter(request):
+    if not request.user.is_authenticated():
+        return redirect('/admin/login/?next=%s' % request.path)
+
+    deleted = False
+    context = {}
+    if request.method == 'POST':
+        try:   # upload excel scope file
+            scopefile = request.FILES['scopefileExcelTwitter']
+            selected_type = request.POST['uploadType']
+            try:
+                # if (allowed_file(scopefile, ALLOWED_EXTENSIONS_EXCEL) == False):
+                #     raise ValueError('Wrong file type')
+
+                # convert excel to json
+                # call function to get json file
+                # scopefile = convertFile(scopefile)
+
+                # Backup Current Scope in a variable
+                out = StringIO()
+                management.call_command('dumpdata', 'explorer', 'taggit', stdout=out)           # ?????????????????????
+                currentScope = out.getvalue()
+                out.close()
+
+                # read json file one by one
+                jsonstr = scopefile.read().decode("utf-8")
+                jsonDict = json.loads(jsonstr)
+                result = ""
+                skipped = []
+                i = 0
+                temp = []
+
+                if (selected_type == "replace"):
+                    # Delete Current Scope
+                    deleteScopeTwitter()        # ????????????????????????????????????
                     deleted = True
 
                     # get info to insert to scope
                     for obj in jsonDict:
                         i = i + 1
-                        website = obj["website"]
+                        twitter_account = obj["Twitter Handle"]
                         sitename = obj["outlet name"]
                         site_type = obj["site_type"]
                         default_scan = 2 # both scanning method
@@ -189,20 +324,17 @@ def downloadsExcel(request):
             # except ValueError as e:
             #     result = "Wrong file type"
             except:
-                result = "Failed"
+                result = "Failed123"
                 restoreLastScope(deleted, currentScope)
 
             finally:
-                context['scope_message_excel'] = result
+                context['scope_message_exceltwitter'] = result
         except:
             pass
 
     return render(request, 'options/downloads.html', context)
 
-def uploadExcelTwitter(request):
-    return render(request, 'options/downloads.html')
-
-def deleteScope():
+def deleteAllScope():
     ReferringSite.objects.all().delete()
     ReferringSiteFilter.objects.all().delete()
     ReferringSiteCssSelector.objects.all().delete()
@@ -214,6 +346,24 @@ def deleteScope():
     Keyword.objects.all().delete()
     Tag.objects.all().delete()
     TaggedItem.objects.all().delete()
+
+def deleteScopeSite():
+    ReferringSite.objects.all().delete()
+    ReferringSiteFilter.objects.all().delete()
+    SourceSite.objects.all().delete()
+    SourceSiteAlias.objects.all().delete()
+    # Keyword.objects.all().delete()
+    # Tag.objects.all().delete()
+    # TaggedItem.objects.all().delete()
+
+def deleteScopeTwitter():
+    ReferringSiteCssSelector.objects.all().delete()
+    ReferringTwitter.objects.all().delete()
+    SourceTwitter.objects.all().delete()
+    SourceTwitterAlias.objects.all().delete()
+    # Keyword.objects.all().delete()
+    # Tag.objects.all().delete()
+    # TaggedItem.objects.all().delete()
 
 def restoreLastScope(deleted, currentScope):
     if (deleted):
