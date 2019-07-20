@@ -259,84 +259,124 @@ def uploadExcelTwitter(request):
 
                 if (selected_type == "replace"):
                     # Delete Current Scope
-                    deleteScopeTwitter()        # ????????????????????????????????????
+                    deleteScopeTwitter()           # ????????????????????????????????????
                     deleted = True
 
-                    # get info to insert to scope
-                    for obj in jsonDict:
-                        i = i + 1
-                        twitter_account = obj["Twitter Handle"]
-                        sitename = obj["outlet name"]
-                        site_type = obj["site_type"]
-                        default_scan = 2 # both scanning method
+                    # check if it's in source
+                    for eachdomain in jsonDict.keys():
+                            # for every obj, add into source site db
+                            domainObj = jsonDict[eachdomain]
+                            for eachTwitterObj in domainObj:
+                                i = i + 1
+                                twitterName = eachTwitterObj["Name"]
+                                twitterHandle = eachTwitterObj["Twitter Handle"]
+                                # remove '@' if exist
+                                if (twitterHandle[0] == '@'):
+                                    twitterHandle = twitterHandle[1:]
+                                type = eachTwitterObj["Source/Referring"]
+                                domain = eachTwitterObj["Domain"]
 
-                        # skip insert a record if exception happened when inserting
-                        try:
-                            # add if complete information
-                            if (site_type == "sourcesite"):
-                                # add to source
-                                s = SourceSite(url=website, name=sitename)
-                                s.save()
-
-                            elif (site_type == "referringsite"):
-                                # add to referring
-                                r = ReferringSite(url=website, name=sitename, mode=default_scan, is_shallow=False)
-                                r.save()
-                            else:
-                                raise Exception()
-                        except:
-                            skipped.append(i)
+                                # if belongs to source
+                                if "source" in type.lower():    
+                                    try:
+                                        # add to source
+                                        s1 = SourceTwitter(name=twitterHandle)
+                                        s1.save()
+                                        # get foreign key for SourceTwitterAlias
+                                        fk = SourceTwitter.objects.get(name=twitterHandle)
+                                        s2 = SourceTwitterAlias(primary=fk, alias=twitterName)
+                                        s2.save()
+                                        # maybe add tag (from which domain)
+                                    except:
+                                        skipped.append(i)
 
                     result = "Successfully replaced"
                     if (len(skipped) > 0):
                         result += ", with skipped record of line "
                         result += str(skipped)
+                                
 
-                elif (selected_type == "append"):
-                    skippedException = []
-                    # get info to insert to scope
-                    for obj in jsonDict:
-                        i = i + 1
-                        website = obj["website"]
-                        sitename = obj["outlet name"]
-                        site_type = obj["site_type"]
-                        default_scan = 2 # both scan
-                        try:
-                            # add if complete information and no duplicate
-                            if (site_type == "sourcesite"):
-                                # check if there is the same existed source site & referring site
-                                try:
-                                    SourceSite.objects.get(url=website)
-                                    skipped.append(i)
-                                except SourceSite.DoesNotExist:
-                                    # add if does not exist
-                                    s = SourceSite(url=website, name=sitename)
-                                    s.save()
-                            elif (site_type == "referringsite"):
-                                try:
-                                    ReferringSite.objects.get(url=website)
-                                    skipped.append(i)
-                                except ReferringSite.DoesNotExist:
-                                    # add if does not exist
-                                    r = ReferringSite(url=website, name=sitename, mode=default_scan, is_shallow=False)
-                                    r.save()
-                            else:
-                                raise Exception()
-                        except:
-                            skippedException.append(i)
+                # if (selected_type == "replace"):
+                #     # Delete Current Scope
+                #     deleteScopeTwitter()        # ????????????????????????????????????
+                #     deleted = True
 
-                    result = "Successfully appened"
-                    if (len(skipped) > 0):
-                        result += ", with duplicated skipped website of line "
-                        result += str(skipped)
-                    if (len(skippedException) > 0):
-                        result += " , with error occurred skipped website of line "
-                        result += str(skippedException)
+                #     # get info to insert to scope
+                #     for obj in jsonDict:
+                #         i = i + 1
+                #         twitter_account = obj["Twitter Handle"]
+                #         sitename = obj["outlet name"]
+                #         site_type = obj["site_type"]
+                #         default_scan = 2 # both scanning method
+
+                #         # skip insert a record if exception happened when inserting
+                #         try:
+                #             # add if complete information
+                #             if (site_type == "sourcesite"):
+                #                 # add to source
+                #                 s = SourceSite(url=website, name=sitename)
+                #                 s.save()
+
+                #             elif (site_type == "referringsite"):
+                #                 # add to referring
+                #                 r = ReferringSite(url=website, name=sitename, mode=default_scan, is_shallow=False)
+                #                 r.save()
+                #             else:
+                #                 raise Exception()
+                #         except:
+                #             skipped.append(i)
+
+                #     result = "Successfully replaced"
+                #     if (len(skipped) > 0):
+                #         result += ", with skipped record of line "
+                #         result += str(skipped)
+
+                # elif (selected_type == "append"):
+                #     skippedException = []
+                #     # get info to insert to scope
+                #     for obj in jsonDict:
+                #         i = i + 1
+                #         website = obj["website"]
+                #         sitename = obj["outlet name"]
+                #         site_type = obj["site_type"]
+                #         default_scan = 2 # both scan
+                #         try:
+                #             # add if complete information and no duplicate
+                #             if (site_type == "sourcesite"):
+                #                 # check if there is the same existed source site & referring site
+                #                 try:
+                #                     SourceSite.objects.get(url=website)
+                #                     skipped.append(i)
+                #                 except SourceSite.DoesNotExist:
+                #                     # add if does not exist
+                #                     s = SourceSite(url=website, name=sitename)
+                #                     s.save()
+                #             elif (site_type == "referringsite"):
+                #                 try:
+                #                     ReferringSite.objects.get(url=website)
+                #                     skipped.append(i)
+                #                 except ReferringSite.DoesNotExist:
+                #                     # add if does not exist
+                #                     r = ReferringSite(url=website, name=sitename, mode=default_scan, is_shallow=False)
+                #                     r.save()
+                #             else:
+                #                 raise Exception()
+                #         except:
+                #             skippedException.append(i)
+
+                    # result = "Successfully appened"
+                    # if (len(skipped) > 0):
+                    #     result += ", with duplicated skipped website of line "
+                    #     result += str(skipped)
+                    # if (len(skippedException) > 0):
+                    #     result += " , with error occurred skipped website of line "
+                    #     result += str(skippedException)
 
             # except ValueError as e:
             #     result = "Wrong file type"
-            except:
-                result = "Failed123"
+            except Exception as e:
+                result = "Failed Twitter: "
+                result += str(e)
                 restoreLastScope(deleted, currentScope)
 
             finally:
