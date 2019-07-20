@@ -98,7 +98,7 @@ def downloadsExcel(request):
 
                 # Backup Current Scope in a variable
                 out = StringIO()
-                management.call_command('dumpdata', 'explorer', 'taggit', stdout=out)       # ????????????????????
+                management.call_command('dumpdata', 'explorer', 'taggit', stdout=out)
                 currentScope = out.getvalue()
                 out.close()
 
@@ -112,7 +112,7 @@ def downloadsExcel(request):
 
                 if (selected_type == "replace"):
                     # Delete Current Scope
-                    deleteScopeSite()           # ????????????????????????????????????
+                    deleteScopeSite()
                     deleted = True
 
                     # check if it's in source
@@ -120,8 +120,8 @@ def downloadsExcel(request):
                         if "source" in type.lower():
                             # for every obj, add into source site db
                             src = jsonDict[type]
-                            for subobj in src.keys():
-                                obj = src[subobj]
+                            for srcgroup in src.keys():
+                                obj = src[srcgroup]
                                 for eachobj in obj:
                                     i = i + 1
                                     website = eachobj["Website"]
@@ -132,14 +132,16 @@ def downloadsExcel(request):
                                         # add to source
                                         s = SourceSite(url=website, name=sitename)
                                         s.save()
+                                        # add tag
+                                        s.tags.add(srcgroup)
                                     except:
                                         skipped.append(i)
                             
                         elif "referring" in type.lower():
                             # for every obj, add into referring site db
                             src = jsonDict[type]
-                            for subobj in src.keys():
-                                obj = src[subobj]
+                            for srcgroup in src.keys():
+                                obj = src[srcgroup]
                                 for eachobj in obj:
                                     i = i + 1
                                     website = eachobj["Website"]
@@ -150,6 +152,8 @@ def downloadsExcel(request):
                                         # add to referring
                                         r = ReferringSite(url=website, name=sitename, mode=default_scan, is_shallow=False)
                                         r.save()
+                                        # add tag
+                                        r.tags.add(srcgroup)
                                     except:
                                         skipped.append(i)
 
@@ -165,8 +169,8 @@ def downloadsExcel(request):
                         if "source" in type.lower():
                             # for every obj, add into source site db
                             src = jsonDict[type]
-                            for subobj in src.keys():
-                                obj = src[subobj]
+                            for srcgroup in src.keys():
+                                obj = src[srcgroup]
                                 for eachobj in obj:
                                     i = i + 1
                                     website = eachobj["Website"]
@@ -179,14 +183,15 @@ def downloadsExcel(request):
                                             # add if does not exist
                                             s = SourceSite(url=website, name=sitename)
                                             s.save()
+                                            s.tags.add(srcgroup)
                                     except:
                                         skippedException.append(i)
 
                         elif "referring" in type.lower():
                             # for every obj, add into referring site db
                             src = jsonDict[type]
-                            for subobj in src.keys():
-                                obj = src[subobj]
+                            for srcgroup in src.keys():
+                                obj = src[srcgroup]
                                 for eachobj in obj:
                                     i = i + 1
                                     website = eachobj["Website"]
@@ -200,6 +205,7 @@ def downloadsExcel(request):
                                             # add if does not exist
                                             r = ReferringSite(url=website, name=sitename, mode=default_scan, is_shallow=False)
                                             r.save()
+                                            r.tags.add(srcgroup)
                                     except:
                                         skippedException.append(i)
 
@@ -288,6 +294,7 @@ def uploadExcelTwitter(request):
                                         s2 = SourceTwitterAlias(primary=fk, alias=twitterName)
                                         s2.save()
                                         # maybe add tag (from which domain)
+                                        s1.tags.add(eachdomain)
                                     except:
                                         skipped.append(i)
                                 elif "referring" in type.lower():
@@ -296,6 +303,7 @@ def uploadExcelTwitter(request):
                                         r1 = ReferringTwitter(name=twitterHandle)
                                         r1.save()
                                         # maybe add tag (from which domain)
+                                        r1.tags.add(eachdomain)
                                     except:
                                         skipped.append(i)
 
@@ -333,6 +341,7 @@ def uploadExcelTwitter(request):
                                         s2 = SourceTwitterAlias(primary=fk, alias=twitterName)
                                         s2.save()
                                         # maybe add tag (from which domain)
+                                        s1.tags.add(eachdomain)
                                 except:
                                     skippedException.append(i)
                             elif "referring" in type.lower():
@@ -345,6 +354,7 @@ def uploadExcelTwitter(request):
                                         r1 = ReferringTwitter(name=twitterHandle)
                                         r1.save()
                                         # maybe add tag (from which domain)
+                                        r1.tags.add(eachdomain)
                                 except:
                                     skippedException.append(twitterHandle)
 
