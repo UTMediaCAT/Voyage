@@ -23,10 +23,11 @@ def convert_twitter_handles_to_json(filename: str) -> None:
     # Dictionary containing the headers.
     headers = {
         1: 'Name',
-        2: 'Position',
-        3: 'Twitter Handle',
-        4: 'Authenticated',
-        5: 'Notes'
+        2: 'Twitter Handle',
+        3: 'Source/Referring',
+        4: 'Domain',
+        5: 'Position',
+        6: 'Authenticated'
     }
     # Open the excel file.
     wb = load_workbook(filename)
@@ -34,7 +35,7 @@ def convert_twitter_handles_to_json(filename: str) -> None:
     excel_data = get_twitter_excel_data(wb, headers)
     # Create the JSON and save it.
     dump_data = json.dumps(excel_data)
-    outfile = open('twitter_handles.json', 'a')
+    outfile = open('twitter_handles.json', 'w')
     outfile.write(dump_data)
     outfile.close()
     return
@@ -68,71 +69,50 @@ def get_twitter_sheet_data(sheet, headers: dict) -> list:
     :return: The list containing the parsed sheet data.
     """
     sheet_data = []
-    max_column = 3
-    # Check the first row for column names and the max_column length.
-    if sheet['A1'].value == 'Name':
-        # Check for optional headers and update headers dictionary.
-        for optional_header in range(4, 6):
-            # Break out if there are no optional columns.
-            if sheet.cell(row=1, column=optional_header).value is None:
-                break
-            elif sheet.cell(row=1, column=optional_header)\
-                    .value is not None and\
-                    sheet.cell(row=1, column=optional_header)\
-                    .value != headers[optional_header]:
-                headers[optional_header] = sheet.\
-                    cell(row=1, column=optional_header).value
-                max_column = optional_header
-            else:
-                max_column = optional_header
-    # If there weren't headers present, use default ones in the headers dict.
-    # Parse the first row to find the number of columns.
-    else:
-        row_data = {}
-        for i in range(1, 6):
-            if sheet.cell(row=1, column=i).value is None:
-                max_column = i - 1
-                break
-            else:
-                row_data[headers[i]] = sheet.cell(row=1, column=i).value\
-                    .strip()
-                max_column = i
-        # Add the row data to the sheet data.
-        sheet_data.append(row_data)
-    # Loop through the remaining cells containing data, recording them.
-    row_counter = 2
-    finished = False
-    while not finished:
+    # Loop through the first row and update the dictionary of headers.
+    done = False
+    row = 1
+    max_column = 1
+    while not done:
+        if sheet.cell(row=row, column=max_column).value != headers[max_column]:
+            headers[max_column] = sheet.cell(row=row, column=max_column).value
+        if sheet.cell(row=1, column=max_column).value is None or max_column is 6:
+            done = True
+        else:
+            max_column += 1
+    row += 1
+    # Loop through the rows and get the data.
+    done = False
+    while not done:
         # If the next two rows are empty.
-        if sheet.cell(row=row_counter, column=1).value is None and\
-                sheet.cell(row=row_counter + 1, column=1).value is None:
-            finished = True
+        if sheet.cell(row=row, column=1).value is None and \
+                sheet.cell(row=row + 1, column=1).value is None:
+            done = True
             pass
-        elif sheet.cell(row=row_counter, column=1).value is None:
-            row_counter += 1
+        # If this row is empty, skip it.
+        elif sheet.cell(row=row, column=1).value is None:
+            row += 1
             pass
         else:
             # Get all the row data.
             row_data = {}
             for i in range(1, max_column + 1):
-                if sheet.cell(row=row_counter, column=i).value is not None:
+                if sheet.cell(row=row, column=i).value is not None:
                     # Convert Yes/No to bool.
-                    if i is 4:
-                        val = sheet.cell(row=row_counter, column=i)\
-                            .value.strip()
+                    if headers[i] == 'Authenticated':
+                        val = sheet.cell(row=row, column=i).value.strip()
                         val = val.lower()[0]
                         val = True if val == 'y' else False
                         row_data[headers[i]] = val
                     else:
-                        row_data[headers[i]] = sheet\
-                            .cell(row=row_counter, column=i).value.strip()
+                        row_data[headers[i]] = sheet.cell(row=row, column=i).value.strip()
             # Add the row data and increment the row counter.
             sheet_data.append(row_data)
-            row_counter += 1
+            row += 1
     # Return the data.
     return sheet_data
 
 
 if __name__ == '__main__':
-    file_name = input('Enter filename of Excel File: ')
-    convert_twitter_handles_to_json(filename=file_name)
+    # file_name = input('Enter filename of Excel File: ')
+    convert_twitter_handles_to_json(filename='Israeli_Palestinian Twitter Handles_Y.xlsx')
