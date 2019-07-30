@@ -1,12 +1,19 @@
 from django.shortcuts import render, redirect
 from django.template import RequestContext, loader
 from django.core import management
+from django.conf import settings
+from django.core.files.storage import default_storage
 from subprocess import Popen
 import sys, os
 import tempfile
 from io import StringIO
 import common
 import json
+import urllib.parse
+sys.path.insert(0, '../src/excel_to_json_script')
+
+from excel_to_json_script.articles_conversion_script import convert_articles_to_json
+# import run_conversion
 
 from explorer.models import (
     ReferringSite,
@@ -89,12 +96,13 @@ def downloadsExcel(request):
             scopefile = request.FILES['scopefileExcel']
             selected_type = request.POST['uploadType']
             try:
-                # if (allowed_file(scopefile, ALLOWED_EXTENSIONS_EXCEL) == False):
-                #     raise ValueError('Wrong file type')
-
                 # convert excel to json
                 # call function to get json file
-                # scopefile = convertFile(scopefile)
+                save_path = os.path.join(settings.MEDIA_ROOT, 'uploads', scopefile.name)
+                file_name = default_storage.save(save_path, scopefile)
+                path = default_storage.url(file_name)
+                abspath = urllib.parse.unquote(default_storage.path(path))
+                convert_articles_to_json(abspath)
 
                 # Backup Current Scope in a variable
                 out = StringIO()
@@ -102,9 +110,19 @@ def downloadsExcel(request):
                 currentScope = out.getvalue()
                 out.close()
 
+                jfile = ""
+                articles_jsonfile_path = "/root/Voyage/Frontend/articles.json"
+                with open(articles_jsonfile_path) as jsonfile:
+                    jfile = json.load(jsonfile)
+                jsonfile.close()
+                # remove newly added files
+                os.remove(articles_jsonfile_path)
+                os.remove(abspath)
+
                 # read json file one by one
                 jsonstr = scopefile.read().decode("utf-8")
-                jsonDict = json.loads(jsonstr)
+                jsonDict = jfile
+                # context['scope_message_excel'] = jsonDict
                 result = ""
                 skipped = []
                 i = 0
