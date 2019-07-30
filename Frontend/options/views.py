@@ -13,7 +13,7 @@ import urllib.parse
 sys.path.insert(0, '../src/excel_to_json_script')
 
 from excel_to_json_script.articles_conversion_script import convert_articles_to_json
-# import run_conversion
+from excel_to_json_script.twitter_handles_conversion_script import convert_twitter_handles_to_json
 
 from explorer.models import (
     ReferringSite,
@@ -110,18 +110,16 @@ def downloadsExcel(request):
                 currentScope = out.getvalue()
                 out.close()
 
-                jfile = ""
+                jsonDict = ""
                 articles_jsonfile_path = "/root/Voyage/Frontend/articles.json"
                 with open(articles_jsonfile_path) as jsonfile:
-                    jfile = json.load(jsonfile)
+                    jsonDict = json.load(jsonfile)
                 jsonfile.close()
                 # remove newly added files
                 os.remove(articles_jsonfile_path)
                 os.remove(abspath)
 
                 # read json file one by one
-                jsonstr = scopefile.read().decode("utf-8")
-                jsonDict = jfile
                 # context['scope_message_excel'] = jsonDict
                 result = ""
                 skipped = []
@@ -259,13 +257,15 @@ def uploadExcelTwitter(request):
         try:   # upload excel scope file
             scopefile = request.FILES['scopefileExcelTwitter']
             selected_type = request.POST['uploadType']
+            wrong_input = None
             try:
-                # if (allowed_file(scopefile, ALLOWED_EXTENSIONS_EXCEL) == False):
-                #     raise ValueError('Wrong file type')
-
                 # convert excel to json
                 # call function to get json file
-                # scopefile = convertFile(scopefile)
+                save_path = os.path.join(settings.MEDIA_ROOT, 'uploads', scopefile.name)
+                file_name = default_storage.save(save_path, scopefile)
+                path = default_storage.url(file_name)
+                abspath = urllib.parse.unquote(default_storage.path(path))
+                convert_twitter_handles_to_json(abspath)
 
                 # Backup Current Scope in a variable
                 out = StringIO()
@@ -273,9 +273,16 @@ def uploadExcelTwitter(request):
                 currentScope = out.getvalue()
                 out.close()
 
+                jsonDict = ""
+                twitter_jsonfile_path = "/root/Voyage/Frontend/twitter_handles.json"
+                with open(twitter_jsonfile_path) as jsonfile:
+                    jsonDict = json.load(jsonfile)
+                jsonfile.close()
+                # remove newly added files
+                os.remove(twitter_jsonfile_path)
+                os.remove(abspath)
+
                 # read json file one by one
-                jsonstr = scopefile.read().decode("utf-8")
-                jsonDict = json.loads(jsonstr)
                 result = ""
                 skipped = []
                 skippedException = []
@@ -284,7 +291,7 @@ def uploadExcelTwitter(request):
 
                 if (selected_type == "replace"):
                     # Delete Current Scope
-                    deleteScopeTwitter()           # ????????????????????????????????????
+                    deleteScopeTwitter()
                     deleted = True
 
                     # check if it's in source
@@ -294,6 +301,7 @@ def uploadExcelTwitter(request):
                             for eachTwitterObj in domainObj:
                                 i = i + 1
                                 twitterName = eachTwitterObj["Name"]
+                                wrong_input = twitterName
                                 twitterHandle = eachTwitterObj["Twitter Handle"]
                                 # remove '@' if exist
                                 if (twitterHandle[0] == '@'):
@@ -337,6 +345,7 @@ def uploadExcelTwitter(request):
                         for eachTwitterObj in domainObj:
                             i = i + 1
                             twitterName = eachTwitterObj["Name"]
+                            wrong_input = twitterName
                             twitterHandle = eachTwitterObj["Twitter Handle"]
                             if (twitterHandle[0] == '@'):
                                 twitterHandle = twitterHandle[1:]
@@ -389,6 +398,8 @@ def uploadExcelTwitter(request):
             except Exception as e:
                 result = "Failed Twitter: "
                 result += str(e)
+                if (wrong_input != None):
+                    result = result + ", wrong header or record on Twitter Name: " + wrong_input
                 restoreLastScope(deleted, currentScope)
 
             finally:
