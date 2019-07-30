@@ -114,5 +114,5 @@ def get_twitter_sheet_data(sheet, headers: dict) -> list:
 
 
 if __name__ == '__main__':
-    # file_name = input('Enter filename of Excel File: ')
-    convert_twitter_handles_to_json()
+    file_name = input('Enter filename of Excel File: ')
+    convert_twitter_handles_to_json(file_name)
