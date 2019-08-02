@@ -1,0 +1,5210 @@
+{
+    "Al-Monitor":[
+        {
+            "Name":"Institutional Account",
+            "Twitter Handle":"@AlMonitor",
+            "Source/Referring":"Referring",
+            "Domain":"Al-Monitor",
+            "Authenticated":true
+        },
+        {
+            "Name":"Barbara Slavin",
+            "Twitter Handle":"@barbaraslavin1",
+            "Source/Referring":"Referring",
+            "Domain":"Al-Monitor",
+            "Position":"Columnist",
+            "Authenticated":false
+        },
+        {
+            "Name":"Maxim A. Suchkov",
+            "Twitter Handle":"@MSuchkov_ALM",
+            "Source/Referring":"Referring",
+            "Domain":"Al-Monitor",
+            "Position":"Russian Editor",
+            "Authenticated":false
+        },
+        {
+            "Name":"Laura Rozen",
+            "Twitter Handle":"@lrozen",
+            "Source/Referring":"Referring",
+            "Domain":"Al-Monitor",
+            "Position":"Columnist",
+            "Authenticated":false
+        },
+        {
+            "Name":"Arash Karami",
+            "Twitter Handle":"@thekarami",
+            "Source/Referring":"Referring",
+            "Domain":"Al-Monitor",
+            "Position":"Contributor",
+            "Authenticated":true
+        },
+        {
+            "Name":"Andrew Parasiliti",
+            "Twitter Handle":"@ATParasiliti",
+            "Source/Referring":"Referring",
+            "Domain":"Al-Monitor",
+            "Position":"President",
+            "Authenticated":false
+        },
+        {
+            "Name":"Amberin Zaman",
+            "Twitter Handle":"@amberinzaman",
+            "Source/Referring":"Referring",
+            "Domain":"Al-Monitor",
+            "Position":"Senior (Roving) Correspondent",
+            "Authenticated":true
+        },
+        {
+            "Name":"Nazlan Ertan",
+            "Twitter Handle":"@NazlanErtan_ALM",
+            "Source/Referring":"Referring",
+            "Domain":"Al-Monitor",
+            "Position":"Culture Editor",
+            "Authenticated":false
+        },
+        {
+            "Name":"Asaad Hanna",
+            "Twitter Handle":"@AsaadHannaa",
+            "Source/Referring":"Referring",
+            "Domain":"Al-Monitor",
+            "Position":"Journalist",
+            "Authenticated":true
+        },
+        {
+            "Name":"Mohammad Ali Shabani",
+            "Twitter Handle":"@mashabani",
+            "Source/Referring":"Referring",
+            "Domain":"Al-Monitor",
+            "Position":"Associate Editor",
+            "Authenticated":true
+        },
+        {
+            "Name":"MAYSAM BIZ\u00c6R \u0645\u06cc\u062b\u0645 \u0628\u06cc\u200c\u0632\u0631",
+            "Twitter Handle":"@m_bizar",
+            "Source/Referring":"Referring",
+            "Domain":"Al-Monitor",
+            "Position":"Contributor",
+            "Authenticated":false
+        },
+        {
+            "Name":"Hana Salah",
+            "Twitter Handle":"@HanaSalahGaza",
+            "Source/Referring":"Referring",
+            "Domain":"Al-Monitor",
+            "Position":"Journalist",
+            "Authenticated":false
+        },
+        {
+            "Name":"Sam Brennan",
+            "Twitter Handle":"@samkbren",
+            "Source/Referring":"Referring",
+            "Domain":"Al-Monitor",
+            "Position":"Culture and Politics Journalist",
+            "Authenticated":false
+        },
+        {
+            "Name":"Makram Najmuddine",
+            "Twitter Handle":"@MNajmuddine",
+            "Source/Referring":"Referring",
+            "Domain":"Al-Monitor",
+            "Position":"Contributor",
+            "Authenticated":false
+        }
+    ],
+    "Israel Hayom EN":[
+        {
+            "Name":"Inst. account",
+            "Twitter Handle":"@IsraelHayomEN",
+            "Source/Referring":"Source",
+            "Domain":"Israel Hayom EN",
+            "Authenticated":false
+        },
+        {
+            "Name":"Boaz Bismuth",
+            "Twitter Handle":"@BismuthBoaz",
+            "Source/Referring":"Source",
+            "Domain":"Israel Hayom EN",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jackson Richman",
+            "Twitter Handle":"@Jacksonrichman",
+            "Source/Referring":"Source",
+            "Domain":"Israel Hayom EN",
+            "Position":"Contributor",
+            "Authenticated":false
+        },
+        {
+            "Name":"Lilach Shoval",
+            "Twitter Handle":"@LilachShoval",
+            "Source/Referring":"Source",
+            "Domain":"Israel Hayom EN",
+            "Position":"Military/defense correspondent",
+            "Authenticated":false
+        },
+        {
+            "Name":"Daniel Siryoti",
+            "Twitter Handle":"@dansiryoti",
+            "Source/Referring":"Source",
+            "Domain":"Israel Hayom EN",
+            "Position":"Correspondent",
+            "Authenticated":false
+        },
+        {
+            "Name":"Ariel Kahana",
+            "Twitter Handle":"@arik3000",
+            "Source/Referring":"Source",
+            "Domain":"Israel Hayom EN",
+            "Position":"Diplomatic correspondent",
+            "Authenticated":true
+        },
+        {
+            "Name":"Hanan Greenwood",
+            "Twitter Handle":"@hanan_greene",
+            "Source/Referring":"Source",
+            "Domain":"Israel Hayom EN",
+            "Position":"Correspondent",
+            "Authenticated":false
+        },
+        {
+            "Name":"Itsik Saban",
+            "Twitter Handle":"@ItsikSaban",
+            "Source/Referring":"Source",
+            "Domain":"Israel Hayom EN",
+            "Position":"Correspondent",
+            "Authenticated":false
+        },
+        {
+            "Name":"Efrat Forsher",
+            "Twitter Handle":"@Efrat_Forsher",
+            "Source/Referring":"Source",
+            "Domain":"Israel Hayom EN",
+            "Position":"Correspondent",
+            "Authenticated":false
+        },
+        {
+            "Name":"Eldad Beck",
+            "Twitter Handle":"@eldadbeck",
+            "Source/Referring":"Source",
+            "Domain":"Israel Hayom EN",
+            "Position":"Contributor",
+            "Authenticated":false
+        },
+        {
+            "Name":"Dan Lavie",
+            "Twitter Handle":"@DanLavie1",
+            "Source/Referring":"Source",
+            "Domain":"Israel Hayom EN",
+            "Position":"Contributor",
+            "Authenticated":false
+        }
+    ],
+    "JNS":[
+        {
+            "Name":"Institutional",
+            "Twitter Handle":"@JNS_org",
+            "Source/Referring":"Source",
+            "Domain":"JNS",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jackson Richman",
+            "Twitter Handle":"@jacksonrichman",
+            "Source/Referring":"Source",
+            "Domain":"JNS",
+            "Position":"Washington Correspondent",
+            "Authenticated":false
+        }
+    ],
+    "No Camels":[
+        {
+            "Name":"No Camels",
+            "Twitter Handle":"@NoCamels",
+            "Source/Referring":"Source",
+            "Domain":"No Camels",
+            "Position":"Inst. site"
+        },
+        {
+            "Name":"Anouk Lorie",
+            "Twitter Handle":"@Anouk Lorie",
+            "Source/Referring":"Source",
+            "Domain":"No Camels",
+            "Position":"Co-founder"
+        },
+        {
+            "Name":"Ricky Ben-David",
+            "Twitter Handle":"@rbendavid",
+            "Source/Referring":"Source",
+            "Domain":"No Camels",
+            "Position":"Editor in Chief"
+        },
+        {
+            "Name":"Simona Shemer",
+            "Twitter Handle":"@fashionsocial",
+            "Source/Referring":"Source",
+            "Domain":"No Camels",
+            "Position":"Contributing Ed."
+        },
+        {
+            "Name":"Yuval Haimovits",
+            "Twitter Handle":"@yuvalhaimovits",
+            "Source/Referring":"Source",
+            "Domain":"No Camels",
+            "Position":"Interactive Director"
+        },
+        {
+            "Name":"Avner Meyrav",
+            "Twitter Handle":"@Avner82",
+            "Source/Referring":"Source",
+            "Domain":"No Camels",
+            "Position":"Contributor"
+        },
+        {
+            "Name":"Dyana So",
+            "Twitter Handle":"@_deeyanaa",
+            "Source/Referring":"Source",
+            "Domain":"No Camels",
+            "Position":"Contributor"
+        },
+        {
+            "Name":"Elana Widman",
+            "Twitter Handle":"@elanawidmann",
+            "Source/Referring":"Source",
+            "Domain":"No Camels",
+            "Position":"Contributor"
+        },
+        {
+            "Name":"Ido Levy",
+            "Twitter Handle":"@IdoLevy5",
+            "Source/Referring":"Source",
+            "Domain":"No Camels",
+            "Position":"Contributor"
+        },
+        {
+            "Name":"Lauren Blanchard",
+            "Twitter Handle":"@LaurenBlanchard12",
+            "Source/Referring":"Source",
+            "Domain":"No Camels",
+            "Position":"Contributor"
+        },
+        {
+            "Name":"Michael Noonan",
+            "Twitter Handle":"@Noonanlive",
+            "Source/Referring":"Source",
+            "Domain":"No Camels",
+            "Position":"Contributor"
+        },
+        {
+            "Name":"Yonatan Sredni",
+            "Twitter Handle":"@YonatanSredni",
+            "Source/Referring":"Source",
+            "Domain":"No Camels",
+            "Position":"Contributor"
+        }
+    ],
+    "JPost":[
+        {
+            "Name":"Amy Spiro",
+            "Twitter Handle":"@AmySpiro",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Culture/Media Reporter & Books editor"
+        },
+        {
+            "Name":"Allyn Fischer-LLAN",
+            "Twitter Handle":"@AFilan",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"News Editor"
+        },
+        {
+            "Name":"Elli Wohlgelernter",
+            "Twitter Handle":"@EWohlgelernter",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Night Editor"
+        },
+        {
+            "Name":"Yaakov Katz",
+            "Twitter Handle":"@yaakovkatz",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Editor in Chief"
+        },
+        {
+            "Name":"David Brinn",
+            "Twitter Handle":"@davidbjpost",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Managing Editor"
+        },
+        {
+            "Name":"Tovah Lazaroff",
+            "Twitter Handle":"@tovahlazaroff",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Deputy Managing Editor"
+        },
+        {
+            "Name":"Caroline Glick",
+            "Twitter Handle":"@CarolineGlick",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Contributing Editor at JPost and Maariv / Columnist at Breitbart"
+        },
+        {
+            "Name":"Noa Amouyal",
+            "Twitter Handle":"@noaamouyal",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Senior Features Editor"
+        },
+        {
+            "Name":"Seth Frantzman",
+            "Twitter Handle":"@sfrantzman",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Op-ed Editor"
+        },
+        {
+            "Name":"Erica Schachne",
+            "Twitter Handle":"@EricaSchachne",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Magazine and In Jerusalem/Arts & Entertainment Editor"
+        },
+        {
+            "Name":"Liat Collins",
+            "Twitter Handle":"@LiatCollins1",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"International Editor"
+        },
+        {
+            "Name":"Ariane Mandell",
+            "Twitter Handle":"@ArianeMandell",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Deputy Managing Editor (ONLINE ONLY)"
+        },
+        {
+            "Name":"Lahav Harkov",
+            "Twitter Handle":"@LahavHarkov",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Senior Contributing Editor, The Jerusalem Post,"
+        },
+        {
+            "Name":"Juliane Helmhold",
+            "Twitter Handle":"@julianehelmhold",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Breaking News Editor"
+        },
+        {
+            "Name":"Eytan Halon",
+            "Twitter Handle":"@eytanhalon",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Breaking News Editor (Former IDF Medic/Israeli UN Intern)"
+        },
+        {
+            "Name":"Shoshana Kranish",
+            "Twitter Handle":"@shoshana_ariel",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Breaking News Editor"
+        },
+        {
+            "Name":"Eric Sumner",
+            "Twitter Handle":"@RealEricSumner",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Breaking News Editor (according to website) / Blogs editor (according to his twitter)"
+        },
+        {
+            "Name":"Tabar Ben Ozer",
+            "Twitter Handle":"@Tamarbenozer",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Breaking News Editor"
+        },
+        {
+            "Name":"Michael Wilner",
+            "Twitter Handle":"@mawilner",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Washington Correspondent"
+        },
+        {
+            "Name":"JPost",
+            "Twitter Handle":"@Jerusalem_Post",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"Institutional Account"
+        },
+        {
+            "Name":"JPost Opinion",
+            "Twitter Handle":"@JPostOpinion",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"OPINION PAGE"
+        },
+        {
+            "Name":"JPost Politics",
+            "Twitter Handle":"@JPostPolitics",
+            "Source/Referring":"Source",
+            "Domain":"Jpost",
+            "Position":"POLITICS PAGE"
+        }
+    ],
+    "The Jewish Chronicle":[
+        {
+            "Name":"Institutional Account",
+            "Twitter Handle":"@JewishChron",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish Chronicle",
+            "Authenticated":true
+        },
+        {
+            "Name":"Daniel Sugarman",
+            "Twitter Handle":"@Daniel_Sugarman",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish Chronicle",
+            "Position":"Journalist",
+            "Authenticated":false
+        },
+        {
+            "Name":"Keren David",
+            "Twitter Handle":"@Kerensd",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish Chronicle",
+            "Position":"Associate Editor (Features)",
+            "Authenticated":true
+        },
+        {
+            "Name":"Anne Joseph",
+            "Twitter Handle":"@1annejoseph",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish Chronicle",
+            "Position":"Film Writer/Critic",
+            "Authenticated":false
+        },
+        {
+            "Name":"Rina Wolfson",
+            "Twitter Handle":"@rinawolfson",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish Chronicle",
+            "Position":"Occasional Contributor",
+            "Authenticated":false
+        },
+        {
+            "Name":"Stephen Pollard",
+            "Twitter Handle":"@stephenpollard",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish Chronicle",
+            "Position":"Editor",
+            "Authenticated":true
+        },
+        {
+            "Name":"Sandy Rashty",
+            "Twitter Handle":"@SandyRashty",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish Chronicle",
+            "Position":"Contributor",
+            "Authenticated":true
+        },
+        {
+            "Name":"Rosa Doherty",
+            "Twitter Handle":"@Rosa_Doherty",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish Chronicle",
+            "Position":"Social Affairs Correspondent",
+            "Authenticated":true
+        },
+        {
+            "Name":"Gus Condeixa",
+            "Twitter Handle":"@ggcondeixa",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish Chronicle",
+            "Position":"Designer",
+            "Authenticated":false
+        },
+        {
+            "Name":"Ben Weich",
+            "Twitter Handle":"@BenWeich",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish Chronicle",
+            "Position":"Reporter",
+            "Authenticated":false
+        },
+        {
+            "Name":"Michael Sercan Daventry",
+            "Twitter Handle":"@MichaelDaventry",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish Chronicle",
+            "Position":"Journalist",
+            "Authenticated":true
+        },
+        {
+            "Name":"Robert Philpot",
+            "Twitter Handle":"@Robert_Philpot",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish Chronicle",
+            "Position":"Politics and History Journalist",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jack Sommers",
+            "Twitter Handle":"@jack_sommers",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish Chronicle",
+            "Position":"Head Of News",
+            "Authenticated":true
+        }
+    ],
+    "Jewish News":[
+        {
+            "Name":"Institutional Account",
+            "Twitter Handle":"@JewishNewsUK",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish News"
+        },
+        {
+            "Name":"Mathilde Frot",
+            "Twitter Handle":"@mathilde_frot",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish News",
+            "Position":"Reporter"
+        },
+        {
+            "Name":"\u05d9\u05d7\u05d9\u05d0\u05dc \u05d9\u05e2\u05e7\u05d1 (((Colin Appleby)))",
+            "Twitter Handle":"@CJ_Appleby",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish News",
+            "Position":"Occasional Contributor"
+        },
+        {
+            "Name":"Jack Mendel",
+            "Twitter Handle":"@Mendelpol",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish News",
+            "Position":"Web Editor"
+        },
+        {
+            "Name":"Richard Ferrer",
+            "Twitter Handle":"@richferrer",
+            "Source/Referring":"Referring",
+            "Domain":"Jewish News",
+            "Position":"Editor/Publisher"
+        }
+    ],
+    "Ha'aretz":[
+        {
+            "Name":"Noa Landau",
+            "Twitter Handle":"@noa_landau",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Diplomatic Correspondant"
+        },
+        {
+            "Name":"Amir Tibon",
+            "Twitter Handle":"@amirtibon",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Covering DC for Ha'aretz"
+        },
+        {
+            "Name":"Avi Scharf",
+            "Twitter Handle":"@avischarf",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Editor of English Edition"
+        },
+        {
+            "Name":"Anshel Pfeffer",
+            "Twitter Handle":"@AnshelPfeffer",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Writer"
+        },
+        {
+            "Name":"Chemi Shalev",
+            "Twitter Handle":"@ChemiShalev",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Senior Columnist"
+        },
+        {
+            "Name":"Yotam Berger",
+            "Twitter Handle":"@yotberg",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Correpondant in the West Bank"
+        },
+        {
+            "Name":"Lior Kodner",
+            "Twitter Handle":"@liorkodner",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Managing Editor, Chief Digital Officer"
+        },
+        {
+            "Name":"Gideon Levy",
+            "Twitter Handle":"@levy_haaretz",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Columnist,Editorial Board Member"
+        },
+        {
+            "Name":"Simon Spungin",
+            "Twitter Handle":"@spungin",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Managing Editor"
+        },
+        {
+            "Name":"Yishai Halper",
+            "Twitter Handle":"@yishaih",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Editor"
+        },
+        {
+            "Name":"Ruth Schuster",
+            "Twitter Handle":"@ruthschuster",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Senior Editor"
+        },
+        {
+            "Name":"Bradley Burston",
+            "Twitter Handle":"@bradleyburston",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Columnist and Senior Editor"
+        },
+        {
+            "Name":"Anat Rosenberg",
+            "Twitter Handle":"@AnatRosenberg \u200f",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Books Editor"
+        },
+        {
+            "Name":"Ofer Aderet",
+            "Twitter Handle":"@oferaderet",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"History Correspondent"
+        },
+        {
+            "Name":"Dafna Arad",
+            "Twitter Handle":"@DafnaArad1",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Writer/ Correspondent"
+        },
+        {
+            "Name":"Roy Chicky Arad",
+            "Twitter Handle":"@chickos99",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Writer/ Correspondent"
+        },
+        {
+            "Name":"Ellie Armon Azoulay",
+            "Twitter Handle":"@Ellie_AA87 \u200f",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Writer/ Correspondent"
+        },
+        {
+            "Name":"Asaf Ronel",
+            "Twitter Handle":"@asafronel",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"head of Foreign Desk"
+        },
+        {
+            "Name":"Uriah Canaf",
+            "Twitter Handle":"@UriahCanaff",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Deputy Editor"
+        },
+        {
+            "Name":"Amira Hass",
+            "Twitter Handle":"@Hass_Haaretz",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Occupied Territories Correspondent"
+        },
+        {
+            "Name":"Insitutional",
+            "Twitter Handle":"@haaretzcom",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Account"
+        },
+        {
+            "Name":"Hagar Shezaf",
+            "Twitter Handle":"@HShezaf",
+            "Source/Referring":"Source",
+            "Domain":"Ha'aretz",
+            "Position":"Writer"
+        }
+    ],
+    "Israel National News ":[
+        {
+            "Name":"Yoni Kempinski",
+            "Twitter Handle":"@theyoni",
+            "Source/Referring":"Source",
+            "Domain":"Israel National News",
+            "Position":"Video Editor"
+        },
+        {
+            "Name":"Gil Ronen",
+            "Twitter Handle":"@GilRonen64",
+            "Source/Referring":"Source",
+            "Domain":"Israel National News",
+            "Position":"News"
+        },
+        {
+            "Name":"Tzvi Lev",
+            "Twitter Handle":"@tzvi_lev",
+            "Source/Referring":"Source",
+            "Domain":"Israel National News",
+            "Position":"News"
+        },
+        {
+            "Name":"Ashraf Ramelah",
+            "Twitter Handle":"@AshrafRamelah",
+            "Source/Referring":"Source",
+            "Domain":"Israel National News",
+            "Position":"Contributor"
+        },
+        {
+            "Name":"David Bedein",
+            "Twitter Handle":"@DavidBedein",
+            "Source/Referring":"Source",
+            "Domain":"Israel National News",
+            "Position":"Contributor"
+        },
+        {
+            "Name":"David Rubin",
+            "Twitter Handle":"@RubinReport",
+            "Source/Referring":"Source",
+            "Domain":"Israel National News",
+            "Position":"Contributor"
+        },
+        {
+            "Name":"Edwin Black",
+            "Twitter Handle":"@EdwinBlackBook",
+            "Source/Referring":"Source",
+            "Domain":"Israel National News",
+            "Position":"Contributor"
+        },
+        {
+            "Name":"Giuilo Meotti",
+            "Twitter Handle":"@giuliomeotti",
+            "Source/Referring":"Source",
+            "Domain":"Israel National News",
+            "Position":"Contributor"
+        },
+        {
+            "Name":"Mark Langfan",
+            "Twitter Handle":"@MarkLangfan",
+            "Source/Referring":"Source",
+            "Domain":"Israel National News",
+            "Position":"Contributor"
+        },
+        {
+            "Name":"Phyllis Schesler",
+            "Twitter Handle":"@Phyllischesler",
+            "Source/Referring":"Source",
+            "Domain":"Israel National News",
+            "Position":"Contributor"
+        },
+        {
+            "Name":"Ron Torossian",
+            "Twitter Handle":"@RTorossian5wpr",
+            "Source/Referring":"Source",
+            "Domain":"Israel National News",
+            "Position":"Contributor"
+        },
+        {
+            "Name":"Insitutional",
+            "Twitter Handle":"@ArutzSheva_En",
+            "Source/Referring":"Source",
+            "Domain":"Israel National News",
+            "Position":"Account"
+        },
+        {
+            "Name":"Uzi Baruch",
+            "Twitter Handle":"@UziBaruch",
+            "Source/Referring":"Source",
+            "Domain":"Israel National News",
+            "Position":"EIC"
+        }
+    ],
+    "Maan":[
+        {
+            "Name":"Kareem Asakrah",
+            "Twitter Handle":"@kasakrah \u200f",
+            "Source/Referring":"Source",
+            "Domain":"Maan",
+            "Position":"Editor"
+        },
+        {
+            "Name":"Killian Redden",
+            "Twitter Handle":"@killian_redden \u200f",
+            "Source/Referring":"Source",
+            "Domain":"Maan",
+            "Position":"Staff writer"
+        },
+        {
+            "Name":"Institutional",
+            "Twitter Handle":"@MaanNewsAgency",
+            "Source/Referring":"Source",
+            "Domain":"Maan"
+        },
+        {
+            "Name":"Inst. Hebrew",
+            "Twitter Handle":"@HebrewMaanNews \u200f",
+            "Source/Referring":"Source",
+            "Domain":"Maan"
+        }
+    ],
+    "Middle East Eye":[
+        {
+            "Name":"Insitutional Account",
+            "Twitter Handle":"@MiddleEastEye",
+            "Source/Referring":"Referring",
+            "Domain":"Middle East Eye",
+            "Authenticated":true
+        },
+        {
+            "Name":"Megan O'Toole",
+            "Twitter Handle":"@megan_otoole",
+            "Source/Referring":"Referring",
+            "Domain":"Middle East Eye",
+            "Position":"Columns Editor",
+            "Authenticated":true
+        },
+        {
+            "Name":"Tikun Olam",
+            "Twitter Handle":"@richards1052",
+            "Source/Referring":"Referring",
+            "Domain":"Middle East Eye",
+            "Position":"Contributor",
+            "Authenticated":false
+        },
+        {
+            "Name":"Dilly Hussain",
+            "Twitter Handle":"@DillyHussain88",
+            "Source/Referring":"Referring",
+            "Domain":"Middle East Eye",
+            "Position":"Contributor",
+            "Authenticated":true
+        },
+        {
+            "Name":"David Hearst",
+            "Twitter Handle":"@davidahearst",
+            "Source/Referring":"Referring",
+            "Domain":"Middle East Eye",
+            "Position":"Editor in Chief",
+            "Authenticated":true
+        },
+        {
+            "Name":"Dania Akkad",
+            "Twitter Handle":"@daniaakkad",
+            "Source/Referring":"Referring",
+            "Domain":"Middle East Eye",
+            "Position":"Senior Editor",
+            "Authenticated":false
+        },
+        {
+            "Name":"Simon Hooper",
+            "Twitter Handle":"@simonbhooper",
+            "Source/Referring":"Referring",
+            "Domain":"Middle East Eye",
+            "Position":"Journalist",
+            "Authenticated":false
+        },
+        {
+            "Name":"Azad Essa",
+            "Twitter Handle":"@azadessa",
+            "Source/Referring":"Referring",
+            "Domain":"Middle East Eye",
+            "Position":"Journalist",
+            "Authenticated":true
+        },
+        {
+            "Name":"Sheren Khalel",
+            "Twitter Handle":"@SherenK",
+            "Source/Referring":"Referring",
+            "Domain":"Middle East Eye",
+            "Position":"Journalist",
+            "Authenticated":true
+        },
+        {
+            "Name":"Areeb Ullah",
+            "Twitter Handle":"@are_eb",
+            "Source/Referring":"Referring",
+            "Domain":"Middle East Eye",
+            "Position":"Journalist",
+            "Authenticated":true
+        },
+        {
+            "Name":"Yunus Emre Oru\u00e7",
+            "Twitter Handle":"@defusertt",
+            "Source/Referring":"Referring",
+            "Domain":"Middle East Eye",
+            "Position":"Audience Development",
+            "Authenticated":true
+        },
+        {
+            "Name":"Rag\u0131p Soylu",
+            "Twitter Handle":"@ragipsoylu",
+            "Source/Referring":"Referring",
+            "Domain":"Middle East Eye",
+            "Position":"Turkey Correspondent",
+            "Authenticated":true
+        },
+        {
+            "Name":"Daniel Hilton",
+            "Twitter Handle":"@DanielHiltonCFC",
+            "Source/Referring":"Referring",
+            "Domain":"Middle East Eye",
+            "Position":"News Editor",
+            "Authenticated":false
+        },
+        {
+            "Name":"Chlo\u00e9 Benoist",
+            "Twitter Handle":"@chloejbenoist",
+            "Source/Referring":"Referring",
+            "Domain":"Middle East Eye",
+            "Position":"News Editor",
+            "Authenticated":true
+        }
+    ],
+    "Palestine Chronicle":[
+        {
+            "Name":"Ramzy Baroud",
+            "Twitter Handle":"@RamzyBaroud",
+            "Source/Referring":"Source",
+            "Domain":"Palestine Chronicle",
+            "Position":"Editor-in-Chief"
+        },
+        {
+            "Name":"Jonathan Cook",
+            "Twitter Handle":"@Jonathan_K_Cook",
+            "Source/Referring":"Source",
+            "Domain":"Palestine Chronicle",
+            "Position":"Writer/ Contributor"
+        },
+        {
+            "Name":"Yousef Al-Jamal",
+            "Twitter Handle":"@YousefAljamal",
+            "Source/Referring":"Source",
+            "Domain":"Palestine Chronicle",
+            "Position":"Editor"
+        },
+        {
+            "Name":"Yousef Ahmed",
+            "Twitter Handle":"@YDGAZA",
+            "Source/Referring":"Source",
+            "Domain":"Palestine Chronicle",
+            "Position":"Writer/ Contributor"
+        },
+        {
+            "Name":"Neve Gordon",
+            "Twitter Handle":"@nevegordon",
+            "Source/Referring":"Source",
+            "Domain":"Palestine Chronicle",
+            "Position":"Writer/ Contributor"
+        },
+        {
+            "Name":"Iqbal Jassat",
+            "Twitter Handle":"@ijassat \u200f",
+            "Source/Referring":"Source",
+            "Domain":"Palestine Chronicle",
+            "Position":"Writer/ Contributor"
+        },
+        {
+            "Name":"Sam Bahour",
+            "Twitter Handle":"@SamBahour \u200f",
+            "Source/Referring":"Source",
+            "Domain":"Palestine Chronicle",
+            "Position":"Writer/ Contributor"
+        },
+        {
+            "Name":"Tammy Obeidallah",
+            "Twitter Handle":"@umjihad \u200f",
+            "Source/Referring":"Source",
+            "Domain":"Palestine Chronicle",
+            "Position":"Writer/ Contributor"
+        },
+        {
+            "Name":"Institutional",
+            "Twitter Handle":"@PalestineChron",
+            "Source/Referring":"Source",
+            "Domain":"Palestine Chronicle",
+            "Position":"Account",
+            "Authenticated":false
+        },
+        {
+            "Name":"Ramona Wadi",
+            "Twitter Handle":"@walzerscent",
+            "Source/Referring":"Source",
+            "Domain":"Palestine Chronicle",
+            "Position":"Writer/ Contributor",
+            "Authenticated":false
+        },
+        {
+            "Name":"Hanna Kawas",
+            "Twitter Handle":"@HannaKawas",
+            "Source/Referring":"Source",
+            "Domain":"Palestine Chronicle",
+            "Position":"Writer/ Contributor",
+            "Authenticated":false
+        },
+        {
+            "Name":"Sam Husseini",
+            "Twitter Handle":"@samhusseini",
+            "Source/Referring":"Source",
+            "Domain":"Palestine Chronicle",
+            "Position":"Writer/ Contributor",
+            "Authenticated":false
+        }
+    ],
+    "Palestinan National News":[
+        {
+            "Name":"Quds News Network",
+            "Twitter Handle":"@QudsNen",
+            "Source/Referring":"Source",
+            "Domain":"PNN",
+            "Position":"Institutional Account",
+            "Authenticated":false
+        }
+    ],
+    "Shehab News":[
+        {
+            "Name":"Insitutional",
+            "Twitter Handle":"@ShehabAgencyEn",
+            "Source/Referring":"Source",
+            "Domain":"Shehab News",
+            "Position":"Account",
+            "Authenticated":false
+        }
+    ],
+    "TOI":[
+        {
+            "Name":"David Horovitz",
+            "Twitter Handle":"@davidhorovitz",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Founding Editor"
+        },
+        {
+            "Name":"Raphael Ahren",
+            "Twitter Handle":"@RaphaelAhren",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Diplomatic Correspondent"
+        },
+        {
+            "Name":"Ricky Ben-David",
+            "Twitter Handle":"@rbendavid",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"News editor"
+        },
+        {
+            "Name":"Sara Tuttle-Singer",
+            "Twitter Handle":"@TuttleSinger",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Blogger"
+        },
+        {
+            "Name":"Amanda Borschel-Dan",
+            "Twitter Handle":"@AmandaBDan",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Jewish World Editor"
+        },
+        {
+            "Name":"Joshua Davidovich",
+            "Twitter Handle":"@JMDavido",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Deputy Editor"
+        },
+        {
+            "Name":"Judah Ari Gross",
+            "Twitter Handle":"@JudahAriGross",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Military Correspondent"
+        },
+        {
+            "Name":"Miriam Herschlag",
+            "Twitter Handle":"@miriamherschlag",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Ops and Blogs Editor"
+        },
+        {
+            "Name":"Elie Leshem",
+            "Twitter Handle":"@elieleshem",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Deputy Editor"
+        },
+        {
+            "Name":"Melanie Lidman",
+            "Twitter Handle":"@melanielidman",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Religion and Environment"
+        },
+        {
+            "Name":"Dov Lieber",
+            "Twitter Handle":"@DovLieber",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Arab Correspondent"
+        },
+        {
+            "Name":"Jacob Magid",
+            "Twitter Handle":"@JacobMagid",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Settlements Correspondent"
+        },
+        {
+            "Name":"Eyal Nevo",
+            "Twitter Handle":"@eyalnevo",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"VP of Monetization"
+        },
+        {
+            "Name":"Marissa Newman",
+            "Twitter Handle":"@marissalnew",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Breaking News Editor"
+        },
+        {
+            "Name":"Yaakov Schwartz",
+            "Twitter Handle":"@YaakovYosef",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Deputy Jewish World Editor"
+        },
+        {
+            "Name":"Jessica Steinberg",
+            "Twitter Handle":"@batshuaj",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Culture and Lifestyle Editor"
+        },
+        {
+            "Name":"Luke Tress",
+            "Twitter Handle":"@luketress",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Video Editor"
+        },
+        {
+            "Name":"Stuart Winer",
+            "Twitter Handle":"@Stuart_Winer",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Breaking News Editor"
+        },
+        {
+            "Name":"Raoul Wootliff",
+            "Twitter Handle":"@RaoulWootliff",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Breaking News Editor"
+        },
+        {
+            "Name":"Irwin Cotler",
+            "Twitter Handle":"@IrwinCotler",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Editoral Board"
+        },
+        {
+            "Name":"Saul Singer",
+            "Twitter Handle":"@saulsinger",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Editoral Board"
+        },
+        {
+            "Name":"Ehud Yaari",
+            "Twitter Handle":"@Ehud_Yaari",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Editoral Board"
+        },
+        {
+            "Name":"Institutional",
+            "Twitter Handle":"@TimesofIsrael",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Account"
+        },
+        {
+            "Name":"Institutional",
+            "Twitter Handle":"@TOIAlerts",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"Alert Account"
+        },
+        {
+            "Name":"Luke Tress",
+            "Twitter Handle":"@EricCortellessa",
+            "Source/Referring":"Source",
+            "Domain":"TOI",
+            "Position":"DC Correspodent"
+        }
+    ],
+    "Ynet":[
+        {
+            "Name":"Yaara Shalom",
+            "Twitter Handle":"@yaarashalom",
+            "Source/Referring":"Source",
+            "Domain":"Ynet"
+        },
+        {
+            "Name":"Yoav Zitun",
+            "Twitter Handle":"@yoavzitun",
+            "Source/Referring":"Source",
+            "Domain":"Ynet",
+            "Position":"Blogger"
+        },
+        {
+            "Name":"Elior Levy",
+            "Twitter Handle":"@eliorlevy \u200f",
+            "Source/Referring":"Source",
+            "Domain":"Ynet",
+            "Position":"Journalist/Palestinian affairs correspondent"
+        },
+        {
+            "Name":"Attila Somfalvi",
+            "Twitter Handle":"@attilus",
+            "Source/Referring":"Source",
+            "Domain":"Ynet",
+            "Position":"Journalist/TV anchor"
+        },
+        {
+            "Name":"Ran Boker",
+            "Twitter Handle":"@ranboker",
+            "Source/Referring":"Source",
+            "Domain":"Ynet",
+            "Position":"Correspondent"
+        },
+        {
+            "Name":"Ilana Curiel",
+            "Twitter Handle":"@ilanacuriel",
+            "Source/Referring":"Source",
+            "Domain":"Ynet",
+            "Position":"Correspondent"
+        },
+        {
+            "Name":"Itamar Eichner",
+            "Twitter Handle":"@itamareichner \u200f",
+            "Source/Referring":"Source",
+            "Domain":"Ynet",
+            "Position":"Correspondent"
+        },
+        {
+            "Name":"Tali Farkash",
+            "Twitter Handle":"@TaliFarkash",
+            "Source/Referring":"Source",
+            "Domain":"Ynet",
+            "Position":"CORRESPONDENT"
+        },
+        {
+            "Name":"Raz Shechnik",
+            "Twitter Handle":"RazShechnik@ \u200f",
+            "Source/Referring":"Source",
+            "Domain":"Ynet",
+            "Position":"CORRESPONDENT"
+        },
+        {
+            "Name":"Ronen Bergman",
+            "Twitter Handle":"@ronenbergman \u200f",
+            "Source/Referring":"Source",
+            "Domain":"Ynet",
+            "Position":"Correspondent"
+        },
+        {
+            "Name":"Yoaz Hendel",
+            "Twitter Handle":"@YoazHendel1 \u200f",
+            "Source/Referring":"Source",
+            "Domain":"Ynet",
+            "Position":"Correspondent"
+        },
+        {
+            "Name":"Sima Kadmon",
+            "Twitter Handle":"@SimaKadmon",
+            "Source/Referring":"Source",
+            "Domain":"Ynet",
+            "Position":"Correspondent"
+        },
+        {
+            "Name":"Institutional",
+            "Twitter Handle":"@ynetnews",
+            "Source/Referring":"Source",
+            "Domain":"Ynet",
+            "Position":"Account"
+        },
+        {
+            "Name":"Sarah Miller",
+            "Source/Referring":"Source",
+            "Domain":"Ynet",
+            "Position":"Managing Ed."
+        }
+    ],
+    "+972":[
+        {
+            "Name":"Dahlia Scheindlin",
+            "Twitter Handle ":"@dahliasc \u200f",
+            "Source/Referring":"Source",
+            "Domain":"972+",
+            "Position":"chair, public opinion analyst and strategic consultant",
+            "Authenticated":false
+        },
+        {
+            "Name":"Mairav Zonszein",
+            "Twitter Handle ":"@MairavZ",
+            "Source/Referring":"Source",
+            "Domain":"972+",
+            "Position":"independent journalist"
+        },
+        {
+            "Name":"Inbal Ben Yehuda",
+            "Twitter Handle ":"@Inbaluna",
+            "Source/Referring":"Source",
+            "Domain":"972+",
+            "Position":"blogger, researcher"
+        },
+        {
+            "Name":"Edo Konrad",
+            "Twitter Handle ":"@edokonrad",
+            "Source/Referring":"Source",
+            "Domain":"972+",
+            "Position":"Deputy editor & writer"
+        },
+        {
+            "Name":"Natasha Roth",
+            "Twitter Handle ":"@NatashaRoth01",
+            "Source/Referring":"Source",
+            "Domain":"972+",
+            "Position":"Blogger, former associate editor"
+        },
+        {
+            "Name":"Amjad Iraqi",
+            "Twitter Handle ":"@aj_iraqi",
+            "Source/Referring":"Source",
+            "Domain":"972+",
+            "Position":"board member, freelance writer"
+        },
+        {
+            "Name":"Haggai Matar",
+            "Twitter Handle ":"@Ha_Matar",
+            "Source/Referring":"Source",
+            "Domain":"972+",
+            "Position":"executive director, journalist"
+        },
+        {
+            "Name":"Rami Younis",
+            "Twitter Handle ":"@RamiYounisPS",
+            "Source/Referring":"Source",
+            "Domain":"972+",
+            "Position":"independent writer, Palestine activist"
+        },
+        {
+            "Name":"Samer Badawi",
+            "Twitter Handle ":"@samwithaner",
+            "Source/Referring":"Source",
+            "Domain":"972+",
+            "Position":"contributor"
+        },
+        {
+            "Name":"Lisa Goldman",
+            "Twitter Handle ":"@lisang",
+            "Source/Referring":"Source",
+            "Domain":"972+",
+            "Position":"contributing editor"
+        },
+        {
+            "Name":"Noam Sheizaf",
+            "Twitter Handle ":"@nsheizaf",
+            "Source/Referring":"Source",
+            "Domain":"972+",
+            "Position":"journalist"
+        },
+        {
+            "Name":"Yuval Ben-Ami",
+            "Twitter Handle ":"@yuval_ba",
+            "Source/Referring":"Source",
+            "Domain":"972+",
+            "Position":"journalist, author"
+        },
+        {
+            "Name":"Mya Guarnieri",
+            "Twitter Handle ":"@myaguarnieri",
+            "Source/Referring":"Source",
+            "Domain":"972+",
+            "Position":"author, contributor"
+        },
+        {
+            "Name":"Dimi Reider",
+            "Twitter Handle ":"@reider",
+            "Source/Referring":"Source",
+            "Domain":"972+",
+            "Position":"co-founder"
+        },
+        {
+            "Name":"Noa Yachot",
+            "Twitter Handle ":"@NoaYachot",
+            "Source/Referring":"Source",
+            "Domain":"972+",
+            "Position":"board member, senior editor ACLU"
+        },
+        {
+            "Name":"Institutional",
+            "Twitter Handle ":"@972mag",
+            "Source/Referring":"Source",
+            "Domain":"972+",
+            "Authenticated":true
+        }
+    ],
+    "FreelancersContributors ":[
+        {
+            "NAME":"Benjamin Shiloh",
+            "Twitter Handle":"@ymedad",
+            "Source/Referring":"Referring",
+            "Position":"Arutz Sheva"
+        },
+        {
+            "NAME":"George Hale",
+            "Twitter Handle":"@georgehale",
+            "Source/Referring":"Referring",
+            "Position":"Maan"
+        },
+        {
+            "NAME":"Jonathan Cook",
+            "Twitter Handle":"@Jonathan_K_Cook",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Yousef Ahmed",
+            "Twitter Handle":"@YDGAZA",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Nicola Nasser",
+            "Twitter Handle":"@Nasser_Sultan1",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Kathy Kelly",
+            "Twitter Handle":"@voiceinwild",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Neve Gordon",
+            "Twitter Handle":"@nevegordon",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Iqbal Jassat",
+            "Twitter Handle":"@ijassat",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Sam Bahour",
+            "Twitter Handle":"@SamBahour",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Tammy Obeidallah",
+            "Twitter Handle":"@umjihad",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Shafiq Morton",
+            "Twitter Handle":"@shafiqmorton",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Susan Abulhawa",
+            "Twitter Handle":"@sjabulhawa",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Samah Sabawi",
+            "Twitter Handle":"@gazaheart",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Sam Husseini",
+            "Twitter Handle":"@samhusseini",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Frank Barat",
+            "Twitter Handle":"@frank_barat",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Antoun Issa",
+            "Twitter Handle":"@antissa",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Tariq Shadid",
+            "Twitter Handle":"@docjazzmusic",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Seraj Assi",
+            "Twitter Handle":"@Serajeas",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Vacy Vlazna",
+            "Twitter Handle":"@vacy_vacy",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Shad Abusalama",
+            "Twitter Handle":"@ShahdAbusalama",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Jamal Kanj",
+            "Twitter Handle":"@jamalkk",
+            "Source/Referring":"Referring",
+            "Position":"PC"
+        },
+        {
+            "NAME":"Richard Hardigan",
+            "Twitter Handle":"@RichardHardigan",
+            "Source/Referring":"Referring",
+            "Position":"journalist, activist, university professor",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Haidar Eid",
+            "Twitter Handle":"@haidareid",
+            "Source/Referring":"Referring",
+            "Position":"Seemed to be a named as a PC contributer. Definitely Palestinian citizen and activist",
+            "Authenticated":false
+        },
+        {
+            "NAME":"anthroboycott",
+            "Twitter Handle":"@anthroboycott",
+            "Source/Referring":"Referring",
+            "Position":"Anthropologists for the Boycott of Israeli Academic Institutions",
+            "Authenticated":false
+        },
+        {
+            "NAME":"The IMEU",
+            "Twitter Handle":"@theIMEU",
+            "Source/Referring":"Referring",
+            "Position":"The Institute for Middle East Understanding offers journalists quick access to information about Palestine and expert sources in the US and Middle East.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"J Street",
+            "Twitter Handle":"@jstreetdotorg",
+            "Source/Referring":"Referring",
+            "Position":"US-based pro-Isreal advocacy group",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Partners for Progressive Israel",
+            "Twitter Handle":"@Partners4Israel",
+            "Source/Referring":"Referring",
+            "Position":"Part of the @WUMeretz. (The organization formerly known as Meretz USA.)",
+            "Authenticated":false
+        },
+        {
+            "NAME":"B'Tselem \u05d1\u05e6\u05dc\u05dd \u0628\u062a\u0633\u064a\u0644\u0645",
+            "Twitter Handle":"@btselem",
+            "Source/Referring":"Referring",
+            "Position":"The Israeli Information Center for Human Rights in the Occupied Territories \u05de\u05e8\u05db\u05d6 \u05d4\u05de\u05d9\u05d3\u05e2 \u05d4\u05d9\u05e9\u05e8\u05d0\u05dc\u05d9 \u05dc\u05d6\u05db\u05d5\u05d9\u05d5\u05ea \u05d4\u05d0\u05d3\u05dd \u05d1\u05e9\u05d8\u05d7\u05d9\u05dd RT \u2260 endorsement. contact@btselem.org",
+            "Authenticated":false
+        },
+        {
+            "NAME":"AIPAC",
+            "Twitter Handle":"@AIPAC",
+            "Source/Referring":"Referring",
+            "Position":"America's pro-Israel lobby",
+            "Authenticated":true
+        },
+        {
+            "NAME":"IfNotNow",
+            "Twitter Handle":"@IfNotNowOrg \u200f",
+            "Source/Referring":"Referring",
+            "Position":"A movement led by young American Jews to end our community's support for the Israeli occupation",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Bend the Arc: Jewish Action",
+            "Twitter Handle":"@jewishaction",
+            "Source/Referring":"Referring",
+            "Position":"Bend the Arc\u2019s political advocacy arm harnesses the collective power of progressive American Jews to change policy and build a more just and equal nation.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"J Street",
+            "Twitter Handle":"@jstreetdotorg",
+            "Source/Referring":"Referring",
+            "Position":"J Street is the political home for pro-#Israel, pro-peace Americans fighting for a two-state solution to the Israeli-Palestinian conflict.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Palestine Legal",
+            "Twitter Handle":"@pal_legal \u200f",
+            "Source/Referring":"Referring",
+            "Position":"Providing legal support and advocacy for Palestinian rights activists in the U.S. Contact us for legal advice, representation, and resources.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"ADL",
+            "Twitter Handle":"@ADL",
+            "Source/Referring":"Referring",
+            "Position":"ADL (Anti-Defamation League) - To stop the defamation of the Jewish people, and secure justice and fair treatment to all.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"US Campaign for Palestinian Rights",
+            "Twitter Handle":"@USCPR_",
+            "Source/Referring":"Referring",
+            "Position":"The US Campaign for Palestinian Rights (USCPR) is a national coalition of 330+ groups working to advocate for Palestinian rights and a shift in US policy.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"MoveOn",
+            "Twitter Handle":"@MoveOn",
+            "Source/Referring":"Referring",
+            "Position":"MoveOn.org",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Benjamin Netanyahu",
+            "Twitter Handle":"@netanyahu",
+            "Source/Referring":"Referring",
+            "Position":"\u05e8\u05d0\u05e9 \u05de\u05de\u05e9\u05dc\u05ea \u05d9\u05e9\u05e8\u05d0\u05dc \u05d5\u05d9\u05d5''\u05e8 \u05d4\u05dc\u05d9\u05db\u05d5\u05d3 \u2022 Prime Minister of Israel, Chairman of the Likud Party",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Gov. Mike Huckabee",
+            "Twitter Handle":"@GovMikeHuckabee",
+            "Source/Referring":"Referring",
+            "Position":"Host of \"Huckabee\" on TBN Sat/Sun 8pm et,Fox News contributor, author, Fmr AR Gov",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Ilhan Omar",
+            "Twitter Handle":"@IlhanMN",
+            "Source/Referring":"Referring",
+            "Position":"Mom, Refugee, Intersectional Feminist, 2017 Top Angler of the Governor's Fishing Opener and Congresswoman for #MN05.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Rashida Tlaib",
+            "Twitter Handle":"@RashidaTlaib",
+            "Source/Referring":"Referring",
+            "Position":"Unbossed Congresswoman for Michigan's #13districtstrong Mama working for justice, social worker at heart, Detroiter, Palestinian American, proud Muslima.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Gisha \u05d2\u05d9\u05e9\u05d4 \u0645\u0633\u0644\u0643",
+            "Twitter Handle":"@Gisha_Access",
+            "Source/Referring":"Referring",
+            "Position":"Gisha is an Israeli NGO whose goal is to protect the freedom of movement of Palestinians, especially Gaza residents.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Majed Abusalama",
+            "Twitter Handle":"@MajedAbusalama",
+            "Source/Referring":"Referring",
+            "Position":"Human Rights Defender and Award winning Journalist from Jabalaia refugees camp in #Gaza - #Palestine",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Women For Palestine",
+            "Twitter Handle":"@WomenForPal",
+            "Source/Referring":"Referring",
+            "Position":"We are Group of Palestinian women work together to reveal the fact about the occupation, Gaza siege and the apartheid in the West Bank .",
+            "Authenticated":false
+        },
+        {
+            "NAME":"ALLMEP",
+            "Twitter Handle":"@ALLMEP_usa",
+            "Source/Referring":"Referring",
+            "Position":"The Alliance for Middle East Peace is a coalition of 100 NGOs promoting ppl-to-ppl coexistence between Arabs and Jews, Israelis and Palestinians. RT\u2260Endorsement",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Boston JCRC",
+            "Twitter Handle":"@BostonJCRC",
+            "Source/Referring":"Referring",
+            "Position":"Advances Jewish values, interests, & priorities through service, advocacy, & Israel engagement. @TELEMyouth_JCRC @ReachOutBoston @GBJCL @GovAffairsJcrc",
+            "Authenticated":false
+        },
+        {
+            "NAME":"USEmbassyJerusalem",
+            "Twitter Handle":"@usembassyjlm",
+            "Source/Referring":"Referring",
+            "Position":"US Embassy Jerusalem",
+            "Authenticated":true
+        },
+        {
+            "NAME":"GazaNews",
+            "Twitter Handle":"@MousaNews",
+            "Source/Referring":"Referring",
+            "Position":"News of Palestine and the Gaza Strip The Official Page of the Palestinian Freelance ( Gaza News ) We deliver news directly to you from Palestine _ Gaza",
+            "Authenticated":false
+        },
+        {
+            "NAME":"ICC",
+            "Twitter Handle":"@IsraelCampus",
+            "Source/Referring":"Referring",
+            "Position":"A national network of students, faculty, and professionals dedicated to strengthening the pro-Israel movement on campus.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Dr. Sara Yael Hirschhorn",
+            "Twitter Handle":"@SaraHirschhorn1",
+            "Source/Referring":"Referring",
+            "Position":"V. Asst. Prof in Israel Studies @NorthwesternU ; Sami Rohr Choice Prize Author, \"City on a Hilltop: American Jews & the Israeli Settler Movement\"; Scholar-Pundit",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Center for ME Peace",
+            "Twitter Handle":"@AbrahamCenter",
+            "Source/Referring":"Referring",
+            "Position":"The S. Daniel Abraham Center for Middle East Peace works towards a just and comprehensive peace that will bring an end to the Arab-Israeli conflict.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Shoshanna Keats Jaskoll",
+            "Twitter Handle":"@skjask",
+            "Source/Referring":"Referring",
+            "Position":"@tabletmag @jerusalem_post @jewishchron @timesofisrael @jdforward",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Karol Markowicz",
+            "Twitter Handle":"@karol",
+            "Source/Referring":"Referring",
+            "Position":"NYPost",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Hillel",
+            "Twitter Handle":"@HillelIntl",
+            "Source/Referring":"Referring",
+            "Position":"Hillel International is the world's largest Jewish college organization.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"The Jewish Agency for Israel",
+            "Twitter Handle":"@JewishAgency",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "NAME":"The Jewish Federations of North America",
+            "Twitter Handle":"@jfederations",
+            "Source/Referring":"Referring",
+            "Position":"The Jewish Federations of North America represents 147 Jewish Federations and 300 independent Jewish communities",
+            "Authenticated":false
+        },
+        {
+            "NAME":"CIJA",
+            "Twitter Handle":"@CIJAinfo",
+            "Source/Referring":"Referring",
+            "Position":"The Centre for Israel and Jewish Affairs (CIJA) is the advocacy agent of Jewish Federations of Canada",
+            "Authenticated":false
+        },
+        {
+            "NAME":"CJPAC",
+            "Twitter Handle":"@CJPAC",
+            "Source/Referring":"Referring",
+            "Position":"Canadian Jewish Political Affairs Committee -- The Political Engagement People",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Canadian Jewish News",
+            "Twitter Handle":"@TheCJN",
+            "Source/Referring":"Referring",
+            "Position":"The largest Jewish newspaper in Canada",
+            "Authenticated":false
+        },
+        {
+            "NAME":"JTA | Jewish news",
+            "Twitter Handle":"@JTAnews",
+            "Source/Referring":"Referring",
+            "Position":"The Global Jewish News Service",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Jewish Journal",
+            "Twitter Handle":"@JewishJournal",
+            "Source/Referring":"Referring",
+            "Position":"US News Outlet",
+            "Authenticated":true
+        },
+        {
+            "NAME":"The Jewish Week",
+            "Twitter Handle":"@NYJewishWeek",
+            "Source/Referring":"Referring",
+            "Position":"The largest independent, Jewish community newspaper in America.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"David Halbfinger",
+            "Twitter Handle":"@halbfinger",
+            "Source/Referring":"Referring",
+            "Position":"Jerusalem bureau chief for The New York Times",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Raf Sanchez",
+            "Twitter Handle":"@rafsanchez",
+            "Source/Referring":"Referring",
+            "Position":"Middle East correspondent | Telegraph",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Ben Hartman",
+            "Twitter Handle":"@Benhartman",
+            "Source/Referring":"Referring",
+            "Position":"Writer, ex @Jerusalem_Post, Bylines also in: @TheDailyBeast @TexasTribune @HIGH_TIMES_Mag @Tabletmag, @TheAtlantic, @TexasObserver @Instagram: @Benlhartman",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Nurit Ben",
+            "Twitter Handle":"@NuritBen",
+            "Source/Referring":"Referring",
+            "Position":"Anchor & Editor at @i24NEWS_EN Previously @CBSNews @GQMagazine @NYTMag",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Ireland Israel Alliance",
+            "Twitter Handle":"@irlisrAlliance",
+            "Source/Referring":"Referring",
+            "Position":"Aiming to bring clarity to the Israeli-Palestinian conflict and to ensure it receives fair and impartial treatment in the Irish media.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Adam Kredo",
+            "Twitter Handle":"@Kredo0",
+            "Source/Referring":"Referring",
+            "Position":"Senior Writer, Foreign Policy & National Security for @FreeBeacon",
+            "Authenticated":true
+        },
+        {
+            "NAME":"MANPalestine Action",
+            "Twitter Handle":"@ManPalestine",
+            "Source/Referring":"Referring",
+            "Position":"A network of people in Manchester taking creative action against Israeli apartheid through BDS and other effective, participatory Palestine solidarity work.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"ManchesterPSC",
+            "Twitter Handle":"@ManchesterPSC",
+            "Source/Referring":"Referring",
+            "Position":"#Manchester Palestine Solidarity Campaign, branch of the #Palestine Solidarity Campaign, an independent, non-governmental and non-party political organisation",
+            "Authenticated":false
+        },
+        {
+            "NAME":"PACBI",
+            "Twitter Handle":"@PACBI",
+            "Source/Referring":"Referring",
+            "Position":"Official twitter account of the Palestinian Campaign for the Academic and Cultural Boycott of Israel - PACBI",
+            "Authenticated":true
+        },
+        {
+            "NAME":"IPSC",
+            "Twitter Handle":"@ipsc48",
+            "Source/Referring":"Referring",
+            "Position":"Ireland-Palestine Solidarity Campaign.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Defense for Children",
+            "Twitter Handle":"@DCIPalestine",
+            "Source/Referring":"Referring",
+            "Position":"NGO dedicated to defending the #humanrights of Palestinian #children living in the Occupied #Palestinian Territory.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"PCHR",
+            "Twitter Handle":"@PCHR",
+            "Source/Referring":"Referring",
+            "Position":"PCHR is a Gaza-based NGO dedicated to protecting human rights in the occupied Palestinian territory.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Al-Haq \u0627\u0644\u062d\u0642",
+            "Twitter Handle":"@alhaq_org",
+            "Source/Referring":"Referring",
+            "Position":"Protecting and Promoting Human Rights & the Rule of Law in the Occupied Palestinian Territory #HumanRights #Accountability #BizHumanRights",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Ali Abunimah",
+            "Twitter Handle":"@AliAbunimah",
+            "Source/Referring":"Referring",
+            "Position":"I'm co-founder of (link: http://electronicintifada.net) electronicintifada.net. I'm author of One Country (2006) and The Battle for Justice in Palestine (2014).",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Dan Cohen",
+            "Twitter Handle":"@dancohen3000",
+            "Source/Referring":"Referring",
+            "Position":"Correspondent \n@RT_America",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Electronic Intifada",
+            "Twitter Handle":"@intifada",
+            "Source/Referring":"Referring",
+            "Position":"Palestinian news outlet",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Electronic Intifada",
+            "Twitter Handle":"@intifadaLive",
+            "Source/Referring":"Referring",
+            "Position":"Palestinian news outlet",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Aaron Mat\u00e9",
+            "Twitter Handle":"@aaronjmate",
+            "Source/Referring":"Referring",
+            "Position":"Contributing Writer @TheNation. Ex @TheRealNews @AJEnglish @democracynow",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Tarek Fatah",
+            "Twitter Handle":"@TarekFatah",
+            "Source/Referring":"Referring",
+            "Position":"Columnist at the Toronto Sun, Fellow at the Middle East Forum",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Ofer Laszewicki Rubin",
+            "Twitter Handle":"@OferLR",
+            "Source/Referring":"Referring",
+            "Position":"Multimedia journalist at \n@SemanarioAurora\n@larazon_es",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Palestinian Voices",
+            "Twitter Handle":"@FalastinVoices",
+            "Source/Referring":"Referring",
+            "Position":"PV is a Palestinian-led organization based in Gaza using every medium available to communicate the truth about the Palestinian Cause to the outside world.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Gaza Freedom Flotilla Australia",
+            "Twitter Handle":"@GFFAusGroup",
+            "Source/Referring":"Referring",
+            "Position":"Campaigning on and off the water to end the illegal israeli blockade of Gaza and for a free Palestine",
+            "Authenticated":false
+        },
+        {
+            "NAME":"We Are Not Numbers #Gaza",
+            "Twitter Handle":"@WeAreNotNumbers",
+            "Source/Referring":"Referring",
+            "Position":"Writers from #Gaza and Lebanon team with international mentors to tell the human stories behind the numbers.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Freedom Flotilla",
+            "Twitter Handle":"@GazaFFlotilla",
+            "Source/Referring":"Referring",
+            "Position":"International campaign to break the illegal Israeli blockade of Palestinians in Gaza.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Dimitri Lascaris",
+            "Twitter Handle":"@dimitrilascaris",
+            "Source/Referring":"Referring",
+            "Position":"Blogger",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Yousef M. Aljamal",
+            "Twitter Handle":"@YousefAljamal",
+            "Source/Referring":"Referring",
+            "Position":"Blogger/Electronic Intifada",
+            "Authenticated":false
+        },
+        {
+            "NAME":"JustWorldEd",
+            "Twitter Handle":"@JustWorldEd",
+            "Source/Referring":"Referring",
+            "Position":"A feisty nonprofit providing educational resources and experiences on issues of war, peace, justice, and the Middle East",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Water Justice in Palestine",
+            "Twitter Handle":"@WaterPalestine",
+            "Source/Referring":"Referring",
+            "Position":"The Alliance for Water Justice in Palestine raises awareness about and organizes against Israel's use of water as a weapon against the people of Palestine",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Bel\u00e9n Fern\u00e1ndez",
+            "Twitter Handle":"@MariaBelen_Fdez",
+            "Source/Referring":"Referring",
+            "Position":"Contributing editor at Jacobin Magazine.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Middle East Monitor",
+            "Twitter Handle":"@MiddleEastMnt",
+            "Source/Referring":"Referring",
+            "Position":"Bringing a fair & accurate coverage of the Middle East to the West /",
+            "Authenticated":true
+        },
+        {
+            "NAME":"poxymoron",
+            "Twitter Handle":"@hilary_aked",
+            "Source/Referring":"Referring",
+            "Position":"Bylines: @independent @aljazeera @huffpost @intifada @spinwatch",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Asa Winstanley",
+            "Twitter Handle":"@AsaWinstanley",
+            "Source/Referring":"Referring",
+            "Position":"Electronic Intifada Contributor",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Palestine PLO-DPDP",
+            "Twitter Handle":"@PLO_DPDP",
+            "Source/Referring":"Referring",
+            "Position":"Welcome to the official account of the PLO Department of Public Diplomacy & Policy headed by Executive Committee Member @DrHananAshrawi .",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Days of Palestine",
+            "Twitter Handle":"@DaysofPalestine",
+            "Source/Referring":"Referring",
+            "Position":"Focused on Palestine News",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Fishel Benkhald",
+            "Twitter Handle":"@Jew_Pakistani",
+            "Source/Referring":"Referring",
+            "Position":"Contributor for Daily Times @dailytimespak",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Azadeh Shahshahani",
+            "Twitter Handle":"@ashahshahani",
+            "Source/Referring":"Referring",
+            "Position":"Contributor for Guardian, HuffPost, The Nation, Salon, Al Jazeera News",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Pal Ahmed",
+            "Twitter Handle":"@ahmedshameya95",
+            "Source/Referring":"Referring",
+            "Position":"Secretary of \"Palestinian Voices\"",
+            "Authenticated":false
+        },
+        {
+            "NAME":"The Jewish Week",
+            "Twitter Handle":"@NYJewishWeek",
+            "Source/Referring":"Referring",
+            "Position":"Largest independent, Jewish community newspaper in America.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Matti Friedman",
+            "Twitter Handle":"@MattiFriedman",
+            "Source/Referring":"Referring",
+            "Position":"NYT Opinion Contributor",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Laura E. Adkins",
+            "Twitter Handle":"@Laura_E_Adkins",
+            "Source/Referring":"Referring",
+            "Position":"Opinion Editor JTA | Jewish news. Bylines: NY Times, SELF Magazine, The Forward, Observer",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Avital Chizhik Goldschmidt",
+            "Twitter Handle":"@avitalrachel",
+            "Source/Referring":"Referring",
+            "Position":"Life Editor for The Forward. Contributer to  \nNY Times, Haaretz, Salon",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Alex Kane",
+            "Twitter Handle":"@alexbkane",
+            "Source/Referring":"Referring",
+            "Position":"Freelance Journalist",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Jim Clancy",
+            "Twitter Handle":"@ClancyReports",
+            "Source/Referring":"Referring",
+            "Position":"International Journalist",
+            "Authenticated":true
+        },
+        {
+            "NAME":"jesse rosenfeld",
+            "Twitter Handle":"@jrosyfield",
+            "Source/Referring":"Referring",
+            "Position":"English press contributor for The Intercept, The Daily Beast, The Nation & Al Jazeera",
+            "Authenticated":false
+        },
+        {
+            "NAME":"\u062f\u064a\u0627\u0646\u0627",
+            "Twitter Handle":"@SuperKnafeh",
+            "Source/Referring":"Referring",
+            "Position":"Freelance Journalist",
+            "Authenticated":false
+        },
+        {
+            "NAME":"GroundBrief",
+            "Twitter Handle":"@GroundBrief",
+            "Source/Referring":"Referring",
+            "Position":"Independent Newsletter",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Joe Truzman",
+            "Twitter Handle":"@Jtruzmah",
+            "Source/Referring":"Referring",
+            "Position":"Independent/Author for GroundBrief (Newsletter)",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Partisangirl",
+            "Twitter Handle":"@Partisangirl",
+            "Source/Referring":"Referring",
+            "Position":"New Eastern Outlook Contributor",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Palestine Info Center",
+            "Twitter Handle":"@palinfoen",
+            "Source/Referring":"Referring",
+            "Position":"Independent News Blog",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Palestine Post 24",
+            "Twitter Handle":"@PalestinePost24",
+            "Source/Referring":"Referring",
+            "Position":"Independent News Blog",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Radio Pakistan",
+            "Twitter Handle":"@RadioPakistan",
+            "Source/Referring":"Referring",
+            "Position":"Independent News Blog and Radio Station",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Ariyana Love",
+            "Twitter Handle":"@AmbassadorOPTV",
+            "Source/Referring":"Referring",
+            "Position":"Independent Journalist, thelibertybeacon.com/",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Mondoweiss",
+            "Twitter Handle":"@Mondoweiss",
+            "Source/Referring":"Referring",
+            "Position":"Independent news site https://mondoweiss.net/",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Michael Bueckert",
+            "Twitter Handle":"@mbueckert",
+            "Source/Referring":"Referring",
+            "Position":"Contributor to  Africa is a Country\n@africasacountry, Jacobin @jacobinmag, Briarpatch Magazine @briarpatchmag",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Jacky Hugi",
+            "Twitter Handle":"@JackyHugi",
+            "Source/Referring":"Referring",
+            "Position":"Middle East editor for Israel's Army Radio ( @glzradio ); Columnist for Maariv daily ( @MaarivOnline )",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Al Mezan Center",
+            "Twitter Handle":"@AlMezanCenter",
+            "Source/Referring":"Referring",
+            "Position":"alestinian non-governmental non-partisan organization; independent news briefs",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Yishai Fleisher",
+            "Twitter Handle":"@YishaiFleisher",
+            "Source/Referring":"Referring",
+            "Position":"NY Times Opinion Editorial Contributor",
+            "Authenticated":true
+        },
+        {
+            "NAME":"American Zionism",
+            "Twitter Handle":"@americanzionism",
+            "Source/Referring":"Referring",
+            "Position":"Independent Blogger",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Israel News Agency",
+            "Twitter Handle":"@Israel_News_INA",
+            "Source/Referring":"Referring",
+            "Position":"Independent Blog",
+            "Authenticated":false
+        },
+        {
+            "NAME":"NaomiZeveloff",
+            "Twitter Handle":"@NaomiZeveloff",
+            "Source/Referring":"Referring",
+            "Position":"Contributor to The Atlantic, The Forward, Forgein Policy, NPR",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Isaac J Ross",
+            "Twitter Handle":"@IsaacRossUK",
+            "Source/Referring":"Referring",
+            "Position":"Blogger and contributor Jewish News @JewishNewsUK, Comment Central @commentcentral1 and Student Voices@StudentVoicesUK",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Maajid Liberal",
+            "Twitter Handle":"@MaajidLiberal",
+            "Source/Referring":"Referring",
+            "Position":"Columnist \nTh Daily Beast @TheDailyBeast\n & Jewish News @JewishNewsUK",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Edward Rowe",
+            "Twitter Handle":"@YahyaRowe",
+            "Source/Referring":"Referring",
+            "Position":"\u201cNondescript Foreign Correspondent,\u201d bylines in \nT-VINE Magazine @1TVINE, The Jewish Chronicle @JewishChron, \ni newspaper @theipaper, \n and \n@hackneymagazine\n.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Josh Jackman",
+            "Twitter Handle":"@josh_jackman",
+            "Source/Referring":"Referring",
+            "Position":"Contributor for Pink News @PinkNews. Former contributor for The Jewish Chronicle @JewishChron",
+            "Authenticated":false
+        },
+        {
+            "NAME":"BICOM",
+            "Twitter Handle":"@BritainIsrael",
+            "Source/Referring":"Referring",
+            "Position":"Independent Blog",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Religion and State",
+            "Twitter Handle":"@religion_state",
+            "Source/Referring":"Referring",
+            "Position":"Independent Blog",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Now The End Begins",
+            "Twitter Handle":"@NowTheEndBegins",
+            "Source/Referring":"Referring",
+            "Position":"Independent Blog",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Ben White",
+            "Twitter Handle":"@benabyad",
+            "Source/Referring":"Referring",
+            "Position":"Jounalist. Bylines include Al Jazeera News @AJENews,  Independent Voices @IndyVoices, Middle East Eye\n @MiddleEastEye, Contributor Al-Shabaka (think-tank) @AlShabaka",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Taqadum Al-khatib",
+            "Twitter Handle":"@taqadum",
+            "Source/Referring":"Referring",
+            "Position":"Writing at \u0627\u0644\u0639\u0631\u0628\u064a \u0627\u0644\u062c\u062f\u064a\u062f @alaraby_ar & Middle East Eye @MiddleEastEye",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Professor Kamel Hawwash \u0643\u0627\u0645\u0644 \u0627\u0644\u062d\u0648\u0627\u0634",
+            "Twitter Handle":"@kamelhawwash",
+            "Source/Referring":"Referring",
+            "Position":"Writer Middle East Eye @middleEastEye, \n Middle East Monitor @MiddleEastMnt, The Arab Weekly \n @ArabWeekly, TRT World @TRTworld, The New Arab @the_NewArab",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Ryan Harvey @ryanharveysongs",
+            "Twitter Handle":"@ryanharveysongs",
+            "Source/Referring":"Referring",
+            "Position":"Bylines The Nation @TheNation, Truthout @Truthout, Middle East Eye @MiddleEastEye, In These Times @InTheseTimesMag",
+            "Authenticated":false
+        },
+        {
+            "NAME":"\u0631\u0648\u0631\u064a \u062f\u0648\u0646\u0627\u063a\u064a",
+            "Twitter Handle":"@roridonaghy",
+            "Source/Referring":"Referring",
+            "Position":"Ex news editorfor Middle East Eye @MiddleEastEye. Bylines \nThe Guardian @Guardian, The Independent @Independent, HuffPost\n @HuffPost",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Tanya Goudsouzian",
+            "Twitter Handle":"@tgoudsouzian",
+            "Source/Referring":"Referring",
+            "Position":"Opinion Editor Contributor for LMD English @LMDiplo, National Interest @TheNatlInterest, Middle East Eye @MiddleEastEye. Former Opinion Editor for Al Jazeera English @AJEnglish. Head of Interviews for TRT World @TRTWorld.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Kaamil Ahmed",
+            "Twitter Handle":"@KaamilAhmed",
+            "Source/Referring":"Referring",
+            "Position":"Journalist/Contributor for The New Humanitarian @irinnews, The Guardian @guardian, Mongabay @mongabay, Vox @voxdotcom, Middle East Eye @middleeasteye. Editor: Convivencia @convivenciamag",
+            "Authenticated":true
+        },
+        {
+            "NAME":"James Reinl",
+            "Twitter Handle":"@jamesreinl",
+            "Source/Referring":"Referring",
+            "Position":"Independent Journalist for Al Jazeera English  @AJEnglish, Foreign Policy@ForeignPolicy, Middle East Eye @MiddleEastEye",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Mark Mondalek",
+            "Twitter Handle":"@markmondalek",
+            "Source/Referring":"Referring",
+            "Position":"Writer. Freelance journalist | Published in: \nMiddle East Eye @MiddleEastEye, MintPress News @MintPressNews, Jacobin @jacobinmag, Middle East Monitor, \n @MiddleEastMnt, Mondoweiss @Mondoweiss, BitchMedia @BitchMedia",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Virginie Le Borgne",
+            "Twitter Handle":"@vlborgne",
+            "Source/Referring":"Referring",
+            "Position":"Journalist & Photographer. Mediapart @mediapart, The Nib @thenib, Al Jazeera English @AJENews, La Revue Dessin\u00e9e\n @LaRevueDessinee, New Deeply @newsdeeply, Middle East Eye @MiddleEastEye",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Amandla",
+            "Twitter Handle":"@tjAmandla",
+            "Source/Referring":"Referring",
+            "Position":"Journalist ex: Channel 4 Dispatches @c4dispatches\n and Middle East Eye @MiddleEastEye. Credits: \nAl Jazeera English @aljazeera, BBC Radio 4 @bbcradio4, BuzzFeed News \n@buzzfeednews, VICE News @vicenews",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Graham Liddell",
+            "Twitter Handle":"@grahamliddell",
+            "Source/Referring":"Referring",
+            "Position":"Former editor for Middle East Eye @MiddleEastEye and Ma'an News Agency\n@MaanNewsAgency",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Cagri Ozdemir",
+            "Twitter Handle":"@CgrOzdemir",
+            "Source/Referring":"Referring",
+            "Position":"Former opinion editor Al Jazeera English @AJEnglish. Works for DW T\u00fcrk\u00e7e @dw_turkce - ex writer for Middle East Eye @MiddleEastEye",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Samer Al-Atrush",
+            "Twitter Handle":"@SameralAtrush",
+            "Source/Referring":"Referring",
+            "Position":"Independent journalist covering North Africa",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Hope for Israel",
+            "Twitter Handle":"@hope4israel",
+            "Source/Referring":"Referring",
+            "Position":"Independent Blog",
+            "Authenticated":false
+        },
+        {
+            "NAME":"American Jewish Congress",
+            "Twitter Handle":"@AJCongress",
+            "Source/Referring":"Referring",
+            "Position":"Independent Blog and Advocacy Group",
+            "Authenticated":false
+        },
+        {
+            "NAME":"ShahdAbusalama",
+            "Twitter Handle":"@ShahdAbusalama",
+            "Source/Referring":"Referring",
+            "Position":"Indepdent Blogger",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Jewish News Syndicate",
+            "Twitter Handle":"@JNS_org",
+            "Source/Referring":"Referring",
+            "Position":"Independent Wire Service",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Jonathan S. Tobin",
+            "Twitter Handle":"@jonathans_tobin",
+            "Source/Referring":"Referring",
+            "Position":"Editor in Chief of Jewish News Syndicate @JNS_org. Contributor to National Review @NRO . Columnist for NY Post @NYPost ,The Federalist @FDRLST, Haaretz.com @Haaretzcom & The Jewish Week @NYJewishWeek.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Hamidreza Azizi",
+            "Twitter Handle":"@HamidRezaAz",
+            "Source/Referring":"Referring",
+            "Position":"Contributor to \nAl-Monitor @AlMonitor, Valdai Club\n@ValdaiClub",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Ayla Jean Yackley",
+            "Twitter Handle":"@aylajean",
+            "Source/Referring":"Referring",
+            "Position":"Columnist/Contributor for Financial Times\n@FT, Al-Monitor @AlMonitor, Eurasianet\n @EurasiaNet, The Art Newspaper, \n@TheArtNewspaper, The Economist @TheEconomist",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Fazel Hawramy",
+            "Twitter Handle":"@FazelHawramy",
+            "Source/Referring":"Referring",
+            "Position":"Bylines: The Guardian @guardian, Al-Monitor @AlMonitor ,Reuters @Reuters",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Aaron Magid",
+            "Twitter Handle":"@AaronMagid",
+            "Source/Referring":"Referring",
+            "Position":"Bylines Foreign Affairs @ForeignAffairs, Foreign Policy @ForeignPolicy & Al-Monitor @Almonitor",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Sabena Siddiqi",
+            "Twitter Handle":"@sabena_siddiqi",
+            "Source/Referring":"Referring",
+            "Position":".Bylines in Al-Monitor @AlMonitor, SCMP News @SCMPNews, TRT World @trtworld, The Diplomat @Diplomat_APAC, Asia Research Institute @UoN_ARI, Al Arabiya English @AlArabiya_Eng, Asian Times @asiatimesonline, China.org.cn @chinaorgcn",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Nick Ashdown",
+            "Twitter Handle":"@Nick_Ashdown",
+            "Source/Referring":"Referring",
+            "Position":"Bylines: LA Review of Books @LAReviewofBooks, PRI's the World @pritheworld, The Globe and Mail @globeandmail, The Atlantic @TheAtlantic, Al-Monitor @AlMonitor, Al Jazeera English @AJEnglish, U.S. News @usnews",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Illan Ben Zion",
+            "Twitter Handle":"@IlanBenZion",
+            "Source/Referring":"Referring",
+            "Position":"Associated Press @APJerusalem. Bylines in \nFinancial Times @ft, The Wall Street Journal @wsj, \nArchaeology Magazine @archaeologymag, Al-Monitor @almonitor, The Forward @jdforward, \nMUNCHIES @munchies, Times of Israel @timesofisrael",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Debra Kamin",
+            "Twitter Handle":"@debra_kamin",
+            "Source/Referring":"Referring",
+            "Position":"Writer for New York Times @nytimes, Variety @Variety, Foreign Policy @ForeignPolicy, Al-Monitor @AlMonitor",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Victoria Yan",
+            "Twitter Handle":"@victoriajyan",
+            "Source/Referring":"Referring",
+            "Position":"Contributor for Al-Monitor @almonitor, Middle East Eye @middleeasteye, Peacebuilding Deeply @peacedeeply",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Walt Curnow",
+            "Twitter Handle":"@Walt_Curnow",
+            "Source/Referring":"Referring",
+            "Position":"Bylines with ABC News @abcnews, The Guardian @guardian, Al-Monitor @AlMonitor, The National @TheNationalUAE. Former editor at Ahram Online @ahramonline.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Virginia Pietromarchi",
+            "Twitter Handle":"@vpietromarchi",
+            "Source/Referring":"Referring",
+            "Position":"Contributor Al Jazeera English @AJEnglish, La Stampa @LaStampa, Al-Monitor @AlMonitor, Reset-Dialogues @ResetDoc, HuffPost @HuffPost",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Micha\u0142 Kranz",
+            "Twitter Handle":"@Michal_Kranz",
+            "Source/Referring":"Referring",
+            "Position":"Freelance Journalist for Vox @voxdotcom, Al-Monitor @AlMonitor, Business Insider @businessinsider, Middle East Eye @MiddleEastEye",
+            "Authenticated":false
+        },
+        {
+            "NAME":"ayah R. aman",
+            "Twitter Handle":"@ayahaman",
+            "Source/Referring":"Referring",
+            "Position":"Editor /Reporter for ShoroukNews.net @shorouknews. Contributer at Al-Monitor @AlMonitor",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Nervana Mahmoud",
+            "Twitter Handle":"@Nervana_1",
+            "Source/Referring":"Referring",
+            "Position":"Columnist at @alhurranews",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Chloe F. Olewitz",
+            "Twitter Handle":"@Colewitz",
+            "Source/Referring":"Referring",
+            "Position":"Freelance Writer: Playboy @Playboy, i-D @i_D, Roads and Kingdoms @RoadsKingdoms, Brooklyn Magazine @BrooklynMag, Taste Talks @TasteTalks, News Deeply @NewsDeeply, gigantic sequins @GiganticSequins",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Darkhorse",
+            "Twitter Handle":"@AnnieDarkhorse",
+            "Source/Referring":"Referring",
+            "Position":"Independent Blogger",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Rania Khalek",
+            "Twitter Handle":"@RaniaKhalek",
+            "Source/Referring":"Referring",
+            "Position":"Producer/Writer/Host in the NOW\n@InTheNow_Tweet. Co-host UnauthorizedDisclos\n@UnauthorizedDis.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Abby Martin",
+            "Twitter Handle":"@AbbyMartin",
+            "Source/Referring":"Referring",
+            "Position":"Journalist for The Empire Files  \n@EmpireFiles",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Max Blumenthal",
+            "Twitter Handle":"@MaxBlumenthal",
+            "Source/Referring":"Referring",
+            "Position":"Editor for idependent news outlet  \n@GrayzoneProject",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Alyn Smith MEP",
+            "Twitter Handle":"@AlynSmith",
+            "Source/Referring":"Referring",
+            "Position":"Columnist for The National @ScotNational",
+            "Authenticated":false
+        },
+        {
+            "NAME":"James North",
+            "Twitter Handle":"@jamesnorth7",
+            "Source/Referring":"Referring",
+            "Position":"Independent Writer",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Dr. Husam Zomlot",
+            "Twitter Handle":"@hzomlot",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Eylon Levy",
+            "Twitter Handle":"@EylonALevy",
+            "Source/Referring":"Referring",
+            "Position":"Investigative journalist and news anchor for i24NEWS English @i24NEWS_EN",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Palestine Post 24",
+            "Twitter Handle":"@PalestinePost24",
+            "Source/Referring":"Referring",
+            "Position":"Independent Blog",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Ozraeli Dave",
+            "Twitter Handle":"@Israellycool",
+            "Source/Referring":"Referring",
+            "Position":"Independent Blogger",
+            "Authenticated":false
+        },
+        {
+            "NAME":"najma minhas",
+            "Twitter Handle":"@MinhasNajma",
+            "Source/Referring":"Referring",
+            "Position":"Editor GVS magazine",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Gil Student",
+            "Twitter Handle":"@GilStudent",
+            "Source/Referring":"Referring",
+            "Position":"Independent Blogger, TorahMusings.com",
+            "Authenticated":true
+        },
+        {
+            "NAME":"annie fofani",
+            "Twitter Handle":"@anniefofani",
+            "Source/Referring":"Referring",
+            "Position":"Editor for Mondoweiss",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Mairav Zonszein \u05de\u05e8\u05d1 \u05d6\u05d5\u05e0\u05e9\u05d9\u05d9\u05df",
+            "Twitter Handle":"@MairavZ",
+            "Source/Referring":"Referring",
+            "Position":"Journalist. Bylines include Washington Post, The Intercept, VICE, NY Times and +972 Magazine",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Agencia AJN",
+            "Twitter Handle":"@AgenciaAJN",
+            "Source/Referring":"Referring",
+            "Position":"Indepdent news agency (AJN - News Agency-Agencia de Noticias)",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Richard Engel",
+            "Twitter Handle":"@RichardEngel",
+            "Source/Referring":"Referring",
+            "Position":"@NBCNews Chief Foreign Correspondent",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Jeremy Bowen",
+            "Twitter Handle":"@BowenBBC",
+            "Source/Referring":"Referring",
+            "Position":"BBC Middle East Editor.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Arwa Damon",
+            "Twitter Handle":"@arwaCNN",
+            "Source/Referring":"Referring",
+            "Position":"CNN Senior International Correspondent.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Eric Tlozek",
+            "Twitter Handle":"@EricTlozek",
+            "Source/Referring":"Referring",
+            "Position":"Middle East Correspondent for ABC News",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Christina Asquith",
+            "Twitter Handle":"@ChristinaAsquit",
+            "Source/Referring":"Referring",
+            "Position":"Former foreign and war correspondent; Founder and editor-in-chief of Fuller Project/@FullerProject",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Nahlah Ayed",
+            "Twitter Handle":"@NahlahAyed",
+            "Source/Referring":"Referring",
+            "Position":"Correspondent for the CBC",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Thomas Erdbrink",
+            "Twitter Handle":"@ThomasErdbrink",
+            "Source/Referring":"Referring",
+            "Position":"Tehran bureau chief for the New York Times.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Erin Cunningham",
+            "Twitter Handle":"@erinmcunningham",
+            "Source/Referring":"Referring",
+            "Position":"Washington Post correspondent in Istanbul, writing about the region. Previously: Cairo, Kabul, Gaza, Baghdad.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Liz Sly",
+            "Twitter Handle":"@LizSly",
+            "Source/Referring":"Referring",
+            "Position":"Washington Post Beirut bureau chief covering Syria, Lebanon, Iraq and beyond.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Matt Brown",
+            "Twitter Handle":"@abcmatt",
+            "Source/Referring":"Referring",
+            "Position":"Deputy Editor - International for the Australian Broadcasting Corporation. ex Beirut, Jerusalem, Jakarta.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Richard Hall",
+            "Twitter Handle":"@_RichardHall",
+            "Source/Referring":"Referring",
+            "Position":"Middle East correspondent for The Independent",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Sophia Jones",
+            "Twitter Handle":"@Sophia_MJones",
+            "Source/Referring":"Referring",
+            "Position":"@FullerProject\n senior editor & journalist reporting on gender & global security.",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Sebastian Walker",
+            "Twitter Handle":"@sebwalker",
+            "Source/Referring":"Referring",
+            "Position":"Correspondent and Middle East Bureau Chief for VICE on HBO",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Lizzie Porter\u0644\u0650\u064a\u0632\u064a \u0628\u0648\u0631\u062a\u0631",
+            "Twitter Handle":"@lcmporter",
+            "Source/Referring":"Referring",
+            "Position":"Beirut correspondent \n@MonocleMag/Monocle Magazine\n & freelance radio/print reporter on Syria, Lebanon, Iraq, Iran",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Ghada Karmi",
+            "Twitter Handle":"@ghadakarmi",
+            "Source/Referring":"Referring",
+            "Position":"Palestinian doctor, activist, academic and writer (freelancer)",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Robtel Neajai Pailey",
+            "Twitter Handle":"@RobtelNeajai",
+            "Source/Referring":"Referring",
+            "Position":"Liberian. Academic. Activist (freelancer).",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Alex Rossi",
+            "Twitter Handle":"@alexrossiSKY",
+            "Source/Referring":"Referring",
+            "Position":"Sky News Middle East Correspondent.",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Jared Malsin",
+            "Twitter Handle":"@jmalsin",
+            "Source/Referring":"Referring",
+            "Position":"Middle East correspondent, @WSJ (The Wall Street Journal)",
+            "Authenticated":true
+        },
+        {
+            "NAME":"David D. Kirkpatrick",
+            "Twitter Handle":"@ddknyt",
+            "Source/Referring":"Referring",
+            "Position":"International Correspondent, New York Times",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Jane Arraf",
+            "Twitter Handle":"@janearraf",
+            "Source/Referring":"Referring",
+            "Position":"NPR international correspondent",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Derek Stoffe",
+            "Twitter Handle":"@DerekStoffelCBC",
+            "Source/Referring":"Referring",
+            "Position":"World News Editor, CBC News",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Richard Spencer",
+            "Twitter Handle":"@RichardJSpencer",
+            "Source/Referring":"Referring",
+            "Position":"Middle East Correspondent \n@TheTimes/The Times of London",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Haid Haid",
+            "Twitter Handle":"@HaidHaid22",
+            "Source/Referring":"Referring",
+            "Position":"Freelance journalist",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Marco Cesario",
+            "Twitter Handle":"@marco_cesario",
+            "Source/Referring":"Referring",
+            "Position":"Freelance journalist and writer",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Hadley Gamble",
+            "Twitter Handle":"@_HadleyGamble",
+            "Source/Referring":"Referring",
+            "Position":"CNBC News Anchor and International Correspondent",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Amena Bakr",
+            "Twitter Handle":"@Amena__Bakr",
+            "Source/Referring":"Referring",
+            "Position":"Senior Correspondent for Energy Intelligence",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Joyce Karam",
+            "Twitter Handle":"@Joyce_Karam",
+            "Source/Referring":"Referring",
+            "Position":"Washington Correspondent (The National)",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Jenni Frazer",
+            "Twitter Handle":"@Jennifrazer",
+            "Source/Referring":"Referring",
+            "Position":"Freelance journalist",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Israel Strong! (Josh Hasten)",
+            "Twitter Handle":"@Joshhasten",
+            "Source/Referring":"Referring",
+            "Position":"Freelance journalist. Bylines include The Jerusalem Post and Times of Israel",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Adesewa Josh",
+            "Twitter Handle":"@AdesewaJosh",
+            "Source/Referring":"Referring",
+            "Position":"Correspondent covering African Politics & Development, migration & refugee crisis",
+            "Authenticated":true
+        },
+        {
+            "NAME":"Sara Firth",
+            "Twitter Handle":"@Sara__Firth",
+            "Source/Referring":"Referring",
+            "Position":"Middle East Correspondent TRT World/@trtworld",
+            "Authenticated":false
+        },
+        {
+            "NAME":"Nurit Greenger",
+            "Twitter Handle":"@NuritGrg",
+            "Source/Referring":"Referring",
+            "Position":"Jpost, NewsBlaze, TOI"
+        }
+    ],
+    "Twitter Journalists ":[
+        {
+            "Name":"Marian Houk",
+            "Twitter Handle":"@Marianhouk",
+            "Location":"Ramallah",
+            "Source/Referring":"Referring"
+        },
+        {
+            "Name":"Noga Tarnopolsky",
+            "Twitter Handle":"@NTarnopolsky",
+            "Location":"Jerusalem",
+            "Source/Referring":"Referring"
+        },
+        {
+            "Name":"Colin Kahl",
+            "Twitter Handle":"@ColinKahl",
+            "Location":"Washington",
+            "Source/Referring":"Referring"
+        },
+        {
+            "Name":"Jonathan Greenblatt",
+            "Twitter Handle":"@JGreenblattADL",
+            "Location":"USA",
+            "Source/Referring":"Referring"
+        },
+        {
+            "Name":"Imram Ali",
+            "Twitter Handle":"@iramfali",
+            "Location":"USA",
+            "Source/Referring":"Referring"
+        },
+        {
+            "Name":"#FreePalestine",
+            "Twitter Handle":"@FreePalestine",
+            "Location":"The #FreePalestine Movement",
+            "Source/Referring":"Referring"
+        },
+        {
+            "Name":"JewishVoiceForPeace",
+            "Twitter Handle":"@jvplive",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Joel Braunold",
+            "Twitter Handle":"@braunold",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Molly McSweyn",
+            "Twitter Handle":"@MollyMcSweyn",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Stephanie Hausner",
+            "Twitter Handle":"@stephhausner",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jeremy Burton",
+            "Twitter Handle":"@BurtonJM",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Ashager Araro",
+            "Twitter Handle":"@AshagerAraro",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Ekahi Ikaika",
+            "Twitter Handle":"@Claudia_Kealoha",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Arsen Ostrovsky",
+            "Twitter Handle":"@Ostrov_A",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Hillel Neuer",
+            "Twitter Handle":"@HillelNeuer",
+            "Location":"Switzerland",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Michael Dickson",
+            "Twitter Handle":"@michaeldickson",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Elder Of Ziyon",
+            "Twitter Handle":"@elderofziyon",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Dr. Petra Marquardt-Bigman",
+            "Twitter Handle":"@WarpedMirrorPMB",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"(((Emily Schrader)))",
+            "Twitter Handle":"@GippersChutzpah",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jonathan Elkhoury",
+            "Twitter Handle":"@Jonathan_Elk",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Yahya Mahamid \u0645\u062d\u0627\u0645\u064a\u062f",
+            "Twitter Handle":"@3moYahya",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"\u2606 \u0623\u0645\u0627\u0646\u064a \u2606",
+            "Twitter Handle":"@Amani90__",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Reda Mansour",
+            "Twitter Handle":"@RedaMansour",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Zohar Freiberg",
+            "Twitter Handle":"@z7654321",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Dumisani Washington",
+            "Twitter Handle":"@Amani90__",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Patty",
+            "Twitter Handle":"@littlebytesnews",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"@Wisdom for Women",
+            "Twitter Handle":"@wisdomforwomen",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"(((\u05e8\u05d7\u05dc Steinmetz)))",
+            "Twitter Handle":"@RachelSteinmetz",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Israel News Links",
+            "Twitter Handle":"@IsraelNewsLinks",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Bob",
+            "Twitter Handle":"@BobSeaPort",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Elke G\u00f6tze",
+            "Twitter Handle":"@Pucemargine",
+            "Location":"Germany",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Geneva Initiative",
+            "Twitter Handle":"@genevaaccord",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Andr\u00e9s Spokoiny",
+            "Twitter Handle":"@Spokoiny",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Hananya Naftali",
+            "Twitter Handle":"@HananyaNaftali \u200f",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Adam Basciano",
+            "Twitter Handle":"@adambasciano",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Aviv Ezra",
+            "Twitter Handle":"@AvivEzra",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Daniella Levy",
+            "Twitter Handle":"@DaniellaNLevy",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"((A. Zionist)))",
+            "Twitter Handle":"@a_zionist",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Israel and Stuff",
+            "Twitter Handle":"@IsraelandStufff",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Willem Kannwischer",
+            "Twitter Handle":"@Willem_Kann",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Aurora Intel",
+            "Twitter Handle":"@AuroraIntel",
+            "Location":"UK/Canada/Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"The Lawfare Project",
+            "Twitter Handle":"@LawfareProject",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"David Collier",
+            "Twitter Handle":"@mishtal",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Irish Jewish Voice",
+            "Twitter Handle":"@Irishchutzpah",
+            "Location":"Ireland",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Adam Milstein",
+            "Twitter Handle":"@AdamMilstein",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"The Israel Project",
+            "Twitter Handle":"@israelproject",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Yiftah Curiel",
+            "Twitter Handle":"@yiftahc",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Israel Foreign Ministry",
+            "Twitter Handle":"@IsraelMFA",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Israel Nitzan",
+            "Twitter Handle":"@IsraelNitzan",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Nitzan Arny",
+            "Twitter Handle":"@NitzanArny",
+            "Location":"Ivory Coast",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Gilad Cohen",
+            "Twitter Handle":"@GiladCohen_",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Gilad Atzmon",
+            "Twitter Handle":"@GiladAtzmon",
+            "Location":"England",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Hagai El-Ad",
+            "Twitter Handle":"@HagaiElAd",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Sari Bashi",
+            "Twitter Handle":"@saribashi",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Omar Shakir",
+            "Twitter Handle":"@OmarSShakir",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Avner Gvaryahu",
+            "Twitter Handle":"@AGvaryahu",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Issa Amro",
+            "Twitter Handle":"@Issaamro",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Sarah Wilkinson",
+            "Twitter Handle":"@swilkinsonbc",
+            "Location":"England",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"If Americans Knew",
+            "Twitter Handle":"@ifamericansknew",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"DigilanteJane\u2122",
+            "Twitter Handle":"@JaneVoter",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Ariel Gold",
+            "Twitter Handle":"@ArielElyseGold",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"US Palestinian Community Network",
+            "Twitter Handle":"@uspcn",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Suzanne Adely \u0633\u0648\u0632\u0627\u0646 \u0639\u062f\u064a\u0644\u064a",
+            "Twitter Handle":"@Suz_Adely",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Dr. Danya Qato",
+            "Twitter Handle":"@DanyaQato",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Justice for Palestine",
+            "Twitter Handle":"@mhabehh",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Dr Brian of London",
+            "Twitter Handle":"@brianoflondon",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"David Roet",
+            "Twitter Handle":"@DavidRoet",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Israel Mission to UN",
+            "Twitter Handle":"@IsraelinUN",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Israel in UN/Geneva",
+            "Twitter Handle":"@IsraelinGeneva",
+            "Location":"Switzerland",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Oren Anolik",
+            "Twitter Handle":"@OrenAnolik",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Elad Ratson",
+            "Twitter Handle":"@EladRatson",
+            "Location":"England",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Shabbir Lakha",
+            "Twitter Handle":"@ShabbirLakha",
+            "Location":"England",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"gawanmac",
+            "Twitter Handle":"@gawanmac",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Ola Anan - \u0639\u064f\u0644\u0627 \u0639\u0646\u0627\u0646",
+            "Twitter Handle":"@olanan",
+            "Location":"UAE",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Aya Al-Ghazzawi",
+            "Twitter Handle":"@AyaAlGhazzawi",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Abdalrahim Alfarra",
+            "Twitter Handle":"@AbdMfarra",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Esor",
+            "Twitter Handle":"@itme_esor",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Remi Kanazi",
+            "Twitter Handle":"@Remroum",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"@SaraSalehOz",
+            "Twitter Handle":"@SaraSalehOz",
+            "Location":"Australia",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Free Gaza Movement",
+            "Twitter Handle":"@freegazaorg",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jihan Hafiz",
+            "Twitter Handle":"@JHafiz22",
+            "Location":"Brazil",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Miko Peled,",
+            "Twitter Handle":"@mikopeled",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"ISM Palestine",
+            "Twitter Handle":"@ISMPalestine",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Amer Zahr",
+            "Twitter Handle":"@AmerZahr",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Mohammed Baroud",
+            "Twitter Handle":"@MohammedBaroud9",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"AbdelKarim Alkahlout",
+            "Twitter Handle":"@KareemN96",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Khaled Elgindy",
+            "Twitter Handle":"@elgindy_",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Canada Boat to Gaza",
+            "Twitter Handle":"@CanadaBoatGaza",
+            "Location":"Canada",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Ayman Qwaider",
+            "Twitter Handle":"@aymanqwaider",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Alice Rothchild, MD",
+            "Twitter Handle":"@AliceRothchild",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Palestina Summer",
+            "Twitter Handle":"@PalestinaSummer",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Ramy Jabbar",
+            "Twitter Handle":"@Ramdog1980",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Al-Shabaka \u0627\u0644\u0634\u0628\u0643\u0629",
+            "Twitter Handle":"@AlShabaka",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Addameer \u2013\u0627\u0644\u0636\u0645\u064a\u0631",
+            "Twitter Handle":"@Addameer",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Lara Friedman",
+            "Twitter Handle":"@LaraFriedmanDC",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Matt Duss",
+            "Twitter Handle":"@mattduss",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"James J. Zogby",
+            "Twitter Handle":"@jjz1600",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Arab American Instit.",
+            "Twitter Handle":"@AAIUSA",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Hanan Ashraw",
+            "Twitter Handle":"@DrHananAshrawi",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Mohammad Fadel",
+            "Twitter Handle":"@Shanfaraa",
+            "Location":"Canada",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Noura Erakat",
+            "Twitter Handle":"@4noura",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"#FreePalestine",
+            "Twitter Handle":"@Taghreeba",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"David Turner #MustBeAMarxist",
+            "Twitter Handle":"@PrivacyCestFini",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Free Palestine Initiative",
+            "Twitter Handle":"@FreePali1948",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"New Palestine Movement (NPM)",
+            "Twitter Handle":"@NPMPParty",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"#FreePalestine",
+            "Twitter Handle":"@Isrexit",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Ahmed (Free Palestine)",
+            "Twitter Handle":"@ChampagnePali",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Ambassador #FreePalestine",
+            "Twitter Handle":"@AmbassadorMC",
+            "Location":"UK",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"EQB",
+            "Twitter Handle":"@pal_resi",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"#FreePalestine #FreeKashmir",
+            "Twitter Handle":"@JeSuis4Peace",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Gaza Boat Convoy",
+            "Twitter Handle":"@gazaboatconvoy",
+            "Location":"UK",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Muhammad Smiry",
+            "Twitter Handle":"@MuhammadSmiry",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Warda_GazaPal",
+            "Twitter Handle":"@WGazapal",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Robby Martin",
+            "Twitter Handle":"@takethepss",
+            "Location":"Ireland",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Boycott Campaign - Palestine",
+            "Twitter Handle":"@BCP_Palestine_E",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"CODEPINK",
+            "Twitter Handle":"@codepink",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"16thOctoberGroup",
+            "Twitter Handle":"@16th_group",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Nour M. Dawood",
+            "Twitter Handle":"@NourMDawood1",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Isl@m Essa Gaza",
+            "Twitter Handle":"@SaloomaEssa",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jamal Khanfer",
+            "Twitter Handle":"@JamalKhanfer",
+            "Location":"Qatar",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Voice of Our Rabbis",
+            "Twitter Handle":"@AuthenticRabbis",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jews Vs. Israel",
+            "Twitter Handle":"@JewsVsIsrael",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Satmar Nation",
+            "Twitter Handle":"@SatmarNation",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"True Torah Jews",
+            "Twitter Handle":"@TorahJews",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jewish Identity",
+            "Twitter Handle":"@JewishIdentity",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"NationalLawyersGuild",
+            "Twitter Handle":"@NLGnews",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"About Face: Veterans Against the War",
+            "Twitter Handle":"@VetsAboutFace",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Eyewitness Palestine",
+            "Twitter Handle":"@EyePalestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Great Islam Army Eng",
+            "Twitter Handle":"@GreatIslamEng",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"TIMES OF GAZA",
+            "Twitter Handle":"@Timesofgaza",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Diana Buttu",
+            "Twitter Handle":"@dianabuttu",
+            "Location":"England",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"amo faisal",
+            "Twitter Handle":"@leimoonleonard",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"The Israel Project",
+            "Twitter Handle":"@israelproject",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"New Israel Fund",
+            "Twitter Handle":"@NewIsraelFund",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Eitan Na'eh",
+            "Twitter Handle":"@AmbassadorNaeh",
+            "Location":"Turkey",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Chabad Lubavitch HQ",
+            "Twitter Handle":"@Lubavitch",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Israel in Chicago",
+            "Twitter Handle":"@IsraelinChicago",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Israel in Myanmar",
+            "Twitter Handle":"@IsraelinMyanmar",
+            "Location":"Myanmar",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Israel In Ghana",
+            "Twitter Handle":"@IsraelinGhana",
+            "Location":"Ghana",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Israel in Toronto",
+            "Twitter Handle":"@IsraelinToronto",
+            "Location":"Canada",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Galit Baram",
+            "Twitter Handle":"@GaliBaram",
+            "Location":"Canada",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Itai Bardov",
+            "Twitter Handle":"@ItaiBardov",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"UJA Federation of Greater Toronto",
+            "Twitter Handle":"@UJAFederation",
+            "Location":"Canada",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"UJA-Federation of NY",
+            "Twitter Handle":"@UJAfedNY",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Hen Mazzig \u05d7\u05df \u05de\u05d6\u05d9\u05d2",
+            "Twitter Handle":"@HenMazzig",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Israel in Cyprus",
+            "Twitter Handle":"@IsraelinCyprus",
+            "Location":"Cyprus",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Sammy Reve",
+            "Twitter Handle":"@SammyRevel",
+            "Location":"Cyprus",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Thessalia S. Shambos",
+            "Twitter Handle":"@ThsShambos",
+            "Location":"Cyprus",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Yoav Adler",
+            "Twitter Handle":"@YoavAdler",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"DecolonizeThisPlace",
+            "Twitter Handle":"@decolonize_this",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Hugh Lovatt",
+            "Twitter Handle":"@h_lovatt",
+            "Location":"England",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Rob Malley",
+            "Twitter Handle":"@Rob_Malley",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Rula Jebreal",
+            "Twitter Handle":"@rulajebreal",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"mayana.m.Palestine",
+            "Twitter Handle":"@mayana_mayra",
+            "Location":"Brazil",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"SJP at ASU",
+            "Twitter Handle":"@sjpasu",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"SJP at UCI",
+            "Twitter Handle":"@SJPatUCI",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"SJP @ USF",
+            "Twitter Handle":"@SJP_USF",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Palestina Komitee",
+            "Twitter Handle":"@Palkomitee",
+            "Location":"Netherlands",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"BDS movement",
+            "Twitter Handle":"@BDSmovement",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"ZazaFL",
+            "Twitter Handle":"@ZazaFL",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Derry IPSC",
+            "Twitter Handle":"@ipsc_derry",
+            "Location":"Ireland",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Observer IL - #OSINT Analysis",
+            "Twitter Handle":"@Obs_IL",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Daniel Blake",
+            "Twitter Handle":"@Lovejoy999",
+            "Location":"England",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Adam Milstein - IAC",
+            "Twitter Handle":"@AdamMilsteinIAC",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"PSC",
+            "Twitter Handle":"@PSCupdates",
+            "Location":"England",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Brighton BDS",
+            "Twitter Handle":"@BrightonBDS",
+            "Location":"England",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"All That's Left: Anti-Occupation Collective",
+            "Twitter Handle":"@ATLCol",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Behind Israel's Troll Army",
+            "Twitter Handle":"@AntiBDSApp",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"MachsomWatch",
+            "Twitter Handle":"@machsomwatch",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Michael Sfard",
+            "Twitter Handle":"@sfardm",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Just Vision",
+            "Twitter Handle":"@JustVisionMedia",
+            "Location":"Israel/USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Simone Zimmerman",
+            "Twitter Handle":"@simonerzim",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Chanda Prescod-Weinstein",
+            "Twitter Handle":"@IBJIYONGI",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Elon Glickman",
+            "Twitter Handle":"@elonTglickman",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Birthright Israel",
+            "Twitter Handle":"@birthright",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Uri Karzen \u05d0\u05d5\u05e8\u05d9 \u05e7\u05e8\u05d6\u05df",
+            "Twitter Handle":"@UriKarzen",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Wendy Pearlman",
+            "Twitter Handle":"@Wendy_Pearlman",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Raed Jarrar",
+            "Twitter Handle":"@raedjarrar",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Natan Sachs",
+            "Twitter Handle":"@natansachs",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Anarcho-Zionist",
+            "Twitter Handle":"@AnarchoZionist",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Canary Mission",
+            "Twitter Handle":"@canarymission",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Mike Harris",
+            "Twitter Handle":"@DrMikeH49",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"SFV4I",
+            "Twitter Handle":"@SFV4I",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Ofer Neiman",
+            "Twitter Handle":"@ofer_n",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Ron Malka",
+            "Twitter Handle":"@DrRonMalka",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Dan Alluf",
+            "Twitter Handle":"@DanAlluf",
+            "Location":"India",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Adva Vilchinski",
+            "Twitter Handle":"@AdvaVilchinski",
+            "Location":"India",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Maya Kadosh",
+            "Twitter Handle":"@MayaKadosh",
+            "Location":"India",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Avigail C.J. Spira",
+            "Twitter Handle":"@Avigailcjm",
+            "Location":"India",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Israel in India",
+            "Twitter Handle":"@IsraelinIndia",
+            "Location":"India",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Israel in Mumbai",
+            "Twitter Handle":"@israelinMumbai",
+            "Location":"India",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Israel in Bengaluru",
+            "Twitter Handle":"@IsraelBangalore",
+            "Location":"India",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"dana kursh",
+            "Twitter Handle":"@DanaKursh",
+            "Location":"India",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Yaakov Finkelstein",
+            "Twitter Handle":"@Yaakov_FINKLSTN",
+            "Location":"India",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Hananya Naftali",
+            "Twitter Handle":"@HananyaNaftali",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"StandWithUs",
+            "Twitter Handle":"@StandWithUs",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"We Believe in Israel",
+            "Twitter Handle":"@WeBelieveIsrael",
+            "Location":"UK",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Zionist Federation",
+            "Twitter Handle":"@ZionistFed",
+            "Location":"UK",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"NW Friends of Israel",
+            "Twitter Handle":"@NorthWestFOI",
+            "Location":"UK",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"SussexFriendsIsrael",
+            "Twitter Handle":"@SussexFriends",
+            "Location":"England",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Israel Advocacy Movement",
+            "Twitter Handle":"@israel_advocacy",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Avi Mayer",
+            "Twitter Handle":"@AviMayer",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Reuven Rivlin",
+            "Twitter Handle":"@PresidentRuvi",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Aviva Klompas",
+            "Twitter Handle":"@AvivaKlompas",
+            "Location":"Canada, Israel, USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"The Mossad",
+            "Twitter Handle":"@TheMossadIL",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Andrew Mark Bennett",
+            "Twitter Handle":"@acandidworld",
+            "Location":"Germany",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Israel in Boston",
+            "Twitter Handle":"@IsraelinBoston",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"GnasherJew #LeftAntisemitism",
+            "Twitter Handle":"@GnasherJew",
+            "Location":"England",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Tevye West",
+            "Twitter Handle":"@telushk",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"The Alternative World",
+            "Twitter Handle":"@TheAltWorld",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Israel News Links",
+            "Twitter Handle":"@IsraelNewsLinks",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Stop the War",
+            "Twitter Handle":"@STWuk",
+            "Location":"UK",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Football-V-Apartheid",
+            "Twitter Handle":"@FAApartheid",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Pro-Israel America",
+            "Twitter Handle":"@ProIsraelAm",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Sarah R. Cohen",
+            "Twitter Handle":"@sarah4dems",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Rabbi Shmuley",
+            "Twitter Handle":"@RabbiShmuley",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Im Tirtzu",
+            "Twitter Handle":"@IMTIzionism",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"(((Emily Schrader)))",
+            "Twitter Handle":"@GippersChutzpah",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Gil Hoffman",
+            "Twitter Handle":"@Gil_Hoffman",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jasmine El-Gamal",
+            "Twitter Handle":"@jasmineelgamal",
+            "Location":"Turkey",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jack Rosen",
+            "Twitter Handle":"@JackRosenNYC",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"WJC",
+            "Twitter Handle":"@WorldJewishCong",
+            "Location":"Worldwide",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Alpha Bravo",
+            "Twitter Handle":"@Pal123A",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"\u062c\u0627\u064a",
+            "Twitter Handle":"@JaySouria",
+            "Location":"Levant",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Israel Forever",
+            "Twitter Handle":"@Tweetisrael",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Zionist Activist",
+            "Twitter Handle":"@ZionistActivist",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Zionist Shark",
+            "Twitter Handle":"@ZionistShark",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Andreas Fagerbakke",
+            "Twitter Handle":"@afagerbakke",
+            "Location":"Norway",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Matzah and Roses",
+            "Twitter Handle":"@solid_jews",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jews for Racial & Economic Justice",
+            "Twitter Handle":"@JFREJNYC",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Israel Kicks Ass",
+            "Twitter Handle":"@Israelkicksass",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Abbas Hamideh",
+            "Twitter Handle":"@Resistance48",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"G.C.P.P.P.",
+            "Twitter Handle":"@Resistance1948",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"asad abukhalil \u0623\u0633\u0639\u062f \u0623\u0628\u0648 \u062e\u0644\u064a\u0644",
+            "Twitter Handle":"@asadabukhalil",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"John B. Driscoll",
+            "Twitter Handle":"@stewardmagazine",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Aysen Candas",
+            "Twitter Handle":"@aysen_candas",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Yazz",
+            "Twitter Handle":"@AussieYazz",
+            "Location":"Australia",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Rita Rosenfeld",
+            "Twitter Handle":"@rheytah",
+            "Location":"Canada",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Anaminona",
+            "Twitter Handle":"@Anaminona",
+            "Location":"Europe and the Middle East",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jewish Community",
+            "Twitter Handle":"@JComm_NewsFeeds",
+            "Location":"Germany",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Hadassah",
+            "Twitter Handle":"@Hadassah",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Rabbi Yonassan Gershom - Autistic Stable Genius",
+            "Twitter Handle":"@rooster613",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Don't get mad, get swag!",
+            "Twitter Handle":"@weedouthate",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Mark Halawa - \u0645\u0627\u0631\u0643 \u062d\u0644\u0627\u0648\u0647",
+            "Twitter Handle":"@HalawaMark",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Israel in the EU",
+            "Twitter Handle":"@IsraelinEU",
+            "Location":"Belgium",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Rebecca Geller",
+            "Twitter Handle":"@tbex",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"OUPA NXUMALO",
+            "Twitter Handle":"@oupanxumalo",
+            "Location":"Swaziland",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Peter RA\u2665Palestina",
+            "Twitter Handle":"@PeterTBD",
+            "Location":"Netherlands",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Palest Return Centre",
+            "Twitter Handle":"@prclondon",
+            "Location":"England",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"The Times Of Gaza",
+            "Twitter Handle":"@PalfromGaza",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"R\u00ea\u0118m \u0102l-\u0126\u0101dd\u00e5\u0111",
+            "Twitter Handle":"@Reem_Gaza96",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Farah Nabulsi",
+            "Twitter Handle":"@farah_nabulsi",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Morph",
+            "Twitter Handle":"@FluorescentGrey",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Mariam Ali",
+            "Twitter Handle":"@MariamA73000734",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Huda Ameen Abu Hatab",
+            "Twitter Handle":"@Hudahatabb",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"\u0196\u053c\u053c\u01b2M\u0196\u019d\u019b\u01ac\u0196 \u0198\u0196\u053c\u053c\u0404\u01a6",
+            "Twitter Handle":"@End_TheFederalR",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"al whit",
+            "Twitter Handle":"@soitiz",
+            "Location":"England",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Tadhg O Caoimh",
+            "Twitter Handle":"@mbakunin88",
+            "Location":"Canada",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Joseph Shellim",
+            "Twitter Handle":"@PhotoshopTruth",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"E",
+            "Twitter Handle":"@bargyle1997",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"alaqsa81090",
+            "Twitter Handle":"@alaqsa81090",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Magnificent",
+            "Twitter Handle":"@Ironyisfunny8",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"moonbee",
+            "Twitter Handle":"@BMoon_bee",
+            "Location":"France",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Steve Pieczenik",
+            "Twitter Handle":"@StevePieczenik",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Sonia Mota",
+            "Twitter Handle":"@SoniaKatiMota",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Smile and nod politely",
+            "Twitter Handle":"@johndotbastable",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jonathan Sugarman",
+            "Twitter Handle":"@WhistleIRL",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Dr. Einat Wilf",
+            "Twitter Handle":"@EWilf",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Walid",
+            "Twitter Handle":"@walid970721",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Abukar Arman",
+            "Twitter Handle":"@Abukar_Arman",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Daniel Hood",
+            "Twitter Handle":"@DanielHood1978",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Kay Wilson",
+            "Twitter Handle":"@kishkushkay",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Roni",
+            "Twitter Handle":"@Roni4488",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"((( james )))",
+            "Twitter Handle":"@james_anderssen",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Chai5\ud83c\uddff",
+            "Twitter Handle":"@sadcjp",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jerusalem of Iron",
+            "Twitter Handle":"@jerusalemofiron",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Janina",
+            "Twitter Handle":"@Ojdadana",
+            "Location":"Poland",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Palestine PLO-NAD",
+            "Twitter Handle":"@nadplo",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"ISRAEL",
+            "Twitter Handle":"@Adelirose",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Manga Warrior",
+            "Twitter Handle":"@178_lishf",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Suzy S",
+            "Twitter Handle":"@PalestinePR",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jakub Kumoch",
+            "Twitter Handle":"@JakubKumoch",
+            "Location":"Switzerland",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"\u1d18\u1d00\u1d1b\u1d1b\u026a\u1d07 \u0262\u1d00\u0280\u1d05\u0274\u1d07\u0280",
+            "Twitter Handle":"@PattiaGarder",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Angelique Rockas",
+            "Twitter Handle":"@A_Rockas",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Andrzej",
+            "Twitter Handle":"@AndrzejBiesz",
+            "Location":"Poland",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Aisha",
+            "Twitter Handle":"@AshyK88",
+            "Location":"Pakistan",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Joop Soesan",
+            "Twitter Handle":"@JoopSoesan",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jeremy Man Saltan",
+            "Twitter Handle":"@TheJeremyMan",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Mark Dubowit",
+            "Twitter Handle":"@mdubowitz",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Zionist Pugs",
+            "Twitter Handle":"@zionistpugs",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Galit Peleg",
+            "Twitter Handle":"@GalitPeleg",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Shahar Azani",
+            "Twitter Handle":"@ShaharAzani",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Roz Rothstein",
+            "Twitter Handle":"@RozRothstein",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Esther Mendelsohn",
+            "Twitter Handle":"@EstherMendel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Yaacov Behrman",
+            "Twitter Handle":"@ChabadLubavitch",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jeffrey Zimmerman",
+            "Twitter Handle":"@Zimmlaw175",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Adina\ud83c\uddff",
+            "Twitter Handle":"@lackboys3",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Eva kicks ass",
+            "Twitter Handle":"@EvaAdva",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"@RupertBayldon / #RoopaTroopa",
+            "Twitter Handle":"@RupertBayldon",
+            "Location":"UK",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"BabyAWACS KISS Chris",
+            "Twitter Handle":"@dubengeldu",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"miri wood",
+            "Twitter Handle":"@miriwood",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Stanis\u0142aw \u017baryn",
+            "Twitter Handle":"@StZaryn",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Margie",
+            "Twitter Handle":"@MargieInTelAviv",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Marc Leibowitz",
+            "Twitter Handle":"@Marc_Leibowitz",
+            "Location":"USA/Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Mutlu Civiroglu",
+            "Twitter Handle":"@mutludc",
+            "Location":"Turkey/USA/Syria/",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Norman Solomon",
+            "Twitter Handle":"@normansolomon",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Galip Dalay",
+            "Twitter Handle":"@GalipDalay",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jewish World Watch",
+            "Twitter Handle":"@jworldwatch",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Dalia Fahmy",
+            "Twitter Handle":"@DaliaFFahmy",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Barah Mikail",
+            "Twitter Handle":"@barahmikail",
+            "Location":"Spain",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Ben the Man",
+            "Twitter Handle":"@Bengegenislam",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Joshua Landis",
+            "Twitter Handle":"@joshua_landis",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Kyle Orton",
+            "Twitter Handle":"@KyleWOrton",
+            "Location":"UK",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Zara Kay",
+            "Twitter Handle":"@zarakayk",
+            "Location":"UK",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Jewish Labour Movement",
+            "Twitter Handle":"@JewishLabour",
+            "Location":"UK",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"CAMERAorg",
+            "Twitter Handle":"@CAMERAorg",
+            "Location":"USA/Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Tamar Sternthal",
+            "Twitter Handle":"@TamarSternthal",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"UK Media Watch",
+            "Twitter Handle":"@UKMediaWatch",
+            "Location":"UK",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Adam Levick",
+            "Twitter Handle":"@adamlevick",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Gilead Ini",
+            "Twitter Handle":"@GileadIni",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Hind Makki",
+            "Twitter Handle":"@HindMakki",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"David Hazony",
+            "Twitter Handle":"@davidhazony",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"R' David Seidenberg",
+            "Twitter Handle":"@neohasid",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"4IL",
+            "Twitter Handle":"@4ILorg",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Yosef Hartuv",
+            "Twitter Handle":"@LoveoftheLand",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"David Ha'ivri",
+            "Twitter Handle":"@haivri",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Uri Pilichowski",
+            "Twitter Handle":"@RationalSettler",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"No2BDS",
+            "Twitter Handle":"@no2bds",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"MegTaverner",
+            "Twitter Handle":"@MegTaverner",
+            "Location":"Canada",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"B'nai Brith Canada",
+            "Twitter Handle":"@bnaibrithcanada",
+            "Location":"Canada",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Ali Mustafa",
+            "Twitter Handle":"@Ali_Mustafa",
+            "Location":"Canada",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"Dave Rich",
+            "Twitter Handle":"@daverich1",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"TechInIsrael",
+            "Twitter Handle":"@TechInIsrael",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Susanne.Wasum-Rainer",
+            "Twitter Handle":"@GerAmbTLV",
+            "Location":"Israel",
+            "Source/Referring":"Referring",
+            "Authenticated":true
+        },
+        {
+            "Name":"YouthAgainstSettlmnt",
+            "Twitter Handle":"@YASHebron",
+            "Location":"Palestine",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        },
+        {
+            "Name":"Adam Friedland",
+            "Twitter Handle":"@adamfriedland1",
+            "Location":"US",
+            "Source/Referring":"Referring"
+        },
+        {
+            "Name":"Elizabeth Tsurkov",
+            "Twitter Handle":"@Elizrael",
+            "Location":"USA",
+            "Source/Referring":"Referring",
+            "Authenticated":false
+        }
+    ]
+}
