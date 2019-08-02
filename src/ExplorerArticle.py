@@ -150,11 +150,11 @@ class ExplorerArticle(object):#derive from object for getters/setters
 
     def get_links(self, article_text_links_only=False):
         result = []
-        logging.info("AAAAAAAAAAAAA\n")
+        # logging.info("AAAAAAAAAAAAA\n")
 
-        logging.info(self.html)
+        # logging.info(self.html)
 
-        logging.info("AAAAAAAAAAAAA\n")
+        # logging.info("AAAAAAAAAAAAA\n")
 
         try:
             if(article_text_links_only):
