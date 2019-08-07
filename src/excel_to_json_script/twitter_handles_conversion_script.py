@@ -75,7 +75,7 @@ def get_twitter_sheet_data(sheet, headers: dict) -> list:
     max_column = 1
     while not done:
         if sheet.cell(row=row, column=max_column).value != headers[max_column]:
-            headers[max_column] = sheet.cell(row=row, column=max_column).value
+            headers[max_column] = sheet.cell(row=row, column=max_column).value.strip()
         if sheet.cell(row=1, column=max_column).value is None or max_column is 6:
             done = True
         else:
@@ -105,7 +105,14 @@ def get_twitter_sheet_data(sheet, headers: dict) -> list:
                         val = True if val == 'y' else False
                         row_data[headers[i]] = val
                     else:
-                        row_data[headers[i]] = sheet.cell(row=row, column=i).value.strip()
+                        # Normalize unicode to python string.
+                        val = sheet.cell(row=row, column=i).value.strip()
+                        if type(val) == 'unicode':
+                            val = val.encode('ascii', 'ignore')
+                        row_data[headers[i]] = val
+                # Insert an empty string.
+                else:
+                    row_data[headers[i]] = ''
             # Add the row data and increment the row counter.
             sheet_data.append(row_data)
             row += 1
