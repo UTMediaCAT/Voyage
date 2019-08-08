@@ -269,7 +269,7 @@ def uploadExcelTwitter(request):
                     jsonDict = json.load(jsonfile)
                 jsonfile.close()
                 # remove newly added files
-                # os.remove(twitter_jsonfile_path)
+                os.remove(twitter_jsonfile_path)
                 os.remove(abspath)
 
                 # read json file one by one
