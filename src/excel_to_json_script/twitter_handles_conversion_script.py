@@ -75,7 +75,18 @@ def get_twitter_sheet_data(sheet, headers: dict) -> list:
     max_column = 1
     while not done:
         if sheet.cell(row=row, column=max_column).value != headers[max_column]:
-            headers[max_column] = sheet.cell(row=row, column=max_column).value
+            headers[max_column] = sheet.cell(row=row, column=max_column).value.strip()
+            # Make the header lowercase except for the first letter.
+            headers[max_column] = headers[max_column].strip()
+            headers[max_column] = headers[max_column][0].upper() + headers[max_column][1:].lower()
+            # If there are two words in the header.
+            if headers[max_column].find(' ') is not -1:
+                space = headers[max_column].find(' ')
+                headers[max_column] = headers[max_column][0:space + 1] + headers[max_column][space + 1].upper() + headers[max_column][space + 2:].lower()
+            # If there is a slash, update the letter after the slash to be capital.
+            if headers[max_column].find('/') is not -1:
+                slash = headers[max_column].find('/')
+                headers[max_column] = headers[max_column][0:slash + 1] + headers[max_column][slash + 1].upper() + headers[max_column][slash + 2:].lower()
         if sheet.cell(row=1, column=max_column).value is None or max_column is 6:
             done = True
         else:
@@ -104,8 +115,24 @@ def get_twitter_sheet_data(sheet, headers: dict) -> list:
                         val = val.lower()[0]
                         val = True if val == 'y' else False
                         row_data[headers[i]] = val
+                    elif headers[i].lower() == 'Twitter Handle'.lower():
+                        # Make the twitter handle a single word.
+                        val = sheet.cell(row=row, column=i).value.strip()
+                        # If a space exists.
+                        if val.find(' ') is not -1:
+                            val = val[0:val.find(' ')]
+                        row_data[headers[i]] = val.strip()
                     else:
-                        row_data[headers[i]] = sheet.cell(row=row, column=i).value.strip()
+                        # Normalize unicode to python string.
+                        val = sheet.cell(row=row, column=i).value.strip()
+                        if type(val) == 'unicode':
+                            val = val.encode('ascii', 'ignore')
+                        row_data[headers[i]] = val
+                        # Strip the string.
+                        row_data[headers[i]] = row_data[headers[i]].strip()
+                # Insert an empty string.
+                else:
+                    row_data[headers[i]] = ''
             # Add the row data and increment the row counter.
             sheet_data.append(row_data)
             row += 1
