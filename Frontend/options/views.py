@@ -501,9 +501,9 @@ def deleteScopeTwitter():
     ReferringTwitter.objects.all().delete()
     SourceTwitter.objects.all().delete()
     SourceTwitterAlias.objects.all().delete()
-    Keyword.objects.all().delete()
-    Tag.objects.all().delete()
-    TaggedItem.objects.all().delete()
+    # Keyword.objects.all().delete()
+    # Tag.objects.all().delete()
+    # TaggedItem.objects.all().delete()
 
 def restoreLastScope(currentScope):
     # if (deleted):
