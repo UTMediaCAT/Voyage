@@ -83,6 +83,10 @@ def get_twitter_sheet_data(sheet, headers: dict) -> list:
             if headers[max_column].find(' ') is not -1:
                 space = headers[max_column].find(' ')
                 headers[max_column] = headers[max_column][0:space + 1] + headers[max_column][space + 1].upper() + headers[max_column][space + 2:].lower()
+            # If there is a slash, update the letter after the slash to be capital.
+            if headers[max_column].find('/') is not -1:
+                slash = headers[max_column].find('/')
+                headers[max_column] = headers[max_column][0:slash + 1] + headers[max_column][slash + 1].upper() + headers[max_column][slash + 2:].lower()
         if sheet.cell(row=1, column=max_column).value is None or max_column is 6:
             done = True
         else:
