@@ -3,6 +3,8 @@ from django.template import RequestContext, loader
 from django.core import management
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.core.exceptions import ValidationError
+from django import forms
 from subprocess import Popen
 import sys, os
 import tempfile
@@ -257,7 +259,6 @@ def uploadExcelTwitter(request):
         try:   # upload excel scope file
             scopefile = request.FILES['scopefileExcelTwitter']
             selected_type = request.POST['uploadType']
-            wrong_input = None
             try:
                 # convert excel to json
                 # call function to get json file
@@ -269,7 +270,7 @@ def uploadExcelTwitter(request):
 
                 # Backup Current Scope in a variable
                 out = StringIO()
-                management.call_command('dumpdata', 'explorer.sourcetwitter', 'explorer.sourcetwitteralias', 'explorer.referringtwitter', 'taggit', stdout=out)           # ?????????????????????
+                management.call_command('dumpdata', 'explorer', 'taggit', stdout=out)           # ?????????????????????
                 currentScope = out.getvalue()
                 out.close()
 
@@ -304,29 +305,46 @@ def uploadExcelTwitter(request):
                             for eachTwitterObj in domainObj:
                                 i = i + 1
                                 objdict = getTwitterAttributes(eachTwitterObj)
-                                wrong_input = objdict['twitterName']
+                                if (objdict == -1):
+                                    skipped.append(i)
+                                    # result += " append1 "
+                                    # result += objdict["twitterHandle"]
+                                    continue
 
                                 # if belongs to source
                                 if "source" in objdict['type'].lower():
                                     try:
                                         # add to source
-                                        s1 = SourceTwitter(name=objdict['twitterHandle'])
-                                        s1.save()
-                                        # get foreign key for SourceTwitterAlias
-                                        fk = SourceTwitter.objects.get(name=objdict['twitterHandle'])
-                                        s2 = SourceTwitterAlias(primary=fk, alias=objdict['twitterName'])
-                                        s2.save()
-                                        # maybe add tag (from which domain)
-                                        s1.tags.add(eachdomain)
+                                        fk = saveTwitter(SourceTwitter, objdict, eachdomain)
+                                        if (fk == -1):
+                                            raise ValidationError('st replace validerror')
+                                        elif (fk == -2):
+                                            raise Exception('st replace err')
+                                        elif (fk == -3):
+                                            # already exist, skip this
+                                            continue
+                                        # check if alias exist. if yes, use twitter handle instead
+                                        alias = getAliasToUse(objdict)
+                                        if (alias == -1):
+                                            raise Exception('st alias replace err')
+                                        saveTwitterAlias(alias, fk)
+
                                     except:
                                         skipped.append(i)
                                 elif "referring" in objdict['type'].lower():
                                     try:
                                         # add to referring
-                                        r1 = ReferringTwitter(name=objdict['twitterHandle'])
-                                        r1.save()
-                                        # maybe add tag (from which domain)
-                                        r1.tags.add(eachdomain)
+                                        saveTwitter(ReferringTwitter, objdict, eachdomain)
+                                        # r1 = ReferringTwitter(name=objdict['twitterHandle'])
+                                        # r1.save()
+                                        if (fk == -1):
+                                            raise ValidationError('rt replace validerror')
+                                        elif (fk == -2):
+                                            raise Exception('rt replace e')
+                                        elif (fk == -3):
+                                            # already exist, skip this
+                                            continue
+
                                     except:
                                         skipped.append(i)
 
@@ -351,41 +369,41 @@ def uploadExcelTwitter(request):
                             # if belongs to source
                             if "source" in objdict['type'].lower():    
                                 try:
-                                    try:
-                                        # add only if twitter handle not exist
-                                        SourceTwitter.objects.get(name=objdict['twitterHandle'])
-                                        skipped.append(i)
-                                    except SourceTwitter.DoesNotExist:
-                                        # add to source
-                                        s1 = SourceTwitter(name=objdict['twitterHandle'])
-                                        s1.save()
-                                        # get foreign key for SourceTwitterAlias
-                                        fk = SourceTwitter.objects.get(name=objdict['twitterHandle'])
-                                        s2 = SourceTwitterAlias(primary=fk, alias=objdict['twitterName'])
-                                        s2.save()
-                                        # maybe add tag (from which domain)
-                                        s1.tags.add(eachdomain)
-                                except Exception as e:
-                                    result += "1 "
-                                    result += str(e)
-                                    skippedException.append(i)
+                                    # add to source
+                                    fk = saveTwitter(SourceTwitter, objdict, eachdomain)
+                                    if (fk == -1):
+                                        raise ValidationError('st append validerror')
+                                    elif (fk == -2):
+                                        raise Exception('st append err')
+                                    elif (fk == -3):
+                                        # already exist, skip this
+                                        continue
+                                    # check if alias exist. if yes, use twitter handle instead
+                                    alias = getAliasToUse(objdict)
+                                    if (alias == -1):
+                                        raise Exception('st alias append err')
+                                    saveTwitterAlias(alias, fk)
+
+                                except:
+                                    skipped.append(i)
                             elif "referring" in objdict['type'].lower():
                                 try:
-                                    try:
-                                        ReferringTwitter.objects.get(name=objdict['twitterHandle'])
-                                        skipped.append(i)
-                                    except ReferringTwitter.DoesNotExist:
-                                        # add to referring
-                                        r1 = ReferringTwitter(name=objdict['twitterHandle'])
-                                        r1.save()
-                                        # maybe add tag (from which domain)
-                                        r1.tags.add(eachdomain)
-                                except Exception as e:
-                                    result += "2 "
-                                    result += str(e)
-                                    skippedException.append(i)
+                                    # add to referring
+                                    saveTwitter(ReferringTwitter, objdict, eachdomain)
+                                    # r1 = ReferringTwitter(name=objdict['twitterHandle'])
+                                    # r1.save()
+                                    if (fk == -1):
+                                        raise ValidationError('rt append validerror')
+                                    elif (fk == -2):
+                                        raise Exception('rt append err')
+                                    elif (fk == -3):
+                                        # already exist, skip this
+                                        continue
 
-                    result = "Successfully appened"
+                                except:
+                                    skipped.append(i)
+
+                    result += "Successfully appened"
                     if (len(skipped) > 0):
                         result += ", with duplicated skipped twitter of line "
                         result += str(skipped)
@@ -396,27 +414,29 @@ def uploadExcelTwitter(request):
                         result += " , with error occurred in excel skipped twitter of line "
                         result += str(skippedExceptionExcelEntry)
 
-            # except ValueError as e:
-            #     result = "Wrong file type"
             except Exception as e:
-                # TODO: if replace, remove all entered data, restore old scope
-                # else remain
-
+                try:
+                    restoreLastScope(currentScope)
+                except Exception as e1:
+                    result += str(e1)
 
                 result += "Failed Twitter: "
                 result += str(e)
-                if (wrong_input != None):
-                    result = result + ", wrong header or record on Twitter Name: " + wrong_input
-                # result="sth wrong"
-                restoreLastScope(currentScope)
+                if (len(skipped) > 0):
+                    result += ", with skipped record of line "
+                    result += str(skipped)
 
             finally:
                 context['scope_message_exceltwitter'] = result
+                # a=2s
         except:
             pass
 
     return render(request, 'options/downloads.html', context)
 
+'''
+    return objdict if pass all, return -1 if wrong twitterhandle name
+'''
 def getTwitterAttributes(eachTwitterObj):
     result = {}
     if checkTwitterFields(eachTwitterObj) :
@@ -427,8 +447,12 @@ def getTwitterAttributes(eachTwitterObj):
     type = eachTwitterObj["Source/Referring"].strip()
     # domain = eachTwitterObj["Domain"].strip()
     # remove '@' if exist
-    if (twitterHandle[0] == '@'):
+    if (twitterHandle.endswith('@')):
+        twitterHandle = twitterHandle[:-1]
+    if(twitterHandle.startswith('@')):
         twitterHandle = twitterHandle[1:]
+    if ('@' in twitterHandle):
+        return -1
 
     # result['domain'] = domain
     result['twitterName'] = twitterName
@@ -477,9 +501,9 @@ def deleteScopeTwitter():
     ReferringTwitter.objects.all().delete()
     SourceTwitter.objects.all().delete()
     SourceTwitterAlias.objects.all().delete()
-    # Keyword.objects.all().delete()
-    # Tag.objects.all().delete()
-    # TaggedItem.objects.all().delete()
+    Keyword.objects.all().delete()
+    Tag.objects.all().delete()
+    TaggedItem.objects.all().delete()
 
 def restoreLastScope(currentScope):
     # if (deleted):
@@ -495,3 +519,46 @@ def restoreLastScope(currentScope):
 
 def allowed_file(filename, allowlist):
     return filename.split('.', 1)[1].lower() in allowlist
+
+'''
+    given modela and objdict, insert into it and return fk
+    if ValidationError, return -1
+    otherwise, return -2
+'''
+def saveTwitter(model, objdict, eachdomaintag):
+    try:
+        # search if there exist the same twitter Handle name
+        try:
+            model.objects.get(name=objdict['twitterHandle'])
+        except model.DoesNotExist:
+            s1 = model(name=objdict['twitterHandle'])
+            s1.save()
+            # maybe add tag (from which domain)
+            s1.tags.add(eachdomaintag)
+            # get foreign key for SourceTwitterAlias
+            fk = model.objects.get(name=objdict['twitterHandle'])
+            return fk
+    except forms.ValidationError as ve:
+        return -1
+    except:
+        return -2
+    # twitter handle already exists
+    return -3
+
+'''
+    if alias not used, return given alias, else return twitter handle
+    otherwise, return -1
+'''
+def getAliasToUse(objdict):
+    try:
+        SourceTwitterAlias.objects.get(alias=objdict['twitterName'])
+        return objdict['twitterHandle']
+    except SourceTwitterAlias.DoesNotExist as e:
+        return objdict['twitterName']
+    except Exception:
+        return -1
+
+def saveTwitterAlias(twitteralias, fk):
+    s2 = SourceTwitterAlias(primary=fk, alias=twitteralias)
+    s2.save()
+
