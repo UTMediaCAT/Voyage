@@ -463,13 +463,13 @@ def getTwitterAttributes(eachTwitterObj):
 
 def checkTwitterFields(obj):
     incomplete = 0
-    if (obj['Twitter Handle'] == None):
+    if (obj['Twitter Handle'] == ""):
         incomplete = 1
     # if (obj['Domain'] == None):
     #     incomplete = 1
-    if (obj['Name'] == None):
+    if (obj['Name'] == ""):
         incomplete = 1
-    if (obj['Source/Referring'] == None):
+    if (obj['Source/Referring'] == ""):
         incomplete = 1
     return incomplete
 
