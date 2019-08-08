@@ -76,6 +76,9 @@ def get_twitter_sheet_data(sheet, headers: dict) -> list:
     while not done:
         if sheet.cell(row=row, column=max_column).value != headers[max_column]:
             headers[max_column] = sheet.cell(row=row, column=max_column).value.strip()
+            # Make the header lowercase except for the first letter.
+            headers[max_column] = headers[max_column].strip()
+            headers[max_column] = headers[max_column][0].upper() + headers[max_column][1:].lower()
         if sheet.cell(row=1, column=max_column).value is None or max_column is 6:
             done = True
         else:
@@ -110,6 +113,8 @@ def get_twitter_sheet_data(sheet, headers: dict) -> list:
                         if type(val) == 'unicode':
                             val = val.encode('ascii', 'ignore')
                         row_data[headers[i]] = val
+                        # Strip the string.
+                        row_data[headers[i]] = row_data[headers[i]].strip()
                 # Insert an empty string.
                 else:
                     row_data[headers[i]] = ''
