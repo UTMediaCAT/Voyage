@@ -176,9 +176,6 @@ def downloadsExcel(request):
                                         skipped.append(i)
 
                     result = "Successfully replaced"
-                    if (len(skipped) > 0):
-                        result += ", with skipped record of line "
-                        result += str(skipped)
 
                 elif (selected_type == "append"):
                     skippedException = []
@@ -228,15 +225,7 @@ def downloadsExcel(request):
                                         skippedException.append(i)
 
                     result = "Successfully appended"
-                    if (len(skipped) > 0):
-                        result += ", with duplicated skipped website of line "
-                        result += str(skipped)
-                    if (len(skippedException) > 0):
-                        result += " , with error occurred skipped website of line "
-                        result += str(skippedException)
 
-            # except ValueError as e:
-            #     result = "Wrong file type"
             except Exception as e:
                 result = "Failed "
                 result += str(e)
@@ -296,92 +285,35 @@ def uploadExcelTwitter(request):
                     deleteScopeTwitter()
                     deleted = True
 
-                    # check if it's in source
-                    for eachdomain in jsonDict.keys():
-                            # for every obj, add into source site db
-                            domainObj = jsonDict[eachdomain]
-
-                            # objarr = [twitterName, twitterHandle, type, domain]
-                            for eachTwitterObj in domainObj:
-                                i = i + 1
-                                objdict = getTwitterAttributes(eachTwitterObj)
-                                if (objdict == -1):
-                                    skipped.append(i)
-                                    # result += " append1 "
-                                    # result += objdict["twitterHandle"]
-                                    continue
-
-                                # if belongs to source
-                                if "source" in objdict['type'].lower():
-                                    try:
-                                        # add to source
-                                        fk = saveTwitter(SourceTwitter, objdict, eachdomain)
-                                        if (fk == -1):
-                                            raise ValidationError('st replace validerror')
-                                        elif (fk == -2):
-                                            raise Exception('st replace err')
-                                        elif (fk == -3):
-                                            # already exist, skip this
-                                            continue
-                                        # check if alias exist. if yes, use twitter handle instead
-                                        alias = getAliasToUse(objdict)
-                                        if (alias == -1):
-                                            raise Exception('st alias replace err')
-                                        saveTwitterAlias(alias, fk)
-
-                                    except:
-                                        skipped.append(i)
-                                elif "referring" in objdict['type'].lower():
-                                    try:
-                                        # add to referring
-                                        saveTwitter(ReferringTwitter, objdict, eachdomain)
-                                        # r1 = ReferringTwitter(name=objdict['twitterHandle'])
-                                        # r1.save()
-                                        if (fk == -1):
-                                            raise ValidationError('rt replace validerror')
-                                        elif (fk == -2):
-                                            raise Exception('rt replace e')
-                                        elif (fk == -3):
-                                            # already exist, skip this
-                                            continue
-
-                                    except:
-                                        skipped.append(i)
-
-                    result = "Successfully replaced"
-                    if (len(skipped) > 0):
-                        result += ", with skipped record of line "
-                        result += str(skipped)
-            
-                elif (selected_type == "append"):
-                    for eachdomain in jsonDict.keys():
+                # check if it's in source
+                for eachdomain in jsonDict.keys():
                         # for every obj, add into source site db
                         domainObj = jsonDict[eachdomain]
+
+                        # objarr = [twitterName, twitterHandle, type, domain]
                         for eachTwitterObj in domainObj:
                             i = i + 1
                             objdict = getTwitterAttributes(eachTwitterObj)
                             if (objdict == -1):
-                                result += "0 "
-                                # skippedExceptionExcelEntry.append(eachTwitterObj)
+                                skipped.append(i)
                                 continue
-                                # raise Exception()
 
                             # if belongs to source
-                            if "source" in objdict['type'].lower():    
+                            if "source" in objdict['type'].lower():
                                 try:
                                     # add to source
                                     fk = saveTwitter(SourceTwitter, objdict, eachdomain)
                                     if (fk == -1):
-                                        raise ValidationError('st append validerror')
+                                        raise ValidationError('st replace validerror')
                                     elif (fk == -2):
-                                        raise Exception('st append err')
+                                        raise Exception('st replace err')
                                     elif (fk == -3):
                                         # already exist, skip this
                                         continue
                                     # check if alias exist. if yes, use twitter handle instead
                                     alias = getAliasToUse(objdict)
                                     if (alias == -1):
-                                        raise Exception('st alias append err')
+                                        raise Exception('st alias replace err')
                                     saveTwitterAlias(alias, fk)
 
                                 except:
@@ -390,29 +322,22 @@ def uploadExcelTwitter(request):
                                 try:
                                     # add to referring
                                     saveTwitter(ReferringTwitter, objdict, eachdomain)
-                                    # r1 = ReferringTwitter(name=objdict['twitterHandle'])
-                                    # r1.save()
                                     if (fk == -1):
-                                        raise ValidationError('rt append validerror')
+                                        raise ValidationError('rt replace validerror')
                                     elif (fk == -2):
-                                        raise Exception('rt append err')
+                                        raise Exception('rt replace e')
                                     elif (fk == -3):
                                         # already exist, skip this
                                         continue
 
                                 except:
                                     skipped.append(i)
-
+                
+                if (selected_type == "replace"):
+                    result = "Successfully replaced"
+            
+                elif (selected_type == "append"):
                     result += "Successfully appened"
-                    if (len(skipped) > 0):
-                        result += ", with duplicated skipped twitter of line "
-                        result += str(skipped)
-                    if (len(skippedException) > 0):
-                        result += " , with error occurred skipped twitter of line "
-                        result += str(skippedException)
-                    if (len(skippedExceptionExcelEntry) > 0):
-                        result += " , with error occurred in excel skipped twitter of line "
-                        result += str(skippedExceptionExcelEntry)
 
             except Exception as e:
                 try:
@@ -422,9 +347,6 @@ def uploadExcelTwitter(request):
 
                 result += "Failed Twitter: "
                 result += str(e)
-                if (len(skipped) > 0):
-                    result += ", with skipped record of line "
-                    result += str(skipped)
 
             finally:
                 context['scope_message_exceltwitter'] = result
