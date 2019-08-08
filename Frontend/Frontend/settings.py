@@ -124,7 +124,7 @@ SUIT_CONFIG = {
         
         {'label': 'Data', 'icon':'icon-book', 'models': ('articles.article', 'tweets.tweet', 'articles.sourcedarticle')},
 
-        {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads'},
+        {'label': 'Downloads', 'icon':'icon-download', 'url': '/options/downloads/'},
 
         {'label': 'Statistics', 'icon':'icon-signal', 'url': '/statistics/'},
 

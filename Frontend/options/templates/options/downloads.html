@@ -8,7 +8,7 @@
       <h2>Scope</h2>
       <div class="downloads">
         <a class="btn btn-success" href="/explorer/getDump">Download JSON</a>
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" action="/options/downloads/json">
           {% csrf_token %}
           <button class="btn btn-info" type="submit">Upload JSON</button>
           {% if scope_message %}
@@ -17,6 +17,44 @@
             <input type="file" name="scopefile">
           {% endif %}
         </form>
+        <div class="excelforms">
+          <form method="post" enctype="multipart/form-data" action="/options/downloads/excel">
+            {% csrf_token %}
+            {% if scope_message_excel %}
+              {{ scope_message_excel }}
+            {% else %}
+              <div class="form-group">
+                <p>For plain sites scope</p>
+                <input type="file" name="scopefileExcel" class="file-selection-btn">
+                <div class="radio-group">
+                  <input type="radio" name="uploadType" class="radio-btn" value="replace" id="r1" checked>
+                  <label for="r1">Replace</label>
+                  <input type="radio" name="uploadType" class="radio-btn" value="append" id="r2">
+                  <label for="r2">Append</label>
+                </div>
+              </div>
+              <button class="btn btn-info" type="submit">Upload Excel</button>
+            {% endif %}
+          </form>
+          <form method="post" enctype="multipart/form-data" action="/options/downloads/twitterexcel">
+            {% csrf_token %}
+            {% if scope_message_exceltwitter %}
+              {{ scope_message_exceltwitter }}
+            {% else %}
+              <div class="form-group">
+                <p>For twitter account scope</p>
+                <input type="file" name="scopefileExcelTwitter" class="file-selection-btn">
+                <div class="radio-group">
+                  <input type="radio" name="uploadType" class="radio-btn" value="replace" id="r3" checked>
+                  <label for="r3">Replace</label>
+                  <input type="radio" name="uploadType" class="radio-btn" value="append" id="r4">
+                  <label for="r4">Append</label>
+                </div>
+              </div>
+              <button class="btn btn-info" type="submit">Upload Excel</button>
+            {% endif %}
+          </form>
+        </div>
       </div>
     </div>
     <div class="download-container">
@@ -41,6 +79,10 @@ h2 {
   margin: 5px;
 }
 
+form {
+  padding-right: 20%;
+}
+
 .download-container {
   display: flex;
   width: 80%;
@@ -63,6 +105,43 @@ h2 {
   line-height: 0px;
 }
 
+.excelforms {
+  display: flex;
+  flex-direction: row;
+  border-top: black 1px solid;
+  justify-content: flex-start;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group p {
+  margin: 10px;
+  margin-top: 15px;
+  margin-bottom: 0;
+  font-size: 1.3em;
+}
+
+.file-selection-btn {
+  margin: 10px;
+  padding-top: 5%;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: row;
+  margin-left: 10px;
+  width: inherit;
+  justify-content: flex-start;
+}
+
+.radio-group label {
+  margin-right: 5%;
+  margin-left: 2%;
+  margin-top: 1%;
+}
     </style>
   </div>
 {% endblock %}
