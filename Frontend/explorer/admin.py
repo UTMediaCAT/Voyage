@@ -118,11 +118,17 @@ class ReferringSiteAdmin(admin.ModelAdmin):
         latest = Article.objects.filter(domain=obj.url).last()
         if latest:
             latest = latest.version_set
-            delta = timezone.now() - latest.latest('date_added').date_added
+            tznow = timezone.now()
+            latestadded = latest.latest('date_added').date_added
+            # temporary fix ---
+            if (latestadded == None):
+                return 'Last date_added not found...'
+            delta = tznow - latestadded
             t1 = delta.days             # Days
             t2 = delta.seconds/3600     # Hours
             t3 = delta.seconds%3600/60  # Minutes
             return ('%2d days %2d hours %2d min ago' % (t1, t2, t3))
+            # return latest.latest('date_added')
         else:
             return 'Have not found any articles yet!'
     latest_article.short_description = 'Last Found'
