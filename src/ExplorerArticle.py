@@ -37,11 +37,12 @@ class ExplorerArticle(object):#derive from object for getters/setters
         FAIL_ENCODING = 'ISO-8859-1'
         useragent = self.newspaper_article.config.browser_user_agent
         timeout = self.newspaper_article.config.request_timeout
-
+        
         try:
             html = None
             with eventlet.Timeout(15):
-                response = requests.get(url=self.url, timeout=15)#TODO: add back get_request_kwargs functionality present in newspaper impl
+                headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+                response = requests.get(url=self.url, timeout=15, headers=headers)#TODO: add back get_request_kwargs functionality present in newspaper impl
             if(response.status_code >= 400):
                 logging.warn("encountered status code {0} while getting {1}".format(response.status_code, self.url))
                 return False
