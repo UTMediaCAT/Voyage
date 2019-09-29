@@ -113,7 +113,7 @@ def downloadsExcel(request):
                 out.close()
 
                 jsonDict = ""
-                articles_jsonfile_path = "/root/Voyage/Frontend/articles.json"
+                articles_jsonfile_path = "/voyage_storage/Voyage/Frontend/articles.json"
                 with open(articles_jsonfile_path) as jsonfile:
                     jsonDict = json.load(jsonfile)
                 jsonfile.close()
@@ -256,7 +256,7 @@ def uploadExcelTwitter(request):
                 path = default_storage.url(file_name)
                 abspath = urllib.parse.unquote(default_storage.path(path))
                 convert_twitter_handles_to_json(abspath)
-
+                
                 # Backup Current Scope in a variable
                 out = StringIO()
                 management.call_command('dumpdata', 'explorer', 'taggit', stdout=out)           # ?????????????????????
@@ -264,7 +264,7 @@ def uploadExcelTwitter(request):
                 out.close()
 
                 jsonDict = ""
-                twitter_jsonfile_path = "/root/Voyage/Frontend/twitter_handles.json"
+                twitter_jsonfile_path = "/voyage_storage/Voyage/Frontend/twitter_handles.json"
                 with open(twitter_jsonfile_path) as jsonfile:
                     jsonDict = json.load(jsonfile)
                 jsonfile.close()
@@ -284,12 +284,11 @@ def uploadExcelTwitter(request):
                     # Delete Current Scope
                     deleteScopeTwitter()
                     deleted = True
-
                 # check if it's in source
                 for eachdomain in jsonDict.keys():
                         # for every obj, add into source site db
                         domainObj = jsonDict[eachdomain]
-
+                        
                         # objarr = [twitterName, twitterHandle, type, domain]
                         for eachTwitterObj in domainObj:
                             i = i + 1
@@ -334,7 +333,7 @@ def uploadExcelTwitter(request):
                                     skipped.append(i)
                 
                 if (selected_type == "replace"):
-                    result = "Successfully replaced"
+                    result += "Successfully replaced"
             
                 elif (selected_type == "append"):
                     result += "Successfully appened"
@@ -350,7 +349,6 @@ def uploadExcelTwitter(request):
 
             finally:
                 context['scope_message_exceltwitter'] = result
-                # a=2s
         except:
             pass
 
