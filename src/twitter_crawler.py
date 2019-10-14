@@ -539,7 +539,7 @@ def get_history_csv(user):
     log_path = "{}/get_history_{}.log".format(log_dir, user)
     print(("Getting tweet history of {}".format(user)))
     with open(log_path, "w") as outfile:
-        subprocess.call(["python", exporter_path, "--username", "\"{}\"".format(user),
+        subprocess.call(["python3", exporter_path, "--username", "\"{}\"".format(user),
             "--output", output_path], stdout=outfile)
 
 
@@ -629,7 +629,7 @@ def history():
 
     # crawls history of all users
     for user in users:
-        processes.append(subprocess.Popen(["python", "./twitter_crawler.py", "history", user]))
+        processes.append(subprocess.Popen(["python3", "./twitter_crawler.py", "history", user]))
 
     # wait for all crawling to finish to start processing
     # so that history crawling does not take too much resource
@@ -717,5 +717,5 @@ if __name__ == '__main__':
         # will do both streaming, timeline and history crawling if no arguments are given
         subprocess.Popen(["python3", "./twitter_crawler.py", "streaming"])
         subprocess.Popen(["python3", "./twitter_crawler.py", "timeline"])
-        subprocess.call(["python", "./twitter_crawler.py", "history"])
+        subprocess.call(["python3", "./twitter_crawler.py", "history"])
 
