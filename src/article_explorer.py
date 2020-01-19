@@ -1018,13 +1018,9 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                         source_version_match = ArticleVersion.objects.filter(text_hash=thash)
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
-                        logging.info("================ source_version_match array: {0}".format(source_version_match))
                         if (source_version_match):
-                            logging.info("================> {0}".format("in source_version_match"))
                             if (source_url_match):
-                                logging.info("================>> {0}".format("in source_url_match"))
                                 source_version_match[0].article.is_source = True
-                                logging.info("================ {0}".format("set source_version_match[0].article.is_source True"))
                                 source_version_match[0].article.save()
                                 
                                 source_version_match[0].article.version_set.last().sourcesite_set.create(
@@ -1038,7 +1034,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                 db_article.sources.add(source_version_match[0].article) # Makes a new version
                                 continue
                             else:
-                                logging.info("================>> {0}".format("in source_url_match"))
                                 # logging.info("TO BE REMOVED found duplicate text_hash objasdasdasd")
                                 # source_version_match[0].article.url_set.create(name=source[0])
                                 source_version_match[0].article.version_set.last().sourcesite_set.create(
@@ -1056,13 +1051,11 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                 
                                 continue
                         
-                        logging.info("================ setting in article obj:\ndomain: {0}\nurl_set create with: {1}".format(source[1], source[0]))
                         db_source_article = Article(domain=source[1])
                         db_source_article.save()
 
                         db_source_article.url_set.create(name=source[0])
                         db_source_article.is_source = True
-                        logging.info("================ {0}".format("db_source_article.is_source set to True"))
                         db_source_article.save()
                         source_version = db_source_article.version_set.create(
                             title=source_article.title,
@@ -1253,15 +1246,10 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                         source_version_match = ArticleVersion.objects.filter(text_hash=thash)
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
-                        logging.info("================ source_version_match: {0}".format(source_version_match))
-                        logging.info("================ source_url_match: {0}".format(source_url_match))
                         if (source_version_match):
-                            logging.info("================> {0}".format("in source_version_match L1275"))
                             if (source_url_match):
-                                logging.info("================>> {0}".format("in source_url_match L1278"))
                                 # logging.info("version match AND url match DIODJQWPDJA")
                                 source_version_match[0].article.is_source = True
-                                logging.info("================ {0}".format("source_version_match[0].article.is_source = True"))
                                 source_version_match[0].article.save()                                
                                 
 
@@ -1278,7 +1266,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                                 continue
                             else:
-                                logging.info("================>> {0}".format("in not source_url_match L1299"))
                                 logging.info("TO BE REMOVED found duplicate text_hash objasdasdasd")
                                 source_version_match[0].article.url_set.create(name=source[0])
                                 source_version_match[0].article.version_set.last().sourcesite_set.create(
@@ -1299,11 +1286,9 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         db_source_article = Article(domain=source[1])
                         db_source_article.save()
 
-                        logging.info("================ db_source_article L1320: {0}".format(db_source_article))
 
                         db_source_article.url_set.create(name=source[0])
                         db_source_article.is_source = True
-                        logging.info("================ {0}".format("db_source_article.is_source = true"))
                         db_source_article.save()
 
                         source_version = db_source_article.version_set.create(
