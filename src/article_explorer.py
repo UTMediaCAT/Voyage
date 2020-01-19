@@ -316,34 +316,25 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             # unmatch  match    Add new Version to article
             # unmatch  unmatch  Create new Article with respective Version and Url
             if version_match:
-                logging.info("----------------> {0}".format("in version_match"))
-                logging.info("---------------- version_match[0].article: {0}".format(version_match[0].article))
                 if (version_match[0].article.is_referring == True):
-                    logging.info("---------------->> {0}".format("in version_match[0].article.is_referring is Ture"))
                     version = version_match[0]
                     if url_match:
-                        logging.info("---------------->>> {0}".format("in url_match L324: "))
                         if version_match[0].article != url_match[0].article:
                             logging.warning("Version and Url matches are not pointing to same article! versionMatchId: {0} urlMatchId:{1}".format(version.id, url_match[0].id))
                             continue
                         else:
                             logging.info("Updating date last seen of {0}".format(version.article.id))
                     else:
-                        logging.info("---------------->>> {0}".format("in not url_match L331: "))
                         db_article = version.article
                         logging.info("Adding new Url to Article {0}".format(db_article.id))
                         db_article.url_set.create(name=url)
                     version.date_last_seen = date_now
                     version.save()
             else:
-                logging.info("----------------> {0}".format("in not version_match"))
                 if url_match:
-                    logging.info("---------------->> {0}".format("in url_match L339: "))
                     # logging.info("AAAAAAAaoudsaosdiasd {0}".format(url))
                     db_article = url_match[0].article
-                    logging.info("--------------- url_match: {0}, db_article: {1}".format(url_match, db_article))
                     if (db_article.is_source == True):
-                        logging.info("---------------->>> {0}".format("in db_article is_source true L339"))
                         version = db_article.version_set.last()
                         version.title=title
                         version.text=text
@@ -354,7 +345,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         version.date_published=pub_date
                         version.save()
                     else:
-                        logging.info("---------------->>> {0}".format("in db_article is_source false L351"))
                         logging.info("Adding new Version to Article {0}".format(db_article.id))
                         version = db_article.version_set.create(
                         title=title,
@@ -365,7 +355,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         date_last_seen=date_now,
                         date_published=pub_date) 
                     db_article.is_referring = True
-                    logging.info("---------------<>> {0}".format("set db_article.is_referring to Ture"))
                     db_article.save()
 
 
@@ -385,7 +374,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             matched = False)
 
                     ## for all matched source sites found in article with the source link (in scope)
-                    logging.info("---------------- sources array[0]: {0}".format(sources[0]))
                     for source in sources[0]:
                         time.sleep(2)
 
@@ -620,7 +608,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                     # logging.info("done checking sources[0] for match url and unmatch version")
                     # logging.info("source: {0}, source_site: {1}".format(source, source_sites))
-                    logging.info("---------------- sources array[1]: {0}".format(sources[1]))
                     for source in sources[1]:
                         # if source is in actual source_sites list
                         if (check_source_domain(source, source_sites) == False):
@@ -847,7 +834,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         # logging.info("CREATED VERSION DDDdddddddddd")
 
                 else:
-                    logging.info("----------------> {0}".format("in not url_match L847: "))
                     # If the db_article is new to the database,
                     # add it to the database
                     # if (version_match[0].article.is_source == True):
@@ -878,9 +864,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                     date_last_seen=date_now,
                     date_published=pub_date)
                     # logging.info("Adding new Article to the DB   qqqq")
-                    logging.info("---------------- db_article: {0}".format(db_article))
                     db_article.is_referring = True
-                    logging.info("---------------- {0}".format("db_article.is_referring set to True "))
                     db_article.save()
                     for key in keywords:
                         version.keyword_set.create(name=key)
@@ -900,7 +884,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                             matched = False)
                     # logging.info("Adding new Article to the DB   6")
 
-                    logging.info("---------------- xd sources array[0]: {0}".format(sources[0]))
                     for source in sources[0]:
                         time.sleep(2)
 
@@ -1129,7 +1112,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                     # logging.info("source: {0}, source_site: {1}".format(source, source_sites))
                     
-                    logging.info("---------------- xd sources array[1]: {0}".format(sources[1]))
                     for source in sources[1]:
                         # if source is in actual source_sites list
                         if (check_source_domain(source, source_sites) == False):
