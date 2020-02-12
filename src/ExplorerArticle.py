@@ -9,6 +9,7 @@ import collections
 #import urlnorm
 import urltools
 from urllib.parse import urlparse, urljoin, urlunparse
+import PyppeteerCrawl
 
 # For absolute download timeout
 import eventlet
@@ -158,21 +159,25 @@ class ExplorerArticle(object):#derive from object for getters/setters
         # logging.info("AAAAAAAAAAAAA\n")
 
         try:
-            if(article_text_links_only):
-                if(self._readability_text):
-                    lxml_tree = lxml.html.fromstring(self._readability_text)
-                else:
-                    if(not self.newspaper_article.is_parsed):
-                        self.newspaper_article.parse()
-                        if(self.newspaper_article.clean_top_node):
-                            lxml_tree = self.newspaper_article.clean_top_node
-                        else:
-                            logging.warning("no links could be obtained because both methods of obtaining a cleaned document failed")
-                            return []
-            else:
-                lxml_tree = lxml.html.fromstring(self.html)
+            self.html = PyppeteerCrawl.run_crawl(self.url)
+            logging.info("-----========================================================")
+            logging.info("url: %s", self.url)
+            logging.info("%s", self.html)
+            # if(article_text_links_only):
+            #     if(self._readability_text):
+            #         lxml_tree = lxml.html.fromstring(self._readability_text)
+            #     else:
+            #         if(not self.newspaper_article.is_parsed):
+            #             self.newspaper_article.parse()
+            #             if(self.newspaper_article.clean_top_node):
+            #                 lxml_tree = self.newspaper_article.clean_top_node
+            #             else:
+            #                 logging.warning("no links could be obtained because both methods of obtaining a cleaned document failed")
+            #                 return []
+            # else:
+            lxml_tree = lxml.html.fromstring(self.html)
         except lxml.etree.Error as e:
-            logging.warning("error while getting links from article: {0}".format(str(e)))
+            logging.warning("error while getting links from article!!!!!!!!: {0}".format(str(e)))
             return []
         for e in lxml_tree.cssselect("a"):
             href = e.get("href")
