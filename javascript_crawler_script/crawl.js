@@ -5,6 +5,7 @@
    dynamically rendered webpages and returns the JSON file containing lists
    of tuples of links and titles for each url.
    Use: "node crawl.js -l <url1> ..."
+   Output: link_title_list.json
 */
 const Apify = require('apify');
 const path = require('path');
@@ -104,7 +105,7 @@ Apify.main(async () => {
 
     // Create a JSON file from the tuples in the output list.
     // Overwrites if it already exists.
-    fs.writeFile("link_title_list.json", JSON.stringify(output_dict), function(err) {
+    fs.writeFileSync("link_title_list.json", JSON.stringify(output_dict), function(err) {
         if (err) throw err;
         console.log('complete');
         });
