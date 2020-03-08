@@ -179,8 +179,9 @@ class Crawler(object):
                         # logging.info("{0}".format(self.site.url))
                         raise ZeroDivisionError
 
-
+                    logging.info("current url")
                     logging.info("visiting {0}".format(current_url))
+                    
                     self.visited_count += 1
                     #use newspaper to download and parse the article
                     article = ExplorerArticle(current_url)
@@ -195,9 +196,12 @@ class Crawler(object):
                     logging.info(article.get_links())
                     for link in article.get_links():
                         # logging.info("WAT 2   {0}".format(link))
-
-                        url = urljoin(current_url, link.href, False)
+                        # logging.info("current_url type: {0}".format(type(current_url)))
+                        # logging.info("link.href type: {0}".format(type(link.href)))
+                        url = urljoin(current_url[0], link.href, False)
+                        logging.info("the url: {0}".format(url))
                         if self.url_in_filter(url, self.filters):
+                            logging.info("aaaaaaaaaaa")
                             logging.info("skipping url \"{0}\" because it matches filter".format(url))
                             continue
                         try:
@@ -209,6 +213,7 @@ class Crawler(object):
                                 continue
                             parsed_as_list[5] = ''
                             url = parsed_url.geturl()
+
                         except Exception as e:
                             logging.info("skipping malformed url {0}. Error: {1}".format(url, str(e)))
                             continue

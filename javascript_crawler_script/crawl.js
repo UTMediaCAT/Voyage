@@ -9,10 +9,18 @@
 */
 const Apify = require('apify');
 const path = require('path');
-const fs = require('fs');
+
+var fs = require('fs');
+var util = require('util');
+var log_file = fs.createWriteStream(__dirname + '/debug.log', {flags : 'w'});
+var log_stdout = process.stdout;
+
+console.log = function(d) {
+  log_file.write(util.format(d) + '\n');
+  log_stdout.write(util.format(d) + '\n');
+};
 
 Apify.main(async () => {
-
     // Get the urls from the command line arguments.
     var url_list = [];
     var is_url = false;
@@ -26,6 +34,7 @@ Apify.main(async () => {
             is_url = true;
         }
       });
+      console.log("HIIIIIIIIIIIIIIIIIIIIIIIIII");
     console.log(url_list);  // Ouput the links provided.
 
     // Create the JSON object to store the tuples of links and titles for each url.
@@ -42,6 +51,11 @@ Apify.main(async () => {
     // Initialize the crawler.
     const crawler = new Apify.PuppeteerCrawler({
         requestQueue,
+        launchPuppeteerOptions: {
+            headless: true,
+            stealth: false,
+            useChrome: false,
+        },
         handlePageFunction: async ({ request, page }) => {
             const title = await page.title();   // Get the title of the page.
             console.log(`Title of "${request.url}" is "${title}"`);
@@ -81,6 +95,8 @@ Apify.main(async () => {
     // Note: If the apify_storage file is not removed, it doesn't crawl
     // during subsequent runs.
     // Implementation of rmdir.
+    console.log("BYEEEEEEEEEEEEEE");
+    console.log(JSON.stringify(output_dict));
     const rmDir = function (dirPath, removeSelf) {
     if (removeSelf === undefined)
         removeSelf = true;

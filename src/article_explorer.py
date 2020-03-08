@@ -76,6 +76,12 @@ from django.db import connection
 # For hashing the text
 import hashlib
 
+import time
+from threading import Event, Thread, Lock
+
+lock = Lock()
+queue = []
+
 # For handling keyboard inturrupt
 def init_worker():
     signal.signal(signal.SIGINT, signal.SIG_IGN)
@@ -101,7 +107,7 @@ def parse_articles(referring_sites, db_keywords, source_sites_and_aliases, twitt
 
         connection.close()
         # Initialize multiprocessing by having cpu*2 workers
-        pool = Pool(processes=len(referring_sites), maxtasksperchild=1, initializer=init_worker)
+        # pool = Pool(processes=len(referring_sites), maxtasksperchild=1, initializer=init_worker)
 
         # Use this instead of ^ when using multiprocessing.dummy
         # pool = Pool(processes=cpu_count()*4)
@@ -111,6 +117,7 @@ def parse_articles(referring_sites, db_keywords, source_sites_and_aliases, twitt
 
         # Start the multiprocessing
         #result = pool.map_async(pass_database, referring_sites)
+        
         threads = {}
         for s in referring_sites:
             site = str(s)
@@ -126,15 +133,34 @@ def parse_articles(referring_sites, db_keywords, source_sites_and_aliases, twitt
 
                     threads[site].join(10000)
                     threads[site] = Process(target=pass_database, args=([s]))
-                    threads[site].start() 
+                    threads[site].start()
+
+        # pool = Pool(processes=len(referring_sites), maxtasksperchild=1, initializer=init_worker)
+        # results = pool.m
+
         # Continue until all sites are done crawling
         while (not result.ready()):
             time.sleep(5)
 
         # Fail-safe to ensure the processes are done
-        pool.close()
-        pool.join()
+        # pool.close()
+        # pool.join()
 
+
+        # # render here
+        # queue.append(url)
+        # lock.acquire()
+        # print("lock acquired")
+        # print(queue[0])
+        # time.sleep(1)
+        # queue.pop(0)
+        # lock.release()
+        # print("lock released")
+
+        # # run threads again for second part
+        # pass_database2 = partial(parse_articles_per_site, db_keywords, source_sites_and_aliases, twitter_accounts_explorer)
+
+        
 
 
 def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accounts_explorer, site):
@@ -185,9 +211,9 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
         time.sleep(5)
         try:
             try:
-                # logging.info("4")
+                logging.info("4")
                 article = next(article_iterator) 
-                # logging.info("5")
+                logging.info("5")
 
             except ZeroDivisionError:
                 article_iterator = itertools.chain(iter(newspaper_articles), crawlersource_articles)
@@ -217,10 +243,13 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             # logging.info("8")
 
             url = article.url
+            logging.info("article_explorer:")
+            logging.info("url: {0}".format(url))
             if 'http://www.' in url:
                 url = url[:7] + url[11:]
             elif 'https://www.' in url:
                 url = url[:8] + url[12:]
+            logging.info("new url: {0}".format(url))
             article = ExplorerArticle(article.url)
             logging.debug("ExplorerArticle Created")
             # Try to download and extract the useful data
@@ -249,6 +278,25 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
             # Regex the keyword from the article's text
             keywords = get_keywords(article, db_keywords)
             logging.debug("matched keywords: {0}".format(repr(keywords)))
+
+            # yield [article, source_sites]
+        #     return [article, source_sites, keywords]
+        # except (KeyboardInterrupt, SystemExit):
+        #     raise
+        # except Exception as e:
+        #     logging.exception("Unhandled exception while crawling: " + str(e))
+        #     error_count+=1
+
+        #     # This loop is used to ensure looping error don't cause MediaCat to loop continuously on them
+        #     if (error_count > 10):
+        #         break
+# def parse_articles_per_site2(db_keywords, source_sites_and_aliases, twitter_accounts_explorer, articleObj, source_sites, site):
+    # while True:
+        # time.sleep(5)
+        # try:
+            # article = articleObj
+            # url = article.canonical_url.strip()
+
             # Regex the links within article's html
             ## get list of source sites that matches the source in scope and those not
             sources = get_sources_sites(article, source_sites)

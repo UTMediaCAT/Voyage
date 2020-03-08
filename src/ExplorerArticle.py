@@ -10,6 +10,9 @@ import collections
 import urltools
 from urllib.parse import urlparse, urljoin, urlunparse
 import PyppeteerCrawl
+import subprocess as sp
+import json
+import time
 
 # For absolute download timeout
 import eventlet
@@ -18,7 +21,12 @@ eventlet.monkey_patch(socket=True)
 Link = collections.namedtuple("Link", ["href", "text"])
 
 class ExplorerArticle(object):#derive from object for getters/setters
-    def __init__(self, url):
+    def __init__(self, object):
+        if (isinstance(object, tuple)):
+            url = object[0]
+        else:
+            url = object
+        logging.info("url is: {0}".format(url))
         self.url = url
         self.canonical_url = url
         self.newspaper_article = newspaper.Article(url)
@@ -159,10 +167,41 @@ class ExplorerArticle(object):#derive from object for getters/setters
         # logging.info("AAAAAAAAAAAAA\n")
 
         try:
-            self.html = PyppeteerCrawl.run_crawl(self.url)
-            logging.info("-----========================================================")
-            logging.info("url: %s", self.url)
-            logging.info("%s", self.html)
+            # self.html = PyppeteerCrawl.run_crawl(self.url)
+            
+            # outputs = sp.check_output(["node", "crawl.js", "-l", self.url])
+            # print(output)
+            
+            child = sp.Popen(["node", "../javascript_crawler_script/crawl.js", "-l", self.url], stdout=sp.PIPE)
+            # print("child.wait: " + str(child.wait()))
+            
+            while child.wait() != 0:
+                time.sleep(1)
+            print(str(child.pid))
+            res = ""
+            for line in child.stdout:
+                line = line.decode("utf-8")
+                res = line
+
+            print(res)
+            jsonObj = json.loads(res)
+            for x in jsonObj:
+                # print(x)
+                for ele in jsonObj[x]:
+                    # print(ele)
+                    href = ele[0]
+                    href = str(href)
+                    # print(ele[1])
+                    result.append(Link(href=href, text=ele[1]))
+            print(result)
+            # result = []
+            # for output in outputs:
+            #     a = Link(href=output[0], text=output[1])
+            #     result.append(a)
+
+            # logging.info("-----========================================================")
+            # logging.info("url: %s", self.url)
+            # logging.info("%s", self.html)
             # if(article_text_links_only):
             #     if(self._readability_text):
             #         lxml_tree = lxml.html.fromstring(self._readability_text)
@@ -175,15 +214,19 @@ class ExplorerArticle(object):#derive from object for getters/setters
             #                 logging.warning("no links could be obtained because both methods of obtaining a cleaned document failed")
             #                 return []
             # else:
-            lxml_tree = lxml.html.fromstring(self.html)
-        except lxml.etree.Error as e:
-            logging.warning("error while getting links from article!!!!!!!!: {0}".format(str(e)))
+            #     lxml_tree = lxml.html.fromstring(self.html)
+        except Exception as e:
+            logging.warning("error while converting links from article--------: {0}".format(str(e)))
+            logging.warning("%s", result)
             return []
-        for e in lxml_tree.cssselect("a"):
-            href = e.get("href")
-            text = e.text_content()
-            if(href):
-                result.append(Link(href=href, text=text))
+        # except lxml.etree.Error as e:
+        #     logging.warning("error while getting links from article!!!!!!!!: {0}".format(str(e)))
+        #     return []
+        # for e in lxml_tree.cssselect("a"):
+        #     href = e.get("href")
+        #     text = e.text_content()
+        #     if(href):
+        #         result.append(Link(href=href, text=text))
         return result
 
     def evaluate_css_selectors(self, selectors):
