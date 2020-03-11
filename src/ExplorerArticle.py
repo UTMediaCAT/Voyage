@@ -13,6 +13,7 @@ import PyppeteerCrawl
 import subprocess as sp
 import json
 import time
+import asyncio
 
 # For absolute download timeout
 import eventlet
@@ -35,6 +36,7 @@ class ExplorerArticle(object):#derive from object for getters/setters
         self.is_parsed = False
         self._readability_title = None
         self._readability_text = None
+        self.stdout = ""
 
     def download(self):
         '''
@@ -171,19 +173,50 @@ class ExplorerArticle(object):#derive from object for getters/setters
             
             # outputs = sp.check_output(["node", "crawl.js", "-l", self.url])
             # print(output)
+
             
-            child = sp.Popen(["node", "../javascript_crawler_script/crawl.js", "-l", self.url], stdout=sp.PIPE)
+            # loop = asyncio.get_event_loop()
+
+            # tasks = [
+            #     asyncio.ensure_future(self.do_subprocess()),
+            #     asyncio.ensure_future(self.sleep_report(5)),
+            # ]
+
+            # loop.run_until_complete(asyncio.gather(*tasks))
+            # loop.close()
+
+            # res = ""
+            # for line in self.stdout:
+            #     line = line.decode("utf-8")
+            #     res = line
+
+            # print(res)
+            # jsonObj = json.loads(res)
+            # for x in jsonObj:
+            #     # print(x)
+            #     for ele in jsonObj[x]:
+            #         # print(ele)
+            #         href = ele[0]
+            #         href = str(href)
+            #         # print(ele[1])
+            #         result.append(Link(href=href, text=ele[1]))
+            # print(result)
+
+            # --------------- 
+            # child = sp.Popen(["node", "../javascript_crawler_script/crawl.js", "-l", self.url], stdout=sp.PIPE)
+            child = sp.Popen(["node", "./temp/main.js", "-l", self.url], stdout=sp.PIPE)
+            
             # print("child.wait: " + str(child.wait()))
-            
-            while child.wait() != 0:
+            while child.poll() is None:
+                print('Still sleeping ' + self.url)
                 time.sleep(1)
-            print(str(child.pid))
+
             res = ""
             for line in child.stdout:
                 line = line.decode("utf-8")
                 res = line
 
-            print(res)
+            # print(res)
             jsonObj = json.loads(res)
             for x in jsonObj:
                 # print(x)
@@ -193,7 +226,12 @@ class ExplorerArticle(object):#derive from object for getters/setters
                     href = str(href)
                     # print(ele[1])
                     result.append(Link(href=href, text=ele[1]))
-            print(result)
+                    
+            # log for checking the list of all url and its title
+            # logging.info("result of {0}: {1}".format(self.url, result))
+
+
+
             # result = []
             # for output in outputs:
             #     a = Link(href=output[0], text=output[1])
@@ -216,12 +254,12 @@ class ExplorerArticle(object):#derive from object for getters/setters
             # else:
             #     lxml_tree = lxml.html.fromstring(self.html)
         except Exception as e:
-            logging.warning("error while converting links from article--------: {0}".format(str(e)))
+            logging.warning("error while converting links from article--------: {0}".format(e))
             logging.warning("%s", result)
             return []
-        # except lxml.etree.Error as e:
-        #     logging.warning("error while getting links from article!!!!!!!!: {0}".format(str(e)))
-        #     return []
+        except lxml.etree.Error as e:
+            logging.warning("error while getting links from article!!!!!!!!: {0}".format(e))
+            return []
         # for e in lxml_tree.cssselect("a"):
         #     href = e.get("href")
         #     text = e.text_content()

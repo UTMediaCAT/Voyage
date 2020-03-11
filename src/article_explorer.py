@@ -69,7 +69,7 @@ import datetime
 # Custom ExlporerArticle object based on newspaper's Article
 from ExplorerArticle import ExplorerArticle
 # For multiprocessing
-from multiprocessing import Pool, cpu_count, Process
+from multiprocessing import Pool, cpu_count, Process, Lock
 from functools import partial
 import signal
 from django.db import connection
@@ -77,10 +77,17 @@ from django.db import connection
 import hashlib
 
 import time
-from threading import Event, Thread, Lock
+from threading import Event, Thread
 
 lock = Lock()
 queue = []
+
+import json
+import collections
+import time
+import subprocess as sp
+Link = collections.namedtuple("Link", ["href", "text"])
+
 
 # For handling keyboard inturrupt
 def init_worker():
@@ -117,45 +124,78 @@ def parse_articles(referring_sites, db_keywords, source_sites_and_aliases, twitt
 
         # Start the multiprocessing
         #result = pool.map_async(pass_database, referring_sites)
+
+        # ---------------
+        # cmd = ["node", "../javascript_crawler_script/crawl.js", "-l"]
+        # for ref in referring_sites:
+        #     cmd.append(ref.url)
+        # child = sp.Popen(cmd, stdout=sp.PIPE)
+        # while child.wait() != 0:
+        #     time.sleep(3)
+
+        # print(str(child.pid))
+        # res = ""
+        # for line in child.stdout:
+        #     line = line.decode("utf-8")
+        #     res = line
         
-        threads = {}
+        # result = {}
+        # subres = []
+        # with open('link_title_list.json') as json_file:
+        #     jsonObj = json.load(json_file)
+        # # jsonObj = json.loads(res)
+        #     for x in jsonObj:
+        #         # print(x)
+        #         for ele in jsonObj[x]:
+        #             # print(ele)
+        #             href = ele[0]
+        #             href = str(href)
+        #             # print(ele[1])
+        #             subres.append(Link(href=href, text=ele[1]))
+        #         result[x] = subres
+        #     logging.info("result here: {0}".format(result))
+        # ---------------
+
+        process = {}
         for s in referring_sites:
             site = str(s)
-            threads[site] = Process(target=pass_database, args=([s]))
-            threads[site].start() 
+            logging.info("hihih")
+            logging.info(s.url)
+            
+            # s_links = result.get(s.url)
+            process[site] = Process(target=pass_database, args=([s]))
+            process[site].start() 
         sleep_time = config['min_iteration_time']
         logging.warning("Sleeping for %is"%sleep_time)
         while True:
             for s in referring_sites:
                 site = str(s)
-                if (not threads[site].is_alive()):
+
+                # s_links = result.get(s.url)
+                if (not process[site].is_alive()):
                     time.sleep(sleep_time)
 
-                    threads[site].join(10000)
-                    threads[site] = Process(target=pass_database, args=([s]))
-                    threads[site].start()
+                    process[site].join(10000)
+                    process[site] = Process(target=pass_database, args=([s]))
+                    process[site].start()
+            
+            for s in referring_sites:
+                site = str(s)
+                process[site].join()
 
         # pool = Pool(processes=len(referring_sites), maxtasksperchild=1, initializer=init_worker)
         # results = pool.m
 
         # Continue until all sites are done crawling
-        while (not result.ready()):
-            time.sleep(5)
+        # while (not result.ready()):
+        #     time.sleep(5)
+        
+
 
         # Fail-safe to ensure the processes are done
         # pool.close()
         # pool.join()
 
-
-        # # render here
-        # queue.append(url)
-        # lock.acquire()
-        # print("lock acquired")
-        # print(queue[0])
-        # time.sleep(1)
-        # queue.pop(0)
-        # lock.release()
-        # print("lock released")
 
         # # run threads again for second part
         # pass_database2 = partial(parse_articles_per_site, db_keywords, source_sites_and_aliases, twitter_accounts_explorer)
@@ -212,7 +252,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
         try:
             try:
                 logging.info("4")
-                article = next(article_iterator) 
+                article = next(article_iterator)
                 logging.info("5")
 
             except ZeroDivisionError:
@@ -1504,8 +1544,9 @@ def get_sources_sites(article, sites):
 
     for site in sites:
         formatted_sites.add(tld.get_tld(site))
-
-    for url in article.get_links(article_text_links_only=True):
+    
+    links = article.get_links(article_text_links_only=True)
+    for url in links:
         try:
             domain = tld.get_tld(url.href)
         #apparently they don't inherit a common class so I have to hard code it

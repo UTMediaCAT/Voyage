@@ -196,12 +196,11 @@ class Crawler(object):
                     logging.info(article.get_links())
                     for link in article.get_links():
                         # logging.info("WAT 2   {0}".format(link))
-                        # logging.info("current_url type: {0}".format(type(current_url)))
-                        # logging.info("link.href type: {0}".format(type(link.href)))
                         url = urljoin(current_url[0], link.href, False)
-                        logging.info("the url: {0}".format(url))
+                        
+                        # logging.info("the url: {0}".format(url))
                         if self.url_in_filter(url, self.filters):
-                            logging.info("aaaaaaaaaaa")
+                            # logging.info("aaaaaaaaaaa")
                             logging.info("skipping url \"{0}\" because it matches filter".format(url))
                             continue
                         try:
