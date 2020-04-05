@@ -1,5 +1,13 @@
 *.tmp
 
+# log files on cralwer
+/src/js_crawler/js_log/*
+/src/js_crawler/result_file/*
+/log/*
+/src/apify_storage/*
+
+# tmp folder
+tmpqueue/*
 
 # Python & Django Specific
 *.pyo
@@ -29,3 +37,6 @@ warc/*
 
 # Database
 Frontend/db.sqlite3
+
+# npm
+/src/js_crawler/node_modules/*

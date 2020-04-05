@@ -9,17 +9,26 @@ import collections
 #import urlnorm
 import urltools
 from urllib.parse import urlparse, urljoin, urlunparse
-import PyppeteerCrawl
 import subprocess as sp
 import json
 import time
 import asyncio
+import os
 
 # For absolute download timeout
 import eventlet
 eventlet.monkey_patch(socket=True)
 
 Link = collections.namedtuple("Link", ["href", "text"])
+
+import random
+import string
+
+def randomString(stringLength=10):
+    """Generate a random string of fixed length """
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(stringLength))
+
 
 class ExplorerArticle(object):#derive from object for getters/setters
     def __init__(self, object):
@@ -168,6 +177,7 @@ class ExplorerArticle(object):#derive from object for getters/setters
 
         # logging.info("AAAAAAAAAAAAA\n")
 
+        result_file_name = randomString(5) + '.txt'
         try:
             # self.html = PyppeteerCrawl.run_crawl(self.url)
             
@@ -201,27 +211,52 @@ class ExplorerArticle(object):#derive from object for getters/setters
             #         # print(ele[1])
             #         result.append(Link(href=href, text=ele[1]))
             # print(result)
-
+            
             # --------------- 
             # child = sp.Popen(["node", "../javascript_crawler_script/crawl.js", "-l", self.url], stdout=sp.PIPE)
-            child = sp.Popen(["node", "./temp/main.js", "-l", self.url], stdout=sp.PIPE)
+            child = sp.Popen(["node", "./js_crawler/main.js", "-l", self.url, "-f", result_file_name], stdout=sp.PIPE)
             
             # print("child.wait: " + str(child.wait()))
             while child.poll() is None:
-                print('Still sleeping ' + self.url)
+                # print('Still sleeping ' + self.url)
                 time.sleep(1)
 
-            res = ""
-            for line in child.stdout:
-                line = line.decode("utf-8")
-                res = line
+            try:
+                with open("./js_crawler/result_file/" + result_file_name, encoding='utf-8') as result_file:
+                    logging.info("reading")
+                    json_data = json.loads(result_file.read())
+                    res = json_data
+                    logging.info("reading done")
+            except err:
+                logging.warning("cannot read")
 
+
+
+            # lines = result_file.readlines()
+            # if len(lines) > 1:
+            #     for line in lines:
+            #         print(line.strip())
+            # else:
+            
+            # res = ""
+            # for line in child.stdout:
+            #     line = line.decode("utf-8")
+            #     res = line
+            #     # print(self.url+ " " + res)
+            #     if (res[0] == '{'):
+            #         print(self.url+ " " + res)
+            #         break
+
+            logging.info("LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+            logging.info("res from main.js of {0}: {1}".format(self.url, res))
             # print(res)
-            jsonObj = json.loads(res)
-            for x in jsonObj:
+            
+            # jsonObj = json.loads(res)
+            # for x in jsonObj:
+            for x in res:
                 # print(x)
-                for ele in jsonObj[x]:
-                    # print(ele)
+                for ele in res[x]:
+                    # logging.info(ele)
                     href = ele[0]
                     href = str(href)
                     # print(ele[1])
@@ -230,6 +265,11 @@ class ExplorerArticle(object):#derive from object for getters/setters
             # log for checking the list of all url and its title
             # logging.info("result of {0}: {1}".format(self.url, result))
 
+            # remove the result_file after read successfully
+            if os.path.exists("./js_crawler/result_file/" + result_file_name):
+                os.remove("./js_crawler/result_file/" + result_file_name)
+            else:
+                logging.warning("The file "+ result_file_name + " does not exist")
 
 
             # result = []
@@ -254,11 +294,11 @@ class ExplorerArticle(object):#derive from object for getters/setters
             # else:
             #     lxml_tree = lxml.html.fromstring(self.html)
         except Exception as e:
-            logging.warning("error while converting links from article--------: {0}".format(e))
+            logging.warning("error while converting links {0} from article--------: {1}".format(self.url, e))
             logging.warning("%s", result)
             return []
-        except lxml.etree.Error as e:
-            logging.warning("error while getting links from article!!!!!!!!: {0}".format(e))
+        except IOError:
+            logging.warning("File " + result_file_name + "not accessible")
             return []
         # for e in lxml_tree.cssselect("a"):
         #     href = e.get("href")

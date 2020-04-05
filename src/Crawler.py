@@ -193,8 +193,8 @@ class Crawler(object):
                     # get urls from the article
                     # logging.info("WAT 12")
 
-                    logging.info(article.get_links())
-                    for link in article.get_links():
+                    article_links = article.get_links()
+                    for link in article_links:
                         # logging.info("WAT 2   {0}".format(link))
                         url = urljoin(current_url[0], link.href, False)
                         
