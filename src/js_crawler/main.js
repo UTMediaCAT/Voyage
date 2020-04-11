@@ -113,32 +113,8 @@ Apify.main(async () => {
         
         await browser.close();
         
-        // var result_file = fs.createWriteStream(__dirname + '/result_file/' + result_file_name, {flags : 'w'});
-        // fs.writeFileSync("link_title_list.json", JSON.stringify(output_dict), function(err) {
-        //     if (err) throw err;
-        //     console.log('complete');
-        //     });
-
-        const rmDir = function (dirPath, removeSelf) {
-            if (removeSelf === undefined)
-                removeSelf = true;
-            try {
-                var files = fs.readdirSync(dirPath);
-            } catch (e) {
-                // throw e
-                return;
-            }
-            if (files.length > 0)
-                for (let i = 0; i < files.length; i++) {
-                const filePath = path.join(dirPath, files[i]);
-                if (fs.statSync(filePath).isFile())
-                    fs.unlinkSync(filePath);
-                else
-                    rmDir(filePath);
-                }
-            if (removeSelf)
-                fs.rmdirSync(dirPath);
-        };
+        
+        // write result to file
         var dirPath = __dirname + '/result_file/';
         // console.log(dirPath)
         // rmDir(dirPath, false);
@@ -166,3 +142,33 @@ Apify.main(async () => {
         console.log("success, so delete file "+ rand + ".log");
     });
 });
+
+
+// draft:
+
+// var result_file = fs.createWriteStream(__dirname + '/result_file/' + result_file_name, {flags : 'w'});
+// fs.writeFileSync("link_title_list.json", JSON.stringify(output_dict), function(err) {
+//     if (err) throw err;
+//     console.log('complete');
+//     });
+
+// const rmDir = function (dirPath, removeSelf) {
+//     if (removeSelf === undefined)
+//         removeSelf = true;
+//     try {
+//         var files = fs.readdirSync(dirPath);
+//     } catch (e) {
+//         // throw e
+//         return;
+//     }
+//     if (files.length > 0)
+//         for (let i = 0; i < files.length; i++) {
+//         const filePath = path.join(dirPath, files[i]);
+//         if (fs.statSync(filePath).isFile())
+//             fs.unlinkSync(filePath);
+//         else
+//             rmDir(filePath);
+//         }
+//     if (removeSelf)
+//         fs.rmdirSync(dirPath);
+// };

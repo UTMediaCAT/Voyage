@@ -227,8 +227,8 @@ class ExplorerArticle(object):#derive from object for getters/setters
                     json_data = json.loads(result_file.read())
                     res = json_data
                     logging.info("reading done")
-            except err:
-                logging.warning("cannot read")
+            except Exception as e:
+                logging.exception("cannot read: " + str(e))
 
 
 
