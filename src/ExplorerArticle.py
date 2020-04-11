@@ -215,7 +215,7 @@ class ExplorerArticle(object):#derive from object for getters/setters
             # --------------- 
             # child = sp.Popen(["node", "../javascript_crawler_script/crawl.js", "-l", self.url], stdout=sp.PIPE)
             child = sp.Popen(["node", "./js_crawler/main.js", "-l", self.url, "-f", result_file_name], stdout=sp.PIPE)
-            
+            res = []
             # print("child.wait: " + str(child.wait()))
             while child.poll() is None:
                 # print('Still sleeping ' + self.url)
