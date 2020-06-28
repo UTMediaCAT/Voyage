@@ -41,6 +41,7 @@ import dateutil
 import django
 os.environ['DJANGO_SETTINGS_MODULE'] = 'Frontend.settings'
 # For Models connecting with the Django Database
+# call save() to save into database :TODO
 from articles.models import*
 from articles.models import Keyword as ArticleKeyword
 from articles.models import SourceSite as ArticleSourceSite
@@ -90,9 +91,12 @@ Link = collections.namedtuple("Link", ["href", "text"])
 
 
 # For handling keyboard inturrupt
+# ignore control c, workers running concurrently? on different screens, prevent control c'ing while working on other stuff
+# screen
 def init_worker():
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
+# 
 def parse_articles(referring_sites, db_keywords, source_sites_and_aliases, twitter_accounts_explorer):
     """ (list of [str, newspaper.source.Source, str],
          list of str, list of str, str) -> None
@@ -202,7 +206,7 @@ def parse_articles(referring_sites, db_keywords, source_sites_and_aliases, twitt
 
         
 
-
+# :TODO
 def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accounts_explorer, site):
     logging.info("Started multiprocessing of Site: %s", site.name)
     #Setup logging for this site
@@ -1619,6 +1623,7 @@ def explore():
     """
 
     # Retrieve and store monitoring site information
+    # set of all the rows of the sites in the reffereing site table
     referring_sites = ReferringSite.objects.all()
     logging.info("Collected {0} Referring Sites from Database".format(len(referring_sites)))
 

@@ -1,0 +1,22 @@
+{% extends "admin/base_site.html" %}
+{% load staticfiles %}
+{% load explorer_tags %}
+
+{% block content %}
+	
+    <div id="contactadmin">
+    	<h1> Contact Page </h1>
+    </div>
+
+    <form action='alert' method='GET'>
+        <button type='submit'> Click for more info</button>
+    </form>
+
+    <!-- {% if messages %}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        {{ message }}
+    {% endif %} -->
+
+{% endblock %}
