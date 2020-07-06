@@ -292,6 +292,9 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 pub_date = dateutil.parser.parse(pub_date)
             else:
                 pub_date = get_pub_date(article)
+            #check to ensure pub_date is valid datetime, otherwise set to None
+            if not isinstance(pub_date, datetime.datetime):
+                pub_date = None
             mod_date = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=3))
 
             language = article.language
@@ -1465,7 +1468,12 @@ def get_pub_date(article):
     Keyword arguments:
     article         -- 'Newspaper.Article' object of article
     """
-    return article.newspaper_article.publish_date
+    pub_date = article.newspaper_article.publish_date
+    if not isinstance(pub_date, datetime.datetime):
+        return None
+    return pub_date
+    # return article.newspaper_article.publish_date
+    
 
 
 def get_keywords(article, keywords):
