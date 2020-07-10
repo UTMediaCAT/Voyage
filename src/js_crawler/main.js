@@ -76,7 +76,7 @@ Apify.main(async () => {
 
         console.log(`Opening page ${url_list[0]}...`);
         const page = await browser.newPage();
-        await page.setDefaultNavigationTimeout(300000); 
+        await page.setDefaultNavigationTimeout(600000); 
         await page.goto(url_list[0]);
         const title = await page.title();
         console.log(`Title of the page "${url_list[0]}" is "${title}".`);

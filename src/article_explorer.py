@@ -291,6 +291,8 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 url = url[:8] + url[12:]
             logging.info("new url: {0}".format(url))
             article = ExplorerArticle(article.url)
+            logging.debug("JACQUELINE") # added by jacqueline
+            logging.debug(article.url) # added by jacqueline
             logging.debug("ExplorerArticle Created")
             # Try to download and extract the useful data
             if(not article.is_downloaded):
@@ -1545,7 +1547,8 @@ def get_sources_sites(article, sites):
     for site in sites:
         formatted_sites.add(tld.get_tld(site))
     
-    links = article.get_links(article_text_links_only=True)
+    #links = article.get_links(article_text_links_only=True)
+    links = article.get_links_crawl(article_text_links_only=True)
     for url in links:
         try:
             domain = tld.get_tld(url.href)
@@ -1674,7 +1677,8 @@ def setup_logging(site_name="", increment=True):
         logging.root.removeHandler(handler)
 
     logging.basicConfig(filename=prefix + current_time + "-" + cycle_number.zfill(3) + ".log",
-                        level=logging.INFO,
+                        #level=logging.INFO, # added by jacqueline
+                        level=logging.DEBUG,
                         format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
     default_logger = logging.getLogger('')
     console_handler = logging.StreamHandler()

@@ -60,9 +60,11 @@ class ExplorerArticle(object):#derive from object for getters/setters
         
         try:
             html = None
-            with eventlet.Timeout(15):
+            # with eventlet.Timeout(15): # by jacqueline
+            with eventlet.Timeout(30):
                 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
-                response = requests.get(url=self.url, timeout=15, headers=headers)#TODO: add back get_request_kwargs functionality present in newspaper impl
+                #response = requests.get(url=self.url, timeout=15, headers=headers)#TODO: add back get_request_kwargs functionality present in newspaper impl # by jacqueline
+                response = requests.get(url=self.url, timeout=30, headers=headers)#TODO: add back get_request_kwargs functionality present in newspaper impl
             if(response.status_code >= 400):
                 logging.warn("encountered status code {0} while getting {1}".format(response.status_code, self.url))
                 return False
@@ -294,6 +296,8 @@ class ExplorerArticle(object):#derive from object for getters/setters
             # else:
             #     lxml_tree = lxml.html.fromstring(self.html)
         except Exception as e:
+            # logging.warning(e) # by jacqueline
+            logging.warning(e)
             logging.warning("error while converting links {0} from article--------: {1}".format(self.url, e))
             logging.warning("%s", result)
             return []
@@ -306,6 +310,162 @@ class ExplorerArticle(object):#derive from object for getters/setters
         #     if(href):
         #         result.append(Link(href=href, text=text))
         return result
+
+    # addded this whole function by jacqueline
+    def get_links_crawl(self, article_text_links_only=False):
+        result = []
+        # result_file_name = randomString(5) + '.txt'
+        try:
+            # self.html = PyppeteerCrawl.run_crawl(self.url)
+            
+            # outputs = sp.check_output(["node", "crawl.js", "-l", self.url])
+            # print(output)
+
+            
+            # loop = asyncio.get_event_loop()
+
+            # tasks = [
+            #     asyncio.ensure_future(self.do_subprocess()),
+            #     asyncio.ensure_future(self.sleep_report(5)),
+            # ]
+
+            # loop.run_until_complete(asyncio.gather(*tasks))
+            # loop.close()
+
+            # res = ""
+            # for line in self.stdout:
+            #     line = line.decode("utf-8")
+            #     res = line
+
+            # print(res)
+            # jsonObj = json.loads(res)
+            # for x in jsonObj:
+            #     # print(x)
+            #     for ele in jsonObj[x]:
+            #         # print(ele)
+            #         href = ele[0]
+            #         href = str(href)
+            #         # print(ele[1])
+            #         result.append(Link(href=href, text=ele[1]))
+            # print(result)
+            
+            # --------------- 
+            print("Starting child process")
+            print(self.url)
+            article_url = "https://tech.newstatesman.com/news/university-computer-science-admissions-rising-gender-gap"
+            child = sp.Popen(["node", "../javascript_crawler_script/crawl.js", "-l", article_url], stdout=sp.PIPE)
+            print("Finishing child process")
+            # child = sp.Popen(["node", "./js_crawler/main.js", "-l", self.url, "-f", result_file_name], stdout=sp.PIPE)
+            res = []
+
+            print(child.poll())
+            # print("child.wait: " + str(child.wait()))
+            # while True:
+            #     #define process
+            #     out = child.stdout.readline()
+            #     print(out)
+            while child.poll() is None:
+                # print('Still sleeping ' + self.url)
+                out = child.stdout.readline()
+                print(out)
+                # time.sleep(1)
+            
+            #:TODO uncomment this
+            ###########################################################
+            # try:
+
+            #     with open("../javascript_crawler_script/link_title_list.json", encoding='utf-8') as result_file:
+            #         logging.info("reading")
+            #         json_data = json.loads(result_file.read())
+            #         res = json_data
+            #         logging.info("reading done")
+            # except Exception as e:
+            #     logging.exception("cannot read: " + str(e))
+            ###########################################################
+
+
+            # lines = result_file.readlines()
+            # if len(lines) > 1:
+            #     for line in lines:
+            #         print(line.strip())
+            # else:
+            
+            # res = ""
+            # for line in child.stdout:
+            #     line = line.decode("utf-8")
+            #     res = line
+            #     # print(self.url+ " " + res)
+            #     if (res[0] == '{'):
+            #         print(self.url+ " " + res)
+            #         break
+
+            logging.info("LAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+            logging.info("res from main.js of {0}: {1}".format(self.url, res))
+            # print(res)
+            
+            # jsonObj = json.loads(res)
+            # for x in jsonObj:
+            for x in res:
+                # print(x)
+                for ele in res[x]:
+                    # logging.info(ele)
+                    href = ele[0]
+                    href = str(href)
+                    # print(ele[1])
+                    result.append(Link(href=href, text=ele[1]))
+                    
+            # log for checking the list of all url and its title
+            # logging.info("result of {0}: {1}".format(self.url, result))
+
+            # remove the result_file after read successfully
+            # if os.path.exists("./js_crawler/result_file/" + result_file_name):
+            #     os.remove("./js_crawler/result_file/" + result_file_name)
+            # if os.path.exists("../javascript_crawler_script/debuglogs/debug-" + result_file_name):
+            #     os.remove("../javascript_crawler_script/debuglogs/debug-" + result_file_name)
+            # else:
+            #     logging.warning("The file debug-"+ result_file_name + " does not exist")
+
+
+            # result = []
+            # for output in outputs:
+            #     a = Link(href=output[0], text=output[1])
+            #     result.append(a)
+
+            # logging.info("-----========================================================")
+            # logging.info("url: %s", self.url)
+            # logging.info("%s", self.html)
+            # if(article_text_links_only):
+            #     if(self._readability_text):
+            #         lxml_tree = lxml.html.fromstring(self._readability_text)
+            #     else:
+            #         if(not self.newspaper_article.is_parsed):
+            #             self.newspaper_article.parse()
+            #             if(self.newspaper_article.clean_top_node):
+            #                 lxml_tree = self.newspaper_article.clean_top_node
+            #             else:
+            #                 logging.warning("no links could be obtained because both methods of obtaining a cleaned document failed")
+            #                 return []
+            # else:
+            #     lxml_tree = lxml.html.fromstring(self.html)
+        except Exception as e:
+            logging.warning("error while converting links {0} from article--------: {1}".format(self.url, e))
+            logging.warning("%s", result)
+            return []
+        except IOError:
+            # logging.warning("File " + result_file_name + "not accessible")
+            logging.warning("IO error")
+            return []
+        # for e in lxml_tree.cssselect("a"):
+        #     href = e.get("href")
+        #     text = e.text_content()
+        #     if(href):
+        #         result.append(Link(href=href, text=text))
+        return result
+
+        
+
+
+
 
     def evaluate_css_selectors(self, selectors):
         lxml_tree = lxml.html.fromstring(self.html)
