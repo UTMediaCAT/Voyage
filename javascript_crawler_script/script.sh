@@ -1,0 +1,1 @@
+node crawl.js -l https://www.aljazeera.com/news/2020/06/palestinians-deadly-police-tactics-200611004902866.html
