@@ -292,6 +292,9 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 pub_date = dateutil.parser.parse(pub_date)
             else:
                 pub_date = get_pub_date(article)
+            #check to ensure pub_date is valid datetime, otherwise set to None
+            if not isinstance(pub_date, datetime.datetime):
+                pub_date = None
             mod_date = article.evaluate_css_selectors(site.referringsitecssselector_set.filter(field=3))
 
             language = article.language
@@ -334,7 +337,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                 if url_match:
                     # logging.info("AAAAAAAaoudsaosdiasd {0}".format(url))
                     db_article = url_match[0].article
-
                     if (db_article.is_source == True):
                         version = db_article.version_set.last()
                         version.title=title
@@ -347,7 +349,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                         version.save()
                     else:
                         logging.info("Adding new Version to Article {0}".format(db_article.id))
-
                         version = db_article.version_set.create(
                         title=title,
                         text=text,
@@ -866,7 +867,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                     date_last_seen=date_now,
                     date_published=pub_date)
                     # logging.info("Adding new Article to the DB   qqqq")
-
                     db_article.is_referring = True
                     db_article.save()
                     for key in keywords:
@@ -1053,7 +1053,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
                                 db_article.save()
                                 
                                 continue
-
+                        
                         db_source_article = Article(domain=source[1])
                         db_source_article.save()
 
@@ -1249,7 +1249,6 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                         source_version_match = ArticleVersion.objects.filter(text_hash=thash)
                         source_url_match = ArticleUrl.objects.filter(name=source[0])
-
                         if (source_version_match):
                             if (source_url_match):
                                 # logging.info("version match AND url match DIODJQWPDJA")
@@ -1289,6 +1288,7 @@ def parse_articles_per_site(db_keywords, source_sites_and_aliases, twitter_accou
 
                         db_source_article = Article(domain=source[1])
                         db_source_article.save()
+
 
                         db_source_article.url_set.create(name=source[0])
                         db_source_article.is_source = True
@@ -1468,7 +1468,12 @@ def get_pub_date(article):
     Keyword arguments:
     article         -- 'Newspaper.Article' object of article
     """
-    return article.newspaper_article.publish_date
+    pub_date = article.newspaper_article.publish_date
+    if not isinstance(pub_date, datetime.datetime):
+        return None
+    return pub_date
+    # return article.newspaper_article.publish_date
+    
 
 
 def get_keywords(article, keywords):

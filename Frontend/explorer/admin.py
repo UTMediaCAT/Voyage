@@ -163,7 +163,7 @@ class SourceSiteAdmin(admin.ModelAdmin):
         # Domain is stored without last forward slash
         url = obj.url[:-1] if obj.url[-1] == '/' else obj.url
         article_cites_count = Article.objects.filter(version__sourcesite__domain=url).distinct().count()
-        article_tag = '<a target="_blank" href="/admin/articles/article/?q=&version__sourcesite__domain=' + \
+        article_tag = '<a target="_blank" href="/admin/articles/sourcedarticle/?q=&version__sourcesite__domain=' + \
             str(urllib.parse.quote_plus(url)) + '">' + \
             str(article_cites_count) + \
             '</a>'
