@@ -15,6 +15,14 @@ Before installation, verify you meet the following requirements
 The required version should be installed on Debian Jessie (and up), as well as Ubuntu 14.04 LTS (and up).
 You can check your current version by `python --version`
 
+Note: The project as of right now is supported up to Python 3.5.2. on Ubuntu 16.0.4. It is currently in the works to make the project compatible with Python 3.6.9. on Ubuntu 18.0.4.
+
+If your Python version differs from Python 3.5, we highly recommend using virtual environment tools (such as pyenv) to help manage multiple Python versions. 
+
+Typically, to use Python 2 use `python`. 
+To use Python 3 use `python3`. 
+To use whatever python version is set in your python virtual environment, use `python`.
+
 ##### [Wget 1.14+](http://www.gnu.org/software/wget/)
 You can check your current version by `wget --version`
 
