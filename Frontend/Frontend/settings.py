@@ -24,7 +24,7 @@ DEBUG = True
 
 # TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['206.12.91.150', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -119,7 +119,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors'
             ],
             'debug': DEBUG
         },
