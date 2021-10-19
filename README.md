@@ -1,4 +1,4 @@
-## UTMediaCAT
+## :no_entry: [DEPRECATED] Active at https://github.com/UTMediaCAT/mediacat-domain-crawler
 MediaCAT is open-source web-based application, with a curated search engine. It crawls designated news websites and twitter accounts for citations of or hyperlinks to a list of source sites. MediaCAT then archives all referring stories and source stories, in preparation for an advanced analysis of the relations across the digital news-scape.
 
 #### [Home page](http://mediacat.utsc.utoronto.ca/)
